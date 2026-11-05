@@ -34,7 +34,7 @@
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
 .wrap{max-width:1140px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-height:1.05;margin:0;text-wrap:balance}
-h2{font-size:clamp(1.9rem,4.6vw,3rem)}
+h2{font-size:clamp(1.6rem,3.4vw,2.3rem)}
 h3{font-size:1.2rem;letter-spacing:-.01em}
 p{margin:0}
 a{color:inherit}
@@ -56,9 +56,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* hero */
 .hero .wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center;padding-block:56px 40px}
-.hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem);font-weight:800}
+.hero h1{font-size:clamp(2rem,4.4vw,3.3rem);font-weight:800}
 .hero h1 .u{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--pop) 70%,transparent) 62%);padding:0 .05em}
-.hero p.lead{color:var(--muted);font-size:1.12rem;margin-top:18px;max-width:44ch}
+.hero p.lead{color:var(--muted);font-size:1.04rem;margin-top:18px;max-width:44ch}
 .hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
 .proof{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:.88rem;color:var(--muted);font-weight:500}
 .proof span{display:inline-flex;align-items:center;gap:7px}
@@ -108,7 +108,7 @@ section{padding-block:80px}
 /* étapes */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
 .step{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:10px;align-content:start}
-.step .n{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;color:var(--brand)}
+.step .n{font-family:var(--display);font-weight:800;font-size:1.9rem;line-height:1;color:var(--brand)}
 .step p{color:var(--muted)}
 .step .t{font-size:.82rem;font-weight:700;color:var(--ink);background:var(--brand-soft);border-radius:999px;padding:4px 10px;justify-self:start}
 
@@ -126,7 +126,7 @@ section{padding-block:80px}
 .plan .badge{position:absolute;top:-12px;left:24px;background:var(--brand);color:var(--brand-ink);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
 .plan .for{color:var(--muted);font-size:.93rem}
 .price{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums}
-.price b{font-family:var(--display);font-size:3rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.price b{font-family:var(--display);font-size:2.4rem;font-weight:800;letter-spacing:-.04em;line-height:1}
 .price span{color:var(--muted);font-size:.92rem}
 .setup{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line);padding-bottom:16px}
 .setup b{color:var(--ink)}

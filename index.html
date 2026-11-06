@@ -315,6 +315,7 @@ footer nav{display:flex;gap:18px}
     </div>
     <div class="ex-actions">
       <a class="btn" id="ex-open" href="modeles/vtc.html#moderne" target="_blank" rel="noopener">Ouvrir le modèle en grand</a>
+      <a class="btn ghost" id="ex-edit" href="espace/?demo=vtc" target="_blank" rel="noopener">Essayer l'espace client</a>
       <span class="hint">Faites défiler l'intérieur des écrans pour voir tout le site.</span>
     </div>
   </div>
@@ -511,6 +512,7 @@ function show(){
   if(ifd.getAttribute('src')!==url){ifd.setAttribute('src',url);}
   if(ifm.getAttribute('src')!==url){ifm.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
+  document.getElementById('ex-edit').href='espace/?demo='+cur.k;
   document.getElementById('ex-url').textContent=URLS[cur.k];
   document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s];
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.k===cur.k?'true':'false');});

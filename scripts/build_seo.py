@@ -96,6 +96,66 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
          ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, et d'autres commerces sur demande.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
+# Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
+INTENT = [
+  dict(slug="site-internet-pas-cher", k=None, label="Site pas cher",
+    title="Création de site internet pas cher pour les pros",
+    meta="Site internet professionnel pas cher : dès 29 €/mois et 190 € de mise en ligne, hébergement et nom de domaine inclus, sans engagement et sans frais cachés.",
+    h1="Un site internet professionnel pas cher, sans mauvaise surprise",
+    lead="Un vrai site sur mesure pour votre métier, pour le prix d'un abonnement de téléphone. Pas de devis à 3 000 €, pas de contrat de 48 mois, pas de frais cachés.",
+    feats=[("Dès 29 € par mois","Hébergement, nom de domaine, version mobile, sécurité et espace client compris dans le prix."),
+           ("190 € de mise en ligne, une fois","Personnalisation du modèle, textes rédigés, photos, installation : tout est compris."),
+           ("Aucun engagement","Vous arrêtez quand vous voulez, l'abonnement s'arrête à la fin du mois en cours."),
+           ("Pas de frais cachés","Le prix affiché est le prix payé (TVA non applicable). Les dépannages sont compris."),
+           ("Moins cher qu'une agence","Une agence classique facture souvent de 1 500 à 5 000 € pour un site vitrine, plus la maintenance."),
+           ("Moins de temps que le faire soi-même","Pas besoin d'apprendre Wix ou WordPress : on fait le site, vous le modifiez simplement.")],
+    faq=[("Pourquoi c'est moins cher qu'une agence ?","Nos modèles sont déjà conçus pour votre métier : on les personnalise au lieu de tout recréer. Vous payez le résultat, pas des semaines de développement."),
+         ("Qu'est-ce qui est inclus dans les 29 € ?","L'hébergement, le nom de domaine, la version mobile, le certificat de sécurité, le formulaire de contact, l'espace client et la maintenance."),
+         ("Y a-t-il un engagement de durée ?","Non. Vous résiliez par simple e-mail, et votre nom de domaine reste à vous.")]),
+  dict(slug="site-internet-rapide", k=None, label="Site en 48 h",
+    title="Site internet rapide : en ligne en 48 heures",
+    meta="Besoin d'un site internet rapidement ? Votre site professionnel en ligne en 48 h, sans rendez-vous, et un site rapide à charger sur mobile. Dès 29 €/mois.",
+    h1="Votre site internet en ligne en 48 heures, et rapide à charger",
+    lead="Ouverture d'entreprise, nouveau local, saison qui démarre : vous avez besoin d'être sur Google maintenant, pas dans deux mois.",
+    feats=[("En ligne en 48 h","Après réception de vos infos et photos, votre site est en ligne en général sous 48 heures ouvrées."),
+           ("Sans rendez-vous","Pas de réunion ni de visio : un formulaire simple depuis votre téléphone, c'est tout."),
+           ("Modèles déjà prêts","Votre métier a déjà son modèle : on l'adapte à votre entreprise au lieu de partir de zéro."),
+           ("Rapide à charger","Pages légères et optimisées : vos clients n'attendent pas, même en 4G."),
+           ("Pensé pour le mobile","La majorité de vos clients vous cherchent depuis leur téléphone : le site est conçu pour eux d'abord."),
+           ("Modifications instantanées","Un prix ou un horaire change ? Vous le modifiez et c'est en ligne aussitôt.")],
+    faq=[("Comment pouvez-vous aller si vite ?","Chaque métier a un modèle déjà conçu et testé. Il reste à y mettre vos textes, vos photos et vos coordonnées."),
+         ("Que dois-je fournir ?","Le nom de votre entreprise, vos services et prix, vos horaires, vos coordonnées et quelques photos. On rédige le reste avec vous."),
+         ("Un site rapide, ça compte pour Google ?","Oui : la vitesse sur mobile fait partie des critères de Google. Un site lent fait partir les visiteurs et recule dans les résultats.")]),
+  dict(slug="site-internet-cle-en-main", k=None, label="Site clé en main",
+    title="Site internet clé en main pour artisans et commerçants",
+    meta="Site internet clé en main : on s'occupe de tout, du nom de domaine à la mise en ligne. Hébergement, maintenance et espace client inclus. Dès 29 €/mois, sans engagement.",
+    h1="Un site internet clé en main : on s'occupe de tout",
+    lead="Vous gérez votre entreprise, on gère votre site. Nom de domaine, hébergement, textes, photos, sécurité et mises à jour : vous n'avez rien de technique à faire.",
+    feats=[("Nom de domaine réservé","votre-entreprise.fr réservé à votre nom, et branché pour vous."),
+           ("Textes rédigés","On écrit vos textes à partir de vos informations, pensés pour Google."),
+           ("Hébergement et sécurité","Site sécurisé (https), sauvegardé et surveillé, sans rien à installer."),
+           ("Mentions légales prêtes","Les pages obligatoires sont rédigées et mises en place."),
+           ("Maintenance incluse","Mises à jour et dépannages compris dans l'abonnement."),
+           ("Simple à faire évoluer","Un espace client facile pour changer prix, horaires et photos depuis votre téléphone.")],
+    faq=[("Je ne suis pas à l'aise avec l'informatique, c'est un problème ?","Non, c'est justement fait pour ça : vous remplissez un formulaire, on fait le reste."),
+         ("J'ai déjà un nom de domaine, je le garde ?","Oui, on le branche sur votre nouveau site."),
+         ("Qui est propriétaire du site ?","Votre nom de domaine, vos textes et vos photos sont à vous. Si vous partez, vous les gardez.")]),
+  dict(slug="site-internet-facile-a-modifier", k=None, label="Site facile à modifier",
+    title="Site internet pratique et facile à modifier soi-même",
+    meta="Un site internet pratique que vous modifiez vous-même depuis votre téléphone : prix, horaires, photos, carte. Aperçu en direct, sans compétence technique. Dès 29 €/mois.",
+    h1="Un site pratique que vous modifiez vous-même, depuis votre téléphone",
+    lead="Plus besoin d'attendre votre prestataire pour changer un prix ou un horaire. Votre espace client vous montre le résultat en direct avant d'enregistrer.",
+    feats=[("Aperçu en direct","Vous voyez votre site changer pendant que vous tapez, sur ordinateur comme sur téléphone."),
+           ("Prix et carte","Ajoutez, supprimez ou modifiez une ligne de tarif en quelques secondes."),
+           ("Horaires","Fermeture exceptionnelle, horaires d'été : mis à jour en un instant."),
+           ("Photos","Changez une photo depuis votre téléphone, elle est redimensionnée automatiquement."),
+           ("Style du site","Changez les couleurs et la mise en page sans perdre vos textes."),
+           ("Retour en arrière","Une erreur ? Annulez la dernière modification en un clic.")],
+    faq=[("Faut-il des connaissances techniques ?","Non : ce sont des cases à remplir, comme un formulaire. Essayez la démo, sans inscription."),
+         ("Et si je préfère que vous le fassiez ?","En formules Pro et Premium, vous nous envoyez vos changements par message et on s'en occupe."),
+         ("Puis-je casser mon site ?","Non : la mise en page est protégée, et vous pouvez toujours annuler votre dernière modification.")]),
+]
+
 CSS = """
 :root{--bg:#F5F6FA;--paper:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#2F45FF;--brand-ink:#FFFFFF;--soft:#E8EBFF}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#6A7BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
@@ -151,6 +211,7 @@ e = html.escape
 def trade_links(cur):
     out = [f'<a href="/{p["slug"]}/">{NAMES[p["k"]]}</a>' for p in PAGES if p["slug"] != cur]
     if cur != LOCAL["slug"]: out.append(f'<a href="/{LOCAL["slug"]}/">Cannes et Côte d\'Azur</a>')
+    out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
 
 def page(p):
@@ -169,7 +230,7 @@ def page(p):
         demo = f'<a class="btn ghost" href="/modeles/{k}.html#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={k}&amp;style={p["style"]}">Essayer l\'espace client</a>'
     else:
         visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par ClicandSite à Cannes" fetchpriority="high"></div>'
-        demo = '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
+        demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
     faq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
@@ -223,7 +284,7 @@ def page(p):
   <div class="faq">{faq}</div>
 </div></section>
 <section style="padding-top:0"><div class="wrap">
-  <h2>Nos autres sites métiers</h2>
+  <h2>À découvrir aussi</h2>
   <div class="links">{trade_links(p["slug"])}</div>
   {cities}
 </div></section>
@@ -237,15 +298,15 @@ def page(p):
 '''
 
 def main():
-    for p in PAGES + [LOCAL]:
+    for p in PAGES + [LOCAL] + INTENT:
         os.makedirs(p["slug"], exist_ok=True)
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL]] + [("cgv.html", "0.3")]
+    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + INTENT] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     sm += [f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><priority>{pr}</priority></url>' for u, pr in urls]
     sm.append("</urlset>")
     open("sitemap.xml", "w").write("\n".join(sm) + "\n")
-    print("pages :", len(PAGES) + 1, "· sitemap :", len(urls), "adresses")
+    print("pages :", len(PAGES) + 1 + len(INTENT), "· sitemap :", len(urls), "adresses")
 
 if __name__ == "__main__":
     main()

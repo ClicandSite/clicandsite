@@ -94,7 +94,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       <span>Robot de recherche : <span class="st" id="robotSt">…</span></span>
       <button class="btn" id="robotToggle" type="button">…</button>
       <button class="btn primary" id="robotRun" type="button">Lancer une recherche maintenant</button>
-      <span class="meta">Toutes les 10 minutes, il cherche dans l'annuaire officiel des entreprises, code postal par code postal, retrouve les sites et les vérifie. Il n'envoie aucun mail.</span>
+      <span class="meta">Il parcourt l'annuaire officiel des entreprises, toute la France département par département (Riviera en premier), retrouve les sites des pros et y relève l'e-mail (accueil, contact, mentions légales). Il n'envoie aucun mail.</span>
       <details><summary>Dernières recherches</summary><div class="runs" id="runs"></div></details>
     </div>
 
@@ -126,19 +126,19 @@ async function stats(){
   const s=data, bs=s.by_site||{}, st=s.by_status||{};
   $('cards').innerHTML=[
     ['Prospects trouvés',s.total],
-    ['À démarcher',s.targets,'hl'],
+    ['Prêts à démarcher (avec e-mail)',s.targets,'hl'],
     ['Sans site',bs.aucun||0],['Site daté',bs.date||0],
     ['Avec email',s.with_email],
     ['Contactés',(st.contacte||0)+(st.interesse||0)],
     ['Clients',st.client||0]
   ].map(([l,v,c])=>`<div class="card ${c||''}"><b>${v??0}</b><span>${l}</span></div>`).join('');
   const on=s.robot&&s.robot.enabled;
-  $('robotSt').textContent=on?'en marche':'arrêté'; $('robotSt').style.color=on?'var(--ok)':'var(--bad)';
+  $('robotSt').textContent=(on?'en marche':'arrêté')+(s.robot&&s.robot.combos?` · ${Math.round(100*s.robot.done/s.robot.combos)} % de la France parcourue`:''); $('robotSt').style.color=on?'var(--ok)':'var(--bad)';
   $('robotToggle').textContent=on?'Arrêter le robot':'Remettre en marche';
   $('robotToggle').dataset.on=on?'1':'0';
   $('runs').innerHTML=(s.runs||[]).map(r=>{
     const d=new Date(r.at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    return r.kind==='sites'?`<div>${d} · ${r.checked} sites vérifiés</div>`
+    return r.kind==='sites'?`<div>${d} · ${r.checked} sites lus, ${r.inserted} e-mails trouvés${r.found?`, ${r.found} sites retrouvés`:''}</div>`
       :`<div>${d} · ${esc(TRADE[r.trade]||r.trade)} à ${esc(r.area)} · ${r.ok?`${r.found} trouvés, ${r.inserted} nouveaux`:'erreur : '+esc(r.error)}</div>`;
   }).join('')||'<div>Aucune recherche pour le moment.</div>';
 }

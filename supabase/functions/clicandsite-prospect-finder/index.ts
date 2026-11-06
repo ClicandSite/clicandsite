@@ -1,10 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-// ClicandSite — robot de recherche de pros (06/11/2026).
-// 1) Cherche dans l'annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit) les VTC / taxis,
-//    restaurants, garages, agences immobilières et artisans du bâtiment en activité, code postal par code postal sur la Riviera.
-//    (OpenStreetMap / Overpass refuse les connexions venant des serveurs Supabase.)
-// 2) Essaie de retrouver le site de chaque pro (nom de domaine deviné et vérifié).
-// 3) Regarde le site : pas de site, site daté (pas adapté au mobile, vieux copyright, http…) ou moderne, et relève l'e-mail publié.
+// ClicandSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
+// mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
+//    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment.
+// mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
+//    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
+//    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
 // N'ENVOIE AUCUN MAIL. Les pros trouvés attendent dans le CRM ClicandSite (projet Supabase séparé, schéma clicandsite) la validation d'Anthony.
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const db = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
@@ -35,32 +35,30 @@ function cleanName(r: any, e: any) {
   n = n.replace(/\s+/g, " ").trim();
   return n === n.toUpperCase() ? titleCase(n) : n;
 }
-async function sirene(postcode: string, trade: string) {
+const deptOf = (cp: string) => cp.startsWith("97") ? cp.slice(0, 3) : cp.startsWith("20") ? null : cp.slice(0, 2);
+async function sirene(dept: string, trade: string, page: number) {
   const rows: any[] = [];
-  for (let page = 1; page <= 4; page++) {
-    const u = `https://recherche-entreprises.api.gouv.fr/search?activite_principale=${NAF[trade]}&code_postal=${postcode}&etat_administratif=A&per_page=25&page=${page}`;
-    const r = await fetch(u, { headers: { "User-Agent": UA, "Accept": "application/json" }, signal: AbortSignal.timeout(20000) });
-    if (r.status === 429) { await new Promise(x => setTimeout(x, 1500)); page--; continue; }
-    if (!r.ok) throw new Error("Annuaire HTTP " + r.status);
-    const d = await r.json();
-    for (const res of d.results || []) {
-      const ets = (res.matching_etablissements || []).filter((e: any) => e.code_postal === postcode && (!e.etat_administratif || e.etat_administratif === "A"));
-      for (const e of ets.slice(0, 3)) {
-        const name = cleanName(res, e); if (!name) continue;
-        rows.push({
-          source: "sirene", source_id: "siret:" + e.siret, siret: e.siret, trade, name,
-          address: (e.adresse || "").replace(new RegExp("\\s*" + postcode + ".*$"), "").trim() || null,
-          postcode, city: e.libelle_commune ? titleCase(e.libelle_commune) : null,
-          lat: e.latitude ? +e.latitude : null, lon: e.longitude ? +e.longitude : null,
-          phone: null, email: null, website: null,
-          brand: CHAINS.test(name) || CHAINS.test(res.nom_complet || "") || (res.nombre_etablissements_ouverts || 0) > 5,
-        });
-      }
+  const u = `https://recherche-entreprises.api.gouv.fr/search?activite_principale=${NAF[trade]}&departement=${dept}&etat_administratif=A&per_page=25&page=${page}`;
+  let r = await fetch(u, { headers: { "User-Agent": UA, "Accept": "application/json" }, signal: AbortSignal.timeout(20000) });
+  if (r.status === 429) { await new Promise(x => setTimeout(x, 2000)); r = await fetch(u, { headers: { "User-Agent": UA, "Accept": "application/json" }, signal: AbortSignal.timeout(20000) }); }
+  if (!r.ok) throw new Error("Annuaire HTTP " + r.status);
+  const d = await r.json();
+  for (const res of d.results || []) {
+    const ets = (res.matching_etablissements || []).filter((e: any) => e.code_postal && (!e.etat_administratif || e.etat_administratif === "A") &&
+      (dept.startsWith("2") && dept.length === 2 && /[AB]/.test(dept) ? e.code_postal.startsWith("20") : deptOf(e.code_postal) === dept));
+    for (const e of ets.slice(0, 3)) {
+      const name = cleanName(res, e); if (!name) continue;
+      rows.push({
+        source: "sirene", source_id: "siret:" + e.siret, siret: e.siret, trade, name,
+        address: (e.adresse || "").replace(new RegExp("\\s*" + e.code_postal + ".*$"), "").trim() || null,
+        postcode: e.code_postal, city: e.libelle_commune ? titleCase(e.libelle_commune) : null,
+        lat: e.latitude ? +e.latitude : null, lon: e.longitude ? +e.longitude : null,
+        phone: null, email: null, website: null,
+        brand: CHAINS.test(name) || CHAINS.test(res.nom_complet || "") || (res.nombre_etablissements_ouverts || 0) > 5,
+      });
     }
-    if (page >= (d.total_pages || 1)) break;
-    await new Promise(x => setTimeout(x, 250));
   }
-  return rows;
+  return { rows, total: Math.min(d.total_pages || 1, 400) };
 }
 
 const PARKED = /domain (is )?for sale|ce domaine est|nom de domaine est (à vendre|disponible)|parked|sedo|godaddy|dan\.com|buy this domain|hugedomains|site en construction|under construction|default web site page|index of \//i;
@@ -70,7 +68,8 @@ async function guessSite(p: { id: string; name: string; city: string | null }) {
   if (base.length < 4) return null;
   const words = base.split(" ").filter(w => w.length >= 4);
   const joined = base.replace(/ /g, ""), dashed = base.replace(/ /g, "-");
-  const cands = [...new Set([joined + ".fr", dashed + ".fr", joined + ".com", dashed + ".com"])].filter(d => d.length <= 40);
+  const city = p.city ? noAccent(p.city.toLowerCase()).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "";
+  const cands = [...new Set([joined + ".fr", dashed + ".fr", joined + ".com", dashed + ".com", ...(city ? [dashed + "-" + city + ".fr", joined + city.replace(/-/g, "") + ".fr"] : [])])].filter(d => d.length <= 45).slice(0, 6);
   for (const d of cands) {
     try {
       const { html, url } = await get("https://" + d + "/");
@@ -89,7 +88,7 @@ async function get(url: string) {
   if (!r.ok) throw new Error("HTTP " + r.status);
   const ct = r.headers.get("content-type") || "";
   if (!ct.includes("html") && !ct.includes("text")) return { html: "", url: r.url };
-  return { html: (await r.text()).slice(0, 600_000), url: r.url };
+  return { html: (await r.text()).slice(0, 250_000), url: r.url };
 }
 function emailsIn(html: string) {
   const t = html.replace(/&#64;|&#x40;|\[at\]|\(at\)/gi, "@");
@@ -105,6 +104,7 @@ function pickEmail(list: string[], host: string) {
 const phoneIn = (h: string) => (h.match(/(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}/) || [null])[0];
 
 function analyse(html: string, finalUrl: string) {
+  html = html.slice(0, 150_000);
   const h = html.toLowerCase();
   const years = [...html.matchAll(/(?:©|&copy;|copyright)[^<]{0,40}?((?:19|20)\d{2})(?:\s*[-–]\s*((?:19|20)\d{2}))?/gi)].map(m => Math.max(+m[1], +(m[2] || 0)));
   const year = years.length ? Math.max(...years) : null;
@@ -130,6 +130,7 @@ function analyse(html: string, finalUrl: string) {
   return { signals: { ...s, reasons }, dated: reasons.length > 0 };
 }
 
+const CONTACT_HINT = /contact|nous-contacter|contactez|mentions|legal|a-propos|qui-sommes|coordonn/i;
 async function checkSite(p: { id: string; website: string; email: string | null }) {
   const u = new URL(p.website);
   let home: { html: string; url: string };
@@ -138,12 +139,23 @@ async function checkSite(p: { id: string; website: string; email: string | null 
   }
   if (!home.html) return { id: p.id, site_status: "injoignable", signals: { error: "pas une page web" }, email: null, phone: null };
   const a = analyse(home.html, home.url);
+  const host = new URL(home.url).hostname;
   let emails = emailsIn(home.html); let phone = phoneIn(home.html);
-  if (!p.email && !pickEmail(emails, u.hostname)?.endsWith(baseDomain(u.hostname))) {
-    const m = home.html.match(/href=["']([^"']*(?:contact|mentions|nous-trouver|a-propos)[^"']*)["']/i);
-    if (m) { try { const c = await get(new URL(m[1], home.url).toString()); emails = emails.concat(emailsIn(c.html)); phone ||= phoneIn(c.html); } catch { /* ignore */ } }
+  const good = () => pickEmail(emails, host)?.endsWith(baseDomain(host));
+  if (!good()) {
+    const links = new Set<string>();
+    for (const m of home.html.matchAll(/href=["']([^"'#]+)["']/gi)) {
+      try { const l = new URL(m[1], home.url); if (l.hostname.replace(/^www\./, "") === host.replace(/^www\./, "") && CONTACT_HINT.test(l.pathname)) links.add(l.href); } catch { /* lien invalide */ }
+      if (links.size >= 6) break;
+    }
+    const origin = new URL(home.url).origin;
+    for (const x of ["/contact", "/mentions-legales"]) links.add(origin + x);
+    for (const l of [...links].slice(0, 4)) {
+      try { const c = await get(l); emails = emails.concat(emailsIn(c.html)); phone ||= phoneIn(c.html); } catch { /* page absente */ }
+      if (good()) break;
+    }
   }
-  return { id: p.id, site_status: a.dated ? "date" : "moderne", signals: a.signals, email: pickEmail(emails, u.hostname), phone };
+  return { id: p.id, site_status: a.dated ? "date" : "moderne", signals: a.signals, email: pickEmail([...new Set(emails)], host), phone };
 }
 function score(site: string, email: string | null, phone: string | null) {
   const e = !!email, t = !!phone;
@@ -153,47 +165,64 @@ function score(site: string, email: string | null, phone: string | null) {
   return 10;
 }
 
+async function search(body: any) {
+  const { data: nx } = await db.rpc("cs_robot_next_page");
+  const next = nx as { enabled: boolean; area: string | null; trade: string; page: number };
+  if (!next.enabled && !body.manual) return { skipped: "robot arrêté" };
+  if (!next.area) return { skipped: "France entière terminée" };
+  const { area, trade } = next; let page = next.page, found = 0, inserted = 0, total = 1;
+  try {
+    for (let i = 0; i < 4; i++, page++) {
+      const res = await sirene(area, trade, page); total = res.total;
+      if (res.rows.length) {
+        const { data: ins, error } = await db.rpc("cs_robot_upsert", { p_rows: res.rows });
+        if (error) throw new Error(error.message);
+        found += res.rows.length; inserted += (ins as number) || 0;
+      }
+      if (page >= total) { page++; break; }
+      await new Promise(x => setTimeout(x, 300));
+    }
+    await db.rpc("cs_robot_page_done", { p_area: area, p_trade: trade, p_next: page, p_total: total, p_done: page > total });
+    await db.rpc("cs_robot_log", { p_kind: "recherche", p_trade: trade, p_area: area, p_found: found, p_inserted: inserted, p_checked: 0, p_ok: true, p_error: null });
+    return { area, trade, found, inserted, next_page: page, total };
+  } catch (e) {
+    await db.rpc("cs_robot_page_done", { p_area: area, p_trade: trade, p_next: page, p_total: total, p_done: false });
+    await db.rpc("cs_robot_log", { p_kind: "recherche", p_trade: trade, p_area: area, p_found: found, p_inserted: inserted, p_checked: 0, p_ok: false, p_error: String(e).slice(0, 300) });
+    return { area, trade, error: String(e) };
+  }
+}
+
+async function crawl(body: any) {
+  const { data: st } = await db.rpc("cs_robot_crawl_settings");
+  if (!(st as any)?.enabled && !body.manual) return { skipped: "robot arrêté" };
+  const out: Record<string, unknown> = {};
+  // 1) retrouver le site des pros
+  const { data: tg } = await db.rpc("cs_robot_to_guess", { p_limit: 4 });
+  const glist = (tg as any[]) || []; let guessed = 0;
+  const gres = await Promise.all(glist.map(async p => ({ id: p.id, w: await guessSite(p).catch(() => null) })));
+  for (const r of gres) { await db.rpc("cs_robot_save_guess", { p_id: r.id, p_website: r.w }); if (r.w) guessed++; }
+  out.sites_found = guessed;
+  // 2) lire les sites (accueil + contact / mentions légales) et relever l'e-mail
+  const { data: todo } = await db.rpc("cs_robot_to_check", { p_limit: 4 });
+  const list = (todo as any[]) || []; let checked = 0, emails = 0;
+  const res = await Promise.all(list.map(p => checkSite(p).catch(e => ({ id: p.id, site_status: "injoignable", signals: { error: String(e).slice(0, 120) }, email: null, phone: null }))));
+  for (const r of res) {
+    const src = list.find(x => x.id === r.id);
+    await db.rpc("cs_robot_save_check", { p_id: r.id, p_site_status: r.site_status, p_signals: r.signals, p_email: r.email, p_phone: r.phone, p_score: score(r.site_status, src?.email || r.email, r.phone) });
+    checked++; if (r.email) emails++;
+  }
+  out.checked = checked; out.emails = emails;
+  if (checked || guessed) await db.rpc("cs_robot_log", { p_kind: "sites", p_trade: null, p_area: null, p_found: guessed, p_inserted: emails, p_checked: checked, p_ok: true, p_error: null });
+  return out;
+}
+
 Deno.serve(async (req) => {
   const key = req.headers.get("x-internal-key") || "";
   const { data: ok } = await db.rpc("cs_robot_key_ok", { p_key: key });
   if (!ok) return json({ error: "forbidden" }, 403);
   const body = await req.json().catch(() => ({}));
-  const { data: nx } = await db.rpc("cs_robot_next");
-  const next = nx as { enabled: boolean; area: string; trade: string; check_per_run: number };
-  if (!next.enabled && !body.manual) return json({ skipped: "robot arrêté" });
-  const area = body.area || next.area, trade = body.trade || next.trade;
-  const out: Record<string, unknown> = { area, trade };
-  // 1) recherche dans l'annuaire officiel
-  try {
-    const rows = await sirene(area, trade);
-    const { data: ins, error } = await db.rpc("cs_robot_upsert", { p_rows: rows });
-    if (error) throw new Error(error.message);
-    out.found = rows.length; out.inserted = ins;
-    await db.rpc("cs_robot_log", { p_kind: "recherche", p_trade: trade, p_area: area, p_found: rows.length, p_inserted: ins as number, p_checked: 0, p_ok: true, p_error: null });
-  } catch (e) {
-    out.search_error = String(e);
-    await db.rpc("cs_robot_log", { p_kind: "recherche", p_trade: trade, p_area: area, p_found: 0, p_inserted: 0, p_checked: 0, p_ok: false, p_error: String(e).slice(0, 300) });
-  }
-  // 1 bis) retrouver le site des pros
-  const { data: tg } = await db.rpc("cs_robot_to_guess", { p_limit: 8 });
-  const glist = (tg as any[]) || []; let guessed = 0;
-  for (let i = 0; i < glist.length; i += 4) {
-    const res = await Promise.all(glist.slice(i, i + 4).map(async p => ({ id: p.id, w: await guessSite(p).catch(() => null) })));
-    for (const r of res) { await db.rpc("cs_robot_save_guess", { p_id: r.id, p_website: r.w }); if (r.w) guessed++; }
-  }
-  out.sites_found = guessed;
-  // 2) contrôle des sites
-  const { data: todo } = await db.rpc("cs_robot_to_check", { p_limit: next.check_per_run || 12 });
-  const list = (todo as any[]) || []; let checked = 0;
-  for (let i = 0; i < list.length; i += 4) {
-    const res = await Promise.all(list.slice(i, i + 4).map(p => checkSite(p).catch(e => ({ id: p.id, site_status: "injoignable", signals: { error: String(e).slice(0, 120) }, email: null, phone: null }))));
-    for (const r of res) {
-      const src = list.find(x => x.id === r.id);
-      await db.rpc("cs_robot_save_check", { p_id: r.id, p_site_status: r.site_status, p_signals: r.signals, p_email: r.email, p_phone: r.phone, p_score: score(r.site_status, src?.email || r.email, r.phone) });
-      checked++;
-    }
-  }
-  out.checked = checked;
-  if (checked) await db.rpc("cs_robot_log", { p_kind: "sites", p_trade: null, p_area: null, p_found: 0, p_inserted: 0, p_checked: checked, p_ok: true, p_error: null });
-  return json(out);
+  if (body.mode === "crawl") return json(await crawl(body));
+  if (body.mode === "search") return json(await search(body));
+  // lancement manuel depuis l'espace admin : une recherche puis une lecture de sites
+  return json({ search: await search(body), crawl: await crawl(body) });
 });

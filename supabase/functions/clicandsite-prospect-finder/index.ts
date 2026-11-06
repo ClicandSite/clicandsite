@@ -54,6 +54,7 @@ async function sirene(dept: string, trade: string, page: number) {
         postcode: e.code_postal, city: e.libelle_commune ? titleCase(e.libelle_commune) : null,
         lat: e.latitude ? +e.latitude : null, lon: e.longitude ? +e.longitude : null,
         phone: null, email: null, website: null,
+        date_creation: res.date_creation || e.date_creation || null,
         brand: CHAINS.test(name) || CHAINS.test(res.nom_complet || "") || (res.nombre_etablissements_ouverts || 0) > 5,
       });
     }

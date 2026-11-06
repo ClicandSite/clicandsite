@@ -31,7 +31,7 @@ h1 span{color:var(--brand)}
 .robot details{width:100%}
 .robot summary{cursor:pointer;color:var(--muted);font-size:.88rem}
 .runs{font-size:.82rem;color:var(--muted);display:grid;gap:3px;margin-top:8px}
-.filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;margin-bottom:12px}
+.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr)) auto;gap:8px;margin-bottom:12px}
 select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);min-width:0}
 .count{color:var(--muted);font-size:.88rem;margin:0 0 10px}
 .list{display:grid;gap:8px}
@@ -120,6 +120,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       <select id="fStatus"><option value="">Tous les statuts</option><option value="nouveau" selected>Nouveau</option><option value="a_contacter">À contacter</option><option value="contacte">Contacté</option><option value="interesse">Intéressé</option><option value="client">Client</option><option value="refus">Refus</option><option value="exclu">Exclu</option></select>
       <input id="fQ" placeholder="Nom, ville, email…">
       <select id="fContact"><option value="">Avec ou sans contact</option><option value="email">Avec email</option><option value="phone">Avec téléphone</option></select>
+      <select id="fAge"><option value="">Toutes les entreprises</option><option value="new">Créateurs (moins d'un an)</option></select>
       <button class="btn" id="refresh" type="button">Actualiser</button>
     </div>
     <p class="count" id="count"></p>
@@ -161,7 +162,7 @@ async function stats(){
 
 async function load(){
   const q=$('fQ').value.trim();
-  const {data,error}=await sb.rpc('cs_admin_prospects',{p_trade:$('fTrade').value||null,p_status:$('fStatus').value||null,p_site:$('fSite').value||null,p_q:q||null,p_limit:500,p_offset:0});
+  const {data,error}=await sb.rpc('cs_admin_prospects_v2',{p_trade:$('fTrade').value||null,p_status:$('fStatus').value||null,p_site:$('fSite').value||null,p_q:q||null,p_recent:$('fAge').value==='new',p_limit:500,p_offset:0});
   if(error){$('list').innerHTML=`<div class="msg">${esc(error.message)}</div>`;return;}
   const c=$('fContact').value;
   rows=(data.rows||[]).filter(r=>!c||(c==='email'?r.email:r.phone));
@@ -179,7 +180,7 @@ function render(){
       <div>
         <h3>${esc(r.name)}</h3>
         <div class="meta">${esc(TRADE[r.trade])} · <span class="addr">${esc((r.address||'').toLowerCase())}</span>${r.address?', ':''}${esc([r.postcode,r.city].filter(Boolean).join(' '))}</div>
-        <div class="tags"><span class="tag ${r.site_status}">${SITE[r.site_status]}</span><span class="tag">Score <span class="score">${r.score}</span></span></div>
+        <div class="tags"><span class="tag ${r.site_status}">${SITE[r.site_status]}</span><span class="tag">Score <span class="score">${r.score}</span></span>${r.date_creation?`<span class="tag${(Date.now()-new Date(r.date_creation))<365*864e5?' aucun':''}">${(Date.now()-new Date(r.date_creation))<365*864e5?'Nouvelle entreprise · ':''}créée ${new Date(r.date_creation).toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}</span>`:''}</div>
         ${reasons.length?`<div class="reasons">${reasons.map(esc).join(' · ')}</div>`:''}
       </div>
       <div class="contact">
@@ -228,7 +229,7 @@ $('list').addEventListener('click',async e=>{
   }
 });
 
-['fTrade','fSite','fStatus','fContact'].forEach(id=>$(id).addEventListener('change',()=>{offset=0;load();}));
+['fTrade','fSite','fStatus','fContact','fAge'].forEach(id=>$(id).addEventListener('change',()=>{offset=0;load();}));
 let tq; $('fQ').addEventListener('input',()=>{clearTimeout(tq);tq=setTimeout(()=>{offset=0;load();},350);});
 $('refresh').addEventListener('click',()=>{stats();load();});
 $('prev').addEventListener('click',()=>{offset=Math.max(0,offset-PAGE);render();scrollTo(0,0);});

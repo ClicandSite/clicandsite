@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-// ClicandSite — webhook Stripe (06/11/2026).
-// Reçoit les événements du compte Stripe ClicandSite (et seulement lui : signature vérifiée avec son secret).
+// MyCreativeSite — webhook Stripe (06/11/2026).
+// Reçoit les événements du compte Stripe MyCreativeSite (et seulement lui : signature vérifiée avec son secret).
 // Met à jour clicandsite.subscriptions et le statut du site client : impayé/résilié → « suspendu », de nouveau payé → « en ligne ».
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 const res = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "Content-Type": "application/json" } });

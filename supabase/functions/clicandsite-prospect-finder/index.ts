@@ -1,15 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-// ClicandSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
+// MyCreativeSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
 // mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
 //    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment.
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
 //    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
-// N'ENVOIE AUCUN MAIL. Les pros trouvés attendent dans le CRM ClicandSite (projet Supabase séparé, schéma clicandsite) la validation d'Anthony.
+// N'ENVOIE AUCUN MAIL. Les pros trouvés attendent dans le CRM MyCreativeSite (projet Supabase séparé, schéma clicandsite) la validation d'Anthony.
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const db = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "Content-Type": "application/json" } });
-const UA = "Mozilla/5.0 (compatible; ClicandSiteBot/1.0; +https://clicandsite.fr/)";
+const UA = "Mozilla/5.0 (compatible; MyCreativeSiteBot/1.0; +https://mycreativesite.fr/)";
 
 const NAF: Record<string, string> = {
   vtc: "49.32Z,49.39B",

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Espace admin · ClicandSite</title>
+<title>Espace admin · MyCreativeSite</title>
 <meta name="googlebot" content="noindex, nofollow">
 <script src="/assets/supabase-js-2.118.0.js"></script>
 <style>
-/* 06/11/2026 (Claude) : espace admin ClicandSite. Données dans le projet Supabase ClicandSite (séparé d'Abracadeal et d'EPS). Aucun envoi de mail depuis cette page. */
+/* 06/11/2026 (Claude) : espace admin MyCreativeSite. Données dans le projet Supabase MyCreativeSite (séparé d'Abracadeal et d'EPS). Aucun envoi de mail depuis cette page. */
 :root{--bg:#F5F6FA;--paper:#fff;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#2F45FF;--soft:#E8EBFF;--ok:#1E8E5A;--warn:#C47A00;--bad:#C0392B}
 @media (prefers-color-scheme:dark){:root{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#6A7BFF;--soft:#1E2550;color-scheme:dark}}
 *{box-sizing:border-box}
@@ -67,7 +67,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 <body>
 <div class="wrap">
   <form class="login" id="login" hidden>
-    <h1>Clic<span style="color:var(--brand)">and</span>Site</h1>
+    <h1>My<span style="color:var(--brand)">Creative</span>Site</h1>
     <p id="loginTitle">Espace administrateur</p>
     <input id="lEmail" type="email" autocomplete="username" placeholder="E-mail" required>
     <input id="lPass" type="password" autocomplete="current-password" placeholder="Mot de passe" minlength="8" required>
@@ -81,7 +81,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 
   <div id="app" hidden>
   <header>
-    <h1>Clic<span>and</span>Site · CRM prospects</h1>
+    <h1>My<span>Creative</span>Site · CRM prospects</h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" id="sitesBtn" type="button">Sites clients</button>
       <a class="btn" href="/espace/" style="text-decoration:none">Modifier un site</a>
@@ -91,7 +91,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
   </header>
 
     <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis clicandsite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis mycreativesite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
       <div id="sitesList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
       <b style="margin-top:6px">Abonnements Stripe</b>
       <div id="subsList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
@@ -258,7 +258,7 @@ $('siteForm').addEventListener('submit',async e=>{e.preventDefault();
 $('exportBtn').addEventListener('click',()=>{
   const cols=['name','trade','address','postcode','city','phone','email','website','site_status','score','status','notes'];
   const csv=[cols.join(';')].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(';'))).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='clicandsite-prospects.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='mycreativesite-prospects.csv';a.click();
 });
 
 let signup=false;

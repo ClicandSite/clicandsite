@@ -1,4 +1,4 @@
-/* ClicandSite · moteur de contenu des sites clients (06/11/2026).
+/* MyCreativeSite · moteur de contenu des sites clients (06/11/2026).
    - CSEdit.extract(doc)        : lit le contenu modifiable d'une page (textes, chiffres, prix, horaires, coordonnées, photos)
    - CSEdit.apply(doc, content) : applique un contenu enregistré à la page
    - Sur un site client, ce script se charge avec data-site="identifiant" : il récupère le contenu publié

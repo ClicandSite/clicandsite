@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""ClicandSite — pages SEO (métiers + Côte d'Azur), plan du site.
+"""MyCreativeSite — pages SEO (métiers + Côte d'Azur), plan du site.
 Lancer depuis la racine du dépôt : python3 scripts/build_seo.py
 Chaque page a un contenu propre (pas de copie) : titre, textes, fonctionnalités et questions du métier."""
 import json, os, html, datetime
 
-SITE = "https://clicandsite.fr"
+SITE = "https://mycreativesite.fr"
 TODAY = datetime.date.today().isoformat()
 PRICES = [("Essentiel", 29, 190), ("Pro", 59, 290), ("Premium", 89, 490)]
 
@@ -84,7 +84,7 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
     title="Création de site internet à Cannes et sur la Côte d'Azur",
     meta="Création de site internet pour les professionnels à Cannes, Nice, Antibes, Grasse, Mougins et dans le Var. Agence basée à Cannes. En ligne en 48 h, dès 29 €/mois.",
     h1="Création de site internet à Cannes et sur la Côte d'Azur",
-    lead="ClicandSite est basé à Cannes. Nous créons les sites des commerçants, artisans et indépendants de la Riviera, de Menton à Saint-Tropez, et partout en France à distance.",
+    lead="MyCreativeSite est basé à Cannes. Nous créons les sites des commerçants, artisans et indépendants de la Riviera, de Menton à Saint-Tropez, et partout en France à distance.",
     feats=[("Une agence locale","Basée à Cannes : nous connaissons les métiers et la clientèle de la Côte d'Azur, locale comme internationale."),
            ("Référencement local","Votre site est pensé pour ressortir sur « votre métier + votre ville » dans Google."),
            ("Clientèle étrangère","Site en anglais en option, ou inclus en Premium, pour les touristes et la clientèle d'affaires."),
@@ -218,7 +218,7 @@ def page(p):
     url = f'{SITE}/{p["slug"]}/'
     faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in p["faq"]]}
     svc_ld = {"@context":"https://schema.org","@type":"Service","name":p["title"],"serviceType":"Création de site internet","url":url,
-      "provider":{"@type":"ProfessionalService","name":"ClicandSite","url":SITE+"/","email":"contact@clicandsite.fr",
+      "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr",
                   "address":{"@type":"PostalAddress","streetAddress":"34 rue Borniol","postalCode":"06400","addressLocality":"Cannes","addressCountry":"FR"}},
       "areaServed":"FR",
       "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in PRICES]}
@@ -226,10 +226,10 @@ def page(p):
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
     if k:
-        visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec ClicandSite" fetchpriority="high"></div>'
+        visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec MyCreativeSite" fetchpriority="high"></div>'
         demo = f'<a class="btn ghost" href="/modeles/{k}.html#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={k}&amp;style={p["style"]}">Essayer l\'espace client</a>'
     else:
-        visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par ClicandSite à Cannes" fetchpriority="high"></div>'
+        visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite à Cannes" fetchpriority="high"></div>'
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
@@ -240,10 +240,10 @@ def page(p):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(p["title"])} · ClicandSite</title>
+<title>{e(p["title"])} · MyCreativeSite</title>
 <meta name="description" content="{e(p["meta"])}">
 <link rel="canonical" href="{url}">
-<meta property="og:title" content="{e(p["title"])} · ClicandSite">
+<meta property="og:title" content="{e(p["title"])} · MyCreativeSite">
 <meta property="og:description" content="{e(p["meta"])}">
 <meta property="og:url" content="{url}">
 <meta property="og:type" content="website">
@@ -259,7 +259,7 @@ def page(p):
 <style>{CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>Clic<i>and</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>Creative</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
 <main>
 <div class="wrap crumbs"><a href="/">Accueil</a> › {e(p["title"])}</div>
 <div class="wrap hero">
@@ -292,7 +292,7 @@ def page(p):
   <div class="cta"><div><h2>Votre site en ligne en 48 heures</h2><p>Rien n'est facturé avant que vous ayez validé votre site.</p></div><a class="btn" href="/#commande">Je veux mon site</a></div>
 </div></section>
 </main>
-<footer><div class="wrap"><span>© 2026 ClicandSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@clicandsite.fr</span></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
 </body>
 </html>
 '''
@@ -320,7 +320,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(title)} · ClicandSite</title>
+<title>{e(title)} · MyCreativeSite</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta property="og:title" content="{e(title)}">
@@ -337,9 +337,9 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <style>{CSS}{ARTICLE_CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>Clic<i>and</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>Creative</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
 <main>{body}</main>
-<footer><div class="wrap"><span>© 2026 ClicandSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@clicandsite.fr</span></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
 </body>
 </html>
 '''
@@ -359,12 +359,12 @@ def build_blog():
         url = f"{SITE}/conseils/{a['slug']}/"
         others = "".join(f'<a href="/conseils/{o["slug"]}/">{e(o["title"])}</a>' for o in ARTICLES if o is not a)
         body = f'''<div class="wrap crumbs"><a href="/">Accueil</a> › <a href="/conseils/">Conseils</a></div>
-<article class="wrap art"><h1>{e(a["title"])}</h1><p class="date">Publié le {datetime.date.fromisoformat(a["date"]).strftime("%d/%m/%Y")} · ClicandSite</p>
+<article class="wrap art"><h1>{e(a["title"])}</h1><p class="date">Publié le {datetime.date.fromisoformat(a["date"]).strftime("%d/%m/%Y")} · MyCreativeSite</p>
 {"".join(render_block(b) for b in a["body"])}
 <h2>À lire aussi</h2><div class="links">{others}</div></article>'''
         ld = [{"@context":"https://schema.org","@type":"Article","headline":a["title"],"description":a["desc"],"datePublished":a["date"],"dateModified":a["date"],
                "inLanguage":"fr-FR","mainEntityOfPage":url,"image":SITE+"/img/og.jpg",
-               "author":{"@type":"Organization","name":"ClicandSite","url":SITE+"/"},"publisher":{"@type":"Organization","name":"ClicandSite","url":SITE+"/"}},
+               "author":{"@type":"Organization","name":"MyCreativeSite","url":SITE+"/"},"publisher":{"@type":"Organization","name":"MyCreativeSite","url":SITE+"/"}},
               {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
                {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":"Conseils","item":SITE+"/conseils/"},
                {"@type":"ListItem","position":3,"name":a["title"],"item":url}]}]
@@ -372,7 +372,7 @@ def build_blog():
         open(f"conseils/{a['slug']}/index.html","w").write(shell(a["title"], a["desc"], url, ld, body, "article"))
     cards = "".join(f'<a class="card" href="/conseils/{a["slug"]}/"><h3>{e(a["title"])}</h3><p>{e(a["desc"])}</p></a>' for a in ARTICLES)
     body = f'<div class="wrap crumbs"><a href="/">Accueil</a> › Conseils</div><div class="wrap" style="padding-block:10px 50px"><h1>Conseils pour le site internet de votre entreprise</h1><p class="lead" style="color:var(--muted);margin-top:12px;max-width:60ch">Prix, visibilité sur Google, obligations légales, nom de domaine : des réponses claires pour les artisans, commerçants et indépendants.</p><div class="list">{cards}</div></div>'
-    ld = [{"@context":"https://schema.org","@type":"CollectionPage","name":"Conseils ClicandSite","url":SITE+"/conseils/","inLanguage":"fr-FR"}]
+    ld = [{"@context":"https://schema.org","@type":"CollectionPage","name":"Conseils MyCreativeSite","url":SITE+"/conseils/","inLanguage":"fr-FR"}]
     open("conseils/index.html","w").write(shell("Conseils pour le site internet de votre entreprise","Guides pratiques pour les professionnels : prix d'un site internet, visibilité sur Google, mentions légales, nom de domaine.",SITE+"/conseils/",ld,body))
     return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 

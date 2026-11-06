@@ -292,16 +292,97 @@ def page(p):
   <div class="cta"><div><h2>Votre site en ligne en 48 heures</h2><p>Rien n'est facturé avant que vous ayez validé votre site.</p></div><a class="btn" href="/#commande">Je veux mon site</a></div>
 </div></section>
 </main>
-<footer><div class="wrap"><span>© 2026 ClicandSite · Cannes</span><nav><a href="/">Accueil</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@clicandsite.fr</span></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 ClicandSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@clicandsite.fr</span></nav></div></footer>
 </body>
 </html>
 '''
+
+CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+ARTICLE_CSS = """
+.art{max-width:740px;padding-block:10px 40px}
+.art h1{margin:6px 0 14px}
+.art .date{color:var(--muted);font-size:.9rem}
+.art p{margin:14px 0;font-size:1.05rem}
+.art h2{margin:34px 0 6px;font-size:1.45rem}
+.art ul{margin:12px 0;padding-left:22px;font-size:1.03rem}
+.art li{margin:8px 0}
+.art .box{margin:34px 0 8px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
+.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;text-decoration:none;display:grid;gap:8px}
+.card p{color:var(--muted);font-size:.95rem}
+@media (max-width:760px){.list{grid-template-columns:1fr}}
+"""
+
+def shell(title, desc, url, ld, body, og_type="website"):
+    lds = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
+    return f'''<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{e(title)} · ClicandSite</title>
+<meta name="description" content="{e(desc)}">
+<link rel="canonical" href="{url}">
+<meta property="og:title" content="{e(title)}">
+<meta property="og:description" content="{e(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:type" content="{og_type}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="{SITE}/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='1' width='24' height='24' rx='7' fill='%232F45FF'/%3E%3Cpath d='M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
+{lds}
+<style>{CSS}{ARTICLE_CSS}</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>Clic<i>and</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<main>{body}</main>
+<footer><div class="wrap"><span>© 2026 ClicandSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@clicandsite.fr</span></nav></div></footer>
+</body>
+</html>
+'''
+
+def render_block(b):
+    t, v = b
+    if t == "p": return f"<p>{v}</p>"
+    if t == "h2": return f"<h2>{e(v)}</h2>"
+    if t == "ul": return "<ul>" + "".join(f"<li>{x}</li>" for x in v) + "</ul>"
+    if t == "cta": return f'<div class="box"><b>{e(v)}</b><a class="btn" href="{CTA_LINK.get(v, "/#tarifs")}">Voir</a></div>'
+    return ""
+
+def build_blog():
+    from articles import ARTICLES
+    os.makedirs("conseils", exist_ok=True)
+    for a in ARTICLES:
+        url = f"{SITE}/conseils/{a['slug']}/"
+        others = "".join(f'<a href="/conseils/{o["slug"]}/">{e(o["title"])}</a>' for o in ARTICLES if o is not a)
+        body = f'''<div class="wrap crumbs"><a href="/">Accueil</a> › <a href="/conseils/">Conseils</a></div>
+<article class="wrap art"><h1>{e(a["title"])}</h1><p class="date">Publié le {datetime.date.fromisoformat(a["date"]).strftime("%d/%m/%Y")} · ClicandSite</p>
+{"".join(render_block(b) for b in a["body"])}
+<h2>À lire aussi</h2><div class="links">{others}</div></article>'''
+        ld = [{"@context":"https://schema.org","@type":"Article","headline":a["title"],"description":a["desc"],"datePublished":a["date"],"dateModified":a["date"],
+               "inLanguage":"fr-FR","mainEntityOfPage":url,"image":SITE+"/img/og.jpg",
+               "author":{"@type":"Organization","name":"ClicandSite","url":SITE+"/"},"publisher":{"@type":"Organization","name":"ClicandSite","url":SITE+"/"}},
+              {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+               {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":"Conseils","item":SITE+"/conseils/"},
+               {"@type":"ListItem","position":3,"name":a["title"],"item":url}]}]
+        os.makedirs(f"conseils/{a['slug']}", exist_ok=True)
+        open(f"conseils/{a['slug']}/index.html","w").write(shell(a["title"], a["desc"], url, ld, body, "article"))
+    cards = "".join(f'<a class="card" href="/conseils/{a["slug"]}/"><h3>{e(a["title"])}</h3><p>{e(a["desc"])}</p></a>' for a in ARTICLES)
+    body = f'<div class="wrap crumbs"><a href="/">Accueil</a> › Conseils</div><div class="wrap" style="padding-block:10px 50px"><h1>Conseils pour le site internet de votre entreprise</h1><p class="lead" style="color:var(--muted);margin-top:12px;max-width:60ch">Prix, visibilité sur Google, obligations légales, nom de domaine : des réponses claires pour les artisans, commerçants et indépendants.</p><div class="list">{cards}</div></div>'
+    ld = [{"@context":"https://schema.org","@type":"CollectionPage","name":"Conseils ClicandSite","url":SITE+"/conseils/","inLanguage":"fr-FR"}]
+    open("conseils/index.html","w").write(shell("Conseils pour le site internet de votre entreprise","Guides pratiques pour les professionnels : prix d'un site internet, visibilité sur Google, mentions légales, nom de domaine.",SITE+"/conseils/",ld,body))
+    return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 
 def main():
     for p in PAGES + [LOCAL] + INTENT:
         os.makedirs(p["slug"], exist_ok=True)
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + INTENT] + [("cgv.html", "0.3")]
+    import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    blog = build_blog()
+    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     sm += [f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><priority>{pr}</priority></url>' for u, pr in urls]
     sm.append("</urlset>")

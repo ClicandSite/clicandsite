@@ -93,6 +93,8 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
     <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis clicandsite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
       <div id="sitesList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
+      <b style="margin-top:6px">Abonnements Stripe</b>
+      <div id="subsList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
       <form id="siteForm" class="filters" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:0">
         <input id="sName" placeholder="Nom (ex. Garage du Port)" required>
         <input id="sSlug" placeholder="Identifiant (ex. garage-du-port)" pattern="[a-z0-9][a-z0-9-]{2,40}" required>
@@ -237,12 +239,17 @@ $('next').addEventListener('click',()=>{offset+=PAGE;render();scrollTo(0,0);});
 $('robotToggle').addEventListener('click',async()=>{const on=$('robotToggle').dataset.on==='1';const {error}=await sb.rpc('cs_admin_robot',{p_enabled:!on});if(error)alert(error.message);stats();});
 $('robotRun').addEventListener('click',async()=>{const b=$('robotRun');b.disabled=true;b.textContent='Recherche lancée…';const {error}=await sb.rpc('cs_admin_robot',{p_run_now:true});if(error)alert(error.message);setTimeout(()=>{b.disabled=false;b.textContent='Lancer une recherche maintenant';stats();load();},60000);});
 const ST={brouillon:'En préparation',en_ligne:'En ligne',suspendu:'Suspendu'};
+const BS={active:'à jour',trialing:'essai',past_due:'en retard',unpaid:'impayé',canceled:'résilié',incomplete:'incomplet',incomplete_expired:'échoué'};
+async function loadSubs(){
+  const {data,error}=await sb.rpc('cs_admin_subscriptions'); if(error){$('subsList').textContent=error.message;return;}
+  $('subsList').innerHTML=(data||[]).map(x=>`<div>${esc(x.company||x.email||x.stripe_customer)} · ${esc(x.email||'')} · ${esc(x.plan||'')} · <b>${esc(BS[x.status]||x.status||'')}</b>${x.current_period_end?' · prochaine échéance '+new Date(x.current_period_end).toLocaleDateString('fr-FR'):''}${x.site_name?' · site : '+esc(x.site_name):' · <span style="color:var(--warn)">aucun site relié : crée-le avec le même e-mail</span>'}</div>`).join('')||'<div>Aucun abonnement pour le moment.</div>';
+}
 async function loadSites(){
   const {data,error}=await sb.rpc('cs_admin_sites'); if(error){$('sitesList').textContent=error.message;return;}
-  $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''} · <b>${ST[s.status]||s.status}</b> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
+  $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''}${s.plan?' · '+esc(s.plan):''}${s.billing_status?' · paiement : '+esc(BS[s.billing_status]||s.billing_status):''} · <b>${ST[s.status]||s.status}</b> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
   $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;});
 }
-$('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden)loadSites();});
+$('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden){loadSites();loadSubs();}});
 $('sName').addEventListener('input',()=>{if(!$('sSlug').dataset.touched)$('sSlug').value=$('sName').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);});
 $('sSlug').addEventListener('input',()=>{$('sSlug').dataset.touched='1';});
 $('siteForm').addEventListener('submit',async e=>{e.preventDefault();

@@ -9,8 +9,8 @@
 <script src="/assets/supabase-js-2.118.0.js"></script>
 <style>
 /* 06/11/2026 (Claude) : espace admin MyCreativeSite. Données dans le projet Supabase MyCreativeSite (séparé d'Abracadeal et d'EPS). Aucun envoi de mail depuis cette page. */
-:root{--bg:#F5F6FA;--paper:#fff;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#2F45FF;--soft:#E8EBFF;--ok:#1E8E5A;--warn:#C47A00;--bad:#C0392B}
-@media (prefers-color-scheme:dark){:root{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#6A7BFF;--soft:#1E2550;color-scheme:dark}}
+:root{--bg:#F5F6FA;--paper:#fff;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--soft:#E8EBFF;--ok:#1E8E5A;--warn:#C47A00;--bad:#C0392B}
+@media (prefers-color-scheme:dark){:root{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--soft:#1E2550;color-scheme:dark}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -62,12 +62,15 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 .login .err{color:var(--bad);font-size:.88rem}
 .login .ok{color:var(--ok);font-size:.88rem}
 .linkbtn{background:none;border:0;color:var(--brand);font:600 .88rem inherit;cursor:pointer;padding:0;text-align:left}
+.logo-mark{width:34px;height:34px;flex:none;display:block}
+.logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <form class="login" id="login" hidden>
-    <h1>My<span style="color:var(--brand)">Creative</span>Site</h1>
+    <h1>My<span class="grad-t">creativesite</span></h1>
     <p id="loginTitle">Espace administrateur</p>
     <input id="lEmail" type="email" autocomplete="username" placeholder="E-mail" required>
     <input id="lPass" type="password" autocomplete="current-password" placeholder="Mot de passe" minlength="8" required>
@@ -81,7 +84,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 
   <div id="app" hidden>
   <header>
-    <h1>My<span>Creative</span>Site · CRM prospects</h1>
+    <h1>My<span>creativesite</span> · CRM prospects</h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" id="sitesBtn" type="button">Sites clients</button>
       <a class="btn" href="/espace/" style="text-decoration:none">Modifier un site</a>

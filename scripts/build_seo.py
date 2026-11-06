@@ -156,10 +156,13 @@ INTENT = [
          ("Puis-je casser mon site ?","Non : la mise en page est protégée, et vous pouvez toujours annuler votre dernière modification.")]),
 ]
 
-CSS = """
-:root{--bg:#F5F6FA;--paper:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#2F45FF;--brand-ink:#FFFFFF;--soft:#E8EBFF}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#6A7BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#6A7BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}
+CSS = """.logo-mark{width:34px;height:34px;flex:none;display:block}
+.logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+
+:root{--bg:#F5F6FA;--paper:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--brand-ink:#FFFFFF;--soft:#E8EBFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -170,7 +173,7 @@ p{margin:0} a{color:inherit}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
 .logo{display:flex;align-items:center;gap:9px;font:800 1.2rem "Bricolage Grotesque",sans-serif;text-decoration:none}
 .logo svg{width:26px;height:26px} .logo i{font-style:normal;color:var(--brand)}
-.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:13px 20px;font-weight:700;text-decoration:none;background:var(--brand);color:var(--brand-ink);border:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:13px 20px;font-weight:700;text-decoration:none;background:var(--grad);color:#fff;border:0}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.sm{padding:9px 14px;font-size:.92rem}
 .crumbs{font-size:.85rem;color:var(--muted);padding-block:18px 0}
@@ -204,7 +207,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
 """
-LOGO = '<svg viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--brand)"/><path d="M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z" fill="#fff"/></svg>'
+LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
 NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment"}
 e = html.escape
 
@@ -250,7 +253,7 @@ def page(p):
 <meta property="og:locale" content="fr_FR">
 <meta property="og:image" content="{SITE}/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='1' width='24' height='24' rx='7' fill='%232F45FF'/%3E%3Cpath d='M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="/img/favicon-64.png"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
 <script type="application/ld+json">{json.dumps(svc_ld, ensure_ascii=False)}</script>
@@ -259,7 +262,7 @@ def page(p):
 <style>{CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>Creative</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
 <main>
 <div class="wrap crumbs"><a href="/">Accueil</a> › {e(p["title"])}</div>
 <div class="wrap hero">
@@ -330,14 +333,14 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <meta property="og:locale" content="fr_FR">
 <meta property="og:image" content="{SITE}/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='1' width='24' height='24' rx='7' fill='%232F45FF'/%3E%3Cpath d='M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="/img/favicon-64.png"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
 {lds}
 <style>{CSS}{ARTICLE_CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>Creative</i>Site</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
 <main>{body}</main>
 <footer><div class="wrap"><span>© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
 </body>

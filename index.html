@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Création de site internet pas cher, rapide et clé en main pour artisans, restaurants, garages, agences immobilières et chauffeurs VTC. En ligne en 48 h, dès 29 €/mois, hébergement et domaine inclus, sans engagement. Partout en France, 100 % à distance.">
 <link rel="canonical" href="https://mycreativesite.fr/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='1' width='24' height='24' rx='7' fill='%232F45FF'/%3E%3Cpath d='M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="/img/favicon-64.png"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <meta property="og:title" content="MyCreativeSite · Votre site pro en ligne en 48 h">
 <meta property="og:description" content="Des modèles pensés pour votre métier. Hébergement et domaine inclus, sans engagement.">
 <meta property="og:url" content="https://mycreativesite.fr/">
@@ -23,17 +23,17 @@
 /* Layout : bandes pleine largeur ; un écran d'ordinateur + un téléphone montrent les vrais modèles ; contenu max 1140px */
 :root{
   --bg:#F5F6FA; --paper:#FFFFFF; --ink:#12162B; --muted:#5C627A; --line:#E1E4EE;
-  --brand:#2F45FF; --brand-ink:#FFFFFF; --brand-soft:#E8EBFF; --pop:#FFB020;
+  --brand:#7C3AED; --brand-ink:#FFFFFF; --brand-soft:#F2EAFF; --pop:#FFB020;
   --device:#12162B;
   --display:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1020; --paper:#151A30; --ink:#EEF0F8; --muted:#9AA1BC; --line:#262C47;
-  --brand:#6A7BFF; --brand-ink:#0D1020; --brand-soft:#1E2550; --pop:#FFB020; --device:#05070F; color-scheme:dark}}
+  --brand:#A98BFF; --brand-ink:#0D1020; --brand-soft:#2A1F4D; --pop:#FFB020; --device:#05070F; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1020; --paper:#151A30; --ink:#EEF0F8; --muted:#9AA1BC; --line:#262C47;
-  --brand:#6A7BFF; --brand-ink:#0D1020; --brand-soft:#1E2550; --pop:#FFB020; --device:#05070F; color-scheme:dark}
+  --brand:#A98BFF; --brand-ink:#0D1020; --brand-soft:#2A1F4D; --pop:#FFB020; --device:#05070F; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
@@ -45,7 +45,7 @@ p{margin:0}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--brand);outline-offset:3px}
 .eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px 22px;font:700 .98rem var(--body);cursor:pointer;text-decoration:none;background:var(--brand);color:var(--brand-ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px 22px;font:700 .98rem var(--body);cursor:pointer;text-decoration:none;background:var(--grad);color:#fff}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.sm{padding:10px 16px;font-size:.88rem}
 
@@ -128,7 +128,7 @@ section{padding-block:80px}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
 .plan{border:1.5px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:16px;background:var(--bg)}
 .plan.hot{border-color:var(--brand);background:var(--paper);box-shadow:0 20px 50px -24px color-mix(in srgb,var(--brand) 55%,transparent);position:relative}
-.plan .badge{position:absolute;top:-12px;left:24px;background:var(--brand);color:var(--brand-ink);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.plan .badge{position:absolute;top:-12px;left:24px;background:var(--grad);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
 .plan .for{color:var(--muted);font-size:.93rem}
 .price{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums}
 .price b{font-family:var(--display);font-size:2.4rem;font-weight:800;letter-spacing:-.04em;line-height:1}
@@ -230,6 +230,9 @@ footer nav{display:flex;gap:18px}
   .gcards{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
   .gcard{flex:0 0 62%;scroll-snap-align:start}
 }
+.logo-mark{width:34px;height:34px;flex:none;display:block}
+.logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -238,8 +241,8 @@ footer nav{display:flex;gap:18px}
 <header class="top">
   <div class="wrap">
     <a class="logo" href="#accueil" aria-label="MyCreativeSite, accueil">
-      <svg viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--brand)"/><path d="M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z" fill="#fff"/></svg>
-      <span>My<span class="and">Creative</span>Site</span>
+      <img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">
+      <span>My<span class="and">creativesite</span></span>
     </a>
     <nav class="nav">
       <a class="l" href="#modeles">Modèles</a>

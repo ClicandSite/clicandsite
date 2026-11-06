@@ -1,5 +1,2 @@
 User-agent: *
-Disallow: /admin/
-Disallow: /espace/
-
-Sitemap: https://clicandsite.fr/sitemap.xml
+Disallow: /

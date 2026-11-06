@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // ClicandSite — robot de recherche de pros (06/11/2026).
 // 1) Cherche dans l'annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit) les VTC / taxis,
-//    restaurants, garages et agences immobilières en activité, code postal par code postal sur la Riviera.
+//    restaurants, garages, agences immobilières et artisans du bâtiment en activité, code postal par code postal sur la Riviera.
 //    (OpenStreetMap / Overpass refuse les connexions venant des serveurs Supabase.)
 // 2) Essaie de retrouver le site de chaque pro (nom de domaine deviné et vérifié).
 // 3) Regarde le site : pas de site, site daté (pas adapté au mobile, vieux copyright, http…) ou moderne, et relève l'e-mail publié.
@@ -16,9 +16,11 @@ const NAF: Record<string, string> = {
   restaurant: "56.10A",
   garage: "45.20A,45.11Z",
   immobilier: "68.31Z",
+  // Bâtiment : maisons, électricité, plomberie/chauffage, plâtrerie, menuiserie, carrelage, peinture, finition, couverture, maçonnerie
+  batiment: "41.20A,43.21A,43.22A,43.22B,43.31Z,43.32A,43.33Z,43.34Z,43.39Z,43.91B,43.99C",
 };
 // Chaînes et réseaux : ils ont déjà un site national, inutile de les démarcher.
-const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix/i;
+const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix|leroy merlin|castorama|brico|point p\b|bouygues|vinci|eiffage|spie\b|engie|veolia|cegelec|socotec|france toitures|illico travaux|cuisinella|schmidt|mobalpa|lapeyre|tryba|art et fen[eê]tres|grosfillex/i;
 const LEGAL = /\b(sarl|sas|sasu|eurl|sa|snc|sci|ste|societe|société|ets|etablissements|holding|groupe|ei|eirl|scp)\b/gi;
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 const BAD = /(\.(png|jpe?g|gif|webp|svg|css|js)$)|example\.|sentry|wixpress|godaddy|domain\.com|email\.com|votre|your|nom@|prenom|@2x|noreply|no-reply|ovh\.net$|mediateur|cnil\.fr|dgccrf|economie\.gouv/i;

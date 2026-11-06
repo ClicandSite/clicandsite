@@ -374,7 +374,8 @@ async function boot(){
   if(DEMO){
     const t=['vtc','restaurant','garage','immobilier','batiment'].includes(params.get('demo'))?params.get('demo'):'garage';
     $('demoTrade').value=t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
-    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:'moderne',content:{},status:'brouillon'});
+    const st=Object.keys(STYLES).includes(params.get('style'))?params.get('style'):'moderne';
+    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:st,content:{},status:'brouillon'});
   }
   const {data:{session}}=await SB.auth.getSession();
   if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }

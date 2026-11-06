@@ -512,7 +512,7 @@ function show(){
   if(ifd.getAttribute('src')!==url){ifd.setAttribute('src',url);}
   if(ifm.getAttribute('src')!==url){ifm.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
-  document.getElementById('ex-edit').href='espace/?demo='+cur.k;
+  document.getElementById('ex-edit').href='espace/?demo='+cur.k+'&style='+cur.s;
   document.getElementById('ex-url').textContent=URLS[cur.k];
   document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s];
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.k===cur.k?'true':'false');});

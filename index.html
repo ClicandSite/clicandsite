@@ -121,7 +121,7 @@ section{padding-block:80px}
 /* tarifs */
 .pricing{background:var(--paper);border-block:1px solid var(--line)}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
-.plan{border:1.5px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:16px;align-content:start;background:var(--bg)}
+.plan{border:1.5px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:16px;background:var(--bg)}
 .plan.hot{border-color:var(--brand);background:var(--paper);box-shadow:0 20px 50px -24px color-mix(in srgb,var(--brand) 55%,transparent);position:relative}
 .plan .badge{position:absolute;top:-12px;left:24px;background:var(--brand);color:var(--brand-ink);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
 .plan .for{color:var(--muted);font-size:.93rem}
@@ -134,7 +134,9 @@ section{padding-block:80px}
 .plan li{display:grid;grid-template-columns:18px 1fr;gap:9px;align-items:start}
 .plan li svg{width:18px;height:18px;color:var(--brand);margin-top:3px}
 .plan li.plus{font-weight:600}
-.plan .btn{margin-top:6px}
+.plan .btn{margin-top:auto}
+.plan ul{margin-bottom:6px}
+.plan .for{min-height:3em}
 .legal{margin-top:18px;font-size:.86rem;color:var(--muted)}
 
 /* options */

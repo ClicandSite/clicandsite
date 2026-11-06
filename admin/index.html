@@ -83,11 +83,27 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
   <header>
     <h1>Clic<span>and</span>Site · CRM prospects</h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="sitesBtn" type="button">Sites clients</button>
+      <a class="btn" href="/espace/" style="text-decoration:none">Modifier un site</a>
       <button class="btn" id="exportBtn" type="button">Exporter (CSV)</button>
       <button class="btn" id="logout" type="button">Se déconnecter</button>
     </div>
   </header>
 
+    <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis clicandsite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
+      <div id="sitesList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
+      <form id="siteForm" class="filters" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:0">
+        <input id="sName" placeholder="Nom (ex. Garage du Port)" required>
+        <input id="sSlug" placeholder="Identifiant (ex. garage-du-port)" pattern="[a-z0-9][a-z0-9-]{2,40}" required>
+        <input id="sEmail" type="email" placeholder="E-mail du client" required>
+        <input id="sDomain" placeholder="Domaine (ex. garage-du-port.fr)">
+        <select id="sTrade"><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option></select>
+        <select id="sStyle"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option></select>
+        <select id="sStatus"><option value="brouillon">En préparation</option><option value="en_ligne">En ligne</option><option value="suspendu">Suspendu</option></select>
+        <button class="btn primary" type="submit">Enregistrer le site</button>
+      </form>
+    </div>
     <div class="cards" id="cards"></div>
 
     <div class="robot">
@@ -219,6 +235,18 @@ $('prev').addEventListener('click',()=>{offset=Math.max(0,offset-PAGE);render();
 $('next').addEventListener('click',()=>{offset+=PAGE;render();scrollTo(0,0);});
 $('robotToggle').addEventListener('click',async()=>{const on=$('robotToggle').dataset.on==='1';const {error}=await sb.rpc('cs_admin_robot',{p_enabled:!on});if(error)alert(error.message);stats();});
 $('robotRun').addEventListener('click',async()=>{const b=$('robotRun');b.disabled=true;b.textContent='Recherche lancée…';const {error}=await sb.rpc('cs_admin_robot',{p_run_now:true});if(error)alert(error.message);setTimeout(()=>{b.disabled=false;b.textContent='Lancer une recherche maintenant';stats();load();},60000);});
+const ST={brouillon:'En préparation',en_ligne:'En ligne',suspendu:'Suspendu'};
+async function loadSites(){
+  const {data,error}=await sb.rpc('cs_admin_sites'); if(error){$('sitesList').textContent=error.message;return;}
+  $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''} · <b>${ST[s.status]||s.status}</b> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
+  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;});
+}
+$('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden)loadSites();});
+$('sName').addEventListener('input',()=>{if(!$('sSlug').dataset.touched)$('sSlug').value=$('sName').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);});
+$('sSlug').addEventListener('input',()=>{$('sSlug').dataset.touched='1';});
+$('siteForm').addEventListener('submit',async e=>{e.preventDefault();
+  const {error}=await sb.rpc('cs_admin_site_upsert',{p_slug:$('sSlug').value.trim(),p_name:$('sName').value.trim(),p_trade:$('sTrade').value,p_style:$('sStyle').value,p_owner_email:$('sEmail').value.trim(),p_domain:$('sDomain').value.trim(),p_status:$('sStatus').value});
+  if(error){alert(error.message);return;} e.target.reset(); delete $('sSlug').dataset.touched; loadSites();});
 $('exportBtn').addEventListener('click',()=>{
   const cols=['name','trade','address','postcode','city','phone','email','website','site_status','score','status','notes'];
   const csv=[cols.join(';')].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(';'))).join('\n');

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Espace client · ClicandSite</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Modifiez vous-même les textes, prix, horaires et photos de votre site ClicandSite.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='1' width='24' height='24' rx='7' fill='%232F45FF'/%3E%3Cpath d='M9 7.5l9 5.2-3.9 1 2.3 4.1-1.7 1-2.3-4.1-2.8 2.9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<script src="/assets/supabase-js-2.118.0.js"></script>
+<script src="/assets/cs-edit.js?v=1"></script>
+<style>
+/* 06/11/2026 (Claude) : espace client ClicandSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
+   avec un aperçu en direct. Données dans le projet Supabase ClicandSite. Mode démo sans compte : ?demo=garage */
+:root{--bg:#F5F6FA;--paper:#fff;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#2F45FF;--soft:#E8EBFF;--ok:#1E8E5A;--bad:#C0392B;--warn:#9A6200;--r:14px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#7584FF;--soft:#1E2550;--ok:#4CC38A;--bad:#FF7A6B;--warn:#E8B04B;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.01em;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sm{padding:6px 10px;font-size:.85rem}
+.btn:disabled{opacity:.5;cursor:default}
+.linkbtn{background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0;text-align:left}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--paper);min-width:0}
+textarea{resize:vertical;min-height:64px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 0 4px}
+
+/* Connexion */
+.login{max-width:400px;margin:8vh auto 0;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.login .box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px 24px;display:grid;gap:12px}
+.login .brand{font:700 1.4rem "Bricolage Grotesque",sans-serif}
+.login .brand span{color:var(--brand)}
+.login p{margin:0;color:var(--muted);font-size:.92rem}
+.msg.err{color:var(--bad);font-size:.88rem}.msg.ok{color:var(--ok);font-size:.88rem}
+.demo-cta{margin-top:16px;text-align:center;font-size:.9rem;color:var(--muted)}
+
+/* Éditeur */
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px));background:var(--paper);border-bottom:1px solid var(--line)}
+.top .brand{font:700 1.05rem "Bricolage Grotesque",sans-serif;margin-right:4px}
+.top .brand span{color:var(--brand)}
+.top .site{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top select{width:auto;max-width:220px;padding:6px 10px}
+.top .sp{flex:1}
+.status{font-size:.85rem;color:var(--muted)}
+.status.dirty{color:var(--warn)}.status.saved{color:var(--ok)}
+.demo-bar{background:var(--soft);color:var(--ink);font-size:.9rem;padding:8px max(16px,env(safe-area-inset-left,0px));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.main{display:grid;grid-template-columns:minmax(340px,430px) minmax(0,1fr);min-height:0}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--bg);padding:14px 14px 80px}
+.sec{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.sec>summary{list-style:none;cursor:pointer;padding:13px 15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.sec>summary::-webkit-details-marker{display:none}
+.sec>summary::after{content:"+";font-weight:500;color:var(--muted);font-size:1.2rem}
+.sec[open]>summary::after{content:"–"}
+.sec .body{padding:0 15px 15px;display:grid;gap:12px}
+.hint{font-size:.82rem;color:var(--muted);margin:-4px 0 0}
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.styles button{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px;font-weight:600;cursor:pointer}
+.styles button[aria-pressed="true"]{border-color:var(--brand);background:var(--soft);color:var(--brand)}
+.item{border:1px solid var(--line);border-radius:11px;padding:11px;display:grid;gap:9px;background:var(--bg)}
+.item .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item .row3{display:grid;grid-template-columns:1.4fr 1.4fr .9fr;gap:8px}
+.item .tools{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.item .tools .btn{padding:4px 9px;font-size:.8rem}
+.photo{display:flex;gap:10px;align-items:center}
+.photo .th{width:84px;height:60px;border-radius:8px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
+.photo .btn{font-size:.82rem;padding:6px 10px}
+.grp{font-weight:700;font-size:.9rem;margin-top:4px}
+.preview{display:grid;grid-template-rows:auto 1fr;min-width:0;min-height:0;background:var(--bg)}
+.pv-bar{display:flex;gap:8px;align-items:center;padding:10px 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.seg button{border:0;background:none;padding:7px 12px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.stage{position:relative;min-height:0;overflow:hidden;margin:0 14px 14px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.stage iframe{position:absolute;top:0;left:0;border:0;transform-origin:0 0;background:#fff}
+.stage.mobile{background:var(--bg);border:0;display:flex;justify-content:center}
+.stage.mobile .phone{position:relative;width:390px;max-width:100%;height:100%;border-radius:28px;border:8px solid #12162B;overflow:hidden;background:#fff}
+.mob-tabs{display:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:20;max-width:calc(100% - 32px)}
+@media (max-width:860px){
+  .main{grid-template-columns:1fr}
+  .panel{border-right:0}
+  .preview{display:none}
+  .app.show-pv .panel{display:none}
+  .app.show-pv .preview{display:grid}
+  .mob-tabs{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--paper);border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px));gap:8px}
+  .mob-tabs .btn{flex:1}
+  .pv-bar .seg{display:none}
+  .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+  .top .hide-m{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="login" id="login" hidden>
+  <form class="box" id="lform">
+    <div class="brand">Clic<span>and</span>Site</div>
+    <p id="lTitle">Votre espace client : modifiez vous-même votre site.</p>
+    <div><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="username" required></div>
+    <div id="lPassBox"><label for="lPass">Mot de passe</label><input id="lPass" type="password" autocomplete="current-password" minlength="8" required></div>
+    <button class="btn primary" id="lBtn" type="submit">Se connecter</button>
+    <div class="msg" id="lMsg" role="status"></div>
+    <button class="linkbtn" id="lMode" type="button">Première connexion : créer mon mot de passe</button>
+    <button class="linkbtn" id="lForgot" type="button">Mot de passe oublié</button>
+  </form>
+  <div class="demo-cta">Pas encore client ? <a href="?demo=garage">Essayer l'espace avec un site d'exemple</a></div>
+</div>
+
+<div class="login" id="nosite" hidden>
+  <div class="box">
+    <div class="brand">Clic<span>and</span>Site</div>
+    <p>Votre compte est bien créé, mais aucun site n'y est encore rattaché. Nous le relions dès la mise en ligne de votre site. Une question : <b style="user-select:all">contact@clicandsite.fr</b></p>
+    <button class="btn" id="out2" type="button">Se déconnecter</button>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <div>
+    <div class="top">
+      <span class="brand">Clic<span>and</span>Site</span>
+      <span class="site" id="siteName"></span>
+      <select id="sitePick" hidden aria-label="Choisir le site"></select>
+      <span class="sp"></span>
+      <span class="status" id="status" role="status"></span>
+      <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
+      <button class="btn sm hide-m" id="undo" type="button" hidden>Annuler la dernière modification</button>
+      <button class="btn primary" id="save" type="button" disabled>Enregistrer</button>
+      <button class="btn sm hide-m" id="logout" type="button" hidden>Se déconnecter</button>
+    </div>
+    <div class="demo-bar" id="demoBar" hidden>
+      <span><b>Démo</b> : essayez librement, rien n'est enregistré.</span>
+      <label for="demoTrade" style="margin:0">Métier</label>
+      <select id="demoTrade" style="width:auto;padding:5px 9px">
+        <option value="vtc">Chauffeur VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage et concession</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment et rénovation</option>
+      </select>
+      <a href="/#commande" style="font-weight:600">Je veux mon site</a>
+    </div>
+  </div>
+  <div class="main">
+    <div class="panel" id="panel"></div>
+    <div class="preview">
+      <div class="pv-bar">
+        <div class="seg" role="group" aria-label="Aperçu"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
+        <span class="status">Aperçu en direct de vos changements</span>
+      </div>
+      <div class="stage" id="stage"><iframe id="pv" title="Aperçu du site"></iframe></div>
+    </div>
+  </div>
+  <div class="mob-tabs"><button class="btn primary" id="tEdit" type="button">Modifier</button><button class="btn" id="tView" type="button">Voir l'aperçu</button></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const SB = supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-espace'}});
+const $ = id => document.getElementById(id);
+const STYLES = {moderne:'Moderne', luxe:'Luxe', riviera:'Riviera', chaleureux:'Chaleureux', audacieux:'Audacieux'};
+const ITEMS = {garage:'Véhicules en stock', immobilier:'Biens en vente et location', batiment:'Réalisations', vtc:'Éléments', restaurant:'Éléments'};
+const params = new URLSearchParams(location.search);
+const DEMO = params.has('demo');
+let sites = [], site = null, state = null, dirty = false, view = 'd';
+
+function toast(t){ const e=$('toast'); e.textContent=t; e.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>e.hidden=true,2600); }
+function setStatus(t, cls){ const s=$('status'); s.textContent=t; s.className='status'+(cls?' '+cls:''); }
+function markDirty(){ if(DEMO){ setStatus('Démo : changements non enregistrés','dirty'); return; } dirty=true; $('save').disabled=false; setStatus('Modifications non enregistrées','dirty'); }
+window.addEventListener('beforeunload', e => { if(dirty){ e.preventDefault(); e.returnValue=''; } });
+
+/* ---------- Aperçu ---------- */
+const pv = $('pv');
+function doc(){ try { return pv.contentDocument; } catch(e){ return null; } }
+function fit(){
+  const st=$('stage');
+  if(view==='m'){
+    st.classList.add('mobile');
+    if(!st.querySelector('.phone')){ const ph=document.createElement('div'); ph.className='phone'; st.appendChild(ph); ph.appendChild(pv); }
+    pv.style.transform='none'; pv.style.width='100%'; pv.style.height='100%';
+  } else {
+    st.classList.remove('mobile');
+    const ph=st.querySelector('.phone'); if(ph){ st.appendChild(pv); ph.remove(); }
+    const w=st.clientWidth||1, a=Math.min(1,w/1280);
+    pv.style.width='1280px'; pv.style.height=(st.clientHeight/a)+'px'; pv.style.transform='scale('+a+')';
+  }
+}
+window.addEventListener('resize', fit);
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{ view=b.dataset.v; document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false')); fit(); }));
+$('tView').addEventListener('click',()=>{ $('app').classList.add('show-pv'); view='m'; fit(); $('tView').classList.add('primary'); $('tEdit').classList.remove('primary'); });
+$('tEdit').addEventListener('click',()=>{ $('app').classList.remove('show-pv'); $('tEdit').classList.add('primary'); $('tView').classList.remove('primary'); });
+
+let applyT;
+function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc(); if(d&&state) CSEdit.apply(d,state); },120); }
+function loadTemplate(trade, styleName){
+  return new Promise(res=>{
+    pv.onload=()=>{ fit(); res(); };
+    pv.src='/modeles/'+trade+'.html#'+styleName;
+  });
+}
+
+/* ---------- Photos ---------- */
+function currentImg(el){
+  if(!el) return '';
+  const v=getComputedStyle(el).getPropertyValue('--img')||''; const m=v.match(/url\(["']?(.*?)["']?\)\s*$/); return m?m[1]:'';
+}
+function resize(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(); const u=URL.createObjectURL(file);
+    img.onload=()=>{ const max=1800, k=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u); c.toBlob(b=>b?res(b):rej(new Error('Image illisible')),'image/jpeg',.84); };
+    img.onerror=()=>rej(new Error('Ce fichier n\'est pas une image lisible.')); img.src=u;
+  });
+}
+async function uploadPhoto(file){
+  const blob=await resize(file);
+  if(DEMO) return URL.createObjectURL(blob);
+  const path=site.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
+  const {error}=await SB.storage.from('site-photos').upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000'});
+  if(error) throw error;
+  return SB.storage.from('site-photos').getPublicUrl(path).data.publicUrl;
+}
+function photoField(label, getEl, get, set){
+  const w=document.createElement('div'); w.className='photo';
+  const th=document.createElement('div'); th.className='th';
+  const info=document.createElement('div'); info.style.display='grid'; info.style.gap='6px';
+  const l=document.createElement('label'); l.textContent=label; l.style.margin='0';
+  const b=document.createElement('button'); b.type='button'; b.className='btn'; b.textContent='Changer la photo';
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.hidden=true;
+  const show=()=>{ const u=get()||currentImg(getEl()); th.style.backgroundImage=u?'url("'+u.replace(/"/g,'%22')+'")':''; };
+  b.addEventListener('click',()=>inp.click());
+  inp.addEventListener('change',async()=>{ const f=inp.files[0]; inp.value=''; if(!f) return;
+    if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum).'); return; }
+    b.disabled=true; b.textContent='Envoi…';
+    try{ const u=await uploadPhoto(f); set(u); show(); refresh(); markDirty(); toast('Photo changée'); }
+    catch(e){ toast('Envoi impossible : '+(e.message||e)); }
+    finally{ b.disabled=false; b.textContent='Changer la photo'; }
+  });
+  info.append(l,b); w.append(th,info,inp); setTimeout(show,50); return w;
+}
+
+/* ---------- Formulaires ---------- */
+function field(label, value, onInput, multi){
+  const w=document.createElement('div'); const id='f'+Math.random().toString(36).slice(2,9);
+  const l=document.createElement('label'); l.htmlFor=id; l.textContent=label;
+  const i=document.createElement(multi?'textarea':'input'); i.id=id; i.value=value||''; if(multi) i.rows=3;
+  i.addEventListener('input',()=>{ onInput(i.value); refresh(); markDirty(); });
+  w.append(l,i); return w;
+}
+function section(title, open, hint){
+  const d=document.createElement('details'); d.className='sec'; if(open) d.open=true;
+  const s=document.createElement('summary'); s.textContent=title; const b=document.createElement('div'); b.className='body';
+  if(hint){ const p=document.createElement('p'); p.className='hint'; p.textContent=hint; b.appendChild(p); }
+  d.append(s,b); $('panel').appendChild(d); return b;
+}
+function tools(arr, i, rerender){
+  const t=document.createElement('div'); t.className='tools';
+  const mk=(txt,fn)=>{ const b=document.createElement('button'); b.type='button'; b.className='btn'; b.textContent=txt; b.addEventListener('click',()=>{ fn(); refresh(); markDirty(); rerender(); }); return b; };
+  if(i>0) t.appendChild(mk('↑ Monter',()=>{ [arr[i-1],arr[i]]=[arr[i],arr[i-1]]; }));
+  if(i<arr.length-1) t.appendChild(mk('↓ Descendre',()=>{ [arr[i+1],arr[i]]=[arr[i],arr[i+1]]; }));
+  t.appendChild(mk('Supprimer',()=>{ arr.splice(i,1); }));
+  return t;
+}
+function listEditor(body, arr, render, makeNew, addLabel){
+  const box=document.createElement('div'); box.style.display='grid'; box.style.gap='10px'; body.appendChild(box);
+  const draw=()=>{ box.textContent=''; arr.forEach((o,i)=>{ const it=document.createElement('div'); it.className='item'; render(it,o,i); it.appendChild(tools(arr,i,draw)); box.appendChild(it); });
+    if(makeNew){ const a=document.createElement('button'); a.type='button'; a.className='btn'; a.textContent='+ '+addLabel; a.addEventListener('click',()=>{ arr.push(makeNew()); refresh(); markDirty(); draw(); }); box.appendChild(a); } };
+  draw();
+}
+function buildForms(){
+  const d=doc(); const P=$('panel'); P.textContent=''; const c=state; c.text=c.text||{}; c.photos=c.photos||{};
+  const T=(k,label,multi)=>{ if(c.text[k]===undefined) return null; return field(label,c.text[k],v=>c.text[k]=v,multi); };
+
+  let b=section('Style du site',false,'Change les couleurs et la mise en page. Vos textes et photos restent.');
+  const sw=document.createElement('div'); sw.className='styles';
+  Object.keys(STYLES).forEach(k=>{ const x=document.createElement('button'); x.type='button'; x.textContent=STYLES[k]; x.setAttribute('aria-pressed',(c.style||site.style)===k?'true':'false');
+    x.addEventListener('click',()=>{ c.style=k; sw.querySelectorAll('button').forEach(y=>y.setAttribute('aria-pressed',y===x?'true':'false')); refresh(); markDirty(); }); sw.appendChild(x); });
+  b.appendChild(sw);
+
+  b=section('Accueil',true);
+  [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
+  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u));
+
+  if(c.stats&&c.stats.length){ b=section('Chiffres clés',false,'Les 4 points forts affichés sous l\'accueil.');
+    listEditor(b,c.stats,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('En gros',o.v,v=>o.v=v),field('En dessous',o.l,v=>o.l=v)); it.appendChild(r); }); }
+
+  if(c.cards&&c.cards.length){ b=section('Prestations');
+    listEditor(b,c.cards,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Description',o.d,v=>o.d=v,true),field('Prix',o.p,v=>o.p=v),
+      photoField('Photo',()=>d.querySelectorAll('.cards > .card')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
+      ()=>({t:'Nouvelle prestation',d:'',p:'',img:null}),'Ajouter une prestation'); }
+
+  if(c.prices&&c.prices.length){ const tabs=[...d.querySelectorAll('.tabs button')].map(x=>x.textContent.trim());
+    b=section(d.querySelector('.dish')?'La carte':'Tarifs',false,'Ajoutez, supprimez ou changez vos prix. Ils sont mis à jour sur votre site dès l\'enregistrement.');
+    c.prices.forEach((g,gi)=>{ if(c.prices.length>1){ const h=document.createElement('div'); h.className='grp'; h.textContent=tabs[gi]||('Liste '+(gi+1)); b.appendChild(h); }
+      listEditor(b,g,(it,o)=>{ const r=document.createElement('div'); r.className='row3'; r.append(field('Intitulé',o.t,v=>o.t=v),field('Détail',o.d,v=>o.d=v),field('Prix',o.p,v=>o.p=v)); it.appendChild(r); },
+        ()=>({t:'Nouveau',d:'',p:''}),'Ajouter une ligne'); }); }
+
+  if(c.items&&c.items.length){ b=section(ITEMS[site.trade]||'Éléments',false,'Les infos sont séparées par « · » (exemple : 2021 · 42 000 km · Essence).');
+    listEditor(b,c.items,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Infos',o.meta,v=>o.meta=v),field('Prix',o.p,v=>o.p=v),
+      photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
+      ()=>({t:'Nouveau',meta:'',p:'',img:null}),'Ajouter'); }
+
+  if(c.hours){ b=section('Horaires',false,'Écrivez « Fermé » pour un jour de fermeture.');
+    listEditor(b,c.hours,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('Jours',o.l,v=>o.l=v),field('Heures',o.v,v=>o.v=v)); it.appendChild(r); },
+      ()=>({l:'Dimanche',v:'Fermé'}),'Ajouter une ligne'); }
+
+  if(c.text.team_t!==undefined){ b=section('Présentation');
+    b.append(T('team_t','Titre'),T('team_d','Texte',true)); if(d.querySelector('.team .photo')) b.appendChild(photoField('Photo',()=>d.querySelector('.team .photo'),()=>c.photos.team,u=>c.photos.team=u)); }
+
+  b=section('Coordonnées');
+  (c.contacts||[]).forEach(o=>b.appendChild(field(o.l||'Contact',o.v,v=>o.v=v)));
+  ['address','cta_t','cta_d'].forEach((k,i)=>{ const f=T(k,['Adresse','Titre du bandeau de contact','Texte du bandeau de contact'][i]); if(f) b.appendChild(f); });
+
+  const gal=[...d.querySelectorAll('.gallery > .photo')];
+  if(gal.length){ c.photos.gallery=c.photos.gallery||gal.map(()=>null); b=section('Galerie photos');
+    gal.forEach((el,i)=>b.appendChild(photoField('Photo '+(i+1),()=>d.querySelectorAll('.gallery > .photo')[i],()=>c.photos.gallery[i],u=>c.photos.gallery[i]=u))); }
+
+  if(c.text.footer!==undefined){ b=section('Bas de page'); b.appendChild(T('footer','Mention en bas de page')); }
+
+  const help=document.createElement('p'); help.className='hint'; help.style.margin='14px 4px';
+  help.textContent=DEMO?'Démo : les changements restent dans cette page et disparaissent si vous la quittez.':'Besoin d\'un changement plus important (nouvelle page, nouvelle rubrique) ? Écrivez à contact@clicandsite.fr.';
+  P.appendChild(help);
+}
+
+/* ---------- Chargement d'un site ---------- */
+async function openSite(s){
+  site=s; dirty=false; $('save').disabled=true;
+  $('siteName').textContent=s.name; $('viewSite').hidden=!s.domain; if(s.domain) $('viewSite').href='https://'+s.domain.replace(/^https?:\/\//,'');
+  $('undo').hidden=DEMO;
+  setStatus('Chargement…');
+  await loadTemplate(s.trade,(s.content&&s.content.style)||s.style);
+  const d=doc(); const base=CSEdit.extract(d);
+  state=Object.assign(base, JSON.parse(JSON.stringify(s.content||{})));
+  state.style=state.style||s.style; CSEdit.apply(d,state);
+  buildForms();
+  setStatus(DEMO?'Démo':(s.status==='en_ligne'?'Site en ligne':'Site en préparation'), DEMO?'':'saved');
+}
+$('save').addEventListener('click',async()=>{
+  if(DEMO||!site) return; $('save').disabled=true; setStatus('Enregistrement…');
+  const {error}=await SB.rpc('cs_site_save',{p_id:site.id,p_content:state,p_style:state.style||null});
+  if(error){ $('save').disabled=false; setStatus('Erreur : '+error.message,'dirty'); return; }
+  dirty=false; site.content=JSON.parse(JSON.stringify(state)); setStatus(site.status==='en_ligne'?'Enregistré : votre site est à jour':'Enregistré','saved'); toast('Modifications enregistrées');
+});
+$('undo').addEventListener('click',async()=>{
+  if(!site) return; const {data,error}=await SB.rpc('cs_site_undo',{p_id:site.id});
+  if(error){ toast(error.message); return; } site.content=data; await openSite(site); toast('Dernière modification annulée');
+});
+$('sitePick').addEventListener('change',async e=>{ if(dirty&&!confirm('Des modifications ne sont pas enregistrées. Changer de site quand même ?')){ e.target.value=site.id; return; } const s=sites.find(x=>x.id===e.target.value); if(s) await openSite(s); });
+$('demoTrade').addEventListener('change',e=>{ const t=e.target.value; history.replaceState(null,'','?demo='+t); openSite({id:'demo',name:'Site d\'exemple',trade:t,style:'moderne',content:{},status:'brouillon'}); });
+
+/* ---------- Connexion ---------- */
+let signup=false, recovery=false;
+function lmsg(t,ok){ $('lMsg').className='msg '+(ok?'ok':'err'); $('lMsg').textContent=t||''; }
+$('lMode').addEventListener('click',()=>{ signup=!signup; $('lBtn').textContent=signup?'Créer mon accès':'Se connecter'; $('lMode').textContent=signup?'J\'ai déjà un mot de passe':'Première connexion : créer mon mot de passe'; $('lPass').autocomplete=signup?'new-password':'current-password'; lmsg(''); });
+$('lForgot').addEventListener('click',async()=>{ const em=$('lEmail').value.trim(); if(!em){ lmsg('Écrivez votre e-mail, puis cliquez à nouveau sur « Mot de passe oublié ».'); return; }
+  const {error}=await SB.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/espace/'}); lmsg(error?error.message:'Si ce compte existe, un lien vient de partir par e-mail.',!error); });
+$('lform').addEventListener('submit',async e=>{ e.preventDefault(); const em=$('lEmail').value.trim(), pw=$('lPass').value; $('lBtn').disabled=true; lmsg('');
+  try{
+    if(recovery){ const {error}=await SB.auth.updateUser({password:pw}); if(error) throw error; recovery=false; return boot(); }
+    if(signup){ const {data,error}=await SB.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+'/espace/'}}); if(error) throw error;
+      if(!data.session){ lmsg('Presque fini : ouvrez le mail de confirmation reçu sur '+em+' et cliquez sur le lien.',true); return; } }
+    else { const {error}=await SB.auth.signInWithPassword({email:em,password:pw}); if(error) throw error; }
+    boot();
+  }catch(err){ lmsg(/Invalid login/i.test(err.message)?'E-mail ou mot de passe incorrect.':/Email not confirmed/i.test(err.message)?'Confirmez d\'abord votre adresse avec le lien reçu par e-mail.':err.message); }
+  finally{ $('lBtn').disabled=false; }
+});
+SB.auth.onAuthStateChange(ev=>{ if(ev==='PASSWORD_RECOVERY'){ recovery=true; $('app').hidden=true; $('login').hidden=false; $('lTitle').textContent='Choisissez votre nouveau mot de passe.'; $('lEmail').closest('div').hidden=true; $('lEmail').required=false; $('lMode').hidden=true; $('lForgot').hidden=true; $('lBtn').textContent='Enregistrer'; } });
+async function logout(){ await SB.auth.signOut(); location.href=location.pathname; }
+$('logout').addEventListener('click',logout); $('out2').addEventListener('click',logout);
+
+async function boot(){
+  if(DEMO){
+    const t=['vtc','restaurant','garage','immobilier','batiment'].includes(params.get('demo'))?params.get('demo'):'garage';
+    $('demoTrade').value=t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
+    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:'moderne',content:{},status:'brouillon'});
+  }
+  const {data:{session}}=await SB.auth.getSession();
+  if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }
+  const {data,error}=await SB.rpc('cs_my_sites');
+  sites=error?[]:(data||[]);
+  if(!sites.length){ $('login').hidden=true; $('nosite').hidden=false; return; }
+  $('login').hidden=true; $('nosite').hidden=true; $('app').hidden=false; $('logout').hidden=false;
+  if(sites.length>1){ const sp=$('sitePick'); sp.hidden=false; $('siteName').hidden=true; sp.textContent=''; sites.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sp.appendChild(o); }); }
+  fit(); await openSite(sites[0]);
+}
+boot();
+</script>
+</body>
+</html>

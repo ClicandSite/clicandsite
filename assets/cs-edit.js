@@ -176,7 +176,7 @@
       body: JSON.stringify({ p_slug: slug })
     }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
       if (!c) return;
-      var go = function () { apply(document, c); siteIcon(document, c); if (c.shop) initShop(slug, c.shop); };
+      var go = function () { apply(document, c); siteIcon(document, c); if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);
@@ -287,25 +287,42 @@
       '.cs-lead textarea{min-height:70px;resize:vertical}.cs-lead .cs-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}' +
       '.cs-lead .cs-act{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.cs-lead .cs-act .btn{flex:1;justify-content:center}' +
       '.cs-lead .cs-cancel{background:none;border:0;color:#5a5f6e;font:inherit;font-weight:600;cursor:pointer;padding:10px}' +
-      '.cs-lead .cs-err{color:#b42318;font-size:.86rem;margin-top:10px}.cs-lead .cs-small{font-size:.76rem;color:#7a7f8e;margin:12px 0 0}';
+      '.cs-lead .cs-err{color:#b42318;font-size:.86rem;margin-top:10px}.cs-lead .cs-small{font-size:.76rem;color:#7a7f8e;margin:12px 0 0}' +
+      '.cs-lead .cs-pay{display:grid;gap:2px;background:#f2f7f3;border:1px solid #cfe5d5;border-radius:12px;padding:10px 12px;margin:0 0 4px}.cs-lead .cs-pay b{font-size:1.05rem;color:#14532d}.cs-lead .cs-pay span{font-size:.82rem;color:#3f5e48}' +
+      '.cs-bk{font-size:.85rem!important;padding:8px 14px!important;min-height:0!important;margin-top:6px}' +
+      '.cs-banner{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147483001;width:min(560px,calc(100% - 32px));background:#16181f;color:#fff;border-radius:14px;padding:14px 44px 14px 16px;font:15px/1.45 inherit;font-family:inherit;box-shadow:0 18px 40px rgba(0,0,0,.3)}.cs-banner.ok{background:#14532d}.cs-banner button{position:absolute;top:8px;right:8px;background:none;border:0;color:inherit;font-size:18px;cursor:pointer;padding:6px}';
     var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
     function bizName() { return txt(q(document, 'header.top .logo')) || document.title.split(/[·|–-]/)[0].trim(); }
-    function open(form) {
-      var data = collect(form), kind = kindOf(form);
+    function cents(p) { var m = /^(\d{1,6})(?:[,.](\d{1,2}))?€?$/.exec(String(p || '').replace(/\s/g, '')); return m ? (+m[1]) * 100 + (m[2] ? +(m[2] + '0').slice(0, 2) : 0) : 0; }
+    function eur(c) { return (c / 100).toFixed(2).replace('.', ',').replace(',00', '') + ' €'; }
+    // 07/11/2026 : formule Pro — combien payer en ligne (null = simple demande)
+    function payFor(item, kind) {
+      var P = window.CS_PAY; if (!P) return null;
+      if (item) { if (P.forfait === 'off' || !item.price) return null;
+        var dep = P.forfait === 'deposit' && P.pct < 100, a = dep ? Math.round(item.price * P.pct / 100) : item.price;
+        return { amount: a, note: dep ? 'Acompte de ' + P.pct + ' % sur ' + eur(item.price) + ', le reste est réglé le jour de la prestation.' : 'Prix total de la prestation.' }; }
+      if (P.deposit >= 100 && (kind === 'reservation' || kind === 'rendez-vous')) return { amount: P.deposit, note: 'Acompte pour confirmer votre réservation, déduit du prix final.' };
+      return null;
+    }
+    function open(form, item) {
+      var data = form ? collect(form) : { fields: [], tel: '' }, kind = form ? kindOf(form) : 'reservation', pay = payFor(item, kind);
       var wrap = document.createElement('div'); wrap.className = 'cs-lead'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
-      wrap.innerHTML = '<form class="cs-box" novalidate><h3>Vos coordonnées</h3><p>Pour que ' + esc(bizName()) + ' vous réponde.</p>' +
+      wrap.innerHTML = '<form class="cs-box" novalidate><h3>' + (item ? 'Réserver : ' + esc(item.t) : (pay ? 'Réserver et payer' : 'Vos coordonnées')) + '</h3><p>' + (pay ? 'Paiement sécurisé par carte, directement à ' + esc(bizName()) + '.' : 'Pour que ' + esc(bizName()) + ' vous réponde.') + '</p>' +
+        (pay ? '<div class="cs-pay"><b>À payer maintenant : ' + eur(pay.amount) + '</b><span>' + esc(pay.note) + '</span></div>' : '') +
+        (item ? '<label for="cs-d">Date et heure souhaitées</label><input id="cs-d" type="datetime-local" required>' : '') +
         '<label for="cs-n">Nom</label><input id="cs-n" autocomplete="name" required maxlength="120">' +
         '<label for="cs-t">Téléphone</label><input id="cs-t" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">' +
-        '<label for="cs-e">E-mail</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
+        '<label for="cs-e">E-mail' + (pay ? ' (pour votre reçu)' : '') + '</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
         '<label for="cs-m">Message (facultatif)</label><textarea id="cs-m" maxlength="2000"></textarea>' +
         '<input class="cs-hp" id="cs-w" tabindex="-1" autocomplete="off" aria-hidden="true">' +
         '<div class="cs-err" role="alert" hidden></div>' +
-        '<div class="cs-act"><button type="button" class="cs-cancel">Annuler</button><button class="btn" type="submit">Envoyer ma demande</button></div>' +
-        '<p class="cs-small">Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.</p></form>';
+        '<div class="cs-act"><button type="button" class="cs-cancel">Annuler</button><button class="btn" type="submit">' + (pay ? 'Payer ' + eur(pay.amount) + ' et réserver' : 'Envoyer ma demande') + '</button></div>' +
+        '<p class="cs-small">Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.' + (pay ? ' Le paiement est traité par Stripe.' : '') + '</p></form>';
       document.body.appendChild(wrap);
       var f = q(wrap, 'form'), err = q(wrap, '.cs-err');
+      if (q(wrap, '#cs-d')) { var t0 = new Date(Date.now() + 864e5); q(wrap, '#cs-d').min = t0.getFullYear() + '-' + pad(t0.getMonth() + 1) + '-' + pad(t0.getDate()) + 'T00:00'; }
       if (data.tel) q(wrap, '#cs-t').value = data.tel;
-      setTimeout(function () { q(wrap, '#cs-n').focus(); }, 30);
+      setTimeout(function () { q(wrap, item ? '#cs-d' : '#cs-n').focus(); }, 30);
       function close() { wrap.remove(); document.removeEventListener('keydown', onKey); }
       function onKey(e) { if (e.key === 'Escape') close(); }
       document.addEventListener('keydown', onKey);
@@ -313,28 +330,52 @@
       wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
       f.addEventListener('submit', function (e) {
         e.preventDefault();
-        var n = q(wrap, '#cs-n').value.trim(), t = q(wrap, '#cs-t').value.trim(), m = q(wrap, '#cs-e').value.trim();
+        var n = q(wrap, '#cs-n').value.trim(), t = q(wrap, '#cs-t').value.trim(), m = q(wrap, '#cs-e').value.trim(), d = q(wrap, '#cs-d');
         err.hidden = true;
+        if (d && !d.value) { err.textContent = 'Choisissez la date et l\'heure.'; err.hidden = false; return; }
         if (!n) { err.textContent = 'Indiquez votre nom.'; err.hidden = false; return; }
+        if (pay && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) { err.textContent = 'Indiquez votre e-mail pour recevoir le reçu de paiement.'; err.hidden = false; return; }
         if (!t && !m) { err.textContent = 'Indiquez un téléphone ou un e-mail pour être recontacté.'; err.hidden = false; return; }
-        var b = q(f, '[type="submit"]'); b.disabled = true; b.textContent = 'Envoi…';
-        fetch(API + '/rest/v1/rpc/cs_lead_submit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
-          body: JSON.stringify({ p_slug: slug, p_kind: kind, p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: data.fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value })
-        }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
+        var fields = data.fields.slice(); if (d) fields.unshift({ l: 'Date et heure', v: niceDate(d.value, true) });
+        var b = q(f, '[type="submit"]'), lbl = b.textContent; b.disabled = true; b.textContent = pay ? 'Ouverture du paiement…' : 'Envoi…';
+        var req = pay
+          ? fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'book', slug: slug, item: item ? { src: item.src, g: item.g, i: item.i, t: item.t } : null, kind: kind, name: n, phone: t, email: m, message: q(wrap, '#cs-m').value, fields: fields, back: location.origin + location.pathname }) })
+          : fetch(API + '/rest/v1/rpc/cs_lead_submit', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
+              body: JSON.stringify({ p_slug: slug, p_kind: kind, p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value }) });
+        req.then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
           if (!r.ok) throw new Error((r.j && r.j.message) || 'Envoi impossible');
+          if (pay) { if (!r.j.url) throw new Error('Paiement indisponible'); location.href = r.j.url; return; }
           close();
-          var ok = q(form, '.ok');
-          if (!ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); }
-          ok.textContent = 'Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.';
-          ok.hidden = false;
+          var ok = form && q(form, '.ok');
+          if (form && !ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); }
+          if (ok) { ok.textContent = 'Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.'; ok.hidden = false; }
         }).catch(function (x) {
-          b.disabled = false; b.textContent = 'Envoyer ma demande';
+          b.disabled = false; b.textContent = lbl;
           err.textContent = (x && x.message && !/fetch/i.test(x.message)) ? x.message : 'La demande n\'est pas partie. Vérifiez votre connexion et réessayez.';
           err.hidden = false;
         });
       });
     }
+    // Boutons « Réserver » sur les tarifs et prestations à prix fixe, et retour du paiement
+    function banner(t, good) { var d = document.createElement('div'); d.className = 'cs-banner' + (good ? ' ok' : ''); d.setAttribute('role', 'status'); d.textContent = t;
+      var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer'); x.textContent = '✕'; x.onclick = function () { d.remove(); }; d.appendChild(x); document.body.appendChild(d); }
+    window.CS_PAY_INIT = function () {
+      var P = window.CS_PAY; if (!P) return;
+      var u = new URL(location.href), st = u.searchParams.get('paiement'), sess = u.searchParams.get('cs_session');
+      if (st) {
+        u.searchParams.delete('paiement'); u.searchParams.delete('cs_session'); history.replaceState(null, '', u.pathname + u.search + u.hash);
+        if (st === 'ok') { banner('Merci ! Votre paiement est accepté et votre réservation est transmise à ' + bizName() + '. Vous recevez le reçu par e-mail.', true);
+          if (sess) fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'confirm', slug: slug, session: sess }) }).catch(function () {}); }
+        else banner('Paiement annulé : rien n\'a été débité. Votre demande a tout de même été transmise, ' + bizName() + ' peut vous recontacter.', false);
+      }
+      if (P.forfait === 'off' || q(document, '.dish')) return;
+      var add = function (el, item, place) { if (!item.price || q(el, '.cs-bk')) return; var b = document.createElement('button'); b.type = 'button'; b.className = 'btn cs-bk'; b.textContent = 'Réserver';
+        b.addEventListener('click', function () { open(null, item); }); place(b); };
+      qa(document, '.prices').forEach(function (box, g) { qa(box, ':scope > .row').forEach(function (r, i) { if (r.hidden) return;
+        add(r, { src: 'price', g: g, i: i, t: txt(q(r, '.t')), price: cents(txt(q(r, '.p'))) }, function (b) { b.style.gridColumn = '1/-1'; b.style.justifySelf = 'start'; r.appendChild(b); }); }); });
+      qa(document, '.cards > .card').forEach(function (c, i) { if (c.hidden) return; var pe = q(c, '.price');
+        add(c, { src: 'card', i: i, t: txt(q(c, 'h3')), price: cents(txt(pe)) }, function (b) { (pe || c).insertAdjacentElement('afterend', b); }); });
+    };
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function ready() {
       qa(document, 'form').forEach(function (f) { if (!SKIP[f.id]) prepare(f); });

@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/site.webmanifest"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=5"></script>
+<script src="/assets/cs-edit.js?v=6"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -196,6 +196,8 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 
 html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
 @media (max-width:860px){input,select,textarea{font-size:16px}}
+
+#plOut a.btn{text-decoration:none}
 </style>
 </head>
 <body>
@@ -414,7 +416,7 @@ function buildForms(){
       photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
       ()=>({t:'Nouveau',meta:'',p:'',img:null}),'Ajouter'); }
 
-  if(site.trade==='boutique') shopSection();
+  if(site.trade==='boutique') shopSection(); else paySection();
 
   if(c.hours){ b=section('Horaires',false,'Écrivez « Fermé » pour un jour de fermeture.');
     listEditor(b,c.hours,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('Jours',o.l,v=>o.l=v),field('Heures',o.v,v=>o.v=v)); it.appendChild(r); },
@@ -455,6 +457,7 @@ function buildForms(){
     } else if((c.reviews||[]).length){ const sh=document.createElement('div'); sh.className='grp'; sh.textContent='Avis affichés sur votre site'; b.appendChild(sh);
       c.reviews.forEach(o=>{ const it=document.createElement('div'); it.className='item'; it.innerHTML='<span style="color:var(--brand);letter-spacing:2px"></span><span></span><span class="hint" style="margin:0"></span>'; const sp=it.children; sp[0].textContent=o.s; sp[1].textContent=o.d; sp[2].textContent=o.who; b.appendChild(it); }); } }
 
+  qrSection();
   if(c.text.footer!==undefined){ b=section('Bas de page'); b.appendChild(T('footer','Mention en bas de page')); }
 
   const help=document.createElement('p'); help.className='hint'; help.style.margin='14px 4px';
@@ -491,12 +494,77 @@ function shopSection(){
   draw();
   if(!DEMO&&!shopCfg) SB.rpc('cs_shop_settings',{p_site:site.id}).then(({data})=>{ if(data){ shopCfg=data; draw(); } if(params.get('stripe')==='retour'&&$('shStatus')){ params.delete('stripe'); history.replaceState(null,'',location.pathname); $('shStatus').click(); } });
 }
+/* ---------- Mon QR code (07/11/2026, toutes formules) : QR code du site + affichette à imprimer soi-même ---------- */
+let qrLib=null;
+function loadQr(){ return qrLib||(qrLib=new Promise((res,rej)=>{ if(window.qrcode) return res(); const sc=document.createElement('script'); sc.src='/assets/qrcode.js'; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); })); }
+function siteUrl(){ if(DEMO) return 'https://'+({vtc:'azur-prestige.fr'}[site.trade]||'votre-site.fr'); return site.domain&&site.status==='en_ligne'?'https://'+String(site.domain).replace(/^https?:\/\//,'').replace(/\/.*$/,''):''; }
+function drawQr(cv,url,size,margin,color){ const q=qrcode(0,'M'); q.addData(url); q.make(); const n=q.getModuleCount(), m=margin||4, cell=Math.floor(size/(n+2*m)), real=cell*(n+2*m);
+  cv.width=cv.height=real; const g=cv.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,real,real); g.fillStyle=color||'#111';
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(q.isDark(r,c)) g.fillRect((c+m)*cell,(r+m)*cell,cell,cell); return cv; }
+function dl(cv,name){ cv.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); },'image/png'); }
+function siteColor(){ try{ const d=doc(), t=d.createElement('span'); t.style.color=getComputedStyle(d.documentElement).getPropertyValue('--accent').trim()||'#12162B'; d.body.appendChild(t); const c=getComputedStyle(t).color; t.remove(); return c; }catch(_){ return '#12162B'; } }
+function qrSection(){
+  const b=section('Mon QR code',false,'Un QR code qui ouvre votre site : à mettre sur vos cartes, vos devis, votre vitrine ou dans votre véhicule. Inclus dans toutes les formules.');
+  const url=siteUrl(), box=document.createElement('div'); box.style.display='grid'; box.style.gap='10px'; b.appendChild(box);
+  if(!url){ box.innerHTML='<p class="hint" style="margin:0">Disponible dès que votre site est en ligne, avec son adresse définitive.</p>'; return; }
+  const name=((state.text&&state.text.logo)||site.name||'').trim(), slug=(site.slug||'mon-site').replace(/[^a-z0-9-]/gi,'');
+  box.innerHTML='<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><canvas id="qrPrev" style="width:120px;height:120px;border:1px solid var(--line);border-radius:10px;background:#fff"></canvas><div style="display:grid;gap:8px;min-width:0"><span class="hint" style="margin:0;word-break:break-all">'+escH(url)+'</span><button class="btn sm" type="button" id="qrPng">Télécharger le QR code</button><button class="btn sm" type="button" id="qrA5">Télécharger l\'affichette à imprimer</button></div></div>';
+  loadQr().then(()=>drawQr($('qrPrev'),url,240,2)).catch(()=>{ box.innerHTML='<p class="hint">QR code indisponible pour le moment.</p>'; });
+  $('qrPng').onclick=async()=>{ await loadQr(); dl(drawQr(document.createElement('canvas'),url,1200,4),'qr-code-'+slug+'.png'); };
+  $('qrA5').onclick=async()=>{ await loadQr();
+    const W=1748,H=2480,cv=document.createElement('canvas'); cv.width=W; cv.height=H; const g=cv.getContext('2d'), col=siteColor(), font='system-ui,-apple-system,"Segoe UI",Arial,sans-serif';
+    g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.fillStyle=col; g.fillRect(0,0,W,300);
+    const lum=(col.match(/\d+/g)||[18,22,43]).slice(0,3).map(Number).reduce((a,v,i)=>a+v*[.299,.587,.114][i],0)/255;
+    g.fillStyle=lum>.6?'#12162B':'#fff'; g.textAlign='center'; g.textBaseline='middle';
+    let fs=130; g.font='800 '+fs+'px '+font; while(g.measureText(name).width>W-200&&fs>60){ fs-=6; g.font='800 '+fs+'px '+font; } g.fillText(name,W/2,150);
+    g.fillStyle='#12162B'; g.font='800 120px '+font; g.fillText(site.trade==='restaurant'?'Réservez votre table':site.trade==='boutique'?'Notre boutique en ligne':'Réservez en ligne',W/2,500);
+    g.fillStyle='#5C627A'; g.font='500 64px '+font; g.fillText('Scannez-moi avec l\'appareil photo de votre téléphone',W/2,620);
+    const qc=drawQr(document.createElement('canvas'),url,1100,2); g.drawImage(qc,(W-qc.width)/2,760);
+    g.fillStyle='#12162B'; g.font='700 72px '+font; g.fillText(url.replace(/^https:\/\//,''),W/2,760+qc.width+130);
+    dl(cv,'affichette-'+slug+'.png'); };
+}
+
+/* ---------- Formule Pro : paiement en ligne des réservations (07/11/2026) ---------- */
+let payCfg=null;
+const NOFORFAIT={restaurant:1,boulangerie:1,immobilier:1};
+async function shopCall(action,extra){ if(DEMO){ toast('Démo : sur votre espace, ce bouton ouvre l\'inscription Stripe.'); return null; }
+  const {data:{session}}=await SB.auth.getSession();
+  const r=await fetch(SHOP_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token,apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify(Object.assign({action,site:site.id,back:location.origin+location.pathname},extra||{}))});
+  const j=await r.json().catch(()=>({})); if(!r.ok){ toast(j.message||'Impossible pour le moment'); return null; } return j; }
+function paySection(){
+  const b=section('Paiement en ligne',false,'Vos clients paient leur réservation par carte. L\'argent arrive directement sur votre compte bancaire, via votre propre compte Stripe. MyCreativeSite ne prend aucune commission.');
+  if(planRank()<2){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Formule Pro : encaissez vos réservations en ligne.</b> Forfaits payés à la réservation, acompte, lien de paiement à envoyer à un client. L\'argent arrive sur votre compte, sans commission.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Pro">Passer en Pro</a>'; b.appendChild(u); return; }
+  const box=document.createElement('div'); box.style.display='grid'; box.style.gap='12px'; b.appendChild(box);
+  const nf=NOFORFAIT[site.trade];
+  const draw=()=>{
+    const c=payCfg||{forfait:'full',pct:30,deposit:0,account:false,card:DEMO};
+    const eur=v=>v?(v/100).toFixed(2).replace('.',',').replace(',00',''):'';
+    box.innerHTML='<div class="item"><b>Paiement par carte</b><span class="hint" style="margin:0">'+(c.card?'Activé : vos clients peuvent payer en ligne, l\'argent arrive sur votre compte.':(c.account?'Presque fini : terminez l\'inscription Stripe pour recevoir les paiements.':'Créez votre compte Stripe en 10 minutes (pièce d\'identité et IBAN).'))+'</span>'+
+      '<div class="qbtns">'+(c.card?'':'<button class="btn primary sm" type="button" id="pyConnect">'+(c.account?'Terminer l\'activation':'Activer le paiement en ligne')+'</button>')+(c.account?'<button class="linkbtn" type="button" id="pyStatus">Vérifier l\'état</button>':'')+'</div></div>'+
+      (nf?'':'<div class="item"><b>Tarifs à prix fixe</b><span class="hint" style="margin:0">Un bouton « Réserver » apparaît sous chaque tarif ou prestation dont le prix est un nombre (ex. 90 €). « Sur devis » ou « à partir de » ne sont pas payables en ligne.</span>'+
+        '<div class="row"><div><label for="pyF">Le client paie</label><select id="pyF"><option value="full"'+(c.forfait==='full'?' selected':'')+'>La totalité</option><option value="deposit"'+(c.forfait==='deposit'?' selected':'')+'>Un acompte</option><option value="off"'+(c.forfait==='off'?' selected':'')+'>Rien en ligne</option></select></div>'+
+        '<div'+(c.forfait==='deposit'?'':' hidden')+' id="pyPctW"><label for="pyPct">Acompte (%)</label><input id="pyPct" inputmode="numeric" value="'+c.pct+'"></div></div></div>')+
+      '<div class="item"><b>Acompte sur les demandes sans prix</b><span class="hint" style="margin:0">Montant payé par le client quand il envoie une demande de réservation ou de rendez-vous depuis votre formulaire. Laissez vide pour ne rien demander.</span>'+
+        '<div style="max-width:200px"><label for="pyDep">Acompte (€)</label><input id="pyDep" inputmode="decimal" value="'+eur(c.deposit)+'" placeholder="Ex. : 20"></div></div>'+
+      '<div><button class="btn sm" type="button" id="pySave">Enregistrer ces réglages</button></div>'+
+      '<p class="hint" style="margin:0">Pour une course ou une prestation sur devis : ouvrez la demande dans « Mes clients » et envoyez un lien de paiement.</p>';
+    if($('pyF')) $('pyF').onchange=()=>{ $('pyPctW').hidden=$('pyF').value!=='deposit'; };
+    $('pySave').onclick=async()=>{ const a={p_site:site.id,p_forfait:$('pyF')?$('pyF').value:'off',p_pct:parseInt(($('pyPct')||{}).value,10)||30,p_deposit:Math.round(parseFloat(String($('pyDep').value||'0').replace(',','.'))*100)||0};
+      if(a.p_deposit&&a.p_deposit<100){ toast('Acompte minimum : 1 €'); return; }
+      if(DEMO){ payCfg=Object.assign({},c,{forfait:a.p_forfait,pct:a.p_pct,deposit:a.p_deposit}); toast('Démo : réglages appliqués'); draw(); return; }
+      const {data,error}=await SB.rpc('cs_pay_settings_save',a); if(error){ toast(error.message); return; } payCfg=data; toast('Réglages enregistrés'); draw(); };
+    if($('pyConnect')) $('pyConnect').onclick=async()=>{ const j=await shopCall('connect'); if(j&&j.url) location.href=j.url; };
+    if($('pyStatus')) $('pyStatus').onclick=async()=>{ const j=await shopCall('status'); if(j){ payCfg=Object.assign({},c,{card:j.card,account:j.account}); toast(j.card?'Paiement en ligne activé':'Inscription Stripe pas encore terminée'); draw(); } };
+  };
+  draw();
+  if(!DEMO&&!payCfg) SB.rpc('cs_pay_settings',{p_site:site.id}).then(({data})=>{ if(data){ payCfg=data; draw(); } if(params.get('stripe')==='retour'&&$('pyStatus')){ params.delete('stripe'); history.replaceState(null,'',location.pathname); $('pyStatus').click(); } });
+}
 /* ---------- Chargement d'un site ---------- */
 /* 07/11/2026 : fonctions selon la formule (Essentiel < Pro < Premium < Boutique) */
 const RANK={essentiel:1,pro:2,premium:3,boutique:4};
 function planRank(){ return DEMO?4:(RANK[String(site&&site.plan||'').toLowerCase()]||1); }
 async function openSite(s){
-  if(!site||site.id!==s.id) shopCfg=null;
+  if(!site||site.id!==s.id){ shopCfg=null; payCfg=null; }
   site=s; dirty=false; $('save').disabled=true;
   $('siteName').textContent=s.name; $('viewSite').hidden=!s.domain; if(s.domain) $('viewSite').href='https://'+s.domain.replace(/^https?:\/\//,'');
   $('undo').hidden=DEMO;
@@ -646,6 +714,8 @@ async function openLead(id){
       '<div class="card"><h3>Historique</h3><div class="qbtns"><select id="ldNk" style="max-width:150px" aria-label="Type"><option value="note">Note</option><option value="appel">Appel</option><option value="email">E-mail</option><option value="rdv">Rendez-vous</option></select></div><textarea id="ldNote" placeholder="Ex. : appelé, rappelle jeudi pour confirmer" aria-label="Note"></textarea><div><button class="btn primary sm" type="button" data-note>Ajouter à l\'historique</button></div><ul class="hist" id="ldHist"><li>Chargement…</li></ul></div>'
     :'<div class="card lock">Statut, notes d\'appel, date de relance et historique de ce client : inclus dans la formule Premium.</div>')+
     (same.length?'<div class="card"><h3>Autres demandes de ce client</h3>'+same.map(x=>'<button type="button" class="linkbtn" data-other="'+escH(x.id)+'">'+escH(KIND[x.kind]||x.kind)+' · '+escH(when(x.created_at))+(P?' · '+STAT[x.status]:'')+'</button>').join('')+'</div>':'')+
+    (planRank()>=2&&!(site.trade==='boutique'&&l.kind==='commande')?'<div class="card" style="gap:8px"><h3>Paiement</h3>'+(l.paid_at?'<span>Payé par carte'+(l.amount_cents?' : <b>'+(l.amount_cents/100).toFixed(2).replace('.',',')+' €</b>':'')+'.</span>':
+      '<span class="hint" style="margin:0">Envoyez un lien de paiement par carte (valable 23 h). L\'argent arrive sur votre compte.</span><div class="qbtns"><input id="plAmt" inputmode="decimal" placeholder="Montant (€)" style="max-width:130px"'+(l.amount_cents?' value="'+(l.amount_cents/100).toFixed(2).replace('.',',')+'"':'')+'><input id="plLbl" placeholder="Ex. : Transfert Nice → Monaco" style="max-width:240px"><button class="btn primary sm" type="button" data-plk>Créer le lien</button></div><div id="plOut" hidden class="qbtns"></div>')+'</div>':'')+
     '<div class="card" style="gap:8px"><h3>Faire un document</h3><div class="qbtns"><button class="btn sm" type="button" data-mkq="devis">Faire un devis</button>'+(site.trade==='vtc'?'<button class="btn sm" type="button" data-mkq="bon">Faire un bon de commande</button>':'')+(state&&state.google&&CSEdit.gUrl(state.google.review)?'<button class="btn sm" type="button" data-avis>Demander un avis Google</button>':'')+'</div></div>'+'<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer cette demande</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
   document.body.appendChild(el);
   const close=()=>{ el.remove(); document.removeEventListener('keydown',onKey); renderCrm(); };
@@ -669,6 +739,15 @@ async function openLead(id){
     if(t.dataset.mkq){ const fv=k=>{ const f=(l.fields||[]).find(x=>new RegExp(k,'i').test(x.l)); return f?f.v:''; };
       DV.prefill={lead:DEMO?null:l.id,name:l.name||'',phone:l.phone||'',email:l.email||'',title:KIND[l.kind]||'',pickup:fv('départ|prise'),dest:fv('arrivée|destination')}; if(t.dataset.mkq==='bon') DV.prefill.bon=true;
       close(); return setMode('devis'); }
+    if(t.hasAttribute('data-plk')){ const amt=Math.round(parseFloat(String(el.querySelector('#plAmt').value||'').replace(/\s/g,'').replace(',','.'))*100)||0, lbl=el.querySelector('#plLbl').value.trim()||KIND[l.kind]||'Réservation';
+      if(amt<100){ toast('Indiquez un montant (1 € minimum)'); return; }
+      let url;
+      if(DEMO){ url='https://checkout.stripe.com/c/pay/exemple'; toast('Démo : sur votre espace, le vrai lien de paiement est créé.'); }
+      else { t.disabled=true; const j=await shopCall('paylink',{lead:l.id,amount:amt,label:lbl}); t.disabled=false; if(!j) return; url=j.url; l.amount_cents=amt; l.card=true; }
+      const msg='Bonjour'+(l.name?' '+l.name.split(' ')[0]:'')+', voici le lien pour régler '+lbl+' ('+(amt/100).toFixed(2).replace('.',',')+' €) par carte, en toute sécurité : '+url+'\nLe lien est valable 23 h.\n\n'+((state.text&&state.text.logo)||site.name||'');
+      const ph=String(l.phone||'').replace(/[^\d+]/g,'').replace(/^\+/,'').replace(/^0/,'33');
+      const o=el.querySelector('#plOut'); o.hidden=false; o.innerHTML=(ph?'<a class="btn primary sm" target="_blank" rel="noopener" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg)+'">Envoyer par WhatsApp</a>':'')+(l.email?'<a class="btn sm" href="mailto:'+escH(l.email)+'?subject='+encodeURIComponent('Paiement : '+lbl)+'&body='+encodeURIComponent(msg)+'">Envoyer par e-mail</a>':'')+'<button class="btn sm" type="button" data-copy="'+escH(url)+'">Copier le lien</button>';
+      return; }
     if(t.hasAttribute('data-avis')){ const name=(state.text&&state.text.logo)||site.name||'';
       const msg='Bonjour'+(l.name?' '+l.name.split(' ')[0]:'')+', merci pour votre confiance ! Si vous avez été satisfait, votre avis Google nous aiderait beaucoup (30 secondes) : '+state.google.review.trim()+'\n\n'+name;
       const ph=String(l.phone||'').replace(/[^\d+]/g,'').replace(/^\+/,'').replace(/^0/,'33');

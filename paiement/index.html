@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Paiement</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+/* 07/11/2026 (Claude) : page de retour des liens de paiement envoyés par les pros (formule Pro). */
+:root{--bg:#F6F7FB;--card:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--ok:#15803D;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0D1020;--card:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--ok:#4ADE80;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 24px;max-width:440px;width:100%;text-align:center;display:grid;gap:10px}
+.ic{width:56px;height:56px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font-size:28px;background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.ic.no{background:color-mix(in srgb,var(--muted) 15%,transparent);color:var(--muted)}
+h1{margin:0;font-size:1.4rem;text-wrap:balance}
+p{margin:0;color:var(--muted)}
+small{color:var(--muted);font-size:.78rem;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="box" id="box"><p>Chargement…</p></div>
+<script>
+(function(){
+  var u=new URLSearchParams(location.search), st=u.get('paiement'), sess=u.get('cs_session')||'', n=(u.get('n')||'').slice(0,80);
+  var box=document.getElementById('box'); box.textContent='';
+  function el(t,c,txt){ var e=document.createElement(t); if(c) e.className=c; if(txt) e.textContent=txt; box.appendChild(e); return e; }
+  if(st==='ok'){
+    el('div','ic','✓'); el('h1','','Paiement reçu, merci !');
+    el('p','',(n?n+' a bien reçu':'Le professionnel a bien reçu')+' votre paiement. Le reçu vous est envoyé par e-mail.');
+    if(/^cs_[A-Za-z0-9_]+$/.test(sess)) fetch('https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-shop',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify({action:'confirm',session:sess})}).catch(function(){});
+  } else {
+    el('div','ic no','✕'); el('h1','','Paiement annulé');
+    el('p','','Rien n\'a été débité. Vous pouvez rouvrir le lien reçu pour réessayer, tant qu\'il est valable.');
+  }
+  el('small','','Paiement sécurisé par Stripe. Vous pouvez fermer cette page.');
+  history.replaceState(null,'',location.pathname);
+})();
+</script>
+</body>
+</html>

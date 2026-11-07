@@ -1,7 +1,9 @@
-// 07/11/2026 (Claude, demande d'Anthony) — Boutique MyCreativeSite : commandes et paiement par carte.
+// 07/11/2026 (Claude, demande d'Anthony) — Boutique et formule Pro MyCreativeSite : commandes, réservations et liens de paiement par carte.
 // L'argent va directement sur le compte Stripe du commerçant (Stripe Connect, compte « standard »).
 // Actions (POST JSON) :
 //   checkout  {slug, items[{i,t,q}], mode, name, email, phone, address, note, back}  -> {url} (paiement) ou {ok, card:false} (paiement au retrait/à la livraison)
+//   book      {slug, item?{src,g,i,t}, kind, name, email, phone, message, fields, back} -> {url}  (réservation payée, formule Pro)
+//   paylink   {lead, amount, label}  (espace client, connecté)                      -> {url, expires} (lien valable 23 h)
 //   confirm   {slug, session}                                                       -> {paid}
 //   connect   {site, back}   (espace client, connecté)                              -> {url} page Stripe pour activer les paiements
 //   status    {site}         (espace client, connecté)                              -> {account, card}
@@ -67,6 +69,40 @@ Deno.serve(async (req) => {
       }, o.account);
       await db.rpc("cs_shop_order_ref", { p_lead: o.lead, p_ref: s.id });
       return out({ url: s.url });
+    }
+    if (action === "book") { // formule Pro : réservation payée depuis le site du pro
+      const back = safeBack(b.back);
+      if (!back) return fail("Adresse de retour invalide");
+      if (!SK) return fail("Le paiement en ligne n'est pas disponible pour le moment", 503);
+      const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim();
+      const { data: o, error } = await db.rpc("cs_book_create", { p_slug: String(b.slug || ""), p_item: b.item || null, p_kind: String(b.kind || ""), p_name: b.name || "", p_email: b.email || "", p_phone: b.phone || "", p_message: b.message || "", p_fields: b.fields || [], p_ip: ip });
+      if (error) return fail(error.message.replace(/^.*?: /, ""));
+      if (!o.account) return fail("Le paiement en ligne n'est pas disponible sur ce site");
+      const s = await stripe("POST", "checkout/sessions", {
+        mode: "payment", customer_email: o.email, locale: "fr",
+        line_items: { 0: { quantity: 1, price_data: { currency: "eur", unit_amount: o.amount, product_data: { name: (o.mode === "acompte" ? "Acompte : " : "") + String(o.label).slice(0, 230) } } } },
+        success_url: back + "?paiement=ok&cs_session={CHECKOUT_SESSION_ID}", cancel_url: back + "?paiement=annule",
+        metadata: { lead: o.lead, site: String(b.slug) }, payment_intent_data: { description: String(o.label).slice(0, 200) + " · " + o.name, metadata: { lead: o.lead } },
+      }, o.account);
+      await db.rpc("cs_shop_order_ref", { p_lead: o.lead, p_ref: s.id });
+      return out({ url: s.url });
+    }
+    if (action === "paylink") { // formule Pro : lien de paiement envoyé par le pro depuis « Mes clients » (espace client, connecté)
+      if (!SK) return fail("Le paiement en ligne n'est pas encore ouvert. Écrivez-nous à contact@mycreativesite.fr.", 503);
+      const auth = req.headers.get("authorization") || "";
+      const user = createClient(URL_, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } }, auth: { persistSession: false } });
+      const amount = Math.round(Number(b.amount) || 0);
+      const { data: o, error } = await user.rpc("cs_pay_link_create", { p_lead: String(b.lead || ""), p_amount: amount, p_label: String(b.label || "") });
+      if (error) return fail(error.message.replace(/^.*?: /, ""), 400);
+      const back = "https://mycreativesite.fr/paiement/?n=" + encodeURIComponent(String(o.name).slice(0, 80));
+      const s = await stripe("POST", "checkout/sessions", {
+        mode: "payment", locale: "fr", customer_email: o.email || undefined, expires_at: Math.floor(Date.now() / 1000) + 23 * 3600,
+        line_items: { 0: { quantity: 1, price_data: { currency: "eur", unit_amount: amount, product_data: { name: String(o.label).slice(0, 240) } } } },
+        success_url: back + "&paiement=ok&cs_session={CHECKOUT_SESSION_ID}", cancel_url: back + "&paiement=annule",
+        metadata: { lead: o.lead, site: o.slug }, payment_intent_data: { description: String(o.label).slice(0, 200) + " · " + o.name, metadata: { lead: o.lead } },
+      }, o.account);
+      await db.rpc("cs_shop_order_ref", { p_lead: o.lead, p_ref: s.id });
+      return out({ url: s.url, expires: s.expires_at });
     }
     if (action === "confirm") {
       const ref = String(b.session || "");

@@ -265,6 +265,10 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .who b{display:block;font-size:.95rem}.who small{display:block;opacity:.75;font-size:.82rem;margin-top:2px}
 .ok a.go{color:#fff;font-weight:800}
 @media (max-width:640px){.who{grid-template-columns:1fr}}
+.nav .acc{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.95rem;color:var(--ink);text-decoration:none;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+.nav .acc:hover{border-color:var(--brand)}
+.nav .acc svg{width:18px;height:18px}
+@media (max-width:860px){.nav .acc span{display:none}.nav .acc{padding:8px}.nav{gap:10px}.nav .btn.sm{white-space:nowrap}}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -281,6 +285,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
       <a class="l" href="#tarifs">Tarifs</a>
       <a class="l" href="#faq">Questions</a>
       <a class="l" href="conseils/">Conseils</a>
+      <a class="acc" href="espace/" aria-label="Espace client : se connecter"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 16.6c1.1-2.9 3.4-4.3 6.2-4.3s5.1 1.4 6.2 4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>Espace client</span></a>
       <a class="btn sm" href="#commande">Je veux mon site</a>
     </nav>
   </div>
@@ -589,7 +594,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 <footer>
   <div class="wrap">
     <span>© 2026 MyCreativeSite</span>
-    <nav><a href="conseils/">Conseils</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="mailto:contact@mycreativesite.fr">contact@mycreativesite.fr</a><a href="admin/" rel="nofollow" style="opacity:.55">Espace admin</a></nav>
+    <nav><a href="espace/">Espace client</a><a href="conseils/">Conseils</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="mailto:contact@mycreativesite.fr">contact@mycreativesite.fr</a><a href="admin/" rel="nofollow" style="opacity:.55">Espace admin</a></nav>
   </div>
 </footer>
 

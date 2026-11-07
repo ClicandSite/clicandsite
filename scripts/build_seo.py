@@ -429,7 +429,7 @@ def page(p):
 <style>{CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
 <main>
 <div class="wrap crumbs"><a href="/">Accueil</a> › {e(p["title"])}</div>
 <div class="wrap hero">
@@ -507,7 +507,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <style>{CSS}{ARTICLE_CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><a class="btn sm" href="/#commande">Je veux mon site</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
 <main>{body}</main>
 <footer><div class="wrap"><span>© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
 </body>

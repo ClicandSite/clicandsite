@@ -23,10 +23,10 @@ Deno.serve(async (req) => {
   const { data: secret } = await db.rpc("cs_stripe_secret");
   if (!secret || !(await verify(payload, req.headers.get("stripe-signature") || "", secret as string))) return res({ error: "signature" }, 400);
   const ev = JSON.parse(payload); const o = ev.data?.object || {};
-  let a: Record<string, unknown> = { p_event_id: ev.id, p_type: ev.type, p_sub: null, p_customer: null, p_email: null, p_company: null, p_phone: null, p_plan: null, p_status: null, p_period_end: null };
+  let a: Record<string, unknown> = { p_event_id: ev.id, p_type: ev.type, p_sub: null, p_customer: null, p_email: null, p_company: null, p_phone: null, p_plan: null, p_status: null, p_period_end: null, p_ref: null };
   if (ev.type === "checkout.session.completed" && o.mode === "subscription") {
     const company = (o.custom_fields || []).find((f: any) => f.key === "entreprise")?.text?.value || null;
-    a = { ...a, p_sub: o.subscription, p_customer: o.customer, p_email: o.customer_details?.email, p_company: company, p_phone: o.customer_details?.phone, p_plan: o.metadata?.plan || null, p_status: "active" };
+    a = { ...a, p_sub: o.subscription, p_customer: o.customer, p_email: o.customer_details?.email, p_company: company, p_phone: o.customer_details?.phone, p_plan: o.metadata?.plan || null, p_status: "active", p_ref: o.client_reference_id || null };
   } else if (ev.type.startsWith("customer.subscription.")) {
     const pe = o.current_period_end ?? o.items?.data?.[0]?.current_period_end ?? null;
     a = { ...a, p_sub: o.id, p_customer: o.customer, p_plan: o.metadata?.plan || null, p_status: ev.type === "customer.subscription.deleted" ? "canceled" : o.status, p_period_end: pe };

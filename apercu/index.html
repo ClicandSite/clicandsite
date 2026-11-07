@@ -57,10 +57,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
     if(!s){ fail('Cet aperçu n\'existe pas ou n\'est plus disponible. Écrivez-nous à contact@mycreativesite.fr.'); return; }
     document.title='Aperçu : '+s.name+' · MyCreativeSite';
     var live=s.status==='en_ligne';
-    info.innerHTML='<b></b> '+(live?'est en ligne.':'· aperçu provisoire, pas encore en ligne. Après votre paiement, on réserve votre nom de domaine et votre site part en ligne.');
+    info.innerHTML='<b></b> '+(live?'est en ligne.':(s.paid?'· paiement reçu : votre site est enregistré et prêt, il part en ligne sous 24 h.':'· aperçu provisoire, pas encore en ligne. Après votre paiement, on réserve votre nom de domaine et votre site part en ligne.'));
     info.querySelector('b').textContent=s.name;
     var plan=String(s.plan||'').toLowerCase(), pay=document.getElementById('pay');
-    if(!live&&PAY[plan]){ pay.href=PAY[plan]; pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
+    var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
     f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=22#'+encodeURIComponent(s.style||'moderne');
     f.onload=function(){ try{ CSEdit.apply(f.contentDocument, s.content||{}); }catch(e){} };

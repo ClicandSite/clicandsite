@@ -28,3 +28,10 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Règle d'Anthony : le client paie **avant** qu'on réserve son nom de domaine.
 - Le site est d'abord montré sur une adresse provisoire : https://mycreativesite.fr/apercu/?s=<slug> (statut brouillon accepté, `cs_site_preview`, page noindex et exclue de robots.txt). Bouton « Valider et payer » = lien Stripe de la formule du site (régler la formule dans l'admin). Lien « Aperçu client » dans Sites clients.
 - Commandes du formulaire de l'accueil : table `site_orders`, `cs_order_submit` (public), `cs_admin_orders` / `cs_admin_order_update`, onglet « Commandes » de l'admin.
+
+## Site bilingue français / anglais (07/11/2026)
+- Droit : formules Premium et Boutique, ou option bilingue (+10 €/mois) cochée dans l'admin (`sites.bilingual`, `cs_admin_site_bilingual`). Fonction `cs_site_bilingual`.
+- Contenu : `content.en = { on, dict: { "texte français": "English text" } }`. `cs_site_content` / `cs_site_preview` n'envoient `en` que si le site y a droit et l'a activé (`cs_public_content`).
+- Site client (`assets/cs-edit.js`) : bouton FR / EN dans le bandeau, `?lang=en` (choix mémorisé), liens hreflang ; chaque texte, placeholder, title, alt est remplacé par sa traduction (MutationObserver pour les textes ajoutés ensuite). Jamais traduits : nom (.logo), adresse, coordonnées, avis Google. Les demandes arrivent chez le pro avec les libellés en français.
+- Traduction (espace client, rubrique « Version anglaise ») : dictionnaire des modèles `assets/cs-en.json` (traduit à la main), puis fonction `cs-translate` (cache `clicandsite.tr_cache` ; DeepL si le secret `DEEPL_KEY` est ajouté), puis Google Traduction depuis le navigateur du pro (Google refuse les serveurs Supabase). Les textes nouveaux ou modifiés sont retraduits à l'enregistrement ; chaque phrase est corrigeable.
+- Ajouter une phrase à un modèle : penser à ajouter sa traduction dans `assets/cs-en.json`.

@@ -93,6 +93,48 @@ PAGES = [
     faq=[("Je paie une commission sur les rendez-vous ?","Non. Contrairement aux plateformes de réservation, vous payez un abonnement fixe dès 29 € par mois, sans commission."),
          ("Je peux changer mes tarifs moi-même ?","Oui, depuis votre espace client sur téléphone : prix, prestations, horaires et photos."),
          ("Le site convient-il à une esthéticienne à domicile ?","Oui : la zone d'intervention remplace l'adresse du salon, et la prise de rendez-vous fonctionne pareil.")]),
+  dict(slug="site-internet-masseur-osteopathe-bien-etre", k="bienetre", style="chaleureux",
+    title="Création de site internet pour masseur, ostéopathe et bien-être",
+    meta="Site internet pour masseur, ostéopathe, kiné, prof de yoga ou spa : réservation en ligne, carte des soins, tarifs, cartes cadeaux. Dès 29 €/mois, sans commission.",
+    h1="Le site internet des masseurs, ostéopathes et professionnels du bien-être",
+    lead="Masseur bien-être, ostéopathe, naturopathe, sophrologue, professeur de yoga ou petit spa : vos clients découvrent vos soins et réservent en ligne, sans commission.",
+    feats=[("Réservation en ligne","Soin, praticien, jour et heure : la demande arrive directement chez vous."),
+           ("Carte des soins","Massages, séances, cours : vos soins filtrables, avec durée et prix."),
+           ("Cartes cadeaux","Un bouton « Offrir » sur chaque soin, idéal pour les fêtes."),
+           ("Tarifs et forfaits","Séance, carte de 5 ou 10, abonnement : tout est clair avant de réserver."),
+           ("Le lieu","Photos du cabinet ou du studio, ambiance, accès et parking."),
+           ("Présentation du praticien","Votre parcours et vos diplômes, pour donner confiance.")],
+    faq=[("Je paie une commission sur les réservations ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous."),
+         ("Le site convient-il à un praticien à domicile ?","Oui : la zone de déplacement remplace l'adresse du cabinet."),
+         ("Je peux ajouter un nouveau soin moi-même ?","Oui, depuis votre espace client, avec photo, durée et prix.")]),
+  dict(slug="site-internet-boulangerie", k="boulangerie", style="chaleureux",
+    title="Création de site internet pour boulangerie et pâtisserie",
+    meta="Site internet pour boulangerie, pâtisserie et commerce de bouche : commande à retirer, vitrine de la semaine, gâteaux sur commande, horaires. Dès 29 €/mois.",
+    h1="Le site internet des boulangeries, pâtisseries et commerces de bouche",
+    lead="Boulanger, pâtissier, chocolatier, traiteur, fromager ou épicerie fine : vos clients voient vos produits du moment et commandent à l'avance pour ne plus faire la queue.",
+    feats=[("Commande à retirer","Produit, quantité et heure de retrait : vous recevez la commande la veille."),
+           ("Vitrine de la semaine","Vos produits du moment, avec photo et prix, mis à jour en une minute."),
+           ("Gâteaux sur commande","Anniversaires, mariages, plateaux pour entreprises : un formulaire dédié."),
+           ("Horaires et fermetures","Jours fériés, vacances, horaires du dimanche : toujours à jour."),
+           ("Avis Google","Vos meilleurs avis mis en avant."),
+           ("Livraison aux pros","Restaurants, hôtels, bureaux : une rubrique pour vos clients professionnels.")],
+    faq=[("Je peux changer ma vitrine chaque jour ?","Oui, depuis votre téléphone, en quelques secondes."),
+         ("Faut-il gérer un paiement en ligne ?","Non : le client paie au retrait. Le paiement en ligne est possible en Premium."),
+         ("Le site convient-il à un traiteur ou un fromager ?","Oui, le modèle s'adapte à tous les commerces de bouche.")]),
+  dict(slug="site-internet-plombier-electricien", k="depannage", style="audacieux",
+    title="Création de site internet pour plombier, électricien et dépannage",
+    meta="Site internet pour plombier, électricien, chauffagiste ou serrurier : demande de rappel urgent, interventions récentes, tarifs transparents, zone 7j/7. Dès 29 €/mois.",
+    h1="Le site internet des plombiers, électriciens et dépanneurs",
+    lead="Plombier, électricien, chauffagiste, serrurier ou vitrier : soyez trouvé au moment de l'urgence, et rassurez avec des prix clairs avant de vous déplacer.",
+    feats=[("Demande de rappel urgent","Problème, code postal, délai : vous êtes prévenu immédiatement par SMS."),
+           ("Interventions récentes","Le problème, la solution, le temps passé et le prix : la preuve de votre sérieux."),
+           ("Tarifs transparents","Déplacement, débouchage, recherche de fuite : la confiance avant l'appel."),
+           ("Zone d'intervention","Vos villes et vos délais, pour ressortir sur « plombier + ville »."),
+           ("Bouton d'appel","Toujours visible sur téléphone, là où se font 9 recherches sur 10."),
+           ("Garanties","Assurance, garantie de la main-d'œuvre, prix signé avant de commencer.")],
+    faq=[("Mon site peut-il ressortir sur « plombier + ma ville » ?","Oui : il est pensé pour ça, avec vos zones d'intervention et vos services."),
+         ("Je peux ajouter une intervention depuis le chantier ?","Oui, depuis votre téléphone, avec la photo et le prix."),
+         ("Le site convient-il à un auto-entrepreneur ?","Oui, la formule Essentiel est faite pour démarrer, dès 29 € par mois.")]),
 ]
 LOCAL = dict(slug="creation-site-internet-cannes", k=None,
     title="Création de site internet à Cannes et sur la Côte d'Azur",
@@ -107,7 +149,7 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
            ("Sans engagement","Un abonnement mensuel, résiliable à tout moment, nom de domaine à votre nom.")],
     faq=[("Intervenez-vous en dehors de Cannes ?","Oui : Nice, Antibes, Cagnes-sur-Mer, Grasse, Mougins, Mandelieu, Menton, Saint-Raphaël, Fréjus, Saint-Tropez, et toute la France à distance."),
          ("Faut-il se rencontrer ?","Ce n'est pas nécessaire : tout se fait en ligne. Si vous êtes près de Cannes, on peut aussi en parler de vive voix."),
-         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, et d'autres commerces sur demande.")],
+         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, masseurs et ostéopathes, boulangeries, plombiers et électriciens, et d'autres commerces sur demande.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
 # Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
@@ -222,7 +264,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien"}
 e = html.escape
 
 def trade_links(cur):

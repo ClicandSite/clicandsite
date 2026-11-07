@@ -304,11 +304,13 @@ $('tView').addEventListener('click',()=>{ $('app').classList.add('show-pv'); vie
 $('pvX').addEventListener('click',()=>$('tEdit').click());
 $('tEdit').addEventListener('click',()=>{ $('app').classList.remove('show-pv'); $('tEdit').classList.add('primary'); $('tView').classList.remove('primary'); });
 
-let applyT;
+let applyT, pvReady=false;
 function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc(); if(d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } },120); }
 function loadTemplate(trade, styleName){
   return new Promise(res=>{
-    pv.onload=()=>{ noZoom(pv); fit(); res(); };
+    pvReady=false;
+    // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
+    pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
     pv.src='/modeles/'+trade+'.html?v=22#'+styleName;
   });
 }
@@ -556,8 +558,10 @@ async function enFill(){
     if(r&&r.status===403) throw new Error(j.message||'Version anglaise non comprise dans votre formule');
     if(r&&r.ok){ Object.assign(keep,j.dict||{}); miss=miss.filter(k=>!keep[k]); }
   }
-  if(miss.length) Object.assign(keep, await gtxBatch(miss));
-  en.dict=keep; return all.length;
+  let gErr=null; if(miss.length){ try{ Object.assign(keep, await gtxBatch(miss)); }catch(e){ gErr=e; } }
+  en.dict=keep;
+  if(gErr){ const left=all.filter(k=>!keep[k]).length; if(left) throw new Error('Traduction automatique indisponible pour '+left+' texte'+(left>1?'s':'')+' (connexion ou bloqueur de publicité). Réessayez dans un moment.'); }
+  return all.length;
 }
 function applyLang(){ const d=doc(); if(d) CSEdit.translate(d, pvEN&&state.en?state.en.dict:null); }
 function enSection(){
@@ -641,7 +645,7 @@ async function openSite(s){
   delete state.noavis;
   if(!DEMO&&base.google&&!Array.isArray(sv.reviews)) state.reviews=[]; // jamais les avis d'exemple du modèle sur un vrai site
   if(base.google&&planRank()<2){ state.reviews=[]; delete state.google; state.noavis=true; }
-  state.style=state.style||s.style; CSEdit.apply(d,state);
+  state.style=state.style||s.style; CSEdit.apply(d,state); pvReady=true;
   buildForms(); badge();
   $('briefTab').hidden=DEMO?false:s.status==='en_ligne';
   $('devisTab').textContent=s.trade==='vtc'?'Devis et bons':'Devis';

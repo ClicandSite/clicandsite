@@ -421,6 +421,13 @@ function buildForms(){
     const g=c.google, gf=(k,l,ph)=>{ const f=field(l,g[k],v=>g[k]=v.trim()); f.querySelector('input').placeholder=ph; return f; };
     b.append(gf('url','Lien de votre fiche Google','https://maps.app.goo.gl/…'),gf('review','Lien « Laisser un avis »','https://g.page/r/…/review'));
     const r=document.createElement('div'); r.className='row'; r.append(gf('score','Note moyenne','4,9'),gf('count','Nombre d\'avis','37')); b.appendChild(r);
+    const mg=document.createElement('label'); mg.className='chk'; mg.style.cssText='display:flex;gap:10px;align-items:flex-start;font-weight:600;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer';
+    mg.innerHTML='<input type="checkbox" style="width:18px;height:18px;min-height:0;padding:0;margin:2px 0 0;flex:none;accent-color:var(--brand)"'+(g.managed?' checked':'')+'><span style="color:var(--ink);font-size:.95rem">On s\'en occupe pour vous<br><span style="font-weight:400;color:var(--muted);font-size:.88rem">Collez seulement le lien de votre fiche Google : on reprend votre note et 5 avis positifs sur votre site, sous 48 h. Inclus dans votre formule.</span></span>';
+    mg.querySelector('input').addEventListener('change',e=>{ g.managed=e.target.checked; if(g.managed&&!CSEdit.gUrl(g.url)) toast('Collez aussi le lien de votre fiche Google, puis enregistrez'); else if(g.managed) toast('Noté : enregistrez, on s\'en occupe sous 48 h'); markDirty(); });
+    b.insertBefore(mg,b.children[1]);
+    if(g.done) { const dn=document.createElement('p'); dn.className='hint'; dn.style.color='var(--ok,#1E8E5A)'; dn.textContent='Vos avis Google ont été repris par MyCreativeSite. Vous pouvez les modifier à tout moment.'; b.insertBefore(dn,mg.nextSibling); }
+    if(window.CS_ADMIN){ const ad=document.createElement('label'); ad.style.cssText='display:flex;gap:8px;align-items:center;font-weight:600;color:var(--brand)';
+      ad.innerHTML='<input type="checkbox" style="width:18px;height:18px;min-height:0;padding:0;margin:0;flex:none"'+(g.done?' checked':'')+'> Admin : avis repris (fait)'; ad.querySelector('input').addEventListener('change',e=>{ g.done=e.target.checked; markDirty(); }); b.appendChild(ad); }
     const hp=document.createElement('p'); hp.className='hint'; hp.textContent='Les liens se trouvent sur votre fiche Google (Google Business Profile) : bouton « Partager » pour la fiche, « Demander des avis » pour le lien d\'avis.'; b.appendChild(hp);
     if(c.reviews){ const sh=document.createElement('div'); sh.className='grp'; sh.textContent='Avis affichés'; b.appendChild(sh);
       listEditor(b,c.reviews,(it,o)=>{ const n=Math.max(1,(o.s.match(/★/g)||[]).length||5);
@@ -691,6 +698,7 @@ function drawBrief(){
       area('hours','Vos horaires','Ex. : Mardi – samedi : 9h – 19h ; Lundi : fermé',3)+
       area('contact','Adresse, téléphone, e-mail, réseaux sociaux','',3)+
       area('google','Lien de votre fiche Google','https://maps.app.goo.gl/… : on recopie vos meilleurs avis sur votre site',1)+
+      '<label style="display:flex;gap:10px;align-items:flex-start;font-weight:600;cursor:pointer"><input type="checkbox" id="bf-gm" style="width:18px;height:18px;min-height:0;padding:0;margin:2px 0 0;flex:none;accent-color:var(--brand)"'+(d.google_managed!==false?' checked':'')+'><span>Reprenez ma note et 5 avis positifs de ma fiche Google sur mon site</span></label>'+
       area('notes','Autres souhaits','Couleurs, textes à reprendre de votre ancien site…',3)+
     '</div>'+
     '<div class="card"><h3>Vos photos <span style="font-weight:500;color:var(--muted);font-size:.85rem">· '+ph.length+' / '+q+' comprises dans votre formule</span></h3>'+
@@ -699,7 +707,7 @@ function drawBrief(){
       (ph.length<q?'<label class="btn primary" style="justify-self:start;cursor:pointer;margin:0;font-size:.95rem;color:#fff">Ajouter des photos<input type="file" accept="image/*" multiple id="bfFiles" hidden></label>':'<p class="hint" style="margin:0">Vous avez atteint les '+q+' photos de votre formule.</p>')+
       '<p class="hint" id="bfUp" style="margin:0" hidden></p></div>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" id="bfSave">Enregistrer</button><button class="btn primary" type="button" id="bfSend">C\'est complet, préparez mon site</button></div>';
-  const read=()=>{ ['about','services','hours','contact','google','notes'].forEach(k=>{ d[k]=$('bf-'+k).value; }); R.querySelectorAll('[data-cap]').forEach(i=>{ ph[+i.dataset.cap].caption=i.value; }); d.photos=ph; brief.data=d; };
+  const read=()=>{ ['about','services','hours','contact','google','notes'].forEach(k=>{ d[k]=$('bf-'+k).value; }); d.google_managed=$('bf-gm').checked&&!!d.google.trim(); R.querySelectorAll('[data-cap]').forEach(i=>{ ph[+i.dataset.cap].caption=i.value; }); d.photos=ph; brief.data=d; };
   R.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ read(); ph.splice(+b.dataset.rm,1); drawBrief(); });
   const save=async(submit)=>{ read(); if(DEMO){ if(submit) brief.submitted_at=new Date().toISOString(); toast(submit?'Démo : envoyé':'Démo : enregistré'); drawBrief(); return; }
     const {data,error}=await SB.rpc('cs_brief_save',{p_site:site.id,p_data:d,p_submit:!!submit}); if(error){ toast(error.message); return; } brief=data; toast(submit?'Merci ! On prépare votre site.':'Enregistré'); drawBrief(); };
@@ -952,6 +960,7 @@ async function boot(){
   const {data:{session}}=await SB.auth.getSession();
   if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }
   SESSION_EMAIL=session.user&&session.user.email||'';
+  SB.rpc('cs_is_admin').then(r=>{ window.CS_ADMIN=r.data===true; }).catch(()=>{});
   const {data,error}=await SB.rpc('cs_my_sites');
   sites=error?[]:(data||[]);
   if(!sites.length){ $('login').hidden=true; $('nosite').hidden=false; return; }

@@ -54,14 +54,14 @@
       a.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;color:inherit;text-decoration:none;font-weight:700';
       if (score > 0 && score <= 5) {
         var n = doc.createElement('span'); n.textContent = score.toFixed(1).replace('.', ','); n.style.fontSize = '1.7em';
-        var st = doc.createElement('span'); st.textContent = stars(score); st.style.cssText = 'color:var(--accent);letter-spacing:2px'; st.setAttribute('aria-label', score + ' sur 5');
+        var st = doc.createElement('span'); st.textContent = stars(score); st.style.cssText = 'color:var(--accent);letter-spacing:2px'; st.setAttribute('aria-label', score + L(' sur 5', ' out of 5'));
         a.append(n, st);
       }
       var c = doc.createElement('span'); var cnt = parseInt(g.count, 10);
-      c.textContent = (cnt > 0 ? cnt + ' avis' : 'Voir nos avis') + ' sur Google'; c.style.cssText = 'font-weight:500;text-decoration:underline;opacity:.85';
+      c.textContent = EN ? (cnt > 0 ? cnt + ' reviews' : 'See our reviews') + ' on Google' : (cnt > 0 ? cnt + ' avis' : 'Voir nos avis') + ' sur Google'; c.style.cssText = 'font-weight:500;text-decoration:underline;opacity:.85';
       a.appendChild(c); box.appendChild(a);
     }
-    if (rv) { var b = doc.createElement('a'); b.className = 'btn'; b.href = rv; b.target = '_blank'; b.rel = 'noopener'; b.textContent = 'Laisser un avis'; box.appendChild(b); }
+    if (rv) { var b = doc.createElement('a'); b.className = 'btn'; b.href = rv; b.target = '_blank'; b.rel = 'noopener'; b.textContent = L('Laisser un avis', 'Leave a review'); box.appendChild(b); }
     head.appendChild(box);
   }
 
@@ -165,7 +165,131 @@
     } catch (e) { /* pas d'icône, tant pis */ }
   }
 
-  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon };
+
+  /* 07/11/2026 (Claude, demande d'Anthony) : site bilingue français / anglais (Premium, Boutique, option +10 €/mois).
+     content.en = { on: true, dict: { "texte français": "English text" } }. La page est écrite en français ;
+     en anglais, chaque texte (et placeholder, title, alt, aria-label) est remplacé par sa traduction, y compris
+     les textes ajoutés ensuite par les scripts (panier, filtres, fenêtres de réservation). Les noms, adresses,
+     téléphones, e-mails et avis clients ne sont jamais traduits. */
+  var EN = false;
+  function L(fr, en) { return EN ? en : fr; }
+  var NOTR = 'script,style,noscript,textarea,.logo,.addr .v,.cinfo .v,#avis .rev,.picker,.cs-lang,.cs-notr';
+  var ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+  var RX = [
+    [/^Ex\. : (.+)$/, function (m, tr) { return 'e.g. ' + tr(m[1]); }],
+    [/^(\d+) réalisations?$/, function (m) { return m[1] + (m[1] > 1 ? ' projects' : ' project'); }],
+    [/^(\d+) produits?$/, function (m) { return m[1] + (m[1] > 1 ? ' products' : ' product'); }],
+    [/^(\d+) véhicules? disponibles?$/, function (m) { return m[1] + (m[1] > 1 ? ' vehicles available' : ' vehicle available'); }],
+    [/^(\d+) biens? à (vendre|louer)$/, function (m) { return m[1] + (m[1] > 1 ? ' properties' : ' property') + (m[2] === 'vendre' ? ' for sale' : ' to rent'); }],
+    [/^(.+) l'unité$/, function (m) { return m[1] + ' each'; }],
+    [/^(.+), offerte dès (.+)$/, function (m, tr) { return tr(m[1]) + ', free over ' + m[2]; }],
+    [/^Dès (.+)$/, function (m) { return 'From ' + m[1]; }]
+  ];
+  function norm(s) { return String(s).replace(/\s+/g, ' ').trim(); }
+  function worth(s) { return /[A-Za-zÀ-ÿ]{2}/.test(s) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && !/^(https?:\/\/|www\.)/i.test(s) && !/^\+?[\d\s.()\/-]{6,}$/.test(s); }
+  function skip(el) { return !el || (el.closest && el.closest(NOTR)); }
+  function frOf(n) { return n.__csfr != null && n.nodeValue === n.__csen ? n.__csfr : n.nodeValue; }
+  // Texte d'origine (français) d'un élément, même quand la page est affichée en anglais
+  function frTxt(el) {
+    if (!el) return '';
+    var out = '', w = el.ownerDocument.createTreeWalker(el, 4), n;
+    while ((n = w.nextNode())) out += frOf(n);
+    return norm(out);
+  }
+  function texts(doc) {
+    var seen = {}, out = [];
+    var add = function (s) { s = norm(s || ''); if (s && !seen[s] && worth(s)) { seen[s] = 1; out.push(s); } };
+    if (!doc || !doc.body) return out;
+    var w = doc.createTreeWalker(doc.body, 4), n;
+    while ((n = w.nextNode())) if (!skip(n.parentElement)) add(frOf(n));
+    ATTRS.forEach(function (a) { qa(doc, '[' + a + ']').forEach(function (el) { if (!skip(el)) add(el.__csfrA && el.__csfrA[a] != null ? el.__csfrA[a] : el.getAttribute(a)); }); });
+    add(doc.__csTitle || doc.title);
+    var md = q(doc, 'meta[name="description"]'); if (md) add(md.__csfr || md.content);
+    return out;
+  }
+  function makeTr(dict) {
+    var tr = function (s) {
+      var k = norm(s); if (!k) return null;
+      if (Object.prototype.hasOwnProperty.call(dict, k) && dict[k]) return dict[k];
+      for (var i = 0; i < RX.length; i++) { var m = RX[i][0].exec(k); if (m) return RX[i][1](m, function (x) { return tr(x) || x; }); }
+      return null;
+    };
+    return tr;
+  }
+  function trText(n, tr) {
+    var fr = frOf(n), en = tr(fr);
+    if (!en) { if (n.__csfr != null) { n.__csfr = null; n.__csen = null; } return; }
+    var v = (fr.match(/^\s*/)[0]) + en + (fr.match(/\s*$/)[0]);
+    n.__csfr = fr; n.__csen = v; if (n.nodeValue !== v) n.nodeValue = v;
+  }
+  function trAttrs(el, tr) {
+    if (skip(el)) return;
+    ATTRS.forEach(function (a) {
+      if (!el.hasAttribute || !el.hasAttribute(a)) return;
+      var cur = el.getAttribute(a), o = el.__csfrA || (el.__csfrA = {}), oe = el.__csenA || (el.__csenA = {});
+      var fr = o[a] != null && cur === oe[a] ? o[a] : cur, en = tr(fr);
+      if (en && en !== cur) { o[a] = fr; oe[a] = en; el.setAttribute(a, en); }
+    });
+  }
+  function trTree(root, tr) {
+    if (!root) return;
+    if (root.nodeType === 3) { if (!skip(root.parentElement)) trText(root, tr); return; }
+    if (root.nodeType !== 1 || skip(root)) return;
+    var doc = root.ownerDocument, w = doc.createTreeWalker(root, 4), n;
+    while ((n = w.nextNode())) if (!skip(n.parentElement)) trText(n, tr);
+    trAttrs(root, tr); qa(root, '*').forEach(function (el) { trAttrs(el, tr); });
+  }
+  // Traduit la page (et ce que les scripts y ajoutent ensuite). dict = null : remet le français.
+  function translate(doc, dict) {
+    if (doc.__csObs) { doc.__csObs.disconnect(); doc.__csObs = null; }
+    var md = q(doc, 'meta[name="description"]');
+    if (!dict) { // retour au français
+      var w = doc.createTreeWalker(doc.body, 4), n;
+      while ((n = w.nextNode())) if (n.__csfr != null && n.nodeValue === n.__csen) { n.nodeValue = n.__csfr; n.__csfr = n.__csen = null; }
+      qa(doc, '*').forEach(function (el) { if (el.__csfrA) Object.keys(el.__csfrA).forEach(function (a) { if (el.getAttribute(a) === el.__csenA[a]) el.setAttribute(a, el.__csfrA[a]); }); el.__csfrA = el.__csenA = null; });
+      if (doc.__csTitle) { doc.title = doc.__csTitle; doc.__csTitle = null; }
+      if (md && md.__csfr) { md.content = md.__csfr; md.__csfr = null; }
+      doc.documentElement.lang = 'fr'; return;
+    }
+    var tr = makeTr(dict);
+    trTree(doc.body, tr);
+    var t = tr(doc.__csTitle || doc.title); if (t) { doc.__csTitle = doc.__csTitle || doc.title; doc.title = t; }
+    if (md) { var d = tr(md.__csfr || md.content); if (d) { md.__csfr = md.__csfr || md.content; md.content = d; } }
+    doc.documentElement.lang = 'en';
+    var MO = (doc.defaultView && doc.defaultView.MutationObserver) || window.MutationObserver;
+    var obs = new MO(function (list) {
+      list.forEach(function (m) {
+        if (m.type === 'characterData') { if (m.target.nodeValue !== m.target.__csen && !skip(m.target.parentElement)) { m.target.__csfr = null; trText(m.target, tr); } }
+        else if (m.type === 'attributes') { var el = m.target, v = el.getAttribute(m.attributeName); if (el.__csenA && v === el.__csenA[m.attributeName]) return; if (el.__csfrA) el.__csfrA[m.attributeName] = null; trAttrs(el, tr); }
+        else m.addedNodes.forEach(function (x) { trTree(x, tr); });
+      });
+    });
+    obs.observe(doc.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+    doc.__csObs = obs;
+  }
+  function wantLang() {
+    var p = null; try { p = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+    if (p === 'en' || p === 'fr') { try { localStorage.setItem('cs_lang', p); } catch (e) {} return p; }
+    try { return localStorage.getItem('cs_lang') === 'en' ? 'en' : 'fr'; } catch (e) { return 'fr'; }
+  }
+  // Bouton FR / EN dans le bandeau du site + liens hreflang pour Google
+  function langSwitch(doc, cur) {
+    var base = location.origin + location.pathname;
+    [['fr', base], ['en', base + '?lang=en'], ['x-default', base]].forEach(function (h) {
+      var l = doc.createElement('link'); l.rel = 'alternate'; l.hreflang = h[0]; l.href = h[1]; doc.head.appendChild(l); });
+    var a = doc.createElement('a'); a.className = 'cs-lang'; var other = cur === 'en' ? 'fr' : 'en';
+    a.href = '?lang=' + other; a.hreflang = other; a.lang = other; a.textContent = other === 'en' ? 'EN' : 'FR';
+    a.setAttribute('aria-label', other === 'en' ? 'English version' : 'Version française');
+    a.style.cssText = 'display:inline-flex!important;align-items:center;justify-content:center;min-width:38px;height:30px;padding:0 9px;border:1.5px solid currentColor;border-radius:999px;font:700 12px/1 system-ui,sans-serif;letter-spacing:.06em;text-decoration:none;color:inherit;opacity:.85;flex:none';
+    a.addEventListener('click', function (e) { e.preventDefault(); try { localStorage.setItem('cs_lang', other); } catch (x) {}
+      var u = new URL(location.href); if (other === 'en') u.searchParams.set('lang', 'en'); else u.searchParams.delete('lang'); location.href = u.toString(); });
+    var nav = q(doc, 'header.top .nav'), wrap = q(doc, 'header.top .wrap');
+    if (nav) nav.insertBefore(a, nav.firstChild);
+    else if (wrap) wrap.appendChild(a);
+    else { a.style.cssText += ';position:fixed;top:12px;right:12px;z-index:2147482000;background:#fff;color:#16181f'; doc.body.appendChild(a); }
+  }
+
+  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;
@@ -176,7 +300,10 @@
       body: JSON.stringify({ p_slug: slug })
     }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
       if (!c) return;
-      var go = function () { apply(document, c); siteIcon(document, c); if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
+      var bi = c.en && c.en.on && c.en.dict && typeof c.en.dict === 'object';
+      EN = bi && wantLang() === 'en';
+      var go = function () { apply(document, c); siteIcon(document, c); if (bi) { langSwitch(document, EN ? 'en' : 'fr'); if (EN) translate(document, c.en.dict); }
+        if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);
@@ -192,8 +319,8 @@
     S.config({ ship: cfg.ship, free: cfg.free, pickup: cfg.pickup, delivery: cfg.delivery });
     var pay = document.getElementById('payBtn'), legal = q(f, '.legal'), okc = document.getElementById('okc');
     if (!cfg.card) {
-      if (pay) pay.textContent = 'Envoyer ma commande';
-      if (legal) legal.textContent = 'Vous réglez au retrait ou à la livraison. La boutique vous confirme la commande par e-mail.';
+      if (pay) pay.textContent = L('Envoyer ma commande', 'Send my order');
+      if (legal) legal.textContent = L('Vous réglez au retrait ou à la livraison. La boutique vous confirme la commande par e-mail.', 'You pay on collection or delivery. The shop will confirm your order by email.');
     }
     var u = new URL(location.href), st = u.searchParams.get('commande'), sess = u.searchParams.get('cs_session');
     function msg(t) { if (okc) { okc.textContent = t; okc.hidden = false; } }
@@ -202,9 +329,9 @@
       if (st === 'ok') {
         S.clear(); S.open();
         var body = document.getElementById('cartBody'); if (body) body.hidden = false;
-        msg('Merci ! Votre paiement est accepté et votre commande est transmise à la boutique. Vous recevez une confirmation par e-mail.');
+        msg(L('Merci ! Votre paiement est accepté et votre commande est transmise à la boutique. Vous recevez une confirmation par e-mail.', 'Thank you! Your payment has been accepted and your order has been sent to the shop. You will receive a confirmation by email.'));
         if (sess) fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'confirm', slug: slug, session: sess }) }).catch(function () {});
-      } else { S.open(); msg('Paiement annulé : votre panier est toujours là.'); }
+      } else { S.open(); msg(L('Paiement annulé : votre panier est toujours là.', 'Payment cancelled: your basket is still here.')); }
     }
     f.addEventListener('submit', function (e) {
       e.preventDefault(); e.stopImmediatePropagation();
@@ -215,12 +342,12 @@
       fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
         body: JSON.stringify({ action: 'checkout', slug: slug, items: p.items, mode: p.mode, name: v('o-name'), email: v('o-mail'), phone: v('o-tel'), address: v('o-addr'), note: v('o-note'), back: location.origin + location.pathname })
       }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
-        if (!r.ok) throw new Error(r.j && r.j.message || 'Commande impossible');
+        if (!r.ok) throw new Error(r.j && r.j.message || L('Commande impossible', 'Order failed'));
         if (r.j.url) { location.href = r.j.url; return; }
         pay.disabled = false; pay.textContent = old; S.clear();
         var body = document.getElementById('cartBody'); if (body) body.hidden = false;
-        msg('Merci ! Votre commande est transmise à la boutique, qui vous confirme par e-mail. Vous réglerez au ' + (p.mode === 'livraison' ? 'moment de la livraison.' : 'retrait.'));
-      }).catch(function (x) { pay.disabled = false; pay.textContent = old; msg((x && x.message && !/fetch/i.test(x.message)) ? x.message : 'La commande n\'est pas partie. Vérifiez votre connexion et réessayez.'); });
+        msg(EN ? 'Thank you! Your order has been sent to the shop, which will confirm by email. You will pay on ' + (p.mode === 'livraison' ? 'delivery.' : 'collection.') : 'Merci ! Votre commande est transmise à la boutique, qui vous confirme par e-mail. Vous réglerez au ' + (p.mode === 'livraison' ? 'moment de la livraison.' : 'retrait.'));
+      }).catch(function (x) { pay.disabled = false; pay.textContent = old; msg((x && x.message && !/fetch/i.test(x.message)) ? x.message : L('La commande n\'est pas partie. Vérifiez votre connexion et réessayez.', 'Your order was not sent. Check your connection and try again.')); });
     }, true);
   }
 
@@ -231,7 +358,7 @@
   function initLeads(slug) {
     var SKIP = { search: 1, cartform: 1 };
     function kindOf(form) {
-      var b = q(form, '[type="submit"]'), t = (txt(b) + ' ' + form.id).toLowerCase();
+      var b = q(form, '[type="submit"]'), t = (frTxt(b) + ' ' + form.id).toLowerCase();
       if (/devis/.test(t)) return 'devis';
       if (/rappel/.test(t)) return 'rappel';
       if (/estimation|estform/.test(t)) return 'estimation';
@@ -250,13 +377,13 @@
     }
     function labelFor(form, el) {
       var l = el.id && q(form, 'label[for="' + el.id + '"]');
-      return txt(l) || el.getAttribute('aria-label') || el.name || '';
+      return frTxt(l) || (el.__csfrA && el.__csfrA['aria-label']) || el.getAttribute('aria-label') || el.name || '';
     }
     function collect(form) {
       var out = [], tel = '';
       qa(form, 'input,select,textarea').forEach(function (el) {
         if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button' || el.closest('.cs-lead')) return;
-        var v = el.tagName === 'SELECT' ? txt(el.options[el.selectedIndex]) : String(el.value || '').trim();
+        var v = el.tagName === 'SELECT' ? frTxt(el.options[el.selectedIndex]) : String(el.value || '').trim();
         if (el.type === 'date') v = niceDate(v, false);
         if (el.type === 'datetime-local') v = niceDate(v, true);
         if (el.type === 'tel' && !tel) tel = v;
@@ -300,24 +427,24 @@
       var P = window.CS_PAY; if (!P) return null;
       if (item) { if (P.forfait === 'off' || !item.price) return null;
         var dep = P.forfait === 'deposit' && P.pct < 100, a = dep ? Math.round(item.price * P.pct / 100) : item.price;
-        return { amount: a, note: dep ? 'Acompte de ' + P.pct + ' % sur ' + eur(item.price) + ', le reste est réglé le jour de la prestation.' : 'Prix total de la prestation.' }; }
-      if (P.deposit >= 100 && (kind === 'reservation' || kind === 'rendez-vous')) return { amount: P.deposit, note: 'Acompte pour confirmer votre réservation, déduit du prix final.' };
+        return { amount: a, note: dep ? L('Acompte de ' + P.pct + ' % sur ' + eur(item.price) + ', le reste est réglé le jour de la prestation.', P.pct + '% deposit on ' + eur(item.price) + ', the balance is paid on the day.') : L('Prix total de la prestation.', 'Full price of the service.') }; }
+      if (P.deposit >= 100 && (kind === 'reservation' || kind === 'rendez-vous')) return { amount: P.deposit, note: L('Acompte pour confirmer votre réservation, déduit du prix final.', 'Deposit to confirm your booking, deducted from the final price.') };
       return null;
     }
     function open(form, item) {
       var data = form ? collect(form) : { fields: [], tel: '' }, kind = form ? kindOf(form) : 'reservation', pay = payFor(item, kind);
       var wrap = document.createElement('div'); wrap.className = 'cs-lead'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
-      wrap.innerHTML = '<form class="cs-box" novalidate><h3>' + (item ? 'Réserver : ' + esc(item.t) : (pay ? 'Réserver et payer' : 'Vos coordonnées')) + '</h3><p>' + (pay ? 'Paiement sécurisé par carte, directement à ' + esc(bizName()) + '.' : 'Pour que ' + esc(bizName()) + ' vous réponde.') + '</p>' +
-        (pay ? '<div class="cs-pay"><b>À payer maintenant : ' + eur(pay.amount) + '</b><span>' + esc(pay.note) + '</span></div>' : '') +
-        (item ? '<label for="cs-d">Date et heure souhaitées</label><input id="cs-d" type="datetime-local" required>' : '') +
-        '<label for="cs-n">Nom</label><input id="cs-n" autocomplete="name" required maxlength="120">' +
-        '<label for="cs-t">Téléphone</label><input id="cs-t" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">' +
-        '<label for="cs-e">E-mail' + (pay ? ' (pour votre reçu)' : '') + '</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
-        '<label for="cs-m">Message (facultatif)</label><textarea id="cs-m" maxlength="2000"></textarea>' +
+      wrap.innerHTML = '<form class="cs-box" novalidate><h3>' + (item ? L('Réserver : ', 'Book: ') + esc(item.label || item.t) : (pay ? L('Réserver et payer', 'Book and pay') : L('Vos coordonnées', 'Your details'))) + '</h3><p>' + (pay ? L('Paiement sécurisé par carte, directement à ', 'Secure card payment, made directly to ') + esc(bizName()) + '.' : L('Pour que ' + esc(bizName()) + ' vous réponde.', 'So that ' + esc(bizName()) + ' can get back to you.')) + '</p>' +
+        (pay ? '<div class="cs-pay"><b>' + L('À payer maintenant : ', 'To pay now: ') + eur(pay.amount) + '</b><span>' + esc(pay.note) + '</span></div>' : '') +
+        (item ? '<label for="cs-d">' + L('Date et heure souhaitées', 'Preferred date and time') + '</label><input id="cs-d" type="datetime-local" required>' : '') +
+        '<label for="cs-n">' + L('Nom', 'Name') + '</label><input id="cs-n" autocomplete="name" required maxlength="120">' +
+        '<label for="cs-t">' + L('Téléphone', 'Phone') + '</label><input id="cs-t" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">' +
+        '<label for="cs-e">' + L('E-mail', 'Email') + (pay ? L(' (pour votre reçu)', ' (for your receipt)') : '') + '</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
+        '<label for="cs-m">' + L('Message (facultatif)', 'Message (optional)') + '</label><textarea id="cs-m" maxlength="2000"></textarea>' +
         '<input class="cs-hp" id="cs-w" tabindex="-1" autocomplete="off" aria-hidden="true">' +
         '<div class="cs-err" role="alert" hidden></div>' +
-        '<div class="cs-act"><button type="button" class="cs-cancel">Annuler</button><button class="btn" type="submit">' + (pay ? 'Payer ' + eur(pay.amount) + ' et réserver' : 'Envoyer ma demande') + '</button></div>' +
-        '<p class="cs-small">Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.' + (pay ? ' Le paiement est traité par Stripe.' : '') + '</p></form>';
+        '<div class="cs-act"><button type="button" class="cs-cancel">' + L('Annuler', 'Cancel') + '</button><button class="btn" type="submit">' + (pay ? L('Payer ' + eur(pay.amount) + ' et réserver', 'Pay ' + eur(pay.amount) + ' and book') : L('Envoyer ma demande', 'Send my request')) + '</button></div>' +
+        '<p class="cs-small">' + L('Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.', 'Your details are only shared with ' + esc(bizName()) + ' to answer your request.') + (pay ? L(' Le paiement est traité par Stripe.', ' Payment is processed by Stripe.') : '') + '</p></form>';
       document.body.appendChild(wrap);
       var f = q(wrap, 'form'), err = q(wrap, '.cs-err');
       if (q(wrap, '#cs-d')) { var t0 = new Date(Date.now() + 864e5); q(wrap, '#cs-d').min = t0.getFullYear() + '-' + pad(t0.getMonth() + 1) + '-' + pad(t0.getDate()) + 'T00:00'; }
@@ -332,49 +459,49 @@
         e.preventDefault();
         var n = q(wrap, '#cs-n').value.trim(), t = q(wrap, '#cs-t').value.trim(), m = q(wrap, '#cs-e').value.trim(), d = q(wrap, '#cs-d');
         err.hidden = true;
-        if (d && !d.value) { err.textContent = 'Choisissez la date et l\'heure.'; err.hidden = false; return; }
-        if (!n) { err.textContent = 'Indiquez votre nom.'; err.hidden = false; return; }
-        if (pay && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) { err.textContent = 'Indiquez votre e-mail pour recevoir le reçu de paiement.'; err.hidden = false; return; }
-        if (!t && !m) { err.textContent = 'Indiquez un téléphone ou un e-mail pour être recontacté.'; err.hidden = false; return; }
+        if (d && !d.value) { err.textContent = L('Choisissez la date et l\'heure.', 'Choose the date and time.'); err.hidden = false; return; }
+        if (!n) { err.textContent = L('Indiquez votre nom.', 'Please enter your name.'); err.hidden = false; return; }
+        if (pay && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) { err.textContent = L('Indiquez votre e-mail pour recevoir le reçu de paiement.', 'Please enter your email to receive the payment receipt.'); err.hidden = false; return; }
+        if (!t && !m) { err.textContent = L('Indiquez un téléphone ou un e-mail pour être recontacté.', 'Please enter a phone number or an email so we can get back to you.'); err.hidden = false; return; }
         var fields = data.fields.slice(); if (d) fields.unshift({ l: 'Date et heure', v: niceDate(d.value, true) });
-        var b = q(f, '[type="submit"]'), lbl = b.textContent; b.disabled = true; b.textContent = pay ? 'Ouverture du paiement…' : 'Envoi…';
+        var b = q(f, '[type="submit"]'), lbl = b.textContent; b.disabled = true; b.textContent = pay ? L('Ouverture du paiement…', 'Opening payment…') : L('Envoi…', 'Sending…');
         var req = pay
           ? fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'book', slug: slug, item: item ? { src: item.src, g: item.g, i: item.i, t: item.t } : null, kind: kind, name: n, phone: t, email: m, message: q(wrap, '#cs-m').value, fields: fields, back: location.origin + location.pathname }) })
           : fetch(API + '/rest/v1/rpc/cs_lead_submit', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
               body: JSON.stringify({ p_slug: slug, p_kind: kind, p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value }) });
         req.then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
-          if (!r.ok) throw new Error((r.j && r.j.message) || 'Envoi impossible');
-          if (pay) { if (!r.j.url) throw new Error('Paiement indisponible'); location.href = r.j.url; return; }
+          if (!r.ok) throw new Error((r.j && r.j.message) || L('Envoi impossible', 'Sending failed'));
+          if (pay) { if (!r.j.url) throw new Error(L('Paiement indisponible', 'Payment unavailable')); location.href = r.j.url; return; }
           close();
           var ok = form && q(form, '.ok');
           if (form && !ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); }
-          if (ok) { ok.textContent = 'Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.'; ok.hidden = false; }
+          if (ok) { ok.textContent = L('Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.', 'Thank you ' + n + ', your request has been sent. ' + bizName() + ' will get back to you shortly.'); ok.hidden = false; }
         }).catch(function (x) {
           b.disabled = false; b.textContent = lbl;
-          err.textContent = (x && x.message && !/fetch/i.test(x.message)) ? x.message : 'La demande n\'est pas partie. Vérifiez votre connexion et réessayez.';
+          err.textContent = (x && x.message && !/fetch/i.test(x.message)) ? x.message : L('La demande n\'est pas partie. Vérifiez votre connexion et réessayez.', 'Your request was not sent. Check your connection and try again.');
           err.hidden = false;
         });
       });
     }
     // Boutons « Réserver » sur les tarifs et prestations à prix fixe, et retour du paiement
     function banner(t, good) { var d = document.createElement('div'); d.className = 'cs-banner' + (good ? ' ok' : ''); d.setAttribute('role', 'status'); d.textContent = t;
-      var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer'); x.textContent = '✕'; x.onclick = function () { d.remove(); }; d.appendChild(x); document.body.appendChild(d); }
+      var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', L('Fermer', 'Close')); x.textContent = '✕'; x.onclick = function () { d.remove(); }; d.appendChild(x); document.body.appendChild(d); }
     window.CS_PAY_INIT = function () {
       var P = window.CS_PAY; if (!P) return;
       var u = new URL(location.href), st = u.searchParams.get('paiement'), sess = u.searchParams.get('cs_session');
       if (st) {
         u.searchParams.delete('paiement'); u.searchParams.delete('cs_session'); history.replaceState(null, '', u.pathname + u.search + u.hash);
-        if (st === 'ok') { banner('Merci ! Votre paiement est accepté et votre réservation est transmise à ' + bizName() + '. Vous recevez le reçu par e-mail.', true);
+        if (st === 'ok') { banner(L('Merci ! Votre paiement est accepté et votre réservation est transmise à ' + bizName() + '. Vous recevez le reçu par e-mail.', 'Thank you! Your payment has been accepted and your booking has been sent to ' + bizName() + '. You will receive the receipt by email.'), true);
           if (sess) fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'confirm', slug: slug, session: sess }) }).catch(function () {}); }
-        else banner('Paiement annulé : rien n\'a été débité. Votre demande a tout de même été transmise, ' + bizName() + ' peut vous recontacter.', false);
+        else banner(L('Paiement annulé : rien n\'a été débité. Votre demande a tout de même été transmise, ' + bizName() + ' peut vous recontacter.', 'Payment cancelled: nothing has been charged. Your request was still sent, ' + bizName() + ' may get back to you.'), false);
       }
       if (P.forfait === 'off' || q(document, '.dish')) return;
-      var add = function (el, item, place) { if (!item.price || q(el, '.cs-bk')) return; var b = document.createElement('button'); b.type = 'button'; b.className = 'btn cs-bk'; b.textContent = 'Réserver';
+      var add = function (el, item, place) { if (!item.price || q(el, '.cs-bk')) return; var b = document.createElement('button'); b.type = 'button'; b.className = 'btn cs-bk cs-notr'; b.textContent = L('Réserver', 'Book');
         b.addEventListener('click', function () { open(null, item); }); place(b); };
       qa(document, '.prices').forEach(function (box, g) { qa(box, ':scope > .row').forEach(function (r, i) { if (r.hidden) return;
-        add(r, { src: 'price', g: g, i: i, t: txt(q(r, '.t')), price: cents(txt(q(r, '.p'))) }, function (b) { b.style.gridColumn = '1/-1'; b.style.justifySelf = 'start'; r.appendChild(b); }); }); });
+        add(r, { src: 'price', g: g, i: i, t: frTxt(q(r, '.t')), label: txt(q(r, '.t')), price: cents(frTxt(q(r, '.p'))) }, function (b) { b.style.gridColumn = '1/-1'; b.style.justifySelf = 'start'; r.appendChild(b); }); }); });
       qa(document, '.cards > .card').forEach(function (c, i) { if (c.hidden) return; var pe = q(c, '.price');
-        add(c, { src: 'card', i: i, t: txt(q(c, 'h3')), price: cents(txt(pe)) }, function (b) { (pe || c).insertAdjacentElement('afterend', b); }); });
+        add(c, { src: 'card', i: i, t: frTxt(q(c, 'h3')), label: txt(q(c, 'h3')), price: cents(frTxt(pe)) }, function (b) { (pe || c).insertAdjacentElement('afterend', b); }); });
     };
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function ready() {

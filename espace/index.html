@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=6"></script>
+<script src="/assets/cs-edit.js?v=7"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -305,7 +305,7 @@ $('pvX').addEventListener('click',()=>$('tEdit').click());
 $('tEdit').addEventListener('click',()=>{ $('app').classList.remove('show-pv'); $('tEdit').classList.add('primary'); $('tView').classList.remove('primary'); });
 
 let applyT;
-function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc(); if(d&&state) CSEdit.apply(d,state); },120); }
+function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc(); if(d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } },120); }
 function loadTemplate(trade, styleName){
   return new Promise(res=>{
     pv.onload=()=>{ noZoom(pv); fit(); res(); };
@@ -458,6 +458,7 @@ function buildForms(){
       c.reviews.forEach(o=>{ const it=document.createElement('div'); it.className='item'; it.innerHTML='<span style="color:var(--brand);letter-spacing:2px"></span><span></span><span class="hint" style="margin:0"></span>'; const sp=it.children; sp[0].textContent=o.s; sp[1].textContent=o.d; sp[2].textContent=o.who; b.appendChild(it); }); } }
 
   qrSection();
+  enSection();
   if(c.text.footer!==undefined){ b=section('Bas de page'); b.appendChild(T('footer','Mention en bas de page')); }
 
   const help=document.createElement('p'); help.className='hint'; help.style.margin='14px 4px';
@@ -524,6 +525,67 @@ function qrSection(){
     dl(cv,'affichette-'+slug+'.png'); };
 }
 
+/* ---------- Version anglaise (07/11/2026, Premium, Boutique ou option +10 €/mois) ----------
+   state.en = { on, dict: { "texte français": "English text" } }. Traduction : dictionnaire des modèles (/assets/cs-en.json),
+   puis cache MyCreativeSite (fonction cs-translate, DeepL si la clé est configurée), puis Google Traduction depuis le navigateur. */
+const TR_FN='https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-translate';
+let pvEN=false, baseDict=null;
+function canEN(){ return DEMO||!!(site&&site.bilingual); }
+function loadBase(){ return baseDict||(baseDict=fetch('/assets/cs-en.json?v=1').then(r=>r.ok?r.json():{}).catch(()=>({}))); }
+async function gtxOne(q){ const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=en&dt=t&q='+encodeURIComponent(q)); if(!r.ok) throw new Error('service de traduction indisponible ('+r.status+')'); const j=await r.json(); return (j[0]||[]).map(x=>x[0]||'').join(''); }
+async function gtxBatch(arr){
+  const out={}, packs=[]; let pack=[], len=0;
+  arr.forEach(t=>{ if(pack.length&&len+t.length>1500){ packs.push(pack); pack=[]; len=0; } pack.push(t); len+=t.length+1; }); if(pack.length) packs.push(pack);
+  const one=async p=>{ const lines=(await gtxOne(p.join('\n'))).split('\n');
+    if(lines.length===p.length){ p.forEach((t,i)=>{ const v=lines[i].trim(); if(v) out[t]=v; }); return; }
+    for(const t of p){ const v=(await gtxOne(t)).trim(); if(v) out[t]=v; } };
+  for(let i=0;i<packs.length;i+=3) await Promise.all(packs.slice(i,i+3).map(one));
+  return out;
+}
+async function enFill(){
+  const d=doc(); if(!d) return 0;
+  const en=state.en=state.en||{on:false,dict:{}}; en.dict=en.dict||{};
+  const all=CSEdit.texts(d), keep={};
+  all.forEach(k=>{ if(en.dict[k]) keep[k]=en.dict[k]; });
+  let miss=all.filter(k=>!keep[k]);
+  if(miss.length){ const base=await loadBase(); miss=miss.filter(k=>{ if(base[k]){ keep[k]=base[k]; return false; } return true; }); }
+  if(miss.length&&!DEMO){
+    const {data:{session}}=await SB.auth.getSession();
+    const r=await fetch(TR_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token,apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify({site:site.id,texts:miss})}).catch(()=>null);
+    const j=r?await r.json().catch(()=>({})):{};
+    if(r&&r.status===403) throw new Error(j.message||'Version anglaise non comprise dans votre formule');
+    if(r&&r.ok){ Object.assign(keep,j.dict||{}); miss=miss.filter(k=>!keep[k]); }
+  }
+  if(miss.length) Object.assign(keep, await gtxBatch(miss));
+  en.dict=keep; return all.length;
+}
+function applyLang(){ const d=doc(); if(d) CSEdit.translate(d, pvEN&&state.en?state.en.dict:null); }
+function enSection(){
+  const b=section('Version anglaise',false,'Un bouton FR / EN apparaît en haut de votre site : vos clients étrangers le lisent en anglais. La traduction est automatique, vous pouvez corriger chaque phrase. Votre nom, votre adresse, vos coordonnées et vos avis Google ne sont pas traduits.');
+  if(!canEN()){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Formule Premium : votre site en français et en anglais.</b> Aussi possible en option à 10 € par mois avec les formules Essentiel et Pro.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Version%20anglaise%20de%20mon%20site">Je veux la version anglaise</a>'; b.appendChild(u); return; }
+  const en=state.en=state.en||{on:false,dict:{}}; en.dict=en.dict||{};
+  const box=document.createElement('div'); box.style.display='grid'; box.style.gap='12px'; b.appendChild(box);
+  const list=()=>{ const L=$('enList'); if(!L) return; const qq=($('enQ').value||'').trim().toLowerCase(); L.textContent='';
+    const keys=Object.keys(en.dict).filter(k=>!qq||k.toLowerCase().includes(qq)||String(en.dict[k]).toLowerCase().includes(qq)), max=qq?60:8;
+    keys.slice(0,max).forEach(k=>L.appendChild(field(k.length>110?k.slice(0,110)+'…':k, en.dict[k], v=>{ en.dict[k]=v; }, k.length>60)));
+    if(keys.length>max){ const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent=(qq?'Affinez la recherche pour voir les autres phrases':'Cherchez un mot pour retrouver une phrase')+' ('+keys.length+' textes).'; L.appendChild(h); }
+    if(!keys.length&&qq){ const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Aucun texte ne contient « '+qq+' ».'; L.appendChild(h); } };
+  const go=async()=>{ const bt=$('enGo'); bt.disabled=true; bt.textContent='Traduction en cours…';
+    try{ await enFill(); markDirty(); if(pvEN) applyLang(); toast('Traduction prête : vérifiez l\'aperçu en anglais puis enregistrez'); }
+    catch(e){ toast(e.message||'Traduction impossible pour le moment'); }
+    draw(); };
+  const draw=()=>{ const n=Object.keys(en.dict).length;
+    box.innerHTML='<label style="display:flex;gap:8px;align-items:center;font-weight:600;color:var(--ink);margin:0"><input type="checkbox" id="enOn" style="width:18px;height:18px;min-height:0;padding:0;margin:0;flex:none"'+(en.on?' checked':'')+'> Afficher la version anglaise sur mon site</label>'+
+      '<div class="qbtns"><button class="btn primary sm" type="button" id="enGo">'+(n?'Mettre à jour la traduction':'Traduire mon site en anglais')+'</button><button class="btn sm" type="button" id="enPv">'+(pvEN?'Revoir l\'aperçu en français':'Voir l\'aperçu en anglais')+'</button></div>'+
+      '<p class="hint" style="margin:0">'+(n?n+' textes traduits. Quand vous changez un texte, sa traduction est refaite à l\'enregistrement.':'Pas encore traduit : cliquez sur « Traduire mon site en anglais ».')+'</p>'+
+      (n?'<div><label for="enQ">Corriger une traduction</label><input id="enQ" placeholder="Un mot en français ou en anglais"></div><div id="enList" style="display:grid;gap:10px"></div>':'');
+    $('enOn').onchange=async e=>{ en.on=e.target.checked; markDirty(); if(en.on&&!Object.keys(en.dict).length) await go(); };
+    $('enGo').onclick=go;
+    $('enPv').onclick=async()=>{ if(!Object.keys(en.dict).length) await go(); if(!Object.keys(en.dict).length) return; pvEN=!pvEN; applyLang(); draw(); if(pvEN&&window.innerWidth<=860) $('tView').click(); };
+    if(n){ $('enQ').oninput=list; list(); } };
+  draw();
+}
+
 /* ---------- Formule Pro : paiement en ligne des réservations (07/11/2026) ---------- */
 let payCfg=null;
 const NOFORFAIT={restaurant:1,boulangerie:1,immobilier:1};
@@ -565,6 +627,7 @@ const RANK={essentiel:1,pro:2,premium:3,boutique:4};
 function planRank(){ return DEMO?4:(RANK[String(site&&site.plan||'').toLowerCase()]||1); }
 async function openSite(s){
   if(!site||site.id!==s.id){ shopCfg=null; payCfg=null; }
+  pvEN=false;
   site=s; dirty=false; $('save').disabled=true;
   $('siteName').textContent=s.name; $('viewSite').hidden=!s.domain; if(s.domain) $('viewSite').href='https://'+s.domain.replace(/^https?:\/\//,'');
   $('undo').hidden=DEMO;
@@ -594,6 +657,8 @@ async function openSite(s){
 }
 $('save').addEventListener('click',async()=>{
   if(DEMO||!site) return; $('save').disabled=true; setStatus('Enregistrement…');
+  // 07/11/2026 : version anglaise, les textes nouveaux ou modifiés sont traduits avant l'enregistrement
+  if(state.en&&state.en.on&&canEN()){ try{ await enFill(); }catch(e){ toast('Traduction anglaise : '+(e.message||'impossible pour le moment')); } }
   const {error}=await SB.rpc('cs_site_save',{p_id:site.id,p_content:state,p_style:state.style||null});
   if(error){ $('save').disabled=false; setStatus('Erreur : '+error.message,'dirty'); return; }
   dirty=false; site.content=JSON.parse(JSON.stringify(state)); setStatus(site.status==='en_ligne'?'Enregistré : votre site est à jour':'Enregistré','saved'); toast('Modifications enregistrées');

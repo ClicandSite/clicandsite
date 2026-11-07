@@ -9,7 +9,7 @@
 <title>Aperçu de votre site · MyCreativeSite</title>
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap">
-<script src="/assets/cs-edit.js?v=6"></script>
+<script src="/assets/cs-edit.js?v=7"></script>
 <style>
 /* 07/11/2026 (Claude, demande d'Anthony) : aperçu provisoire du site d'un client, avant paiement.
    Le nom de domaine n'est réservé qu'après le paiement. Adresse : /apercu/?s=<identifiant du site> */
@@ -46,6 +46,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
   <a class="brand" href="/" aria-label="MyCreativeSite"><img src="/img/logo-m.png" alt=""><span>My<span>creativesite</span></span></a>
   <div class="info" id="info">Chargement de votre aperçu…</div>
   <div class="seg" role="group" aria-label="Affichage"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
+  <div class="seg" role="group" aria-label="Langue" id="langSeg" hidden><button type="button" data-l="fr" aria-pressed="true">FR</button><button type="button" data-l="en" aria-pressed="false">EN</button></div>
   <a class="btn" id="pay" hidden>Valider et payer</a>
   <a class="btn ghost" id="closeX" href="/espace/" aria-label="Fermer l'aperçu"><span aria-hidden="true" style="margin-right:6px">✕</span>Fermer</a>
 </div>
@@ -71,10 +72,16 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
     var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
     f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=22#'+encodeURIComponent(s.style||'moderne');
-    f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, s.content||{}); }catch(e){} };
+    var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';
+    f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, c); if(lang==='en'&&en) CSEdit.translate(f.contentDocument, en); }catch(e){} };
+    // 07/11/2026 : version anglaise (Premium, Boutique, option bilingue)
+    if(en){ var ls=document.getElementById('langSeg'); ls.hidden=false;
+      ls.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ lang=b.dataset.l;
+        ls.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });
+        try{ CSEdit.translate(f.contentDocument, lang==='en'?en:null); }catch(e){} }); }); }
     stage.appendChild(f);
-    document.querySelectorAll('.seg button').forEach(function(b){ b.addEventListener('click',function(){
-      document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });
+    document.querySelectorAll('.seg button[data-v]').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.seg button[data-v]').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });
       stage.classList.toggle('m', b.dataset.v==='m'); }); });
   }).catch(function(){ fail('Impossible de charger l\'aperçu. Vérifiez votre connexion et réessayez.'); });
 })();

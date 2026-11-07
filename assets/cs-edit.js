@@ -135,7 +135,37 @@
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }
 
-  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl };
+  // 07/11/2026 : icône automatique du site client (onglet, favoris, écran d'accueil du téléphone).
+  // Logo carré envoyé par le pro (photos.icon) ; sinon monogramme : 1re lettre du nom, sur la couleur du style.
+  function siteIcon(doc, c) {
+    try {
+      var name = ((c.text && c.text.logo) || txt(q(doc, TEXT.logo)) || '').trim();
+      var cs = getComputedStyle(doc.documentElement), acc = (cs.getPropertyValue('--accent') || '').trim() || '#12162B';
+      var put = function (url) {
+        qa(doc, 'link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]').forEach(function (l) { l.remove(); });
+        [['icon', '32x32'], ['icon', '180x180'], ['apple-touch-icon', '180x180']].forEach(function (r) {
+          var l = doc.createElement('link'); l.rel = r[0]; l.sizes = r[1]; l.type = 'image/png'; l.href = url; doc.head.appendChild(l); });
+        var m = q(doc, 'meta[name="apple-mobile-web-app-title"]'); if (!m) { m = doc.createElement('meta'); m.name = 'apple-mobile-web-app-title'; doc.head.appendChild(m); }
+        m.content = name.slice(0, 30) || 'Mon site';
+      };
+      var cv = doc.createElement('canvas'); cv.width = cv.height = 180; var g = cv.getContext('2d');
+      var src = c.photos && safeUrl(c.photos.icon);
+      if (src) {
+        var im = new Image(); im.crossOrigin = 'anonymous';
+        im.onload = function () { try { g.fillStyle = '#fff'; g.fillRect(0, 0, 180, 180); var k = Math.min(156 / im.width, 156 / im.height), w = im.width * k, h = im.height * k; g.drawImage(im, (180 - w) / 2, (180 - h) / 2, w, h); put(cv.toDataURL('image/png')); } catch (e) { put(src); } };
+        im.onerror = function () { put(src); }; im.src = src; return;
+      }
+      var tmp = doc.createElement('span'); tmp.style.color = acc; doc.body.appendChild(tmp); var rgb = (getComputedStyle(tmp).color.match(/\d+/g) || [18, 22, 43]).map(Number); tmp.remove();
+      var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+      g.fillStyle = 'rgb(' + rgb.slice(0, 3).join(',') + ')'; g.fillRect(0, 0, 180, 180);
+      g.fillStyle = lum > 0.6 ? '#12162B' : '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.font = '700 112px ' + (cs.fontFamily || 'system-ui, sans-serif');
+      var L = (name.replace(/^(le|la|les|l'|chez|maison|garage|atelier|studio)\s+/i, '').match(/[A-Za-zÀ-ÿ0-9]/) || ['M'])[0].toUpperCase();
+      g.fillText(L, 90, 98); put(cv.toDataURL('image/png'));
+    } catch (e) { /* pas d'icône, tant pis */ }
+  }
+
+  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;
@@ -146,7 +176,7 @@
       body: JSON.stringify({ p_slug: slug })
     }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
       if (!c) return;
-      var go = function () { apply(document, c); if (c.shop) initShop(slug, c.shop); };
+      var go = function () { apply(document, c); siteIcon(document, c); if (c.shop) initShop(slug, c.shop); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);

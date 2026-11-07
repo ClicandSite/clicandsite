@@ -257,6 +257,14 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .pickline{grid-column:1/-1;margin:-4px 0 0;font-size:.9rem;opacity:.85}.pickline a{color:inherit;font-weight:700}
 #orderform textarea{width:100%;font:inherit;font-size:.96rem;padding:13px 14px;border-radius:10px;border:1px solid #343B63;background:#1C2240;color:#F2F3F9;resize:vertical;min-width:0;box-sizing:border-box}
 .ok.err{background:#FDECEC;color:#8A1F1F;border-color:#F5C2C2}
+.who{border:0;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.who legend{font-size:.85rem;font-weight:600;margin-bottom:6px;padding:0}
+.who label{color:#F2F3F9;display:flex;gap:10px;align-items:flex-start;border:1px solid #343B63;border-radius:10px;padding:12px;cursor:pointer;background:#1C2240}
+.who label:has(input:checked){border-color:#A98BFF;background:#2A2556}
+.who input{width:auto;margin-top:3px;flex:none}
+.who b{display:block;font-size:.95rem}.who small{display:block;opacity:.75;font-size:.82rem;margin-top:2px}
+.ok a.go{color:#fff;font-weight:800}
+@media (max-width:640px){.who{grid-template-columns:1fr}}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -549,11 +557,11 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
     <div>
       <span class="eyebrow" style="color:var(--pop)">Commander</span>
       <h2 style="margin-top:12px">Votre site en ligne dans 48 heures.</h2>
-      <p class="sub">Choisissez votre modèle et votre style, laissez vos coordonnées : c'est tout pour l'instant. Rien n'est facturé avant que vous ayez validé votre site.</p>
+      <p class="sub">Choisissez votre modèle et votre style, laissez vos coordonnées. Rien n'est facturé avant que vous ayez validé votre site.</p>
       <ol class="steps-o">
         <li><b>Vous envoyez cette demande</b><span>Une minute, depuis votre téléphone.</span></li>
-        <li><b>On vous contacte sous 24 h</b><span>Pour vos textes, vos services, vos prix et vos photos.</span></li>
-        <li><b>Votre site est prêt en 48 h</b><span>Sur une adresse provisoire : vous le voyez en vrai, on ajuste ce que vous voulez.</span></li>
+        <li><b>Vous remplissez votre site, ou on le fait pour vous</b><span>Textes, prix, horaires, photos : depuis votre espace, avec l'aperçu en direct. Ou vous nous envoyez tout et on s'en occupe en 48 h.</span></li>
+        <li><b>Vous le voyez en vrai</b><span>Sur une adresse provisoire, sur ordinateur et téléphone.</span></li>
         <li><b>Vous validez et vous payez</b><span>On réserve alors votre nom de domaine et votre site part en ligne.</span></li>
       </ol>
     </div>
@@ -564,6 +572,10 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
       <div class="f"><label for="o-city">Ville</label><input id="o-city" autocomplete="address-level2" placeholder="Votre ville"></div>
       <div class="f"><label for="o-tel">Téléphone</label><input id="o-tel" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"></div>
       <div class="f full"><label for="o-mail">Email</label><input id="o-mail" type="email" autocomplete="email" placeholder="vous@exemple.fr" required></div>
+      <fieldset class="f full who"><legend>Qui remplit le site ?</legend>
+        <label><input type="radio" name="o-self" value="1" checked><span><b>Je le remplis moi-même</b><small>Vous accédez tout de suite à votre espace : textes, prix, horaires, photos.</small></span></label>
+        <label><input type="radio" name="o-self" value="0"><span><b>Vous le faites pour moi</b><small>On vous contacte et on le prépare avec vos infos et vos photos.</small></span></label>
+      </fieldset>
       <div class="f full"><label for="o-msg">Un mot sur votre projet (facultatif)</label><textarea id="o-msg" rows="3" maxlength="1500" placeholder="Vos services, votre site actuel, une couleur préférée…"></textarea></div>
       <input id="o-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <button class="btn" type="submit">Je veux mon site</button>
@@ -679,12 +691,14 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
     e.preventDefault();
     var f=e.target, b=f.querySelector('button[type=submit]'), ok=$('ok'), v=function(id){return ($(id).value||'').trim();};
     if(!f.reportValidity()) return;
-    var data={p_trade:v('o-trade'),p_style:v('o-style'),p_plan:v('o-plan'),p_company:v('o-name'),p_city:v('o-city'),p_phone:v('o-tel'),p_email:v('o-mail'),p_message:v('o-msg'),p_hp:v('o-hp')};
+    var data={p_trade:v('o-trade'),p_style:v('o-style'),p_plan:v('o-plan'),p_company:v('o-name'),p_city:v('o-city'),p_phone:v('o-tel'),p_email:v('o-mail'),p_message:v('o-msg'),p_hp:v('o-hp'),p_self:(document.querySelector('input[name=o-self]:checked')||{}).value!=='0'};
     b.disabled=true; b.textContent='Envoi…'; ok.hidden=true; ok.classList.remove('err');
     fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_order_submit',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify(data)})
     .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j&&j.message||'Envoi impossible'); return j; }); })
-    .then(function(){ f.reset(); line(); b.textContent='Demande envoyée';
-      ok.textContent='Merci ! Votre demande est bien arrivée. On vous contacte sous 24 h (jours ouvrés) pour préparer votre site. Une question d\'ici là : contact@mycreativesite.fr'; ok.hidden=false; })
+    .then(function(j){ var em=data.p_email; f.reset(); line(); b.textContent='Demande envoyée';
+      if(data.p_self&&j&&j.slug){ ok.innerHTML='Merci ! Votre site est créé. <a class="go" href="/espace/?inscription=1&email='+encodeURIComponent(em)+'">Créer mon mot de passe et remplir mon site</a> avec l\'adresse '+em.replace(/[<>&"]/g,'')+'. Quand il vous plaît, vous le validez et vous payez : on réserve alors votre nom de domaine.'; }
+      else ok.textContent='Merci ! Votre demande est bien arrivée. On vous contacte sous 24 h (jours ouvrés) pour préparer votre site. Une question d\'ici là : contact@mycreativesite.fr';
+      ok.hidden=false; })
     .catch(function(x){ b.disabled=false; b.textContent='Je veux mon site';
       if(x&&x.message&&!/fetch/i.test(x.message)){ ok.textContent=x.message; ok.classList.add('err'); ok.hidden=false; return; }
       var body='Métier : '+$('o-trade').selectedOptions[0].text+'\nStyle : '+(SN[data.p_style]||data.p_style)+'\nFormule : '+data.p_plan+'\nEntreprise : '+data.p_company+'\nVille : '+data.p_city+'\nTéléphone : '+data.p_phone+'\nEmail : '+data.p_email+'\n\n'+data.p_message;

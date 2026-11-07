@@ -23,3 +23,8 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Activation du paiement par carte : bouton dans l'espace client → action `connect` (création du compte Stripe + lien d'inscription), puis `status`.
 - Stripe Connect activé et profil de plateforme confirmé (07/11) ; clé restreinte « boutique » (Accounts, Account Links en écriture sur le compte, Checkout Sessions en écriture sur les comptes connectés) dans le secret `STRIPE_SECRET_KEY`. Test réussi : création de compte et lien d'inscription OK. Un compte d'essai vide (acct_1UZAl3RKZJGhEkWI) reste dans Connect : Stripe interdit de supprimer un compte Standard en mode réel, il est inactif.
 - Lien d'abonnement Boutique (99 €/mois) : https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07
+
+## Paiement avant le nom de domaine (07/11/2026)
+- Règle d'Anthony : le client paie **avant** qu'on réserve son nom de domaine.
+- Le site est d'abord montré sur une adresse provisoire : https://mycreativesite.fr/apercu/?s=<slug> (statut brouillon accepté, `cs_site_preview`, page noindex et exclue de robots.txt). Bouton « Valider et payer » = lien Stripe de la formule du site (régler la formule dans l'admin). Lien « Aperçu client » dans Sites clients.
+- Commandes du formulaire de l'accueil : table `site_orders`, `cs_order_submit` (public), `cs_admin_orders` / `cs_admin_order_update`, onglet « Commandes » de l'admin.

@@ -281,6 +281,15 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .reftxt .lnk{font-weight:700;color:var(--brand);font-size:.92rem}
 @media (max-width:860px){.refgrid{grid-template-columns:1fr}}
 @media (max-width:480px){header .nav .btn.sm{padding:8px 10px;font-size:.82rem}header .nav{gap:6px}header .logo span{font-size:1rem}header .logo{gap:6px}header .logo .logo-mark{width:28px;height:28px}}
+
+/* 07/11/2026 : modèle en plein écran avec bouton Fermer (iPhone : pas de retour possible dans un nouvel onglet) */
+.fullv{position:fixed;inset:0;z-index:200;background:#fff;display:flex;flex-direction:column}
+.fullv[hidden]{display:none}
+.fullv .fv-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:#12162B;color:#fff}
+.fullv .fv-t{flex:1;min-width:0;font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fullv .fv-x{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:#fff;color:#12162B;font:700 .95rem inherit;font-family:inherit;padding:9px 16px;cursor:pointer}
+.fullv iframe{flex:1;width:100%;border:0;background:#fff}
+html.fv-open,html.fv-open body{overflow:hidden}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -745,5 +754,22 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
 show();
 </script>
 
+<div class="fullv" id="fullv" hidden role="dialog" aria-modal="true" aria-label="Modèle en plein écran"><div class="fv-bar"><span class="fv-t" id="fvT">Aperçu du modèle</span><button type="button" class="fv-x" id="fvX"><span aria-hidden="true" style="font-size:1.15em;line-height:1">✕</span> Fermer</button></div><iframe id="fvF" title="Modèle en plein écran"></iframe></div>
+<script>
+(function(){
+  var box=document.getElementById('fullv'), fr=document.getElementById('fvF'), t=document.getElementById('fvT'), pushed=false;
+  function close(fromPop){ if(box.hidden) return; box.hidden=true; document.documentElement.classList.remove('fv-open'); fr.removeAttribute('src'); if(pushed&&!fromPop){ pushed=false; history.back(); } pushed=false; }
+  function open(url,label){ fr.src=url; t.textContent=label||'Aperçu du modèle'; box.hidden=false; document.documentElement.classList.add('fv-open');
+    try{ history.pushState({fv:1},''); pushed=true; }catch(e){} document.getElementById('fvX').focus(); }
+  document.getElementById('fvX').addEventListener('click',function(){ close(false); });
+  window.addEventListener('popstate',function(){ if(!box.hidden) close(true); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(false); });
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href*="modeles/"]'); if(!a||e.metaKey||e.ctrlKey||e.shiftKey) return;
+    e.preventDefault(); var lbl=(document.getElementById('ex-url')&&a.id==='ex-open')?document.getElementById('ex-url').textContent:'';
+    open(a.href, lbl?'Modèle · '+lbl:'Aperçu du modèle');
+  });
+})();
+</script>
 </body>
 </html>

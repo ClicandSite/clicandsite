@@ -76,6 +76,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .grp{font-weight:700;font-size:.9rem;margin-top:4px}
 .preview{display:grid;grid-template-rows:auto 1fr;min-width:0;min-height:0;background:var(--bg)}
 .pv-bar{display:flex;gap:8px;align-items:center;padding:10px 14px}
+.pv-x{display:none;margin-left:auto;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 .95rem inherit;font-family:inherit;border-radius:999px;padding:8px 14px;cursor:pointer}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
 .seg button{border:0;background:none;padding:7px 12px;font-weight:600;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -94,6 +95,11 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
   .mob-tabs{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--paper);border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px));gap:8px}
   .mob-tabs .btn{flex:1}
   .pv-bar .seg{display:none}
+  .app.show-pv .preview{position:fixed;inset:0;z-index:30;padding-top:env(safe-area-inset-top,0px)}
+  .app.show-pv .mob-tabs{display:none}
+  .app.show-pv .stage{margin:0;border:0;border-radius:0}
+  .app.show-pv .stage.mobile .phone{width:100%;border:0;border-radius:0}
+  .app.show-pv .pv-x{display:inline-flex}
   .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
   .top .hide-m{display:none}
 }
@@ -225,7 +231,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <button class="btn primary" id="save" type="button" disabled>Enregistrer</button>
       <button class="btn sm hide-m" id="logout" type="button" hidden>Se déconnecter</button>
     </div>
-    <div class="demo-bar" id="draftBar" hidden><span id="draftTxt"></span><a id="draftView" target="_blank" rel="noopener" style="font-weight:700">Voir l'aperçu</a><a id="draftPay" class="btn primary sm" target="_blank" rel="noopener" hidden>Valider et payer</a></div>
+    <div class="demo-bar" id="draftBar" hidden><span id="draftTxt"></span><a id="draftView" style="font-weight:700">Voir l'aperçu</a><a id="draftPay" class="btn primary sm" target="_blank" rel="noopener" hidden>Valider et payer</a></div>
     <div class="demo-bar" id="demoBar" hidden>
       <span><b>Démo</b> : essayez librement, rien n'est enregistré.</span>
       <label for="demoTrade" style="margin:0">Métier</label>
@@ -244,6 +250,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <div class="pv-bar">
         <div class="seg" role="group" aria-label="Aperçu"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
         <span class="status">Aperçu en direct de vos changements</span>
+        <button type="button" class="pv-x" id="pvX" aria-label="Fermer l'aperçu"><span aria-hidden="true" style="font-size:1.15em;line-height:1">✕</span> Fermer</button>
       </div>
       <div class="stage" id="stage"><iframe id="pv" title="Aperçu du site"></iframe></div>
     </div>
@@ -287,6 +294,7 @@ function fit(){
 window.addEventListener('resize', fit);
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{ view=b.dataset.v; document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false')); fit(); }));
 $('tView').addEventListener('click',()=>{ $('app').classList.add('show-pv'); view='m'; fit(); $('tView').classList.add('primary'); $('tEdit').classList.remove('primary'); });
+$('pvX').addEventListener('click',()=>$('tEdit').click());
 $('tEdit').addEventListener('click',()=>{ $('app').classList.remove('show-pv'); $('tEdit').classList.add('primary'); $('tView').classList.remove('primary'); });
 
 let applyT;

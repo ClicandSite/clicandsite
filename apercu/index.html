@@ -42,6 +42,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
   <div class="info" id="info">Chargement de votre aperçu…</div>
   <div class="seg" role="group" aria-label="Affichage"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
   <a class="btn" id="pay" hidden>Valider et payer</a>
+  <a class="btn ghost" id="closeX" href="/espace/" aria-label="Fermer l'aperçu"><span aria-hidden="true" style="margin-right:6px">✕</span>Fermer</a>
 </div>
 <div class="stage" id="stage"></div>
 <script>
@@ -50,6 +51,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
   var PAY={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07'};
   var slug=(new URLSearchParams(location.search).get('s')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
   var info=document.getElementById('info'), stage=document.getElementById('stage');
+  document.getElementById('closeX').addEventListener('click',function(e){ if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){ e.preventDefault(); history.back(); } });
   function fail(t){ info.textContent=''; stage.innerHTML='<p class="msg">'+t+'</p>'; }
   if(!slug){ fail('Lien d\'aperçu incomplet. Écrivez-nous à contact@mycreativesite.fr.'); return; }
   fetch(API+'/rest/v1/rpc/cs_site_preview',{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({p_slug:slug})})

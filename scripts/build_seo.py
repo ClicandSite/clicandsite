@@ -121,6 +121,21 @@ PAGES = [
     faq=[("Je peux changer ma vitrine chaque jour ?","Oui, depuis votre téléphone, en quelques secondes."),
          ("Faut-il gérer un paiement en ligne ?","Non : le client paie au retrait. Le paiement en ligne est possible en Premium."),
          ("Le site convient-il à un traiteur ou un fromager ?","Oui, le modèle s'adapte à tous les commerces de bouche.")]),
+  dict(slug="site-internet-boutique-en-ligne", k="boutique", style="moderne",
+    title="Création de boutique en ligne pour commerçants et créateurs",
+    meta="Boutique en ligne clé en main pour commerçants et créateurs : catalogue, panier, paiement par carte, retrait ou livraison. En ligne en 48 h, 99 €/mois, sans engagement.",
+    h1="Votre boutique en ligne, avec paiement par carte, sans y passer vos soirées",
+    lead="Vendez vos produits sur votre propre site, à votre nom. Vos clients remplissent leur panier, paient par carte, et choisissent le retrait en boutique ou la livraison.",
+    feats=[("Paiement par carte","Le client paie en ligne, l'argent arrive directement sur votre compte via votre propre compte Stripe."),
+           ("Catalogue facile à tenir","Ajoutez un produit, changez un prix ou une photo depuis votre téléphone, en une minute."),
+           ("Retrait ou livraison","Retrait gratuit en boutique, livraison avec vos frais et votre seuil de livraison offerte."),
+           ("Filtres par rayon et budget","Vos clients trouvent vite : déco, bougies, cadeaux, petits prix…"),
+           ("Commandes rangées","Chaque commande arrive dans votre espace, avec le statut du paiement et l'historique du client."),
+           ("Votre boutique, votre nom","Votre nom de domaine, sans commission de place de marché sur vos ventes.")],
+    faq=[("Combien coûte la boutique ?","99 € par mois et 490 € de mise en ligne, sans engagement. Les frais bancaires de Stripe s'ajoutent à chaque paiement (environ 1,5 % + 0,25 € par carte européenne)."),
+         ("Qui encaisse l'argent ?","Vous. Le paiement passe par votre propre compte Stripe et arrive sur votre compte bancaire. MyCreativeSite ne touche pas à vos ventes."),
+         ("Combien de produits puis-je vendre ?","La formule est pensée pour les petites boutiques, jusqu'à 40 produits mis en avant. Pour un très grand catalogue, parlons-en avant."),
+         ("Puis-je aussi vendre en boutique physique ?","Oui : le retrait en boutique permet à vos clients de commander en ligne et de passer chercher leur commande.")]),
   dict(slug="site-internet-plombier-electricien", k="depannage", style="audacieux",
     title="Création de site internet pour plombier, électricien et dépannage",
     meta="Site internet pour plombier, électricien, chauffagiste ou serrurier : demande de rappel urgent, interventions récentes, tarifs transparents, zone 7j/7. Dès 29 €/mois.",
@@ -356,7 +371,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):

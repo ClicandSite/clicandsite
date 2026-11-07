@@ -111,10 +111,52 @@
       body: JSON.stringify({ p_slug: slug })
     }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
       if (!c) return;
-      var go = function () { apply(document, c); };
+      var go = function () { apply(document, c); if (c.shop) initShop(slug, c.shop); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);
+  }
+
+  /* 07/11/2026 (Claude) : boutique en ligne. Le panier est géré par la page (window.CSShop) ;
+     ici on envoie la commande à MyCreativeSite, qui recalcule les prix et ouvre le paiement par carte
+     sur le compte Stripe du commerçant (ou l'enregistre « à régler sur place » si la carte n'est pas activée). */
+  var SHOP_FN = API + '/functions/v1/cs-shop';
+  function initShop(slug, cfg) {
+    var S = window.CSShop, f = document.getElementById('cartform');
+    if (!S || !f) return;
+    S.config({ ship: cfg.ship, free: cfg.free, pickup: cfg.pickup, delivery: cfg.delivery });
+    var pay = document.getElementById('payBtn'), legal = q(f, '.legal'), okc = document.getElementById('okc');
+    if (!cfg.card) {
+      if (pay) pay.textContent = 'Envoyer ma commande';
+      if (legal) legal.textContent = 'Vous réglez au retrait ou à la livraison. La boutique vous confirme la commande par e-mail.';
+    }
+    var u = new URL(location.href), st = u.searchParams.get('commande'), sess = u.searchParams.get('cs_session');
+    function msg(t) { if (okc) { okc.textContent = t; okc.hidden = false; } }
+    if (st) {
+      u.searchParams.delete('commande'); u.searchParams.delete('cs_session'); history.replaceState(null, '', u.pathname + u.search + u.hash);
+      if (st === 'ok') {
+        S.clear(); S.open();
+        var body = document.getElementById('cartBody'); if (body) body.hidden = false;
+        msg('Merci ! Votre paiement est accepté et votre commande est transmise à la boutique. Vous recevez une confirmation par e-mail.');
+        if (sess) fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'confirm', slug: slug, session: sess }) }).catch(function () {});
+      } else { S.open(); msg('Paiement annulé : votre panier est toujours là.'); }
+    }
+    f.addEventListener('submit', function (e) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (!f.reportValidity()) return;
+      var p = S.payload(); if (!p.items.length) return;
+      var v = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      pay.disabled = true; var old = pay.textContent; pay.textContent = 'Un instant…'; if (okc) okc.hidden = true;
+      fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
+        body: JSON.stringify({ action: 'checkout', slug: slug, items: p.items, mode: p.mode, name: v('o-name'), email: v('o-mail'), phone: v('o-tel'), address: v('o-addr'), note: v('o-note'), back: location.origin + location.pathname })
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
+        if (!r.ok) throw new Error(r.j && r.j.message || 'Commande impossible');
+        if (r.j.url) { location.href = r.j.url; return; }
+        pay.disabled = false; pay.textContent = old; S.clear();
+        var body = document.getElementById('cartBody'); if (body) body.hidden = false;
+        msg('Merci ! Votre commande est transmise à la boutique, qui vous confirme par e-mail. Vous réglerez au ' + (p.mode === 'livraison' ? 'moment de la livraison.' : 'retrait.'));
+      }).catch(function (x) { pay.disabled = false; pay.textContent = old; msg((x && x.message && !/fetch/i.test(x.message)) ? x.message : 'La commande n\'est pas partie. Vérifiez votre connexion et réessayez.'); });
+    }, true);
   }
 
   /* 07/11/2026 (Claude, demande d'Anthony) : demandes des visiteurs (réservation, devis, rendez-vous…).
@@ -122,7 +164,7 @@
      dans l'espace client du pro (liste « Mes demandes », suivi complet en formule Premium).
      Sur les modèles de démonstration (sans data-site), rien ne change et rien n'est envoyé. */
   function initLeads(slug) {
-    var SKIP = { search: 1 };
+    var SKIP = { search: 1, cartform: 1 };
     function kindOf(form) {
       var b = q(form, '[type="submit"]'), t = (txt(b) + ' ' + form.id).toLowerCase();
       if (/devis/.test(t)) return 'devis';

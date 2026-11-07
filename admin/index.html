@@ -103,7 +103,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
         <input id="sSlug" placeholder="Identifiant (ex. garage-du-port)" pattern="[a-z0-9][a-z0-9-]{2,40}" required>
         <input id="sEmail" type="email" placeholder="E-mail du client" required>
         <input id="sDomain" placeholder="Domaine (ex. garage-du-port.fr)">
-        <select id="sTrade"><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option></select>
+        <select id="sTrade"><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="beaute">Coiffure / beauté</option></select>
         <select id="sStyle"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option></select>
         <select id="sStatus"><option value="brouillon">En préparation</option><option value="en_ligne">En ligne</option><option value="suspendu">Suspendu</option></select>
         <button class="btn primary" type="submit">Enregistrer le site</button>
@@ -120,7 +120,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
     </div>
 
     <div class="filters">
-      <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option></select>
+      <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="beaute">Coiffure / beauté</option></select>
       <select id="fSite"><option value="">Tous les sites</option><option value="aucun">Sans site</option><option value="date">Site daté</option><option value="injoignable">Site en panne</option><option value="moderne">Site moderne</option><option value="a_verifier">À vérifier</option></select>
       <select id="fStatus"><option value="">Tous les statuts</option><option value="nouveau" selected>Nouveau</option><option value="a_contacter">À contacter</option><option value="contacte">Contacté</option><option value="interesse">Intéressé</option><option value="client">Client</option><option value="refus">Refus</option><option value="exclu">Exclu</option></select>
       <input id="fQ" placeholder="Nom, ville, email…">
@@ -138,7 +138,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 const sb=supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-admin'}});
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment'};
+const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment',beaute:'Coiffure / beauté'};
 const SITE={aucun:'Sans site',date:'Site daté',moderne:'Site moderne',injoignable:'Site en panne',a_verifier:'À vérifier'};
 const STATUS={nouveau:'Nouveau',a_contacter:'À contacter',contacte:'Contacté',interesse:'Intéressé',client:'Client',refus:'Refus',exclu:'Exclu'};
 const PAGE=50; let offset=0, rows=[];

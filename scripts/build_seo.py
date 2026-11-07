@@ -79,6 +79,20 @@ PAGES = [
     faq=[("Je peux ajouter mes chantiers moi-même ?","Oui : depuis votre téléphone, vous ajoutez les photos d'un chantier terminé et ses informations."),
          ("Le site convient-il à un auto-entrepreneur ?","Oui, la formule Essentiel est faite pour démarrer, avec un site complet dès 29 € par mois."),
          ("Puis-je indiquer mon assurance décennale ?","Oui, et c'est conseillé : elle est mise en avant sur le site et dans les mentions légales.")]),
+  dict(slug="site-internet-coiffeur-institut-beaute", k="beaute", style="luxe",
+    title="Création de site internet pour coiffeur et institut de beauté",
+    meta="Site internet pour salon de coiffure, barbier et institut de beauté : prise de rendez-vous en ligne, carte des tarifs, réalisations, horaires. Dès 29 €/mois, sans commission.",
+    h1="Le site internet des coiffeurs, barbiers et instituts de beauté",
+    lead="Salon de coiffure, barbier, esthéticienne, onglerie ou prothésiste ongulaire : vos clientes réservent en ligne, voient vos réalisations et vos tarifs, sans commission sur les rendez-vous.",
+    feats=[("Prise de rendez-vous","Prestation, coiffeur ou esthéticienne, jour et heure : la demande arrive chez vous, sans commission."),
+           ("Vos réalisations","Coupes, couleurs, ongles, cils : vos plus belles photos, filtrables par catégorie."),
+           ("Carte des tarifs","Femme, homme, enfant, beauté : vos prix clairs, modifiables à tout moment."),
+           ("Horaires et accès","Jours de fermeture, horaires du samedi, plan et parking : tout ce qu'on vous demande au téléphone."),
+           ("Avis Google","Vos meilleurs avis mis en avant pour rassurer les nouvelles clientes."),
+           ("Instagram","Votre compte mis en avant, pour transformer les abonnés en rendez-vous.")],
+    faq=[("Je paie une commission sur les rendez-vous ?","Non. Contrairement aux plateformes de réservation, vous payez un abonnement fixe dès 29 € par mois, sans commission."),
+         ("Je peux changer mes tarifs moi-même ?","Oui, depuis votre espace client sur téléphone : prix, prestations, horaires et photos."),
+         ("Le site convient-il à une esthéticienne à domicile ?","Oui : la zone d'intervention remplace l'adresse du salon, et la prise de rendez-vous fonctionne pareil.")]),
 ]
 LOCAL = dict(slug="creation-site-internet-cannes", k=None,
     title="Création de site internet à Cannes et sur la Côte d'Azur",
@@ -93,7 +107,7 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
            ("Sans engagement","Un abonnement mensuel, résiliable à tout moment, nom de domaine à votre nom.")],
     faq=[("Intervenez-vous en dehors de Cannes ?","Oui : Nice, Antibes, Cagnes-sur-Mer, Grasse, Mougins, Mandelieu, Menton, Saint-Raphaël, Fréjus, Saint-Tropez, et toute la France à distance."),
          ("Faut-il se rencontrer ?","Ce n'est pas nécessaire : tout se fait en ligne. Si vous êtes près de Cannes, on peut aussi en parler de vive voix."),
-         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, et d'autres commerces sur demande.")],
+         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, et d'autres commerces sur demande.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
 # Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
@@ -208,7 +222,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté"}
 e = html.escape
 
 def trade_links(cur):

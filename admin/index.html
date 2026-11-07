@@ -86,12 +86,18 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
   <header>
     <h1>My<span>creativesite</span> · CRM prospects</h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="ordersBtn" type="button">Commandes <span id="ordersN" style="background:#C0392B;color:#fff;border-radius:999px;padding:0 7px;font-size:.78rem" hidden></span></button>
       <button class="btn" id="sitesBtn" type="button">Sites clients</button>
       <a class="btn" href="/espace/" style="text-decoration:none">Modifier un site</a>
       <button class="btn" id="exportBtn" type="button">Exporter (CSV)</button>
       <button class="btn" id="logout" type="button">Se déconnecter</button>
     </div>
   </header>
+
+    <div class="robot" id="ordersBox" hidden style="display:grid;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Commandes reçues depuis le site</b><span class="meta">Formulaire « Je veux mon site » de l'accueil. Contacte le client, prépare son site, puis crée-le dans « Sites clients » avec son e-mail.</span></div>
+      <div id="ordersList" style="display:grid;gap:8px;font-size:.92rem"></div>
+    </div>
 
     <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis mycreativesite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
@@ -139,7 +145,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 const sb=supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-admin'}});
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment',beaute:'Coiffure / beauté',bienetre:'Bien-être',boulangerie:'Boulangerie',depannage:'Dépannage'};
+const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment',beaute:'Coiffure / beauté',bienetre:'Bien-être',boulangerie:'Boulangerie',depannage:'Dépannage',boutique:'Boutique',autre:'Autre métier'};
 const SITE={aucun:'Sans site',date:'Site daté',moderne:'Site moderne',injoignable:'Site en panne',a_verifier:'À vérifier'};
 const STATUS={nouveau:'Nouveau',a_contacter:'À contacter',contacte:'Contacté',interesse:'Intéressé',client:'Client',refus:'Refus',exclu:'Exclu'};
 const PAGE=50; let offset=0, rows=[];
@@ -253,6 +259,23 @@ async function loadSites(){
   $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''}${s.plan?' · '+esc(s.plan):''}${s.billing_status?' · paiement : '+esc(BS[s.billing_status]||s.billing_status):''} · <b>${ST[s.status]||s.status}</b> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
   $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;$('sPlan').value=(s.plan||'').toLowerCase();});
 }
+
+/* 07/11/2026 : commandes de sites (formulaire de l'accueil) */
+const OST={nouvelle:'Nouvelle',contactee:'Contactée',en_cours:'Site en préparation',en_ligne:'En ligne',abandon:'Abandon'};
+const SNAME={moderne:'Moderne',luxe:'Luxe',riviera:'Riviera',chaleureux:'Chaleureux',audacieux:'Audacieux',minimal:'Minimal crème',nuit:'Nuit bleue',provence:'Provence lavande',ocean:'Océan',pop:'Pop vitaminé',corporate:'Pro sérieux',retro:'Rétro',zen:'Zen nature',neon:'Néon',poudre:'Rose poudré',terracotta:'Terracotta',graphite:'Graphite',foret:'Forêt',soleil:'Soleil',marine:'Marine chic'};
+async function loadOrders(){
+  const {data,error}=await sb.rpc('cs_admin_orders'); if(error){$('ordersList').textContent=error.message;return;}
+  const n=(data||[]).filter(o=>o.status==='nouvelle').length; $('ordersN').hidden=!n; $('ordersN').textContent=n;
+  $('ordersList').innerHTML=(data||[]).map(o=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px">
+    <div><b>${esc(o.company)}</b> · ${new Date(o.created_at).toLocaleString('fr-FR')} · ${esc(o.plan||'')} · ${esc(TRADE[o.trade]||o.trade||'')}, style ${esc(SNAME[o.style]||o.style||'')}${o.trade&&o.trade!=='autre'?` · <a href="/modeles/${esc(o.trade)}.html#${esc(o.style)}" target="_blank" rel="noopener">voir le modèle</a>`:''}</div>
+    <div><span style="user-select:all">${esc(o.email)}</span>${o.phone?` · <span style="user-select:all">${esc(o.phone)}</span>`:''}${o.city?' · '+esc(o.city):''}</div>
+    ${o.message?`<div style="white-space:pre-wrap;color:var(--muted)">${esc(o.message)}</div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select data-ost="${o.id}" style="width:auto">${Object.keys(OST).map(k=>`<option value="${k}"${k===o.status?' selected':''}>${OST[k]}</option>`).join('')}</select>
+    <input data-onote="${o.id}" value="${esc(o.notes||'')}" placeholder="Note" style="flex:1;min-width:160px">
+    <button class="btn" type="button" data-osave="${o.id}">Enregistrer</button></div></div>`).join('')||'<div>Aucune commande pour le moment.</div>';
+  $('ordersList').querySelectorAll('[data-osave]').forEach(b=>b.onclick=async()=>{const id=+b.dataset.osave;const {error}=await sb.rpc('cs_admin_order_update',{p_id:id,p_status:$('ordersList').querySelector(`[data-ost="${id}"]`).value,p_notes:$('ordersList').querySelector(`[data-onote="${id}"]`).value});if(error){alert(error.message);return;}loadOrders();});
+}
+$('ordersBtn').addEventListener('click',()=>{const b=$('ordersBox');b.hidden=!b.hidden;if(!b.hidden)loadOrders();});
 $('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden){loadSites();loadSubs();}});
 $('sName').addEventListener('input',()=>{if(!$('sSlug').dataset.touched)$('sSlug').value=$('sName').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);});
 $('sSlug').addEventListener('input',()=>{$('sSlug').dataset.touched='1';});
@@ -290,7 +313,7 @@ async function boot(){
   if(!session||recovery){$('login').hidden=false;$('app').hidden=true;return;}
   const {data:isAdmin,error}=await sb.rpc('cs_is_admin');
   if(error||!isAdmin){$('login').hidden=true;$('gate').hidden=false;$('gate').innerHTML='Ce compte n\'a pas accès à l\'espace admin. <button class="linkbtn" id="out2" type="button">Se déconnecter</button>';$('out2').onclick=async()=>{await sb.auth.signOut();location.reload();};return;}
-  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load();
+  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders();
 }
 boot();
 </script>

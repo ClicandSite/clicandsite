@@ -114,5 +114,131 @@
       var go = function () { apply(document, c); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
+    initLeads(slug);
+  }
+
+  /* 07/11/2026 (Claude, demande d'Anthony) : demandes des visiteurs (réservation, devis, rendez-vous…).
+     Sur un site client, chaque formulaire demande les coordonnées du visiteur puis envoie la demande
+     dans l'espace client du pro (liste « Mes demandes », suivi complet en formule Premium).
+     Sur les modèles de démonstration (sans data-site), rien ne change et rien n'est envoyé. */
+  function initLeads(slug) {
+    var SKIP = { search: 1 };
+    function kindOf(form) {
+      var b = q(form, '[type="submit"]'), t = (txt(b) + ' ' + form.id).toLowerCase();
+      if (/devis/.test(t)) return 'devis';
+      if (/rappel/.test(t)) return 'rappel';
+      if (/estimation|estform/.test(t)) return 'estimation';
+      if (/reprise/.test(t)) return 'reprise';
+      if (/rendez-vous/.test(t)) return 'rendez-vous';
+      if (/table|prix|trajet/.test(t)) return 'reservation';
+      if (/côté|command/.test(t)) return 'commande';
+      if (/réserv/.test(t)) return 'rendez-vous';
+      return 'contact';
+    }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function niceDate(v, withTime) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(v || '');
+      if (!m) return v;
+      return m[3] + '/' + m[2] + '/' + m[1] + (withTime && m[4] ? ' à ' + m[4] + 'h' + m[5] : '');
+    }
+    function labelFor(form, el) {
+      var l = el.id && q(form, 'label[for="' + el.id + '"]');
+      return txt(l) || el.getAttribute('aria-label') || el.name || '';
+    }
+    function collect(form) {
+      var out = [], tel = '';
+      qa(form, 'input,select,textarea').forEach(function (el) {
+        if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button' || el.closest('.cs-lead')) return;
+        var v = el.tagName === 'SELECT' ? txt(el.options[el.selectedIndex]) : String(el.value || '').trim();
+        if (el.type === 'date') v = niceDate(v, false);
+        if (el.type === 'datetime-local') v = niceDate(v, true);
+        if (el.type === 'tel' && !tel) tel = v;
+        if (v) out.push({ l: labelFor(form, el), v: v });
+      });
+      return { fields: out, tel: tel };
+    }
+    // Les champs des modèles sont pré-remplis avec des exemples : sur le vrai site ils deviennent des indications.
+    function prepare(form) {
+      var today = new Date(), iso = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+      qa(form, 'input').forEach(function (el) {
+        if (el.type === 'date' || el.type === 'datetime-local') {
+          el.min = el.type === 'date' ? iso : iso + 'T00:00';
+          el.value = ''; el.required = true; return;
+        }
+        if (!el.type || el.type === 'text' || el.type === 'tel') {
+          if (el.value && !el.placeholder) el.placeholder = 'Ex. : ' + el.value;
+          el.value = '';
+        }
+      });
+      qa(form, '.ok').forEach(function (o) { o.hidden = true; });
+    }
+    var css = '.cs-lead{position:fixed;inset:0;z-index:2147483000;background:rgba(10,12,20,.55);display:flex;align-items:center;justify-content:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}' +
+      '.cs-lead .cs-box{background:#fff;color:#16181f;width:100%;max-width:420px;max-height:calc(100dvh - 32px);overflow:auto;border-radius:18px;padding:22px 20px;box-shadow:0 24px 60px rgba(0,0,0,.3);font:15px/1.45 inherit;font-family:inherit;text-align:left}' +
+      '.cs-lead h3{margin:0 0 4px;font-size:1.2rem;color:#16181f}.cs-lead p{margin:0 0 14px;color:#5a5f6e;font-size:.9rem}' +
+      '.cs-lead label{display:block;font-size:.8rem;font-weight:600;color:#5a5f6e;margin:10px 0 4px}' +
+      '.cs-lead input,.cs-lead textarea{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d6d9e3;border-radius:10px;font:inherit;color:#16181f;background:#fff}' +
+      '.cs-lead textarea{min-height:70px;resize:vertical}.cs-lead .cs-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}' +
+      '.cs-lead .cs-act{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.cs-lead .cs-act .btn{flex:1;justify-content:center}' +
+      '.cs-lead .cs-cancel{background:none;border:0;color:#5a5f6e;font:inherit;font-weight:600;cursor:pointer;padding:10px}' +
+      '.cs-lead .cs-err{color:#b42318;font-size:.86rem;margin-top:10px}.cs-lead .cs-small{font-size:.76rem;color:#7a7f8e;margin:12px 0 0}';
+    var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+    function bizName() { return txt(q(document, 'header.top .logo')) || document.title.split(/[·|–-]/)[0].trim(); }
+    function open(form) {
+      var data = collect(form), kind = kindOf(form);
+      var wrap = document.createElement('div'); wrap.className = 'cs-lead'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+      wrap.innerHTML = '<form class="cs-box" novalidate><h3>Vos coordonnées</h3><p>Pour que ' + esc(bizName()) + ' vous réponde.</p>' +
+        '<label for="cs-n">Nom</label><input id="cs-n" autocomplete="name" required maxlength="120">' +
+        '<label for="cs-t">Téléphone</label><input id="cs-t" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">' +
+        '<label for="cs-e">E-mail</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
+        '<label for="cs-m">Message (facultatif)</label><textarea id="cs-m" maxlength="2000"></textarea>' +
+        '<input class="cs-hp" id="cs-w" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+        '<div class="cs-err" role="alert" hidden></div>' +
+        '<div class="cs-act"><button type="button" class="cs-cancel">Annuler</button><button class="btn" type="submit">Envoyer ma demande</button></div>' +
+        '<p class="cs-small">Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.</p></form>';
+      document.body.appendChild(wrap);
+      var f = q(wrap, 'form'), err = q(wrap, '.cs-err');
+      if (data.tel) q(wrap, '#cs-t').value = data.tel;
+      setTimeout(function () { q(wrap, '#cs-n').focus(); }, 30);
+      function close() { wrap.remove(); document.removeEventListener('keydown', onKey); }
+      function onKey(e) { if (e.key === 'Escape') close(); }
+      document.addEventListener('keydown', onKey);
+      q(wrap, '.cs-cancel').onclick = close;
+      wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var n = q(wrap, '#cs-n').value.trim(), t = q(wrap, '#cs-t').value.trim(), m = q(wrap, '#cs-e').value.trim();
+        err.hidden = true;
+        if (!n) { err.textContent = 'Indiquez votre nom.'; err.hidden = false; return; }
+        if (!t && !m) { err.textContent = 'Indiquez un téléphone ou un e-mail pour être recontacté.'; err.hidden = false; return; }
+        var b = q(f, '[type="submit"]'); b.disabled = true; b.textContent = 'Envoi…';
+        fetch(API + '/rest/v1/rpc/cs_lead_submit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
+          body: JSON.stringify({ p_slug: slug, p_kind: kind, p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: data.fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value })
+        }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
+          if (!r.ok) throw new Error((r.j && r.j.message) || 'Envoi impossible');
+          close();
+          var ok = q(form, '.ok');
+          if (!ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); }
+          ok.textContent = 'Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.';
+          ok.hidden = false;
+        }).catch(function (x) {
+          b.disabled = false; b.textContent = 'Envoyer ma demande';
+          err.textContent = (x && x.message && !/fetch/i.test(x.message)) ? x.message : 'La demande n\'est pas partie. Vérifiez votre connexion et réessayez.';
+          err.hidden = false;
+        });
+      });
+    }
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function ready() {
+      qa(document, 'form').forEach(function (f) { if (!SKIP[f.id]) prepare(f); });
+      document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || form.tagName !== 'FORM' || SKIP[form.id] || form.closest('.cs-lead')) return;
+        e.preventDefault(); e.stopPropagation();
+        if (typeof form.reportValidity === 'function' && !form.reportValidity()) return;
+        open(form);
+      }, true);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready); else ready();
   }
 })();

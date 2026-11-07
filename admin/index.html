@@ -105,6 +105,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
         <input id="sDomain" placeholder="Domaine (ex. garage-du-port.fr)">
         <select id="sTrade"><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option></select>
         <select id="sStyle"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option><option value="minimal">Minimal crème</option><option value="nuit">Nuit bleue</option><option value="provence">Provence lavande</option><option value="ocean">Océan</option><option value="pop">Pop vitaminé</option><option value="corporate">Pro sérieux</option><option value="retro">Rétro</option><option value="zen">Zen nature</option><option value="neon">Néon</option><option value="poudre">Rose poudré</option><option value="terracotta">Terracotta</option><option value="graphite">Graphite</option><option value="foret">Forêt</option><option value="soleil">Soleil</option><option value="marine">Marine chic</option></select>
+        <select id="sPlan" aria-label="Formule"><option value="">Formule : selon Stripe</option><option value="essentiel">Essentiel</option><option value="pro">Pro</option><option value="premium">Premium (CRM)</option></select>
         <select id="sStatus"><option value="brouillon">En préparation</option><option value="en_ligne">En ligne</option><option value="suspendu">Suspendu</option></select>
         <button class="btn primary" type="submit">Enregistrer le site</button>
       </form>
@@ -250,14 +251,16 @@ async function loadSubs(){
 async function loadSites(){
   const {data,error}=await sb.rpc('cs_admin_sites'); if(error){$('sitesList').textContent=error.message;return;}
   $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''}${s.plan?' · '+esc(s.plan):''}${s.billing_status?' · paiement : '+esc(BS[s.billing_status]||s.billing_status):''} · <b>${ST[s.status]||s.status}</b> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
-  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;});
+  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;$('sPlan').value=(s.plan||'').toLowerCase();});
 }
 $('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden){loadSites();loadSubs();}});
 $('sName').addEventListener('input',()=>{if(!$('sSlug').dataset.touched)$('sSlug').value=$('sName').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);});
 $('sSlug').addEventListener('input',()=>{$('sSlug').dataset.touched='1';});
 $('siteForm').addEventListener('submit',async e=>{e.preventDefault();
   const {error}=await sb.rpc('cs_admin_site_upsert',{p_slug:$('sSlug').value.trim(),p_name:$('sName').value.trim(),p_trade:$('sTrade').value,p_style:$('sStyle').value,p_owner_email:$('sEmail').value.trim(),p_domain:$('sDomain').value.trim(),p_status:$('sStatus').value});
-  if(error){alert(error.message);return;} e.target.reset(); delete $('sSlug').dataset.touched; loadSites();});
+  if(error){alert(error.message);return;}
+  if($('sPlan').value){const r2=await sb.rpc('cs_admin_site_plan',{p_slug:$('sSlug').value.trim(),p_plan:$('sPlan').value});if(r2.error){alert(r2.error.message);return;}}
+  e.target.reset(); delete $('sSlug').dataset.touched; loadSites();});
 $('exportBtn').addEventListener('click',()=>{
   const cols=['name','trade','address','postcode','city','phone','email','website','site_status','score','status','notes'];
   const csv=[cols.join(';')].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(';'))).join('\n');

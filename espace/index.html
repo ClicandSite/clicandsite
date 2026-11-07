@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="/img/favicon-64.png"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=1"></script>
+<script src="/assets/cs-edit.js?v=2"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -95,6 +95,60 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
   .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
   .top .hide-m{display:none}
 }
+
+/* 07/11/2026 (Claude, demande d'Anthony) : « Mes demandes » — CRM de la formule Premium (liste simple pour les autres formules). */
+.vseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.vseg button{border:0;background:none;padding:6px 12px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.vseg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.cnt{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--bad);color:#fff;font-size:.72rem;display:inline-grid;place-items:center}
+.crm{overflow:auto;min-height:0;background:var(--bg)}
+.crm-in{max-width:1080px;margin:0 auto;padding-block:20px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+.crm-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:end}
+.crm-head p{margin:4px 0 0;color:var(--muted);font-size:.92rem;max-width:62ch}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.kpi b{display:block;font:700 1.6rem/1.1 "Bricolage Grotesque",sans-serif}
+.kpi span{font-size:.82rem;color:var(--muted)}
+.kpi.warn b{color:var(--bad)}
+.kpi[aria-pressed="true"]{border-color:var(--brand);background:var(--soft)}
+.upsell{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.upsell p{margin:0;font-size:.92rem;max-width:70ch}
+.ctools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctools input{max-width:260px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 11px;font-weight:600;font-size:.84rem;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.leads{display:grid;gap:8px}
+.lead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.lead:hover{border-color:var(--brand)}
+.lead.unseen{border-left:4px solid var(--brand)}
+.lead .who{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.lead .sum{font-size:.88rem;color:var(--muted);grid-column:1;min-width:0;overflow-wrap:anywhere}
+.lead .side{grid-row:1/3;grid-column:2;display:grid;gap:5px;justify-items:end;align-content:start;font-size:.8rem;color:var(--muted)}
+.kind{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--brand)}
+.st{font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--bg)}
+.st.nouveau{background:var(--brand);color:#fff;border-color:var(--brand)}
+.st.en_cours{color:var(--warn);border-color:currentColor}
+.st.gagne{background:var(--ok);color:#fff;border-color:var(--ok)}
+.st.perdu,.st.archive{color:var(--muted)}
+.due{color:var(--bad);font-weight:700}
+.empty{background:var(--paper);border:1px dashed var(--line);border-radius:var(--r);padding:28px 18px;text-align:center;color:var(--muted)}
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(10,12,25,.45);display:flex;justify-content:flex-end}
+.sheet .in{width:min(560px,100%);height:100%;overflow:auto;background:var(--bg);border-left:1px solid var(--line);padding:18px max(16px,env(safe-area-inset-right,0px)) calc(30px + env(safe-area-inset-bottom,0px)) 18px;display:grid;gap:14px;align-content:start}
+.sheet .hd{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;display:grid;gap:8px}
+.card h3{font-size:1rem}
+.kv{display:grid;grid-template-columns:minmax(110px,auto) minmax(0,1fr);gap:4px 12px;font-size:.9rem}
+.kv dt{color:var(--muted)}.kv dd{margin:0;overflow-wrap:anywhere}
+.contact{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.contact a{font-weight:700;color:var(--brand);text-decoration:none;overflow-wrap:anywhere}
+.qbtns{display:flex;gap:6px;flex-wrap:wrap}
+.hist{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.hist li{border-left:2px solid var(--line);padding:2px 0 2px 11px;font-size:.9rem}
+.hist li small{display:block;color:var(--muted);font-size:.78rem}
+.hist li.statut,.hist li.relance{color:var(--muted)}
+.lock{font-size:.86rem;color:var(--muted)}
+@media (max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.app.crm-on .mob-tabs{display:none}.app.crm-on .main{padding-bottom:0}.ctools input{max-width:none;flex:1 1 100%}}
 </style>
 </head>
 <body>
@@ -127,6 +181,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <span class="brand">My<span>creativesite</span></span>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="crm" aria-pressed="false">Mes demandes <span class="cnt" id="crmCnt" hidden></span></button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -143,7 +198,8 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <a href="/#commande" style="font-weight:600">Je veux mon site</a>
     </div>
   </div>
-  <div class="main">
+  <div class="crm" id="crm" hidden><div class="crm-in" id="crmIn"></div></div>
+  <div class="main" id="mainEd">
     <div class="panel" id="panel"></div>
     <div class="preview">
       <div class="pv-bar">
@@ -334,7 +390,8 @@ async function openSite(s){
   const d=doc(); const base=CSEdit.extract(d);
   state=Object.assign(base, JSON.parse(JSON.stringify(s.content||{})));
   state.style=state.style||s.style; CSEdit.apply(d,state);
-  buildForms();
+  buildForms(); badge();
+  if(mode==='crm'||params.get('vue')==='demandes'){ params.delete('vue'); await setMode('crm'); }
   setStatus(DEMO?'Démo':(s.status==='en_ligne'?'Site en ligne':'Site en préparation'), DEMO?'':'saved');
 }
 $('save').addEventListener('click',async()=>{
@@ -349,6 +406,168 @@ $('undo').addEventListener('click',async()=>{
 });
 $('sitePick').addEventListener('change',async e=>{ if(dirty&&!confirm('Des modifications ne sont pas enregistrées. Changer de site quand même ?')){ e.target.value=site.id; return; } const s=sites.find(x=>x.id===e.target.value); if(s) await openSite(s); });
 $('demoTrade').addEventListener('change',e=>{ const t=e.target.value; history.replaceState(null,'','?demo='+t); openSite({id:'demo',name:'Site d\'exemple',trade:t,style:'moderne',content:{},status:'brouillon'}); });
+
+/* ---------- Mes demandes (CRM Premium) ---------- */
+const KIND={contact:'Message',reservation:'Réservation','rendez-vous':'Rendez-vous',devis:'Devis',commande:'Commande',rappel:'Rappel demandé',estimation:'Estimation',reprise:'Reprise'};
+const STAT={nouveau:'Nouvelle',en_cours:'En cours',gagne:'Gagnée',perdu:'Perdue',archive:'Archivée'};
+const NK={note:'Note',appel:'Appel',email:'E-mail',rdv:'Rendez-vous',statut:'',relance:''};
+let crm={leads:[],premium:false,filter:'actives',q:'',by:'demande',loaded:false,notes:{}};
+const escH=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function endToday(){ const d=new Date(); d.setHours(23,59,59,999); return d; }
+function isDue(l){ return l.follow_up_at && new Date(l.follow_up_at)<=endToday() && (l.status==='nouveau'||l.status==='en_cours'); }
+function when(v){ const d=new Date(v), now=new Date(), diff=(now-d)/60000;
+  if(diff<1) return 'à l\'instant'; if(diff<60) return 'il y a '+Math.round(diff)+' min';
+  const t=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const y=new Date(now); y.setDate(now.getDate()-1);
+  if(d.toDateString()===now.toDateString()) return 'aujourd\'hui '+t;
+  if(d.toDateString()===y.toDateString()) return 'hier '+t;
+  return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+(d.getFullYear()!==now.getFullYear()?' '+d.getFullYear():'')+' '+t; }
+function dayLabel(v){ const d=new Date(v); const t=new Date(); t.setHours(0,0,0,0); const n=Math.round((new Date(d).setHours(0,0,0,0)-t)/864e5);
+  return n===0?'aujourd\'hui':n===1?'demain':n===-1?'hier':d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}); }
+function summary(l){ return (l.fields||[]).slice(0,4).map(f=>f.l?f.l+' : '+f.v:f.v).join(' · ') + (l.message?((l.fields||[]).length?' · ':'')+'« '+l.message.slice(0,90)+(l.message.length>90?'…':'')+' »':''); }
+function demoLeads(trade){
+  const h=n=>new Date(Date.now()-n*36e5).toISOString(), d=n=>{const x=new Date(); x.setDate(x.getDate()+n); x.setHours(9,0,0,0); return x.toISOString();};
+  const F={vtc:[['reservation',[['Départ','Aéroport Nice, T2'],['Arrivée','Cannes, Croisette'],['Date et heure','21/11/2026 à 14h30']]],['reservation',[['Départ','Monaco'],['Arrivée','Saint-Tropez'],['Date et heure','28/11/2026 à 10h00']]]],
+    restaurant:[['reservation',[['Date','14/11/2026'],['Heure','20:00'],['Couverts','4']]],['reservation',[['Date','15/11/2026'],['Heure','12:30'],['Couverts','2']]]],
+    garage:[['rendez-vous',[['Prestation','Vidange et filtres'],['Date souhaitée','17/11/2026'],['Immatriculation','FG-482-KL']]],['reprise',[['Immatriculation','DS-115-PM'],['Kilométrage','92 000']]]],
+    immobilier:[['estimation',[['Adresse du bien','12 rue d\'Antibes, Cannes'],['Type','Appartement'],['Surface (m²)','68']]],['contact',[]]],
+    batiment:[['devis',[['Type de travaux','Salle de bain'],['Code postal du chantier','06400'],['Début souhaité','11/01/2027']]],['rappel',[['Téléphone','06 12 34 56 78'],['Rappel souhaité','Midi']]]],
+    beaute:[['rendez-vous',[['Prestation','Balayage'],['Avec','Sarah'],['Jour et heure','14/11/2026 à 10h30']]],['rendez-vous',[['Prestation','Coupe homme'],['Avec','Peu importe'],['Jour et heure','13/11/2026 à 18h00']]]],
+    bienetre:[['rendez-vous',[['Soin','Massage relaxant 60 min'],['Jour et heure','16/11/2026 à 15h00']]],['contact',[]]],
+    boulangerie:[['commande',[['Je commande','Gâteau d\'anniversaire'],['Quantité','1'],['Retrait le','15/11/2026 à 10h00']]],['commande',[['Je commande','Croissants'],['Quantité','10'],['Retrait le','14/11/2026 à 07h30']]]],
+    depannage:[['rappel',[['Mon problème','Fuite d\'eau'],['Code postal','06000'],['Quand ?','Dès que possible']]],['rappel',[['Mon problème','Panne d\'électricité'],['Code postal','06400'],['Quand ?','Aujourd\'hui']]]]}[trade]||[];
+  const mk=(i,k,f,name,ph,em,st,age,fu,msg)=>({id:'demo'+i,created_at:h(age),kind:k,name,phone:ph,email:em,message:msg||null,fields:f.map(x=>({l:x[0],v:x[1]})),contact_key:em||ph.replace(/\D/g,''),status:st,follow_up_at:fu,unseen:st==='nouveau',notes:0});
+  const a=F[0]||['contact',[]], b=F[1]||['contact',[]];
+  return [mk(1,a[0],a[1],'Claire Martin','06 12 34 56 78','claire.martin@exemple.fr','nouveau',1,null,'Possible de confirmer par SMS ?'),
+    mk(2,b[0],b[1],'Julien Rossi','06 98 76 54 32',null,'en_cours',27,d(0)),
+    mk(3,a[0],a[1],'Claire Martin','06 12 34 56 78','claire.martin@exemple.fr','gagne',24*20,null),
+    mk(4,b[0],b[1],'Sophie Bernard',null,'sophie.b@exemple.fr','en_cours',50,d(2),'Je préfère être contactée l\'après-midi.'),
+    mk(5,'contact',[],'Marc Duval','07 11 22 33 44',null,'perdu',24*9,null,'Vous avez des disponibilités le samedi ?')];
+}
+async function loadCrm(){
+  if(DEMO){ crm.leads=demoLeads(site.trade); crm.premium=true; crm.loaded=true; crm.notes={demo2:[{id:1,at:new Date(Date.now()-20*36e5).toISOString(),kind:'appel',content:'Appelé, il rappelle demain pour confirmer.'}]}; crm.leads[1].notes=1; return; }
+  const {data,error}=await SB.rpc('cs_leads',{p_site:site.id});
+  if(error){ crm.error=error.message; return; }
+  crm.error=null; crm.leads=data.leads||[]; crm.premium=!!data.premium; crm.loaded=true;
+  site.leads_new=0; badge();
+}
+function badge(){ const n=DEMO?0:((+site?.leads_new||0)+(+site?.leads_due||0)); const c=$('crmCnt'); c.hidden=!n; c.textContent=n>99?'99+':n; }
+function filtered(){
+  const q=crm.q.toLowerCase().trim();
+  return crm.leads.filter(l=>{
+    if(crm.premium){
+      if(crm.filter==='actives'&&!(l.status==='nouveau'||l.status==='en_cours')) return false;
+      if(crm.filter==='due'&&!isDue(l)) return false;
+      if(STAT[crm.filter]&&l.status!==crm.filter) return false;
+    }
+    if(!q) return true;
+    return [l.name,l.phone,l.email,l.message,KIND[l.kind],...(l.fields||[]).map(f=>f.v)].join(' ').toLowerCase().includes(q);
+  });
+}
+function renderCrm(){
+  const R=$('crmIn');
+  if(crm.error){ R.innerHTML='<div class="empty">Impossible de charger vos demandes pour le moment. Réessayez dans un instant.</div>'; return; }
+  if(!crm.loaded){ R.innerHTML='<div class="empty">Chargement…</div>'; return; }
+  const L=crm.leads, P=crm.premium, mon=Date.now()-30*864e5;
+  const k={nouveau:L.filter(l=>l.status==='nouveau').length, due:L.filter(isDue).length, en_cours:L.filter(l=>l.status==='en_cours').length, gagne:L.filter(l=>l.status==='gagne'&&new Date(l.created_at)>mon).length};
+  let h='<div class="crm-head"><div><h2>Mes demandes</h2><p>'+(P?'Chaque réservation, devis ou message envoyé depuis votre site arrive ici. Suivez où en est chaque client et notez quand le relancer.':'Les réservations, devis et messages envoyés depuis votre site arrivent ici.')+(DEMO?' <b>Démo</b> : clients fictifs, rien n\'est enregistré.':'')+'</p></div>'+
+    (P&&L.length?'<button class="btn sm" type="button" id="crmCsv">Exporter (tableur)</button>':'')+'</div>';
+  if(P) h+='<div class="kpis">'+[['nouveau','Nouvelles',k.nouveau,''],['due','À relancer aujourd\'hui',k.due,k.due?'warn':''],['en_cours','En cours',k.en_cours,''],['gagne','Gagnées sur 30 jours',k.gagne,'']].map(x=>'<button type="button" class="kpi '+x[3]+'" data-kf="'+x[0]+'" aria-pressed="'+(crm.filter===x[0])+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>').join('')+'</div>';
+  else h+='<div class="upsell"><p><b>Formule Premium : votre fichier clients.</b> Statut de chaque demande, historique par client, notes d\'appel, date de relance et export vers un tableur.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20Premium">Passer en Premium</a></div>';
+  h+='<div class="ctools">'+(P?'<div class="chips" role="group" aria-label="Filtrer">'+[['actives','À traiter'],['due','À relancer'],['gagne','Gagnées'],['perdu','Perdues'],['archive','Archivées'],['tout','Toutes']].map(x=>'<button type="button" data-f="'+x[0]+'" aria-pressed="'+(crm.filter===x[0])+'">'+x[1]+'</button>').join('')+'</div>':'')+
+    '<input type="search" id="crmQ" placeholder="Rechercher un nom, un téléphone…" value="'+escH(crm.q)+'" aria-label="Rechercher">'+
+    (P?'<div class="vseg" role="group" aria-label="Regrouper"><button type="button" data-by="demande" aria-pressed="'+(crm.by==='demande')+'">Demandes</button><button type="button" data-by="client" aria-pressed="'+(crm.by==='client')+'">Clients</button></div>':'')+'</div>';
+  const F=filtered();
+  let list='';
+  if(!L.length) list='<div class="empty">Aucune demande pour le moment. Dès qu\'un visiteur remplit un formulaire de votre site, elle apparaît ici.</div>';
+  else if(!F.length) list='<div class="empty">Aucune demande dans ce filtre.</div>';
+  else if(P&&crm.by==='client'){
+    const g={}; F.forEach(l=>{ const key=l.contact_key||l.id; (g[key]=g[key]||[]).push(l); });
+    list=Object.values(g).sort((a,b)=>new Date(b[0].created_at)-new Date(a[0].created_at)).map(arr=>{ const l=arr[0], won=arr.filter(x=>x.status==='gagne').length;
+      return '<button type="button" class="lead" data-id="'+escH(l.id)+'"><span class="who">'+escH(l.name||'Sans nom')+'</span><span class="sum">'+escH([l.phone,l.email].filter(Boolean).join(' · '))+'</span><span class="side"><span>'+arr.length+' demande'+(arr.length>1?'s':'')+(won?' · '+won+' gagnée'+(won>1?'s':''):'')+'</span><span>dernière '+escH(when(l.created_at))+'</span></span></button>'; }).join('');
+  } else list=F.map(l=>'<button type="button" class="lead'+(l.unseen?' unseen':'')+'" data-id="'+escH(l.id)+'"><span class="who">'+escH(l.name||'Sans nom')+' <span class="kind">'+escH(KIND[l.kind]||l.kind)+'</span></span><span class="sum">'+escH([l.phone,l.email].filter(Boolean).join(' · '))+(summary(l)?'<br>'+escH(summary(l)):'')+'</span><span class="side"><span>'+escH(when(l.created_at))+'</span>'+(P?'<span class="st '+l.status+'">'+STAT[l.status]+'</span>'+(l.follow_up_at&&(l.status==='nouveau'||l.status==='en_cours')?'<span class="'+(isDue(l)?'due':'')+'">Relance '+escH(dayLabel(l.follow_up_at))+'</span>':''):'')+'</span></button>').join('');
+  R.innerHTML=h+'<div class="leads">'+list+'</div>';
+}
+function csv(){
+  const cols=[['Date',l=>new Date(l.created_at).toLocaleString('fr-FR')],['Type',l=>KIND[l.kind]||l.kind],['Nom',l=>l.name],['Téléphone',l=>l.phone],['E-mail',l=>l.email],['Statut',l=>STAT[l.status]],['Relance',l=>l.follow_up_at?new Date(l.follow_up_at).toLocaleDateString('fr-FR'):''],['Détails',l=>(l.fields||[]).map(f=>f.l+' : '+f.v).join(' | ')],['Message',l=>l.message]];
+  const out=[cols.map(c=>c[0]).join(';')].concat(crm.leads.map(l=>cols.map(c=>'"'+String(c[1](l)??'').replace(/"/g,'""')+'"').join(';'))).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+out],{type:'text/csv;charset=utf-8'})); a.download='mes-demandes-'+(site.slug||'site')+'.csv'; a.click();
+}
+async function history(id){
+  if(DEMO) return crm.notes[id]||[];
+  const {data}=await SB.rpc('cs_lead_history',{p_id:id}); return data||[];
+}
+async function openLead(id){
+  const l=crm.leads.find(x=>x.id===id); if(!l) return; const P=crm.premium;
+  const same=crm.leads.filter(x=>x.id!==l.id&&l.contact_key&&x.contact_key===l.contact_key);
+  const el=document.createElement('div'); el.className='sheet'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label','Demande de '+(l.name||''));
+  const iso=v=>{ if(!v) return ''; const d=new Date(v); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  el.innerHTML='<div class="in"><div class="hd"><div><h2>'+escH(l.name||'Sans nom')+'</h2><div style="color:var(--muted);font-size:.88rem">'+escH(KIND[l.kind]||l.kind)+' · reçue '+escH(when(l.created_at))+'</div></div><button class="btn sm" type="button" data-x>Fermer</button></div>'+
+    '<div class="card">'+(l.phone?'<div class="contact"><a href="tel:'+escH(l.phone.replace(/[^0-9+]/g,''))+'">'+escH(l.phone)+'</a><button class="btn sm" type="button" data-copy="'+escH(l.phone)+'">Copier</button></div>':'')+
+      (l.email?'<div class="contact"><a href="mailto:'+escH(l.email)+'">'+escH(l.email)+'</a><button class="btn sm" type="button" data-copy="'+escH(l.email)+'">Copier</button></div>':'')+
+      ((l.fields||[]).length?'<dl class="kv">'+l.fields.map(f=>'<dt>'+escH(f.l||'Détail')+'</dt><dd>'+escH(f.v)+'</dd>').join('')+'</dl>':'')+
+      (l.message?'<div style="white-space:pre-wrap">'+escH(l.message)+'</div>':'')+'</div>'+
+    (P?'<div class="card"><h3>Suivi</h3><div><label for="ldSt">Statut</label><select id="ldSt">'+Object.keys(STAT).map(k=>'<option value="'+k+'"'+(k===l.status?' selected':'')+'>'+STAT[k]+'</option>').join('')+'</select></div>'+
+      '<div><label for="ldFu">Relancer le</label><div class="qbtns"><input id="ldFu" type="date" value="'+iso(l.follow_up_at)+'" style="max-width:170px"><button class="btn sm" type="button" data-fu="1">Demain</button><button class="btn sm" type="button" data-fu="3">Dans 3 jours</button><button class="btn sm" type="button" data-fu="7">Dans 1 semaine</button>'+(l.follow_up_at?'<button class="btn sm" type="button" data-fu="0">Retirer</button>':'')+'</div></div></div>'+
+      '<div class="card"><h3>Historique</h3><div class="qbtns"><select id="ldNk" style="max-width:150px" aria-label="Type"><option value="note">Note</option><option value="appel">Appel</option><option value="email">E-mail</option><option value="rdv">Rendez-vous</option></select></div><textarea id="ldNote" placeholder="Ex. : appelé, rappelle jeudi pour confirmer" aria-label="Note"></textarea><div><button class="btn primary sm" type="button" data-note>Ajouter à l\'historique</button></div><ul class="hist" id="ldHist"><li>Chargement…</li></ul></div>'
+    :'<div class="card lock">Statut, notes d\'appel, date de relance et historique de ce client : inclus dans la formule Premium.</div>')+
+    (same.length?'<div class="card"><h3>Autres demandes de ce client</h3>'+same.map(x=>'<button type="button" class="linkbtn" data-other="'+escH(x.id)+'">'+escH(KIND[x.kind]||x.kind)+' · '+escH(when(x.created_at))+(P?' · '+STAT[x.status]:'')+'</button>').join('')+'</div>':'')+
+    '<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer cette demande</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
+  document.body.appendChild(el);
+  const close=()=>{ el.remove(); document.removeEventListener('keydown',onKey); renderCrm(); };
+  const onKey=e=>{ if(e.key==='Escape') close(); };
+  document.addEventListener('keydown',onKey);
+  el.addEventListener('click',e=>{ if(e.target===el) close(); });
+  const H=el.querySelector('#ldHist');
+  const drawHist=arr=>{ if(H) H.innerHTML=arr.length?arr.map(n=>'<li class="'+n.kind+'">'+(NK[n.kind]?'<b>'+NK[n.kind]+'</b> · ':'')+escH(n.content)+'<small>'+escH(when(n.at))+'</small></li>').join(''):'<li>Rien pour le moment. Notez vos appels et échanges ici.</li>'; };
+  if(P) history(l.id).then(drawHist);
+  async function upd(args){
+    if(DEMO){ if(args.p_status){ l.status=args.p_status; (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:'statut',content:'Statut : '+STAT[l.status]}); }
+      if(args.p_set_follow){ l.follow_up_at=args.p_follow_up; (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:'relance',content:l.follow_up_at?'Relance prévue le '+new Date(l.follow_up_at).toLocaleDateString('fr-FR'):'Relance retirée'}); }
+      drawHist(crm.notes[l.id]); return true; }
+    const {data,error}=await SB.rpc('cs_lead_update',Object.assign({p_id:l.id},args));
+    if(error){ toast(error.message); return false; }
+    l.status=data.status; l.follow_up_at=data.follow_up_at; drawHist(await history(l.id)); return true;
+  }
+  el.addEventListener('click',async e=>{
+    const t=e.target.closest('button'); if(!t) return;
+    if(t.hasAttribute('data-x')) return close();
+    if(t.dataset.copy){ try{ await navigator.clipboard.writeText(t.dataset.copy); toast('Copié'); }catch(_){ toast(t.dataset.copy); } return; }
+    if(t.dataset.other){ close(); return openLead(t.dataset.other); }
+    if(t.dataset.fu!==undefined){ const n=+t.dataset.fu; let v=null; if(n){ const d=new Date(); d.setDate(d.getDate()+n); d.setHours(9,0,0,0); v=d.toISOString(); }
+      if(await upd({p_set_follow:true,p_follow_up:v})){ el.querySelector('#ldFu').value=iso(v); toast(v?'Relance notée : '+dayLabel(v):'Relance retirée'); } return; }
+    if(t.hasAttribute('data-note')){ const ta=el.querySelector('#ldNote'), txt=ta.value.trim(), kd=el.querySelector('#ldNk').value; if(!txt){ ta.focus(); return; }
+      t.disabled=true;
+      if(DEMO){ (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:kd,content:txt}); if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(crm.notes[l.id]); }
+      else { const {error}=await SB.rpc('cs_lead_add_note',{p_id:l.id,p_kind:kd,p_text:txt}); if(error){ toast(error.message); t.disabled=false; return; } if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(await history(l.id)); }
+      l.notes=(l.notes||0)+1; ta.value=''; t.disabled=false; return; }
+    if(t.hasAttribute('data-del')){ el.querySelector('#ldDel').hidden=false; return; }
+    if(t.hasAttribute('data-delno')){ el.querySelector('#ldDel').hidden=true; return; }
+    if(t.hasAttribute('data-delyes')){ if(!DEMO){ const {error}=await SB.rpc('cs_lead_delete',{p_id:l.id}); if(error){ toast(error.message); return; } }
+      crm.leads=crm.leads.filter(x=>x.id!==l.id); toast('Demande supprimée'); return close(); }
+  });
+  const sel=el.querySelector('#ldSt'); if(sel) sel.addEventListener('change',async()=>{ const old=l.status; if(!(await upd({p_status:sel.value}))) sel.value=old; else toast('Statut : '+STAT[l.status]); });
+  const fu=el.querySelector('#ldFu'); if(fu) fu.addEventListener('change',async()=>{ const v=fu.value?new Date(fu.value+'T09:00').toISOString():null; if(await upd({p_set_follow:true,p_follow_up:v})) toast(v?'Relance notée : '+dayLabel(v):'Relance retirée'); });
+  el.querySelector('[data-x]').focus();
+  if(l.unseen){ l.unseen=false; }
+}
+$('crmIn').addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.id) return openLead(t.dataset.id);
+  if(t.dataset.f){ crm.filter=t.dataset.f; return renderCrm(); }
+  if(t.dataset.kf){ crm.filter=crm.filter===t.dataset.kf?'actives':t.dataset.kf; return renderCrm(); }
+  if(t.dataset.by){ crm.by=t.dataset.by; return renderCrm(); }
+  if(t.id==='crmCsv') return csv();
+});
+$('crmIn').addEventListener('input',e=>{ if(e.target.id==='crmQ'){ crm.q=e.target.value; const pos=e.target.selectionStart; renderCrm(); const i=$('crmQ'); i.focus(); try{ i.setSelectionRange(pos,pos); }catch(_){} } });
+let mode='edit';
+async function setMode(m){
+  mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+  const on=m==='crm'; $('crm').hidden=!on; $('mainEd').hidden=on; $('app').classList.toggle('crm-on',on);
+  ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=on?'hidden':''; });
+  if(on){ if(!crm.loaded||crm.site!==site.id){ crm.loaded=false; crm.site=site.id; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
+}
+document.querySelector('.vseg[aria-label="Affichage"]').addEventListener('click',e=>{ const b=e.target.closest('button[data-mode]'); if(b) setMode(b.dataset.mode); });
 
 /* ---------- Connexion ---------- */
 let signup=false, recovery=false;

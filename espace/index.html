@@ -35,7 +35,9 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .login{max-width:400px;margin:8vh auto 0;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
 .login .box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px 24px;display:grid;gap:12px}
 .login .brand{font:700 1.4rem "Bricolage Grotesque",sans-serif}
-.login .brand span{color:var(--brand)}
+.brand{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.brand img{flex:none;display:block}
+.brand>span>span{background:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .login p{margin:0;color:var(--muted);font-size:.92rem}
 .msg.err{color:var(--bad);font-size:.88rem}.msg.ok{color:var(--ok);font-size:.88rem}
 .demo-cta{margin-top:16px;text-align:center;font-size:.9rem;color:var(--muted)}
@@ -44,7 +46,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
 .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px));background:var(--paper);border-bottom:1px solid var(--line)}
 .top .brand{font:700 1.05rem "Bricolage Grotesque",sans-serif;margin-right:4px}
-.top .brand span{color:var(--brand)}
+
 .top .site{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top select{width:auto;max-width:220px;padding:6px 10px}
 .top .sp{flex:1}
@@ -155,7 +157,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 
 <div class="login" id="login" hidden>
   <form class="box" id="lform">
-    <div class="brand">My<span>creativesite</span></div>
+    <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span>creativesite</span></span></a>
     <p id="lTitle">Votre espace client : modifiez vous-même votre site.</p>
     <div><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="username" required></div>
     <div id="lPassBox"><label for="lPass">Mot de passe</label><input id="lPass" type="password" autocomplete="current-password" minlength="8" required></div>
@@ -169,7 +171,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 
 <div class="login" id="nosite" hidden>
   <div class="box">
-    <div class="brand">My<span>creativesite</span></div>
+    <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span>creativesite</span></span></a>
     <p>Votre compte est bien créé, mais aucun site n'y est encore rattaché. Nous le relions dès la mise en ligne de votre site. Une question : <b style="user-select:all">contact@mycreativesite.fr</b></p>
     <button class="btn" id="out2" type="button">Se déconnecter</button>
   </div>
@@ -178,7 +180,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 <div class="app" id="app" hidden>
   <div>
     <div class="top">
-      <span class="brand">My<span>creativesite</span></span>
+      <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
       <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="crm" aria-pressed="false">Mes demandes <span class="cnt" id="crmCnt" hidden></span></button></div>
@@ -192,7 +194,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
     <div class="demo-bar" id="demoBar" hidden>
       <span><b>Démo</b> : essayez librement, rien n'est enregistré.</span>
       <label for="demoTrade" style="margin:0">Métier</label>
-      <select id="demoTrade" style="width:auto;padding:5px 9px">
+      <select id="demoTrade" autocomplete="off" style="width:auto;padding:5px 9px">
         <option value="vtc">Chauffeur VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage et concession</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment et rénovation</option><option value="beaute">Coiffure et beauté</option><option value="bienetre">Bien-être et santé</option><option value="boulangerie">Boulangerie et pâtisserie</option><option value="depannage">Dépannage à domicile</option><option value="boutique">Boutique en ligne</option>
       </select>
       <a href="/#commande" style="font-weight:600">Je veux mon site</a>
@@ -253,7 +255,7 @@ function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc();
 function loadTemplate(trade, styleName){
   return new Promise(res=>{
     pv.onload=()=>{ fit(); res(); };
-    pv.src='/modeles/'+trade+'.html?v=20#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=21#'+styleName;
   });
 }
 
@@ -418,7 +420,9 @@ async function openSite(s){
   $('siteName').textContent=s.name; $('viewSite').hidden=!s.domain; if(s.domain) $('viewSite').href='https://'+s.domain.replace(/^https?:\/\//,'');
   $('undo').hidden=DEMO;
   setStatus('Chargement…');
+  const tok=openSite.tok=(openSite.tok||0)+1;
   await loadTemplate(s.trade,(s.content&&s.content.style)||s.style);
+  if(tok!==openSite.tok) return; // un autre métier a été choisi pendant le chargement
   const d=doc(); const base=CSEdit.extract(d);
   state=Object.assign(base, JSON.parse(JSON.stringify(s.content||{})));
   state.style=state.style||s.style; CSEdit.apply(d,state);
@@ -529,7 +533,7 @@ function csv(){
   const out=[cols.map(c=>c[0]).join(';')].concat(crm.leads.map(l=>cols.map(c=>'"'+String(c[1](l)??'').replace(/"/g,'""')+'"').join(';'))).join('\r\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+out],{type:'text/csv;charset=utf-8'})); a.download='mes-demandes-'+(site.slug||'site')+'.csv'; a.click();
 }
-async function history(id){
+async function leadHistory(id){
   if(DEMO) return crm.notes[id]||[];
   const {data}=await SB.rpc('cs_lead_history',{p_id:id}); return data||[];
 }
@@ -556,14 +560,14 @@ async function openLead(id){
   el.addEventListener('click',e=>{ if(e.target===el) close(); });
   const H=el.querySelector('#ldHist');
   const drawHist=arr=>{ if(H) H.innerHTML=arr.length?arr.map(n=>'<li class="'+n.kind+'">'+(NK[n.kind]?'<b>'+NK[n.kind]+'</b> · ':'')+escH(n.content)+'<small>'+escH(when(n.at))+'</small></li>').join(''):'<li>Rien pour le moment. Notez vos appels et échanges ici.</li>'; };
-  if(P) history(l.id).then(drawHist);
+  if(P) leadHistory(l.id).then(drawHist);
   async function upd(args){
     if(DEMO){ if(args.p_status){ l.status=args.p_status; (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:'statut',content:'Statut : '+STAT[l.status]}); }
       if(args.p_set_follow){ l.follow_up_at=args.p_follow_up; (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:'relance',content:l.follow_up_at?'Relance prévue le '+new Date(l.follow_up_at).toLocaleDateString('fr-FR'):'Relance retirée'}); }
       drawHist(crm.notes[l.id]); return true; }
     const {data,error}=await SB.rpc('cs_lead_update',Object.assign({p_id:l.id},args));
     if(error){ toast(error.message); return false; }
-    l.status=data.status; l.follow_up_at=data.follow_up_at; drawHist(await history(l.id)); return true;
+    l.status=data.status; l.follow_up_at=data.follow_up_at; drawHist(await leadHistory(l.id)); return true;
   }
   el.addEventListener('click',async e=>{
     const t=e.target.closest('button'); if(!t) return;
@@ -575,7 +579,7 @@ async function openLead(id){
     if(t.hasAttribute('data-note')){ const ta=el.querySelector('#ldNote'), txt=ta.value.trim(), kd=el.querySelector('#ldNk').value; if(!txt){ ta.focus(); return; }
       t.disabled=true;
       if(DEMO){ (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:kd,content:txt}); if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(crm.notes[l.id]); }
-      else { const {error}=await SB.rpc('cs_lead_add_note',{p_id:l.id,p_kind:kd,p_text:txt}); if(error){ toast(error.message); t.disabled=false; return; } if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(await history(l.id)); }
+      else { const {error}=await SB.rpc('cs_lead_add_note',{p_id:l.id,p_kind:kd,p_text:txt}); if(error){ toast(error.message); t.disabled=false; return; } if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(await leadHistory(l.id)); }
       l.notes=(l.notes||0)+1; ta.value=''; t.disabled=false; return; }
     if(t.hasAttribute('data-del')){ el.querySelector('#ldDel').hidden=false; return; }
     if(t.hasAttribute('data-delno')){ el.querySelector('#ldDel').hidden=true; return; }
@@ -601,7 +605,7 @@ async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
   const on=m==='crm'; $('crm').hidden=!on; $('mainEd').hidden=on; $('app').classList.toggle('crm-on',on);
   ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=on?'hidden':''; });
-  if(on){ if(!crm.loaded||crm.site!==site.id){ crm.loaded=false; crm.site=site.id; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
+  if(on){ if(!crm.loaded||crm.site!==site.id+':'+site.trade){ crm.loaded=false; crm.site=site.id+':'+site.trade; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
 }
 document.querySelector('.vseg[aria-label="Affichage"]').addEventListener('click',e=>{ const b=e.target.closest('button[data-mode]'); if(b) setMode(b.dataset.mode); });
 

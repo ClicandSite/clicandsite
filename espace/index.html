@@ -98,7 +98,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
   .top .hide-m{display:none}
 }
 
-/* 07/11/2026 (Claude, demande d'Anthony) : « Mes demandes » — CRM de la formule Premium (liste simple pour les autres formules). */
+/* 07/11/2026 (Claude, demande d'Anthony) : « Mes clients » (ex « Mes demandes ») — CRM de la formule Premium (liste simple pour les autres formules). */
 .vseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
 .vseg button{border:0;background:none;padding:6px 12px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
 .vseg button[aria-pressed="true"]{background:var(--brand);color:#fff}
@@ -183,7 +183,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
-      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="crm" aria-pressed="false">Mes demandes <span class="cnt" id="crmCnt" hidden></span></button></div>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -510,7 +510,7 @@ function renderCrm(){
   if(!crm.loaded){ R.innerHTML='<div class="empty">Chargement…</div>'; return; }
   const L=crm.leads, P=crm.premium, mon=Date.now()-30*864e5;
   const k={nouveau:L.filter(l=>l.status==='nouveau').length, due:L.filter(isDue).length, en_cours:L.filter(l=>l.status==='en_cours').length, gagne:L.filter(l=>l.status==='gagne'&&new Date(l.created_at)>mon).length};
-  let h='<div class="crm-head"><div><h2>Mes demandes</h2><p>'+(P?'Chaque réservation, devis ou message envoyé depuis votre site arrive ici. Suivez où en est chaque client et notez quand le relancer.':'Les réservations, devis et messages envoyés depuis votre site arrivent ici.')+(DEMO?' <b>Démo</b> : clients fictifs, rien n\'est enregistré.':'')+'</p></div>'+
+  let h='<div class="crm-head"><div><h2>Demandes de vos clients</h2><p>'+(P?'Chaque réservation, devis ou message envoyé depuis votre site arrive ici. Suivez où en est chaque client et notez quand le relancer.':'Les réservations, devis et messages envoyés depuis votre site arrivent ici.')+(DEMO?' <b>Démo</b> : clients fictifs, rien n\'est enregistré.':'')+'</p></div>'+
     (P&&L.length?'<button class="btn sm" type="button" id="crmCsv">Exporter (tableur)</button>':'')+'</div>';
   if(P) h+='<div class="kpis">'+[['nouveau','Nouvelles',k.nouveau,''],['due','À relancer aujourd\'hui',k.due,k.due?'warn':''],['en_cours','En cours',k.en_cours,''],['gagne','Gagnées sur 30 jours',k.gagne,'']].map(x=>'<button type="button" class="kpi '+x[3]+'" data-kf="'+x[0]+'" aria-pressed="'+(crm.filter===x[0])+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>').join('')+'</div>';
   else h+='<div class="upsell"><p><b>Formule Premium : votre fichier clients.</b> Statut de chaque demande, historique par client, notes d\'appel, date de relance et export vers un tableur.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20Premium">Passer en Premium</a></div>';

@@ -161,7 +161,7 @@
 
   /* 07/11/2026 (Claude, demande d'Anthony) : demandes des visiteurs (réservation, devis, rendez-vous…).
      Sur un site client, chaque formulaire demande les coordonnées du visiteur puis envoie la demande
-     dans l'espace client du pro (liste « Mes demandes », suivi complet en formule Premium).
+     dans l'espace client du pro (liste « Mes clients », suivi complet en formule Premium).
      Sur les modèles de démonstration (sans data-site), rien ne change et rien n'est envoyé. */
   function initLeads(slug) {
     var SKIP = { search: 1, cartform: 1 };

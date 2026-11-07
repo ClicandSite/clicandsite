@@ -2,7 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<script>/* 07/11/2026 : pas de zoom (pincer ou double-tap) dans l'espace client et l'aperçu, comme une appli */document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});</script>
+
 <meta name="robots" content="noindex, nofollow">
 <title>Aperçu de votre site · MyCreativeSite</title>
 <link rel="icon" type="image/png" href="/img/favicon-64.png">
@@ -34,6 +36,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
 .stage.m iframe{width:390px;max-width:100%;border-radius:24px;box-shadow:0 20px 50px -20px rgba(0,0,0,.4)}
 .msg{max-width:520px;margin:12vh auto 0;padding:0 16px;text-align:center;color:var(--muted)}
 @media (max-width:700px){.seg{display:none}}
+
+html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
+@media (max-width:860px){input,select,textarea{font-size:16px}}
 </style>
 </head>
 <body>
@@ -47,6 +52,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
 <div class="stage" id="stage"></div>
 <script>
 (function(){
+  function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
   var API='https://avcynjwcyygygkjuxsdt.supabase.co', KEY='sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO';
   var PAY={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07'};
   var slug=(new URLSearchParams(location.search).get('s')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
@@ -65,7 +71,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",sys
     var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
     f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=22#'+encodeURIComponent(s.style||'moderne');
-    f.onload=function(){ try{ CSEdit.apply(f.contentDocument, s.content||{}); }catch(e){} };
+    f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, s.content||{}); }catch(e){} };
     stage.appendChild(f);
     document.querySelectorAll('.seg button').forEach(function(b){ b.addEventListener('click',function(){
       document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });

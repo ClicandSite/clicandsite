@@ -290,6 +290,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .fullv .fv-x{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:#fff;color:#12162B;font:700 .95rem inherit;font-family:inherit;padding:9px 16px;cursor:pointer}
 .fullv iframe{flex:1;width:100%;border:0;background:#fff}
 html.fv-open,html.fv-open body{overflow:hidden}
+.fullv{touch-action:pan-x pan-y}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -758,10 +759,14 @@ show();
 <script>
 (function(){
   var box=document.getElementById('fullv'), fr=document.getElementById('fvF'), t=document.getElementById('fvT'), pushed=false;
+  function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
+  fr.addEventListener('load',function(){ noZoom(fr); });
   function close(fromPop){ if(box.hidden) return; box.hidden=true; document.documentElement.classList.remove('fv-open'); fr.removeAttribute('src'); if(pushed&&!fromPop){ pushed=false; history.back(); } pushed=false; }
   function open(url,label){ fr.src=url; t.textContent=label||'Aperçu du modèle'; box.hidden=false; document.documentElement.classList.add('fv-open');
     try{ history.pushState({fv:1},''); pushed=true; }catch(e){} document.getElementById('fvX').focus(); }
   document.getElementById('fvX').addEventListener('click',function(){ close(false); });
+  document.addEventListener('gesturestart',function(e){ if(!box.hidden) e.preventDefault(); },{passive:false});
+  box.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false});
   window.addEventListener('popstate',function(){ if(!box.hidden) close(true); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(false); });
   document.addEventListener('click',function(e){

@@ -21,5 +21,5 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Retour de paiement : action `confirm` ; filet de sécurité : cron `cs-shop-sweep` toutes les 15 min (clé `shop_internal`).
 - Réglages (frais de livraison, seuil de gratuité, retrait, livraison) : `sites.shop`, via `cs_shop_settings_save` (espace client). Compte Stripe du commerçant : `clicandsite.shop_private`.
 - Activation du paiement par carte : bouton dans l'espace client → action `connect` (création du compte Stripe + lien d'inscription), puis `status`.
-- **À faire par Anthony** : activer Stripe Connect sur le compte MyCreativeSite et ajouter la clé secrète (clé restreinte) dans Supabase → Edge Functions → Secrets sous le nom `STRIPE_SECRET_KEY`.
+- Stripe Connect activé et profil de plateforme confirmé (07/11) ; clé restreinte « boutique » (Accounts, Account Links en écriture sur le compte, Checkout Sessions en écriture sur les comptes connectés) dans le secret `STRIPE_SECRET_KEY`. Test réussi : création de compte et lien d'inscription OK. Un compte d'essai vide (acct_1UZAl3RKZJGhEkWI) reste dans Connect : Stripe interdit de supprimer un compte Standard en mode réel, il est inactif.
 - Lien d'abonnement Boutique (99 €/mois) : https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07

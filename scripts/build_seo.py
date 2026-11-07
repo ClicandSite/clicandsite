@@ -152,6 +152,98 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
          ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, masseurs et ostéopathes, boulangeries, plombiers et électriciens, et d'autres commerces sur demande.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
+# 07/11/2026 (Claude, demande d'Anthony) : pages locales par ville, chacune avec son propre contenu (pas de copie).
+def _city(slug, city, title, meta, h1, lead, feats, faq, near, dist):
+    return dict(slug=slug, k=None, city=city, title=title, meta=meta, h1=h1, lead=lead, feats=feats, faq=faq, cities=near, dist=dist)
+CITIES = [
+  _city("creation-site-internet-nice", "Nice", "Création de site internet à Nice pour les pros",
+    "Création de site internet à Nice pour commerçants, artisans, restaurants et indépendants : site mobile, réservation, version anglaise. En ligne en 48 h, dès 29 €/mois.",
+    "Création de site internet à Nice : un site qui parle aux Niçois et aux visiteurs",
+    "Entre la clientèle du quartier et les millions de visiteurs qui arrivent par l'aéroport, un pro niçois doit être trouvé sur Google en français comme en anglais. On s'en occupe depuis Cannes, à une demi-heure.",
+    [("Trouvé sur « métier + Nice »","Titres, textes et fiches pensés pour ressortir quand on cherche votre métier à Nice ou dans votre quartier : Vieux-Nice, Libération, Port, Cimiez."),
+     ("Clientèle internationale","Une version anglaise (incluse en Premium) pour les touristes et la clientèle d'affaires de passage."),
+     ("Réservation et rendez-vous","Table, rendez-vous, course ou devis : la demande arrive directement chez vous, avec les coordonnées du client."),
+     ("Pensé pour le téléphone","La plupart de vos clients vous cherchent depuis leur mobile, souvent dans la rue : bouton d'appel et itinéraire en un geste."),
+     ("Horaires de saison","Horaires d'été, fermeture annuelle, jours fériés : vous les changez vous-même en quelques secondes."),
+     ("Avis Google affichés","Vos meilleurs avis mis en avant pour rassurer ceux qui ne vous connaissent pas encore (Pro et Premium).")],
+    [("Vous déplacez-vous à Nice ?","Tout se fait à distance, sans rendez-vous. Si vous préférez en parler de vive voix, Cannes n'est qu'à une trentaine de kilomètres."),
+     ("Mon commerce est dans une rue piétonne, ça compte pour Google ?","Oui : votre adresse exacte, votre plan d'accès et votre fiche Google doivent être cohérents. On veille à ce que le site donne les mêmes informations."),
+     ("Pouvez-vous reprendre mon ancien site ?","Oui. On reprend vos textes et photos dans un modèle moderne et on garde votre nom de domaine.")],
+    ["Nice","Saint-Laurent-du-Var","Cagnes-sur-Mer","Villefranche-sur-Mer","Beaulieu-sur-Mer","Èze","La Trinité","Carros"], "une trentaine de kilomètres"),
+  _city("creation-site-internet-antibes", "Antibes", "Création de site internet à Antibes et Juan-les-Pins",
+    "Création de site internet à Antibes, Juan-les-Pins et Sophia Antipolis pour commerçants, artisans et indépendants. Site mobile, version anglaise, en ligne en 48 h, dès 29 €/mois.",
+    "Création de site internet à Antibes, Juan-les-Pins et Sophia Antipolis",
+    "Port Vauban, Juan-les-Pins en saison, Sophia Antipolis toute l'année : à Antibes, vos clients sont aussi bien des habitants que des plaisanciers et des cadres en déplacement. Votre site doit leur parler à tous. Nous sommes à Cannes, à dix minutes.",
+    [("Saison et hors saison","Mettez en avant vos offres d'été à Juan-les-Pins, puis vos services de l'année : vous changez les textes vous-même."),
+     ("Clientèle anglophone","Plaisanciers, résidents étrangers, visiteurs : la version anglaise est incluse en Premium."),
+     ("Clientèle d'affaires","Pour Sophia Antipolis : déjeuners d'équipe, transferts, services aux entreprises, avec demande de devis en ligne."),
+     ("Réservation directe","Vos clients réservent chez vous, sans commission de plateforme sur les demandes qui arrivent par votre site."),
+     ("Référencement local","Votre site est construit pour « votre métier + Antibes », « Juan-les-Pins » ou « Biot » selon votre zone."),
+     ("Vous restez autonome","Prix, horaires et photos modifiables depuis votre téléphone, avec aperçu en direct.")],
+    [("Travaillez-vous avec des entreprises de Sophia Antipolis ?","Oui : le site met en avant vos services aux professionnels et reçoit leurs demandes de devis."),
+     ("Mon activité est saisonnière, le site l'est aussi ?","Non, le site reste en ligne toute l'année. Vous adaptez simplement textes et horaires selon la saison."),
+     ("Faut-il se rencontrer ?","Ce n'est pas nécessaire, tout se fait en ligne. Nous sommes à Cannes, tout près si vous préférez en parler.")],
+    ["Antibes","Juan-les-Pins","Biot","Valbonne","Sophia Antipolis","Vallauris","Golfe-Juan","Villeneuve-Loubet"], "une dizaine de kilomètres"),
+  _city("creation-site-internet-grasse", "Grasse", "Création de site internet à Grasse et dans le pays grassois",
+    "Création de site internet à Grasse, Mouans-Sartoux, Peymeinade et dans le pays grassois pour artisans, commerçants et indépendants. En ligne en 48 h, dès 29 €/mois.",
+    "Création de site internet à Grasse et dans le pays grassois",
+    "Artisans du parfum, commerces du centre historique, artisans du bâtiment des villages alentour : à Grasse, beaucoup de clients viennent de loin ou arrivent par la route. Votre site doit dire clairement ce que vous faites, où vous êtes et comment venir.",
+    [("Plan d'accès clair","Adresse, stationnement, horaires : les infos que cherchent ceux qui montent à Grasse pour vous voir."),
+     ("Visiteurs du monde entier","La ville attire une clientèle internationale : version anglaise incluse en Premium."),
+     ("Zone d'intervention","Artisans : affichez les communes où vous intervenez, de Mouans-Sartoux à Saint-Vallier-de-Thiey."),
+     ("Demandes de devis","Type de travaux, code postal, date souhaitée : la demande arrive chez vous avec les coordonnées du client."),
+     ("Vos réalisations en photos","Ateliers, créations, chantiers terminés : une galerie que vous complétez vous-même."),
+     ("Sans engagement","Un abonnement mensuel, résiliable à tout moment, nom de domaine à votre nom.")],
+    [("Intervenez-vous dans les villages autour de Grasse ?","Oui, tout se fait à distance : Mouans-Sartoux, Peymeinade, Le Tignet, Cabris, Saint-Cézaire, Châteauneuf et au-delà."),
+     ("Je vends des produits artisanaux, je peux les présenter ?","Oui, avec photos, descriptions et prix. Pour la vente en ligne avec paiement, parlez-nous de votre projet."),
+     ("Combien de temps pour être en ligne ?","En général 48 heures après réception de vos informations et de vos photos.")],
+    ["Grasse","Mouans-Sartoux","Peymeinade","Le Tignet","Cabris","Saint-Vallier-de-Thiey","Châteauneuf-Grasse","Opio"], "une quinzaine de kilomètres"),
+  _city("creation-site-internet-saint-raphael-frejus", "Saint-Raphaël", "Création de site internet à Saint-Raphaël et Fréjus",
+    "Création de site internet à Saint-Raphaël, Fréjus, Agay et dans l'Estérel pour commerçants, artisans et restaurants. En ligne en 48 h, dès 29 €/mois, sans engagement.",
+    "Création de site internet à Saint-Raphaël, Fréjus et dans l'Estérel",
+    "Dans l'est du Var, l'été multiplie la population et les recherches sur Google. Être visible avant la saison, avec des horaires et des prix à jour, fait toute la différence pour un commerce, un restaurant ou un artisan.",
+    [("Prêt avant la saison","En ligne en 48 heures : de quoi être visible dès les premières réservations de printemps."),
+     ("Horaires et offres d'été","Vous mettez à jour vos horaires, menus et tarifs de saison vous-même, depuis votre téléphone."),
+     ("Réservation en ligne","Table, rendez-vous ou intervention : les demandes arrivent directement chez vous, même quand vous êtes débordé."),
+     ("Visiteurs étrangers","Version anglaise incluse en Premium pour la clientèle touristique."),
+     ("Toute l'année aussi","Le site continue de travailler hors saison pour la clientèle locale de Fréjus, Puget-sur-Argens ou Roquebrune."),
+     ("Avis Google","Vos meilleurs avis affichés sur le site (Pro et Premium).")],
+    [("Vous intervenez dans le Var ?","Oui : Saint-Raphaël, Fréjus, Agay, Roquebrune-sur-Argens, Puget-sur-Argens, Sainte-Maxime et partout en France à distance."),
+     ("Mon restaurant n'ouvre qu'en saison, je paie toute l'année ?","L'abonnement est sans engagement : vous pouvez l'arrêter à la fin du mois en cours. Mais un site en ligne toute l'année garde sa place sur Google."),
+     ("Faut-il se rencontrer ?","Non, tout se fait en ligne. Nous sommes à Cannes, à une quarantaine de kilomètres.")],
+    ["Saint-Raphaël","Fréjus","Agay","Boulouris","Roquebrune-sur-Argens","Puget-sur-Argens","Sainte-Maxime","Les Adrets-de-l'Estérel"], "une quarantaine de kilomètres"),
+  _city("creation-site-internet-cagnes-sur-mer", "Cagnes-sur-Mer", "Création de site internet à Cagnes-sur-Mer",
+    "Création de site internet à Cagnes-sur-Mer, Villeneuve-Loubet, Saint-Laurent-du-Var et Vence pour commerces de proximité, artisans et indépendants. Dès 29 €/mois.",
+    "Création de site internet à Cagnes-sur-Mer et alentours",
+    "Entre Nice et Antibes, Cagnes-sur-Mer vit beaucoup de sa clientèle de proximité. Quand quelqu'un cherche un artisan, un garage ou un restaurant « près de chez moi », votre site doit sortir, avec vos horaires et votre téléphone en un clic.",
+    [("Recherches « près de chez moi »","Adresse, quartier et zone desservie clairement indiqués : Cros-de-Cagnes, Haut-de-Cagnes, centre-ville."),
+     ("Appel en un geste","Sur téléphone, un bouton d'appel toujours visible pour vous joindre tout de suite."),
+     ("Demandes de rappel","Pour les artisans et dépanneurs : le client laisse son problème et son numéro, vous rappelez."),
+     ("Vos tarifs affichés","Des prix clairs qui rassurent avant d'appeler, modifiables par vous à tout moment."),
+     ("Fiche Google cohérente","On aligne les informations du site sur votre fiche Google : mêmes horaires, même adresse, même téléphone."),
+     ("Sans engagement","Abonnement mensuel, nom de domaine à votre nom.")],
+    [("Vous travaillez aussi à Vence et Saint-Paul-de-Vence ?","Oui, et à Villeneuve-Loubet, Saint-Laurent-du-Var, La Colle-sur-Loup et partout en France à distance."),
+     ("J'ai déjà une page Facebook, est-ce suffisant ?","Une page Facebook aide, mais Google met mieux en avant un vrai site. Lisez notre article à ce sujet dans les conseils."),
+     ("Combien ça coûte ?","Dès 29 € par mois et 190 € de mise en ligne, hébergement et nom de domaine inclus.")],
+    ["Cagnes-sur-Mer","Villeneuve-Loubet","Saint-Laurent-du-Var","La Colle-sur-Loup","Saint-Paul-de-Vence","Vence","Saint-Jeannet","La Gaude"], "une vingtaine de kilomètres"),
+  _city("creation-site-internet-menton", "Menton", "Création de site internet à Menton et Roquebrune-Cap-Martin",
+    "Création de site internet à Menton, Roquebrune-Cap-Martin et Beausoleil pour commerces, restaurants et artisans. Site mobile, version anglaise, en ligne en 48 h, dès 29 €/mois.",
+    "Création de site internet à Menton et Roquebrune-Cap-Martin",
+    "À deux pas de l'Italie et de Monaco, Menton reçoit des clients de partout, et pas seulement en février. Un site clair, rapide sur mobile et disponible en anglais aide les visiteurs à vous choisir.",
+    [("Clientèle transfrontalière","Version anglaise incluse en Premium pour les visiteurs étrangers."),
+     ("Réservation et commandes","Table, rendez-vous, commande à retirer : la demande arrive chez vous avec les coordonnées du client."),
+     ("Horaires des événements","Pendant les grandes fêtes de la ville, prévenez de vos horaires spéciaux en quelques secondes."),
+     ("Pensé pour le téléphone","Itinéraire, appel et horaires accessibles en un geste."),
+     ("Galerie photos","Vos produits, votre salle ou vos réalisations mis en valeur, en grand."),
+     ("Vous restez autonome","Vous modifiez prix, textes et photos vous-même, ou on le fait pour vous en Pro et Premium.")],
+    [("Vous intervenez jusqu'à Menton ?","Oui, tout se fait à distance : Menton, Roquebrune-Cap-Martin, Beausoleil, Cap-d'Ail et au-delà."),
+     ("Et pour un commerce à Monaco ?","C'est possible à distance. Les mentions légales et l'adresse s'adaptent à votre situation : parlez-nous-en avant de commander."),
+     ("Mon site peut-il être en italien ?","Le site est prévu en français et en anglais. Pour une autre langue, écrivez-nous avant de commander.")],
+    ["Menton","Roquebrune-Cap-Martin","Beausoleil","Cap-d'Ail","Sainte-Agnès","Gorbio","Castellar","Castillon"], "une soixantaine de kilomètres"),
+]
+CITY_SLUG = {c["city"]: c["slug"] for c in CITIES}
+CITY_SLUG.update({"Nice":"creation-site-internet-nice","Antibes":"creation-site-internet-antibes","Grasse":"creation-site-internet-grasse","Saint-Raphaël":"creation-site-internet-saint-raphael-frejus","Fréjus":"creation-site-internet-saint-raphael-frejus","Cagnes-sur-Mer":"creation-site-internet-cagnes-sur-mer","Menton":"creation-site-internet-menton"})
+
 # Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
 INTENT = [
   dict(slug="site-internet-pas-cher", k=None, label="Site pas cher",
@@ -270,6 +362,7 @@ e = html.escape
 def trade_links(cur):
     out = [f'<a href="/{p["slug"]}/">{NAMES[p["k"]]}</a>' for p in PAGES if p["slug"] != cur]
     if cur != LOCAL["slug"]: out.append(f'<a href="/{LOCAL["slug"]}/">Cannes et Côte d\'Azur</a>')
+    out += [f'<a href="/{c["slug"]}/">Site internet à {c["city"]}</a>' for c in CITIES if c["slug"] != cur]
     out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
 
@@ -279,7 +372,7 @@ def page(p):
     svc_ld = {"@context":"https://schema.org","@type":"Service","name":p["title"],"serviceType":"Création de site internet","url":url,
       "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr",
                   "address":{"@type":"PostalAddress","streetAddress":"34 rue Borniol","postalCode":"06400","addressLocality":"Cannes","addressCountry":"FR"}},
-      "areaServed":"FR",
+      "areaServed":({"@type":"City","name":p["city"]} if p.get("city") else "FR"),
       "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in PRICES]}
     crumbs_ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
@@ -293,7 +386,10 @@ def page(p):
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
     faq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
-    cities = f'<p class="cities">Villes : {", ".join(p["cities"])}.</p>' if p.get("cities") else ""
+    def _cl(c):
+        sl = CITY_SLUG.get(c)
+        return f'<a href="/{sl}/">{e(c)}</a>' if sl and sl != p["slug"] else e(c)
+    cities = f'<p class="cities">{"Communes desservies" if p.get("city") else "Villes"} : {", ".join(_cl(c) for c in p["cities"])}.</p>' if p.get("cities") else ""
     return f'''<!doctype html>
 <html lang="fr">
 <head>
@@ -436,17 +532,17 @@ def build_blog():
     return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 
 def main():
-    for p in PAGES + [LOCAL] + INTENT:
+    for p in PAGES + [LOCAL] + CITIES + INTENT:
         os.makedirs(p["slug"], exist_ok=True)
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     blog = build_blog()
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
+    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + CITIES + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     sm += [f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><priority>{pr}</priority></url>' for u, pr in urls]
     sm.append("</urlset>")
     open("sitemap.xml", "w").write("\n".join(sm) + "\n")
-    print("pages :", len(PAGES) + 1 + len(INTENT), "· sitemap :", len(urls), "adresses")
+    print("pages :", len(PAGES) + 1 + len(CITIES) + len(INTENT), "· sitemap :", len(urls), "adresses")
 
 if __name__ == "__main__":
     main()

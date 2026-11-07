@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Espace admin · MyCreativeSite</title>
+<link rel="icon" type="image/png" href="/img/favicon-64.png">
 <meta name="googlebot" content="noindex, nofollow">
 <script src="/assets/supabase-js-2.118.0.js"></script>
 <style>
@@ -65,12 +66,14 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 .logo-mark{width:34px;height:34px;flex:none;display:block}
 .logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 :root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+.brandh{display:flex;align-items:center;gap:10px}.brandh img{flex:none}
+.grad-t{background:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 </style>
 </head>
 <body>
 <div class="wrap">
   <form class="login" id="login" hidden>
-    <h1>My<span class="grad-t">creativesite</span></h1>
+    <h1 class="brandh"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span class="grad-t">creativesite</span></span></h1>
     <p id="loginTitle">Espace administrateur</p>
     <input id="lEmail" type="email" autocomplete="username" placeholder="E-mail" required>
     <input id="lPass" type="password" autocomplete="current-password" placeholder="Mot de passe" minlength="8" required>
@@ -84,7 +87,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 
   <div id="app" hidden>
   <header>
-    <h1>My<span>creativesite</span> · CRM prospects</h1>
+    <h1 class="brandh"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span class="grad-t">creativesite</span> · CRM prospects</span></h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" id="ordersBtn" type="button">Commandes <span id="ordersN" style="background:#C0392B;color:#fff;border-radius:999px;padding:0 7px;font-size:.78rem" hidden></span></button>
       <button class="btn" id="sitesBtn" type="button">Sites clients</button>

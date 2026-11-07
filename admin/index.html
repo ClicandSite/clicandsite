@@ -279,7 +279,7 @@ async function loadOrders(){
     <button class="btn" type="button" data-osave="${o.id}">Enregistrer</button></div></div>`).join('')||'<div>Aucune commande pour le moment.</div>';
   $('ordersList').querySelectorAll('[data-brief]').forEach(b=>b.onclick=async()=>{const box=$('ordersList').querySelector(`[data-bbox="${b.dataset.brief}"]`);if(!box.hidden){box.hidden=true;return;}
     const {data,error}=await sb.rpc('cs_admin_brief',{p_slug:b.dataset.brief});if(error){alert(error.message);return;}const d=(data&&data.data)||{};
-    const T=[['about','Présentation'],['services','Services et prix'],['hours','Horaires'],['contact','Coordonnées'],['notes','Souhaits']];
+    const T=[['about','Présentation'],['services','Services et prix'],['hours','Horaires'],['contact','Coordonnées'],['google','Fiche Google (avis à recopier)'],['notes','Souhaits']];
     box.innerHTML=T.filter(t=>d[t[0]]).map(t=>`<div style="margin-top:6px"><b>${t[1]}</b><div style="white-space:pre-wrap">${esc(d[t[0]])}</div></div>`).join('')+
       `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px">${(d.photos||[]).map(p=>`<a href="${esc(p.url)}" target="_blank" rel="noopener" download style="display:grid;gap:4px;text-decoration:none;color:inherit"><img src="${esc(p.url)}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px">${p.caption?`<small>${esc(p.caption)}</small>`:''}</a>`).join('')}</div>`;
     box.hidden=false;});

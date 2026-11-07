@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="/img/favicon-64.png"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=3"></script>
+<script src="/assets/cs-edit.js?v=4"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -416,6 +416,20 @@ function buildForms(){
   if(gal.length){ c.photos.gallery=c.photos.gallery||gal.map(()=>null); b=section('Galerie photos');
     gal.forEach((el,i)=>b.appendChild(photoField('Photo '+(i+1),()=>d.querySelectorAll('.gallery > .photo')[i],()=>c.photos.gallery[i],u=>c.photos.gallery[i]=u))); }
 
+  if(c.google){ b=section('Avis Google',false,'Recopiez vos meilleurs avis depuis votre fiche Google, et collez les liens de votre fiche : les visiteurs voient votre note et peuvent laisser un avis en un clic.');
+    b.append(T('avis_t','Titre')||document.createElement('span'),T('avis_d','Texte sous le titre')||document.createElement('span'));
+    const g=c.google, gf=(k,l,ph)=>{ const f=field(l,g[k],v=>g[k]=v.trim()); f.querySelector('input').placeholder=ph; return f; };
+    b.append(gf('url','Lien de votre fiche Google','https://maps.app.goo.gl/…'),gf('review','Lien « Laisser un avis »','https://g.page/r/…/review'));
+    const r=document.createElement('div'); r.className='row'; r.append(gf('score','Note moyenne','4,9'),gf('count','Nombre d\'avis','37')); b.appendChild(r);
+    const hp=document.createElement('p'); hp.className='hint'; hp.textContent='Les liens se trouvent sur votre fiche Google (Google Business Profile) : bouton « Partager » pour la fiche, « Demander des avis » pour le lien d\'avis.'; b.appendChild(hp);
+    if(c.reviews){ const sh=document.createElement('div'); sh.className='grp'; sh.textContent='Avis affichés'; b.appendChild(sh);
+      listEditor(b,c.reviews,(it,o)=>{ const n=Math.max(1,(o.s.match(/★/g)||[]).length||5);
+        const w=document.createElement('div'); const id='f'+Math.random().toString(36).slice(2,9); w.innerHTML='<label for="'+id+'">Étoiles</label>';
+        const se=document.createElement('select'); se.id=id; [5,4,3,2,1].forEach(k=>{ const op=document.createElement('option'); op.value=k; op.textContent=k+' étoile'+(k>1?'s':''); if(k===n) op.selected=true; se.appendChild(op); });
+        se.addEventListener('change',()=>{ const k=+se.value; o.s='★★★★★'.slice(0,k)+'☆☆☆☆☆'.slice(0,5-k); refresh(); markDirty(); }); w.appendChild(se);
+        it.append(w,field('Avis',o.d,v=>o.d=v,true),field('Nom et date','who' in o?o.who:'',v=>o.who=v)); },
+        ()=>({s:'★★★★★',d:'',who:'Prénom N. · '+new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}),'Ajouter un avis'); } }
+
   if(c.text.footer!==undefined){ b=section('Bas de page'); b.appendChild(T('footer','Mention en bas de page')); }
 
   const help=document.createElement('p'); help.className='hint'; help.style.margin='14px 4px';
@@ -463,7 +477,8 @@ async function openSite(s){
   await loadTemplate(s.trade,(s.content&&s.content.style)||s.style);
   if(tok!==openSite.tok) return; // un autre métier a été choisi pendant le chargement
   const d=doc(); const base=CSEdit.extract(d);
-  state=Object.assign(base, JSON.parse(JSON.stringify(s.content||{})));
+  const sv=JSON.parse(JSON.stringify(s.content||{})); state=Object.assign(base, sv); state.text=Object.assign({}, base.text, sv.text||{});
+  if(base.google) state.google=Object.assign({}, base.google, sv.google||{});
   state.style=state.style||s.style; CSEdit.apply(d,state);
   buildForms(); badge();
   $('briefTab').hidden=DEMO?false:s.status==='en_ligne';
@@ -600,7 +615,7 @@ async function openLead(id){
       '<div class="card"><h3>Historique</h3><div class="qbtns"><select id="ldNk" style="max-width:150px" aria-label="Type"><option value="note">Note</option><option value="appel">Appel</option><option value="email">E-mail</option><option value="rdv">Rendez-vous</option></select></div><textarea id="ldNote" placeholder="Ex. : appelé, rappelle jeudi pour confirmer" aria-label="Note"></textarea><div><button class="btn primary sm" type="button" data-note>Ajouter à l\'historique</button></div><ul class="hist" id="ldHist"><li>Chargement…</li></ul></div>'
     :'<div class="card lock">Statut, notes d\'appel, date de relance et historique de ce client : inclus dans la formule Premium.</div>')+
     (same.length?'<div class="card"><h3>Autres demandes de ce client</h3>'+same.map(x=>'<button type="button" class="linkbtn" data-other="'+escH(x.id)+'">'+escH(KIND[x.kind]||x.kind)+' · '+escH(when(x.created_at))+(P?' · '+STAT[x.status]:'')+'</button>').join('')+'</div>':'')+
-    '<div class="card" style="gap:8px"><h3>Faire un document</h3><div class="qbtns"><button class="btn sm" type="button" data-mkq="devis">Faire un devis</button>'+(site.trade==='vtc'?'<button class="btn sm" type="button" data-mkq="bon">Faire un bon de commande</button>':'')+'</div></div>'+'<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer cette demande</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
+    '<div class="card" style="gap:8px"><h3>Faire un document</h3><div class="qbtns"><button class="btn sm" type="button" data-mkq="devis">Faire un devis</button>'+(site.trade==='vtc'?'<button class="btn sm" type="button" data-mkq="bon">Faire un bon de commande</button>':'')+(state&&state.google&&CSEdit.gUrl(state.google.review)?'<button class="btn sm" type="button" data-avis>Demander un avis Google</button>':'')+'</div></div>'+'<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer cette demande</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
   document.body.appendChild(el);
   const close=()=>{ el.remove(); document.removeEventListener('keydown',onKey); renderCrm(); };
   const onKey=e=>{ if(e.key==='Escape') close(); };
@@ -623,6 +638,11 @@ async function openLead(id){
     if(t.dataset.mkq){ const fv=k=>{ const f=(l.fields||[]).find(x=>new RegExp(k,'i').test(x.l)); return f?f.v:''; };
       DV.prefill={lead:DEMO?null:l.id,name:l.name||'',phone:l.phone||'',email:l.email||'',title:KIND[l.kind]||'',pickup:fv('départ|prise'),dest:fv('arrivée|destination')}; if(t.dataset.mkq==='bon') DV.prefill.bon=true;
       close(); return setMode('devis'); }
+    if(t.hasAttribute('data-avis')){ const name=(state.text&&state.text.logo)||site.name||'';
+      const msg='Bonjour'+(l.name?' '+l.name.split(' ')[0]:'')+', merci pour votre confiance ! Si vous avez été satisfait, votre avis Google nous aiderait beaucoup (30 secondes) : '+state.google.review.trim()+'\n\n'+name;
+      const ph=String(l.phone||'').replace(/[^\d+]/g,'').replace(/^\+/,'').replace(/^0/,'33');
+      if(ph){ window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(msg),'_blank','noopener'); }
+      try{ await navigator.clipboard.writeText(msg); toast(ph?'Message ouvert dans WhatsApp (et copié)':'Message copié : collez-le dans un SMS ou un e-mail'); }catch(_){ if(!ph) toast(msg); } return; }
     if(t.dataset.copy){ try{ await navigator.clipboard.writeText(t.dataset.copy); toast('Copié'); }catch(_){ toast(t.dataset.copy); } return; }
     if(t.dataset.other){ close(); return openLead(t.dataset.other); }
     if(t.dataset.fu!==undefined){ const n=+t.dataset.fu; let v=null; if(n){ const d=new Date(); d.setDate(d.getDate()+n); d.setHours(9,0,0,0); v=d.toISOString(); }
@@ -670,7 +690,8 @@ function drawBrief(){
       area('services','Vos services et vos prix','Un service par ligne, avec son prix. Ex. : Coupe femme — 35 €',6)+
       area('hours','Vos horaires','Ex. : Mardi – samedi : 9h – 19h ; Lundi : fermé',3)+
       area('contact','Adresse, téléphone, e-mail, réseaux sociaux','',3)+
-      area('notes','Autres souhaits','Couleurs, textes à reprendre de votre ancien site, avis Google…',3)+
+      area('google','Lien de votre fiche Google','https://maps.app.goo.gl/… : on recopie vos meilleurs avis sur votre site',1)+
+      area('notes','Autres souhaits','Couleurs, textes à reprendre de votre ancien site…',3)+
     '</div>'+
     '<div class="card"><h3>Vos photos <span style="font-weight:500;color:var(--muted);font-size:.85rem">· '+ph.length+' / '+q+' comprises dans votre formule</span></h3>'+
       '<p class="hint" style="margin:0">Photos de vos réalisations, de votre équipe, de votre local. Elles sont réduites automatiquement. Au-delà de '+q+', vous pourrez les ajouter vous-même depuis « Mon site ».</p>'+
@@ -678,7 +699,7 @@ function drawBrief(){
       (ph.length<q?'<label class="btn primary" style="justify-self:start;cursor:pointer;margin:0;font-size:.95rem;color:#fff">Ajouter des photos<input type="file" accept="image/*" multiple id="bfFiles" hidden></label>':'<p class="hint" style="margin:0">Vous avez atteint les '+q+' photos de votre formule.</p>')+
       '<p class="hint" id="bfUp" style="margin:0" hidden></p></div>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" id="bfSave">Enregistrer</button><button class="btn primary" type="button" id="bfSend">C\'est complet, préparez mon site</button></div>';
-  const read=()=>{ ['about','services','hours','contact','notes'].forEach(k=>{ d[k]=$('bf-'+k).value; }); R.querySelectorAll('[data-cap]').forEach(i=>{ ph[+i.dataset.cap].caption=i.value; }); d.photos=ph; brief.data=d; };
+  const read=()=>{ ['about','services','hours','contact','google','notes'].forEach(k=>{ d[k]=$('bf-'+k).value; }); R.querySelectorAll('[data-cap]').forEach(i=>{ ph[+i.dataset.cap].caption=i.value; }); d.photos=ph; brief.data=d; };
   R.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ read(); ph.splice(+b.dataset.rm,1); drawBrief(); });
   const save=async(submit)=>{ read(); if(DEMO){ if(submit) brief.submitted_at=new Date().toISOString(); toast(submit?'Démo : envoyé':'Démo : enregistré'); drawBrief(); return; }
     const {data,error}=await SB.rpc('cs_brief_save',{p_site:site.id,p_data:d,p_submit:!!submit}); if(error){ toast(error.message); return; } brief=data; toast(submit?'Merci ! On prépare votre site.':'Enregistré'); drawBrief(); };

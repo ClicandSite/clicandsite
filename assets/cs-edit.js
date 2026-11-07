@@ -25,7 +25,9 @@
     cta_t: '.cta h2',
     cta_d: '.cta p',
     address: '.addr .v',
-    footer: 'footer .wrap > span:first-child'
+    footer: 'footer .wrap > span:first-child',
+    avis_t: '#avis .head h2',
+    avis_d: '#avis .head p'
   };
   // Listes : conteneur d'éléments + champs de chaque élément
   var LISTS = {
@@ -33,8 +35,35 @@
     contacts: { items: '.cinfo > div', f: { l: '.l', v: '.v' } },
     cards: { items: '.cards > .card', f: { t: 'h3', d: 'p', p: '.price' }, img: '.photo', add: true },
     items: { items: '.vgrid > .car, .props > .prop', f: { t: 'h3', p: '.prx' }, meta: '.meta', img: '.photo', add: true },
-    hours: { items: '.hrow', f: { l: 'span:nth-child(1)', v: 'span:nth-child(2)' }, add: true }
+    hours: { items: '.hrow', f: { l: 'span:nth-child(1)', v: 'span:nth-child(2)' }, add: true },
+    reviews: { items: '#avis .reviews > .rev', f: { s: '.s', d: 'p', who: '.who' }, add: true }
   };
+  // Avis Google (07/11/2026, comme sur le site EPS) : avis recopiés par le pro + note et liens vers sa fiche Google
+  var DEF_AVIS = 'Ce que disent nos clients sur Google.';
+  function gUrl(u) { return typeof u === 'string' && /^https:\/\/([a-z0-9-]+\.)*(google\.[a-z.]+|goo\.gl|g\.page)\//i.test(u.trim()) ? u.trim() : null; }
+  function stars(n) { n = Math.max(1, Math.min(5, Math.round(n || 5))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
+  function google(doc, g) {
+    var head = q(doc, '#avis .head'); if (!head) return;
+    var old = q(head, '.cs-gg'); if (old) old.remove();
+    g = g || {}; var url = gUrl(g.url), rv = gUrl(g.review), score = parseFloat(String(g.score || '').replace(',', '.'));
+    if (!url && !rv) return;
+    var box = doc.createElement('div'); box.className = 'cs-gg';
+    box.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px';
+    if (url) {
+      var a = doc.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      a.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;color:inherit;text-decoration:none;font-weight:700';
+      if (score > 0 && score <= 5) {
+        var n = doc.createElement('span'); n.textContent = score.toFixed(1).replace('.', ','); n.style.fontSize = '1.7em';
+        var st = doc.createElement('span'); st.textContent = stars(score); st.style.cssText = 'color:var(--accent);letter-spacing:2px'; st.setAttribute('aria-label', score + ' sur 5');
+        a.append(n, st);
+      }
+      var c = doc.createElement('span'); var cnt = parseInt(g.count, 10);
+      c.textContent = (cnt > 0 ? cnt + ' avis' : 'Voir nos avis') + ' sur Google'; c.style.cssText = 'font-weight:500;text-decoration:underline;opacity:.85';
+      a.appendChild(c); box.appendChild(a);
+    }
+    if (rv) { var b = doc.createElement('a'); b.className = 'btn'; b.href = rv; b.target = '_blank'; b.rel = 'noopener'; b.textContent = 'Laisser un avis'; box.appendChild(b); }
+    head.appendChild(box);
+  }
 
   function readItem(el, def) {
     var o = {};
@@ -66,6 +95,8 @@
   function extract(doc) {
     var c = { v: 1, text: {}, prices: [], photos: {} };
     Object.keys(TEXT).forEach(function (k) { var el = q(doc, TEXT[k]); if (el) c.text[k] = txt(el); });
+    if (c.text.avis_d && /^Exemples/.test(c.text.avis_d)) c.text.avis_d = DEF_AVIS;
+    if (q(doc, '#avis')) c.google = { url: '', review: '', score: '', count: '' };
     Object.keys(LISTS).forEach(function (k) { var d = LISTS[k]; var els = qa(doc, d.items); if (els.length) c[k] = els.map(function (e) { return readItem(e, d); }); });
     qa(doc, '.prices').forEach(function (box) {
       c.prices.push(qa(box, ':scope > .row').map(function (r) { return { t: txt(q(r, '.t')), d: txt(q(r, '.d')), p: txt(q(r, '.p')) }; }));
@@ -92,6 +123,9 @@
       var rows = fit(qa(box, ':scope > .row'), arr.length, 60);
       arr.forEach(function (o, i) { var r = rows[i]; if (!r || !o) return; setTxt(q(r, '.t'), o.t || ''); setTxt(q(r, '.d'), o.d || ''); setTxt(q(r, '.p'), o.p || ''); });
     });
+    var ad = q(doc, '#avis .head p'); if (ad && typeof t.avis_d !== 'string' && /^Exemples/.test(txt(ad))) ad.textContent = DEF_AVIS;
+    google(doc, c.google);
+    var av = q(doc, '#avis'); if (av && Array.isArray(c.reviews)) av.hidden = !c.reviews.length && !(c.google && (gUrl(c.google.url) || gUrl(c.google.review)));
     var p = c.photos || {};
     if (p.hero) setImg(q(doc, '.photo.hero'), p.hero);
     if (p.team) setImg(q(doc, '.team .photo'), p.team);
@@ -100,7 +134,7 @@
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }
 
-  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS };
+  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;

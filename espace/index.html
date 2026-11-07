@@ -151,6 +151,10 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .hist li.statut,.hist li.relance{color:var(--muted)}
 .lock{font-size:.86rem;color:var(--muted)}
 @media (max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.app.crm-on .mob-tabs{display:none}.app.crm-on .main{padding-bottom:0}.ctools input{max-width:none;flex:1 1 100%}}
+.bph{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.bph figure{margin:0;display:grid;gap:6px}
+.bph figure div{aspect-ratio:4/3;border-radius:10px;background:var(--soft) center/cover no-repeat;border:1px solid var(--line)}
+.bph input{padding:6px 8px;font-size:.82rem}
 </style>
 </head>
 <body>
@@ -183,7 +187,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
       <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
-      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -202,6 +206,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
     </div>
   </div>
   <div class="crm" id="crm" hidden><div class="crm-in" id="crmIn"></div></div>
+  <div class="crm" id="brief" hidden><div class="crm-in" id="briefIn"></div></div>
   <div class="main" id="mainEd">
     <div class="panel" id="panel"></div>
     <div class="preview">
@@ -428,8 +433,10 @@ async function openSite(s){
   state=Object.assign(base, JSON.parse(JSON.stringify(s.content||{})));
   state.style=state.style||s.style; CSEdit.apply(d,state);
   buildForms(); badge();
+  $('briefTab').hidden=DEMO?false:s.status==='en_ligne';
   const dr=$('draftBar'); if(dr){ const show=!DEMO&&s.status!=='en_ligne'; dr.hidden=!show; if(show){ $('draftView').href='/apercu/?s='+encodeURIComponent(s.slug); } }
   if(mode==='crm'||params.get('vue')==='demandes'){ params.delete('vue'); await setMode('crm'); }
+  else if(params.get('vue')==='infos'&&!$('briefTab').hidden){ params.delete('vue'); await setMode('brief'); }
   setStatus(DEMO?'Démo':(s.status==='en_ligne'?'Site en ligne':'Site en préparation'), DEMO?'':'saved');
 }
 $('save').addEventListener('click',async()=>{
@@ -602,11 +609,49 @@ $('crmIn').addEventListener('click',e=>{
   if(t.id==='crmCsv') return csv();
 });
 $('crmIn').addEventListener('input',e=>{ if(e.target.id==='crmQ'){ crm.q=e.target.value; const pos=e.target.selectionStart; renderCrm(); const i=$('crmQ'); i.focus(); try{ i.setSelectionRange(pos,pos); }catch(_){} } });
+
+/* ---------- Mes infos et photos (07/11/2026) : le client dépose tout ici, on construit le site à partir de ça ---------- */
+let brief=null;
+async function loadBrief(){
+  const R=$('briefIn'); R.innerHTML='<div class="empty">Chargement…</div>';
+  if(DEMO){ brief=brief||{data:{photos:[]},quota:20,submitted_at:null}; }
+  else { const {data,error}=await SB.rpc('cs_brief_get',{p_site:site.id}); if(error){ R.innerHTML='<div class="empty">'+escH(error.message)+'</div>'; return; } brief=data; }
+  drawBrief();
+}
+function drawBrief(){
+  const d=brief.data||{}, ph=d.photos||[], q=brief.quota||20, R=$('briefIn');
+  const area=(k,l,ph2,rows)=>'<div><label for="bf-'+k+'">'+l+'</label><textarea id="bf-'+k+'" rows="'+(rows||4)+'" placeholder="'+escH(ph2)+'">'+escH(d[k]||'')+'</textarea></div>';
+  R.innerHTML='<div class="crm-head"><div><h2>Mes infos et photos</h2><p>Vous préférez qu\'on prépare votre site ? Mettez tout ici, depuis votre téléphone : on s\'en sert pour le construire. Vous pouvez enregistrer et revenir plus tard.'+(DEMO?' <b>Démo</b> : rien n\'est enregistré.':'')+'</p></div></div>'+
+    (brief.submitted_at?'<div class="upsell"><p><b>Bien reçu le '+new Date(brief.submitted_at).toLocaleString('fr-FR')+'.</b> On prépare votre site et on vous prévient dès qu\'il est prêt. Vous pouvez encore compléter.</p></div>':'')+
+    '<div class="card" style="gap:12px">'+
+      area('about','Présentation de votre entreprise','Qui vous êtes, depuis quand, ce qui vous rend différent…',4)+
+      area('services','Vos services et vos prix','Un service par ligne, avec son prix. Ex. : Coupe femme — 35 €',6)+
+      area('hours','Vos horaires','Ex. : Mardi – samedi : 9h – 19h ; Lundi : fermé',3)+
+      area('contact','Adresse, téléphone, e-mail, réseaux sociaux','',3)+
+      area('notes','Autres souhaits','Couleurs, textes à reprendre de votre ancien site, avis Google…',3)+
+    '</div>'+
+    '<div class="card"><h3>Vos photos <span style="font-weight:500;color:var(--muted);font-size:.85rem">· '+ph.length+' / '+q+' comprises dans votre formule</span></h3>'+
+      '<p class="hint" style="margin:0">Photos de vos réalisations, de votre équipe, de votre local. Elles sont réduites automatiquement. Au-delà de '+q+', vous pourrez les ajouter vous-même depuis « Mon site ».</p>'+
+      '<div class="bph">'+ph.map((p,i)=>'<figure><div style="background-image:url(\''+escH(p.url)+'\')"></div><input data-cap="'+i+'" value="'+escH(p.caption||'')+'" placeholder="Légende (facultatif)"><button type="button" class="linkbtn" data-rm="'+i+'" style="color:var(--bad)">Retirer</button></figure>').join('')+'</div>'+
+      (ph.length<q?'<label class="btn primary" style="justify-self:start;cursor:pointer;margin:0;font-size:.95rem;color:#fff">Ajouter des photos<input type="file" accept="image/*" multiple id="bfFiles" hidden></label>':'<p class="hint" style="margin:0">Vous avez atteint les '+q+' photos de votre formule.</p>')+
+      '<p class="hint" id="bfUp" style="margin:0" hidden></p></div>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" id="bfSave">Enregistrer</button><button class="btn primary" type="button" id="bfSend">C\'est complet, préparez mon site</button></div>';
+  const read=()=>{ ['about','services','hours','contact','notes'].forEach(k=>{ d[k]=$('bf-'+k).value; }); R.querySelectorAll('[data-cap]').forEach(i=>{ ph[+i.dataset.cap].caption=i.value; }); d.photos=ph; brief.data=d; };
+  R.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ read(); ph.splice(+b.dataset.rm,1); drawBrief(); });
+  const save=async(submit)=>{ read(); if(DEMO){ if(submit) brief.submitted_at=new Date().toISOString(); toast(submit?'Démo : envoyé':'Démo : enregistré'); drawBrief(); return; }
+    const {data,error}=await SB.rpc('cs_brief_save',{p_site:site.id,p_data:d,p_submit:!!submit}); if(error){ toast(error.message); return; } brief=data; toast(submit?'Merci ! On prépare votre site.':'Enregistré'); drawBrief(); };
+  $('bfSave').onclick=()=>save(false); $('bfSend').onclick=()=>save(true);
+  const fi=$('bfFiles'); if(fi) fi.onchange=async()=>{ read(); const files=[...fi.files].slice(0,q-ph.length); const up=$('bfUp'); up.hidden=false;
+    for(let i=0;i<files.length;i++){ up.textContent='Envoi de la photo '+(i+1)+' sur '+files.length+'…'; try{ ph.push({url:await uploadPhoto(files[i]),caption:''}); }catch(e){ toast(e.message||'Photo refusée'); } }
+    if(fi.files.length>files.length) toast('Votre formule comprend '+q+' photos.');
+    d.photos=ph; drawBrief(); if(!DEMO) save(false); };
+}
 let mode='edit';
 async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
-  const on=m==='crm'; $('crm').hidden=!on; $('mainEd').hidden=on; $('app').classList.toggle('crm-on',on);
-  ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=on?'hidden':''; });
+  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
+  ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=other?'hidden':''; });
+  if(m==='brief'){ await loadBrief(); return; }
   if(on){ if(!crm.loaded||crm.site!==site.id+':'+site.trade){ crm.loaded=false; crm.site=site.id+':'+site.trade; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
 }
 document.querySelector('.vseg[aria-label="Affichage"]').addEventListener('click',e=>{ const b=e.target.closest('button[data-mode]'); if(b) setMode(b.dataset.mode); });

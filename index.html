@@ -522,6 +522,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
       <div class="opt"><span class="n2">Fiche Google optimisée<span class="d2">Photos, horaires, catégories, réponses aux avis</span></span><span class="p2">149 € une fois</span></div>
       <div class="opt"><span class="n2">Adresse mail pro<span class="d2">contact@votre-entreprise.fr</span></span><span class="p2">+ 5 € / mois</span></div>
       <div class="opt"><span class="n2">Création de logo<span class="d2">2 propositions, fichiers fournis. Offert en Premium</span></span><span class="p2">49 € une fois</span></div>
+      <div class="opt"><span class="n2">Photos supplémentaires placées par nous<span class="d2">Au-delà des photos comprises (10 Essentiel, 20 Pro, 40 Premium et Boutique). Vous pouvez aussi les ajouter vous-même, sans frais</span></span><span class="p2">29 € les 20</span></div>
       <div class="opt"><span class="n2">Pages supplémentaires<span class="d2">Une page de plus sur votre site</span></span><span class="p2">49 € la page</span></div>
     </div>
   </div>
@@ -574,7 +575,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
       <div class="f full"><label for="o-mail">Email</label><input id="o-mail" type="email" autocomplete="email" placeholder="vous@exemple.fr" required></div>
       <fieldset class="f full who"><legend>Qui remplit le site ?</legend>
         <label><input type="radio" name="o-self" value="1" checked><span><b>Je le remplis moi-même</b><small>Vous accédez tout de suite à votre espace : textes, prix, horaires, photos.</small></span></label>
-        <label><input type="radio" name="o-self" value="0"><span><b>Vous le faites pour moi</b><small>On vous contacte et on le prépare avec vos infos et vos photos.</small></span></label>
+        <label><input type="radio" name="o-self" value="0"><span><b>Vous le faites pour moi</b><small>Vous déposez vos infos et vos photos dans votre espace, on prépare le site.</small></span></label>
       </fieldset>
       <div class="f full"><label for="o-msg">Un mot sur votre projet (facultatif)</label><textarea id="o-msg" rows="3" maxlength="1500" placeholder="Vos services, votre site actuel, une couleur préférée…"></textarea></div>
       <input id="o-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
@@ -697,6 +698,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
     .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j&&j.message||'Envoi impossible'); return j; }); })
     .then(function(j){ var em=data.p_email; f.reset(); line(); b.textContent='Demande envoyée';
       if(data.p_self&&j&&j.slug){ ok.innerHTML='Merci ! Votre site est créé. <a class="go" href="/espace/?inscription=1&email='+encodeURIComponent(em)+'">Créer mon mot de passe et remplir mon site</a> avec l\'adresse '+em.replace(/[<>&"]/g,'')+'. Quand il vous plaît, vous le validez et vous payez : on réserve alors votre nom de domaine.'; }
+      else if(j&&j.slug){ ok.innerHTML='Merci ! Dernière étape : <a class="go" href="/espace/?inscription=1&vue=infos&email='+encodeURIComponent(em)+'">créez votre mot de passe et déposez vos infos et vos photos</a>. On prépare votre site avec, puis on vous l\'envoie pour validation.'; }
       else ok.textContent='Merci ! Votre demande est bien arrivée. On vous contacte sous 24 h (jours ouvrés) pour préparer votre site. Une question d\'ici là : contact@mycreativesite.fr';
       ok.hidden=false; })
     .catch(function(x){ b.disabled=false; b.textContent='Je veux mon site';

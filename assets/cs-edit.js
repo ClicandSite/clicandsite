@@ -109,6 +109,7 @@
 
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;
+    if (!Array.isArray(c.reviews)) c = Object.assign({}, c, { reviews: [] }); // pas d'avis d'exemple sur un vrai site
     var t = c.text || {};
     Object.keys(TEXT).forEach(function (k) { if (typeof t[k] === 'string') setTxt(q(doc, TEXT[k]), t[k]); });
     Object.keys(LISTS).forEach(function (k) {
@@ -125,7 +126,7 @@
     });
     var ad = q(doc, '#avis .head p'); if (ad && typeof t.avis_d !== 'string' && /^Exemples/.test(txt(ad))) ad.textContent = DEF_AVIS;
     google(doc, c.google);
-    var av = q(doc, '#avis'); if (av && Array.isArray(c.reviews)) av.hidden = !c.reviews.length && !(c.google && (gUrl(c.google.url) || gUrl(c.google.review)));
+    var av = q(doc, '#avis'); if (av) av.hidden = !c.reviews.length && !(c.google && (gUrl(c.google.url) || gUrl(c.google.review)));
     var p = c.photos || {};
     if (p.hero) setImg(q(doc, '.photo.hero'), p.hero);
     if (p.team) setImg(q(doc, '.team .photo'), p.team);

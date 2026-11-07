@@ -269,6 +269,18 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .nav .acc:hover{border-color:var(--brand)}
 .nav .acc svg{width:18px;height:18px}
 @media (max-width:860px){.nav .acc span{display:none}.nav .acc{padding:8px}.nav{gap:10px}.nav .btn.sm{white-space:nowrap}}
+.refgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.ref{min-width:0;display:grid;gap:16px;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;transition:border-color .2s,transform .2s}
+.ref:hover{border-color:var(--brand);transform:translateY(-2px)}
+.refshot{position:relative;padding-right:14%;padding-bottom:6%}
+.refshot img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);box-shadow:0 18px 40px -22px rgba(18,22,43,.45)}
+.refshot .rm{position:absolute;right:0;bottom:0;width:24%;border-radius:14px;border:4px solid var(--device,#12162B)}
+.reftxt{display:grid;gap:6px;padding:0 4px 4px}
+.reftxt .tag{justify-self:start;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand)}
+.reftxt p{color:var(--muted);margin:0}
+.reftxt .lnk{font-weight:700;color:var(--brand);font-size:.92rem}
+@media (max-width:860px){.refgrid{grid-template-columns:1fr}}
+@media (max-width:480px){header .nav .btn.sm{padding:8px 10px;font-size:.82rem}header .nav{gap:6px}header .logo span{font-size:1rem}header .logo{gap:6px}header .logo .logo-mark{width:28px;height:28px}}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -440,6 +452,26 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
       <div class="inc"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 6h18v13H12l-5 4v-4H5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 11h8M10 15h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h3>Textes et logo simple</h3><p>On écrit vos textes, et pas de logo ? On met votre nom en forme, offert.</p></div>
       <div class="inc"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 22V9l9-5 9 5v13" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 22v-7h8v7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 22h22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h3>Mentions légales</h3><p>Pages obligatoires prêtes : mentions, confidentialité.</p></div>
       <div class="inc"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 9a9 9 0 0 1 17-2M23 19a9 9 0 0 1-17 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 3v4h-4M6 25v-4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Dépannage</h3><p>Un souci ? On répare à distance, sans frais.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="refs" id="references">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Réalisations</span>
+      <h2>Ils sont en ligne avec nous</h2>
+      <p>Deux sites réalisés par MyCreativeSite, en ligne et utilisés chaque jour.</p>
+    </div>
+    <div class="refgrid">
+      <a class="ref" href="https://www.elite-prestige-services.fr/" target="_blank" rel="noopener">
+        <div class="refshot"><img src="img/ref-eps-d.jpg" width="960" height="600" alt="Site d'Elite Prestige Services, chauffeur privé sur la Côte d'Azur" loading="lazy"><img class="rm" src="img/ref-eps-m.jpg" width="360" height="720" alt="" loading="lazy"></div>
+        <div class="reftxt"><span class="tag">Chauffeur VTC</span><h3>Elite Prestige Services</h3><p>Chauffeur privé à Cannes, Nice et Monaco. Réservation en ligne, flotte, transferts aéroport, site en 4 langues.</p><span class="lnk">elite-prestige-services.fr ↗</span></div>
+      </a>
+      <a class="ref" href="https://abracadeal.fr/" target="_blank" rel="noopener">
+        <div class="refshot"><img src="img/ref-abra-d.jpg" width="960" height="600" alt="Site d'Abracadeal, petites annonces" loading="lazy"><img class="rm" src="img/ref-abra-m.jpg" width="360" height="720" alt="" loading="lazy"></div>
+        <div class="reftxt"><span class="tag">Petites annonces</span><h3>Abracadeal</h3><p>Site de petites annonces : comptes particuliers et pros, messagerie, modération, espace professionnel.</p><span class="lnk">abracadeal.fr ↗</span></div>
+      </a>
     </div>
   </div>
 </section>

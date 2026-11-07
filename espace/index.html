@@ -197,7 +197,7 @@ function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc();
 function loadTemplate(trade, styleName){
   return new Promise(res=>{
     pv.onload=()=>{ fit(); res(); };
-    pv.src='/modeles/'+trade+'.html#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=20#'+styleName;
   });
 }
 

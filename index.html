@@ -298,7 +298,7 @@ footer nav{display:flex;gap:18px}
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Les modèles</span>
-      <h2>9 métiers, 5 styles. Essayez-les en vrai.</h2>
+      <h2>9 métiers, 20 styles. Essayez-les en vrai.</h2>
       <p>Ce ne sont pas des images : faites défiler les écrans, cliquez, testez la réservation. C'est exactement le site que vos clients verront.</p>
     </div>
     <div class="ex-bar">
@@ -324,6 +324,21 @@ footer nav{display:flex;gap:18px}
           <button type="button" data-s="riviera" aria-pressed="false"><span class="sw" style="background:#0E6BA8"></span>Riviera</button>
           <button type="button" data-s="chaleureux" aria-pressed="false"><span class="sw" style="background:#4D5B39"></span>Chaleureux</button>
           <button type="button" data-s="audacieux" aria-pressed="false"><span class="sw" style="background:#2F2FE4"></span>Audacieux</button>
+          <button type="button" data-s="minimal" aria-pressed="false"><span class="sw" style="background:#1C1B19"></span>Minimal crème</button>
+          <button type="button" data-s="nuit" aria-pressed="false"><span class="sw" style="background:#8DB8FF"></span>Nuit bleue</button>
+          <button type="button" data-s="provence" aria-pressed="false"><span class="sw" style="background:#6E4C93"></span>Provence lavande</button>
+          <button type="button" data-s="ocean" aria-pressed="false"><span class="sw" style="background:#0E8C7F"></span>Océan</button>
+          <button type="button" data-s="pop" aria-pressed="false"><span class="sw" style="background:#FF3D7F"></span>Pop vitaminé</button>
+          <button type="button" data-s="corporate" aria-pressed="false"><span class="sw" style="background:#1F4FD1"></span>Pro sérieux</button>
+          <button type="button" data-s="retro" aria-pressed="false"><span class="sw" style="background:#B5452B"></span>Rétro</button>
+          <button type="button" data-s="zen" aria-pressed="false"><span class="sw" style="background:#5F8466"></span>Zen nature</button>
+          <button type="button" data-s="neon" aria-pressed="false"><span class="sw" style="background:#00E0B8"></span>Néon</button>
+          <button type="button" data-s="poudre" aria-pressed="false"><span class="sw" style="background:#C9506F"></span>Rose poudré</button>
+          <button type="button" data-s="terracotta" aria-pressed="false"><span class="sw" style="background:#C0582E"></span>Terracotta</button>
+          <button type="button" data-s="graphite" aria-pressed="false"><span class="sw" style="background:#18191C"></span>Graphite</button>
+          <button type="button" data-s="foret" aria-pressed="false"><span class="sw" style="background:#2F5D3A"></span>Forêt</button>
+          <button type="button" data-s="soleil" aria-pressed="false"><span class="sw" style="background:#E85D04"></span>Soleil</button>
+          <button type="button" data-s="marine" aria-pressed="false"><span class="sw" style="background:#0B1F3A"></span>Marine chic</button>
         </div>
       </div>
     </div>
@@ -512,7 +527,7 @@ var IMG={"d-garage-audacieux": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABA
 var FILES={vtc:'modeles/vtc.html',restaurant:'modeles/restaurant.html',garage:'modeles/garage.html',immobilier:'modeles/immobilier.html',batiment:'modeles/batiment.html',beaute:'modeles/beaute.html',bienetre:'modeles/bienetre.html',boulangerie:'modeles/boulangerie.html',depannage:'modeles/depannage.html'};
 var URLS={vtc:'azur-prestige.fr',restaurant:'chez-marius.fr',garage:'garage-du-littoral.fr',immobilier:'maisons-esterel.fr',batiment:'azur-renovation.fr',beaute:'maison-lila.fr',bienetre:'studio-respire.fr',boulangerie:'maison-fournier.fr',depannage:'azur-depannage.fr'};
 var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage et concession',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile'};
-var SN={moderne:'Moderne',luxe:'Luxe',riviera:'Riviera',chaleureux:'Chaleureux',audacieux:'Audacieux'};
+var SN={"moderne": "Moderne", "luxe": "Luxe", "riviera": "Riviera", "chaleureux": "Chaleureux", "audacieux": "Audacieux", "minimal": "Minimal crème", "nuit": "Nuit bleue", "provence": "Provence lavande", "ocean": "Océan", "pop": "Pop vitaminé", "corporate": "Pro sérieux", "retro": "Rétro", "zen": "Zen nature", "neon": "Néon", "poudre": "Rose poudré", "terracotta": "Terracotta", "graphite": "Graphite", "foret": "Forêt", "soleil": "Soleil", "marine": "Marine chic"};
 var DESC={
   vtc:'<b>Réservation de course</b> dès l\'ouverture, services aéroport et longue distance, véhicule, tarifs fixes et bouton WhatsApp sur téléphone.',
   restaurant:'<b>Réservation de table</b>, carte par catégories, menu du midi, photos des plats, horaires et plan d\'accès.',
@@ -524,7 +539,7 @@ var DESC={
   boulangerie:'<b>Commande à retirer</b> (click and collect), <b>vitrine de la semaine</b> filtrable par rayon, gâteaux sur commande, tarifs et horaires.',
   depannage:'<b>Demande de rappel urgent</b> dès l\'ouverture, <b>interventions récentes</b> avec prix payé, tarifs transparents, zone d\'intervention 7j/7.'
 };
-var SDESC={moderne:'blanc et noir, grandes photos.',luxe:'noir et champagne, tout centré.',riviera:'bleu mer, photo à droite.',chaleureux:'tons pierre et olive, photo encadrée.',audacieux:'couleurs vives, titres en majuscules.'};
+var SDESC={"moderne": "blanc et noir, grandes photos.", "luxe": "noir et champagne, tout centré.", "riviera": "bleu mer, photo à droite.", "chaleureux": "tons pierre et olive, photo encadrée.", "audacieux": "couleurs vives, titres en majuscules.", "minimal": "crème et noir, très épuré.", "nuit": "bleu nuit et serif élégant, tout centré.", "provence": "lavande et crème, photo encadrée.", "ocean": "turquoise, photo à droite.", "pop": "rose et jaune vitaminés.", "corporate": "bleu franc, sobre et rassurant.", "retro": "tons vintage brique et sable.", "zen": "vert sauge, calme et centré.", "neon": "fond sombre, accents fluo.", "poudre": "rose poudré, arrondis doux.", "terracotta": "terre cuite et serif classique.", "graphite": "gris anthracite, élégant.", "foret": "vert forêt, photo encadrée.", "soleil": "orange et jaune soleil.", "marine": "bleu marine et touches dorées."};
 var cur={k:'vtc',s:'moderne'};
 var ifd=document.getElementById('if-d'), ifm=document.getElementById('if-m');
 function fit(){

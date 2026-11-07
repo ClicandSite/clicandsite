@@ -160,7 +160,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 <script>
 const SB = supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-espace'}});
 const $ = id => document.getElementById(id);
-const STYLES = {moderne:'Moderne', luxe:'Luxe', riviera:'Riviera', chaleureux:'Chaleureux', audacieux:'Audacieux'};
+const STYLES = {'moderne': 'Moderne', 'luxe': 'Luxe', 'riviera': 'Riviera', 'chaleureux': 'Chaleureux', 'audacieux': 'Audacieux', 'minimal': 'Minimal crème', 'nuit': 'Nuit bleue', 'provence': 'Provence lavande', 'ocean': 'Océan', 'pop': 'Pop vitaminé', 'corporate': 'Pro sérieux', 'retro': 'Rétro', 'zen': 'Zen nature', 'neon': 'Néon', 'poudre': 'Rose poudré', 'terracotta': 'Terracotta', 'graphite': 'Graphite', 'foret': 'Forêt', 'soleil': 'Soleil', 'marine': 'Marine chic'};
 const ITEMS = {garage:'Véhicules en stock', immobilier:'Biens en vente et location', batiment:'Réalisations', beaute:'Réalisations', bienetre:'Soins', boulangerie:'Produits en vitrine', depannage:'Interventions', vtc:'Éléments', restaurant:'Éléments'};
 const params = new URLSearchParams(location.search);
 const DEMO = params.has('demo');

@@ -185,6 +185,8 @@
     [/^(.+), offerte dès (.+)$/, function (m, tr) { return tr(m[1]) + ', free over ' + m[2]; }],
     [/^Dès (.+)$/, function (m) { return 'From ' + m[1]; }]
   ];
+  // Textes écrits par les scripts des modèles après un clic (absents de la page au moment de la traduction)
+  var BUILTIN = { 'Dans le panier': 'In basket', 'Ajouter': 'Add', 'Gratuit': 'Free', 'Gratuite': 'Free', 'Offerte': 'Free', 'Sur demande': 'On request', 'Fermé': 'Closed', 'Fermer': 'Close' };
   function norm(s) { return String(s).replace(/\s+/g, ' ').trim(); }
   function worth(s) { return /[A-Za-zÀ-ÿ]{2}/.test(s) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && !/^(https?:\/\/|www\.)/i.test(s) && !/^\+?[\d\s.()\/-]{6,}$/.test(s); }
   function skip(el) { return !el || (el.closest && el.closest(NOTR)); }
@@ -211,6 +213,7 @@
     var tr = function (s) {
       var k = norm(s); if (!k) return null;
       if (Object.prototype.hasOwnProperty.call(dict, k) && dict[k]) return dict[k];
+      if (BUILTIN[k]) return BUILTIN[k];
       for (var i = 0; i < RX.length; i++) { var m = RX[i][0].exec(k); if (m) return RX[i][1](m, function (x) { return tr(x) || x; }); }
       return null;
     };

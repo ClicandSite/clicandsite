@@ -89,6 +89,19 @@ Deno.serve(async (req) => {
       }
       return out({ checked: (pend || []).length, paid });
     }
+    if (action === "selftest") { // vérification de la clé et de Connect (clé interne requise)
+      const { data: ok } = await db.rpc("cs_shop_key_ok", { p_key: req.headers.get("x-cs-key") || "" });
+      if (!ok) return fail("Accès refusé", 403);
+      if (!SK) return out({ key: false });
+      const r: Record<string, unknown> = { key: true, mode: SK.includes("_live_") ? "live" : "test" };
+      try {
+        const x = await stripe("POST", "accounts", { type: "standard", country: "FR", email: "test-connect@mycreativesite.fr", metadata: { selftest: "1" } });
+        r.account = "ok";
+        try { const l = await stripe("POST", "account_links", { account: x.id, type: "account_onboarding", refresh_url: "https://mycreativesite.fr/espace/", return_url: "https://mycreativesite.fr/espace/" }); r.link = l.url ? "ok" : "?"; } catch (e) { r.link = (e as Error).message; }
+        try { await stripe("DELETE", "accounts/" + x.id); r.cleanup = "ok"; } catch (e) { r.cleanup = (e as Error).message + " (" + x.id + ")"; }
+      } catch (e) { r.account = (e as Error).message; }
+      return out(r);
+    }
     if (action === "connect" || action === "status") {
       const site = String(b.site || "");
       if (!/^[0-9a-f-]{36}$/.test(site) || !(await owner(req, site))) return fail("Accès refusé", 403);

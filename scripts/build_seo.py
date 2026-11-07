@@ -6,7 +6,7 @@ import json, os, html, datetime
 
 SITE = "https://mycreativesite.fr"
 TODAY = datetime.date.today().isoformat()
-PRICES = [("Essentiel", 29, 190), ("Pro", 59, 290), ("Premium", 89, 490)]
+PRICES = [("Essentiel", 29, 190), ("Pro", 49, 290), ("Premium", 79, 490)]
 
 PAGES = [
   dict(slug="site-internet-vtc", k="vtc", style="luxe",
@@ -19,8 +19,8 @@ PAGES = [
            ("Vos tarifs fixes","Aéroport → centre-ville, gares, événements : des prix clairs qui rassurent avant de réserver."),
            ("Votre véhicule mis en avant","Photos, nombre de places, bagages, équipements à bord, langues parlées."),
            ("Site en anglais","Indispensable pour la clientèle d'affaires et touristique (inclus en Premium)."),
-           ("Acompte en ligne","Le client paie un acompte par carte à la réservation : fini les courses annulées (Premium).")],
-    faq=[("Mon site peut-il remplacer les plateformes de VTC ?","Il les complète : vos clients fidèles et les personnes qui vous trouvent sur Google réservent chez vous, sans commission sur la course."),
+           ("Paiement à la réservation","Forfait payé ou acompte par carte, l'argent arrive directement sur votre compte : fini les courses annulées (Pro).")],
+    faq=[("Mon site peut-il remplacer les plateformes de VTC ?","Il les complète : vos clients fidèles et les personnes qui vous trouvent sur Google réservent chez vous, sans commission sur la course. Une plateforme prend environ 25 % : sur une course de 100 €, c'est 25 € que vous gardez. Deux courses directes par mois paient la formule Pro."),
          ("Puis-je afficher mes tarifs aéroport ?","Oui. Vous modifiez vous-même vos forfaits depuis votre espace client, à tout moment."),
          ("Le site fonctionne-t-il pour une petite société de VTC avec plusieurs chauffeurs ?","Oui : vous présentez vos véhicules et les réservations arrivent sur l'adresse de votre choix.")]),
   dict(slug="site-internet-restaurant", k="restaurant", style="chaleureux",
@@ -116,10 +116,10 @@ PAGES = [
            ("Vitrine de la semaine","Vos produits du moment, avec photo et prix, mis à jour en une minute."),
            ("Gâteaux sur commande","Anniversaires, mariages, plateaux pour entreprises : un formulaire dédié."),
            ("Horaires et fermetures","Jours fériés, vacances, horaires du dimanche : toujours à jour."),
-           ("Avis Google","Vos meilleurs avis mis en avant."),
+           ("Avis Google","Votre note et vos meilleurs avis mis en avant (Pro et Premium)."),
            ("Livraison aux pros","Restaurants, hôtels, bureaux : une rubrique pour vos clients professionnels.")],
     faq=[("Je peux changer ma vitrine chaque jour ?","Oui, depuis votre téléphone, en quelques secondes."),
-         ("Faut-il gérer un paiement en ligne ?","Non : le client paie au retrait. Le paiement en ligne est possible en Premium."),
+         ("Faut-il gérer un paiement en ligne ?","Non : le client paie au retrait. Le paiement en ligne à la commande est possible dès la formule Pro."),
          ("Le site convient-il à un traiteur ou un fromager ?","Oui, le modèle s'adapte à tous les commerces de bouche.")]),
   dict(slug="site-internet-boutique-en-ligne", k="boutique", style="moderne",
     title="Création de boutique en ligne pour commerçants et créateurs",

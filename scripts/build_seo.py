@@ -256,8 +256,8 @@ CITIES = [
      ("Mon site peut-il être en italien ?","Le site est prévu en français et en anglais. Pour une autre langue, écrivez-nous avant de commander.")],
     ["Menton","Roquebrune-Cap-Martin","Beausoleil","Cap-d'Ail","Sainte-Agnès","Gorbio","Castellar","Castillon"], "une soixantaine de kilomètres"),
 ]
-CITY_SLUG = {c["city"]: c["slug"] for c in CITIES}
-CITY_SLUG.update({"Nice":"creation-site-internet-nice","Antibes":"creation-site-internet-antibes","Grasse":"creation-site-internet-grasse","Saint-Raphaël":"creation-site-internet-saint-raphael-frejus","Fréjus":"creation-site-internet-saint-raphael-frejus","Cagnes-sur-Mer":"creation-site-internet-cagnes-sur-mer","Menton":"creation-site-internet-menton"})
+CITIES = []  # 07/11/2026 : retirées à la demande d'Anthony, MyCreativeSite vend dans toute la France
+CITY_SLUG = {}
 
 # Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
 INTENT = [

@@ -472,7 +472,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <span class="lbl">Des modèles faits pour :</span>
     <button type="button" class="pill" data-ht="vtc" aria-pressed="true">Chauffeurs VTC</button>
     <button type="button" class="pill" data-ht="restaurant" aria-pressed="false">Restaurants</button>
-    <button type="button" class="pill" data-ht="concession" aria-pressed="false">Concessions automobiles</button>
+    <button type="button" class="pill" data-ht="concession" aria-pressed="false">Concessions auto et moto</button>
     <button type="button" class="pill" data-ht="garage" aria-pressed="false">Garages</button>
     <button type="button" class="pill" data-ht="immobilier" aria-pressed="false">Agences immobilières</button>
     <button type="button" class="pill" data-ht="batiment" aria-pressed="false">Artisans du bâtiment</button>
@@ -499,7 +499,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <button type="button" data-k="vtc" aria-pressed="true"><span class="ic" aria-hidden="true">🚘</span>Chauffeur VTC</button>
           <button type="button" data-k="restaurant" aria-pressed="false"><span class="ic" aria-hidden="true">🍽️</span>Restaurant</button>
           <button type="button" data-k="garage" aria-pressed="false"><span class="ic" aria-hidden="true">🔧</span>Garage</button>
-          <button type="button" data-k="concession" aria-pressed="false"><span class="ic" aria-hidden="true">🚗</span>Concession automobile</button>
+          <button type="button" data-k="concession" aria-pressed="false"><span class="ic" aria-hidden="true">🚗</span>Concession auto et moto</button>
           <button type="button" data-k="immobilier" aria-pressed="false"><span class="ic" aria-hidden="true">🏠</span>Agence immobilière</button>
           <button type="button" data-k="batiment" aria-pressed="false"><span class="ic" aria-hidden="true">🧱</span>Bâtiment et rénovation</button>
           <button type="button" data-k="beaute" aria-pressed="false"><span class="ic" aria-hidden="true">✂️</span>Coiffure et beauté</button>
@@ -693,7 +693,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <!-- 08/11/2026 (Anthony : « pas intuitif avec le switch ») : une carte, même prix, les deux offres côte à côte -->
     <span id="auto-immo" class="anchor"></span>
     <div class="plan spec" id="boutique">
-      <span class="badge">Formules spécialisées · Boutiques, concessions, garages, agences</span>
+      <span class="badge">Formules spécialisées · Boutiques, concessions et garages auto-moto, agences</span>
       <div class="spec-head">
         <div class="price"><b>99 €</b><span>/ mois</span></div>
         <p class="setup">+ <b>490 €</b> de mise en ligne, une fois · au choix selon votre activité</p>
@@ -717,8 +717,8 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <h3>Pack Auto &amp; Immo</h3>
           <p class="for">Votre site et vos annonces en illimité sur Abracadeal. Une seule mise à jour, site et annonces suivent. Trois versions au choix :</p>
           <div class="spec-ver">
-            <a class="star" href="modeles/garage.html?concession=1#luxe" target="_blank" rel="noopener"><b>🚗 Concession automobile <em>Nouveau</em></b><span>100 % vente de véhicules : stock en vitrine, fiches complètes, reprise et financement. Pas d'atelier, pas de rendez-vous.</span></a>
-            <a href="modeles/garage.html#moderne" target="_blank" rel="noopener"><b>🔧 Garage</b><span>Atelier (rendez-vous, entretien, tarifs) et véhicules à vendre</span></a>
+            <a class="star" href="modeles/garage.html?concession=1#luxe" target="_blank" rel="noopener"><b>🚗🏍️ Concession auto et moto <em>Nouveau</em></b><span>100 % vente de voitures et de motos : stock en vitrine, fiches complètes, reprise et financement. Pas d'atelier, pas de rendez-vous.</span></a>
+            <a href="modeles/garage.html#moderne" target="_blank" rel="noopener"><b>🔧 Garage auto et moto</b><span>Atelier (rendez-vous, entretien, tarifs) et véhicules à vendre</span></a>
             <a href="modeles/immobilier.html#riviera" target="_blank" rel="noopener"><b>🏠 Agence immobilière</b><span>Biens à vendre et à louer, DPE et GES, estimation</span></a>
           </div>
           <ul>
@@ -788,7 +788,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
       </ol>
     </div>
     <form id="orderform">
-      <div class="f"><label for="o-trade">Votre métier</label><select id="o-trade"><option value="vtc">Chauffeur VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage ou concession automobile</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment, artisan</option><option value="beaute">Coiffure, beauté</option><option value="bienetre">Bien-être, santé</option><option value="boulangerie">Boulangerie, pâtisserie</option><option value="boutique">Boutique, vente en ligne</option><option value="depannage">Plomberie, électricité, dépannage</option><option value="autre">Autre métier</option></select></div>
+      <div class="f"><label for="o-trade">Votre métier</label><select id="o-trade"><option value="vtc">Chauffeur VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage ou concession (auto, moto)</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment, artisan</option><option value="beaute">Coiffure, beauté</option><option value="bienetre">Bien-être, santé</option><option value="boulangerie">Boulangerie, pâtisserie</option><option value="boutique">Boutique, vente en ligne</option><option value="depannage">Plomberie, électricité, dépannage</option><option value="autre">Autre métier</option></select></div>
       <div class="f"><label for="o-style">Style</label><select id="o-style"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option><option value="minimal">Minimal crème</option><option value="nuit">Nuit bleue</option><option value="provence">Provence lavande</option><option value="ocean">Océan</option><option value="pop">Pop vitaminé</option><option value="corporate">Pro sérieux</option><option value="retro">Rétro</option><option value="zen">Zen nature</option><option value="neon">Néon</option><option value="poudre">Rose poudré</option><option value="terracotta">Terracotta</option><option value="graphite">Graphite</option><option value="foret">Forêt</option><option value="soleil">Soleil</option><option value="marine">Marine chic</option><option value="signature">Signature Émeraude (Premium)</option><option value="signatureonyx">Signature Onyx (Premium)</option><option value="signaturesaphir">Signature Saphir (Premium)</option><option value="signaturebordeaux">Signature Bordeaux (Premium)</option><option value="signatureivoire">Signature Ivoire (Premium)</option></select></div><p class="pickline" id="o-pick"></p><div class="f full"><label for="o-plan">Formule</label><select id="o-plan"><option>Essentiel</option><option selected>Pro</option><option>Premium</option><option>Boutique</option><option value="AutoImmo">Pack Auto &amp; Immo</option></select></div>
       <div class="f full"><label for="o-name">Nom de votre entreprise</label><input id="o-name" autocomplete="organization" placeholder="Garage du Port" required></div>
       <div class="f"><label for="o-city">Ville</label><input id="o-city" autocomplete="address-level2" placeholder="Votre ville"></div>
@@ -825,13 +825,13 @@ html.fv-open,html.fv-open body{overflow:hidden}
 var IMG={"d-concession-luxe": "/img/g/d-concession-luxe.jpg?v=1", "d-garage-audacieux": "/img/g/d-garage-audacieux.jpg?v=2", "d-immobilier-riviera": "/img/g/d-immobilier-riviera.jpg?v=2", "d-restaurant-chaleureux": "/img/g/d-restaurant-chaleureux.jpg?v=2", "d-vtc-moderne": "/img/g/d-vtc-moderne.jpg", "m-vtc-moderne": "/img/g/m-vtc-moderne.jpg", "d-vtc-signature": "/img/g/d-vtc-signature.jpg?v=2", "d-batiment-corporate": "/img/g/d-batiment-corporate.jpg?v=2", "d-beaute-poudre": "/img/g/d-beaute-poudre.jpg?v=2", "d-bienetre-zen": "/img/g/d-bienetre-zen.jpg?v=2", "d-boulangerie-terracotta": "/img/g/d-boulangerie-terracotta.jpg?v=2", "d-depannage-soleil": "/img/g/d-depannage-soleil.jpg?v=2", "d-boutique-minimal": "/img/g/d-boutique-minimal.jpg?v=2"};
 var FILES={vtc:'modeles/vtc.html?v=29',restaurant:'modeles/restaurant.html?v=29',garage:'modeles/garage.html?v=29',concession:'modeles/garage.html?v=30&concession=1',immobilier:'modeles/immobilier.html?v=29',batiment:'modeles/batiment.html?v=29',beaute:'modeles/beaute.html?v=29',bienetre:'modeles/bienetre.html?v=29',boulangerie:'modeles/boulangerie.html?v=29',depannage:'modeles/depannage.html?v=29',boutique:'modeles/boutique.html?v=29'};
 var URLS={vtc:'azur-prestige.fr',restaurant:'chez-marius.fr',garage:'garage-du-littoral.fr',concession:'littoral-automobiles.fr',immobilier:'maisons-esterel.fr',batiment:'azur-renovation.fr',beaute:'maison-lila.fr',bienetre:'studio-respire.fr',boulangerie:'maison-fournier.fr',depannage:'azur-depannage.fr',boutique:'atelier-solene.fr'};
-var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage',concession:'Concession automobile',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile',boutique:'Boutique en ligne'};
+var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage',concession:'Concession auto et moto',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile',boutique:'Boutique en ligne'};
 var SN={"moderne": "Moderne", "luxe": "Luxe", "riviera": "Riviera", "chaleureux": "Chaleureux", "audacieux": "Audacieux", "minimal": "Minimal crème", "nuit": "Nuit bleue", "provence": "Provence lavande", "ocean": "Océan", "pop": "Pop vitaminé", "corporate": "Pro sérieux", "retro": "Rétro", "zen": "Zen nature", "neon": "Néon", "poudre": "Rose poudré", "terracotta": "Terracotta", "graphite": "Graphite", "foret": "Forêt", "soleil": "Soleil", "marine": "Marine chic", "signature": "Signature Émeraude", "signatureonyx": "Signature Onyx", "signaturesaphir": "Signature Saphir", "signaturebordeaux": "Signature Bordeaux", "signatureivoire": "Signature Ivoire"};
 var DESC={
   vtc:'<b>Réservation de course</b> dès l\'ouverture, services aéroport et longue distance, véhicule, tarifs fixes et bouton WhatsApp sur téléphone.',
   restaurant:'<b>Réservation de table</b>, carte par catégories, menu du midi, photos des plats, horaires et plan d\'accès.',
   garage:'<b>Prise de rendez-vous</b> atelier, forfaits et tarifs, <b>stock de véhicules à vendre</b> (diffusé sur Abracadeal avec le Pack Auto &amp; Immo), présentation de l\'équipe.',
-  concession:'<b>Véhicules à vendre uniquement</b> : stock filtrable par marque, énergie et prix, fiche complète par véhicule (photos, fiche technique, équipements), demande d\'essai, reprise et financement. Pas d\'atelier ni de rendez-vous. Annonces diffusées sur Abracadeal avec le Pack Auto &amp; Immo.',
+  concession:'<b>Voitures et motos à vendre uniquement</b> : stock filtrable par marque, énergie et prix, fiche complète par véhicule (photos, fiche technique, équipements), demande d\'essai, reprise et financement. Pas d\'atelier ni de rendez-vous. Annonces diffusées sur Abracadeal avec le Pack Auto &amp; Immo.',
   immobilier:'<b>Recherche de biens</b> filtrée en direct, fiches avec étiquette DPE, estimation gratuite, présentation de l\'agent.',
   batiment:'<b>Demande de devis</b> dès l\'ouverture, <b>réalisations</b> filtrables avec surface, durée et budget, tarifs au m², zone d\'intervention et garanties.',
   beaute:'<b>Prise de rendez-vous</b> avec choix de la prestation et du coiffeur, <b>réalisations</b> filtrables, carte des tarifs femme, homme et beauté, horaires.',
@@ -894,7 +894,7 @@ window.addEventListener('resize',function(){ show(); });
 document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){document.getElementById('o-plan').value=a.dataset.plan;/* 08/11/2026 : Pack Auto & Immo → métier garage ou immobilier */var t=document.getElementById('o-trade');if(a.dataset.plan==='AutoImmo'&&t&&!/^(garage|immobilier)$/.test(t.value)){t.value='garage';t.dispatchEvent(new Event('change'));}});});
 /* 07/11/2026 : l'accueil fait défiler les 11 métiers (demande d'Anthony : ne pas donner l'impression d'un site réservé aux VTC). */
 (function(){
-  var T=[['vtc','Chauffeur VTC'],['restaurant','Restaurant'],['beaute','Coiffure et beauté'],['concession','Concession automobile'],['garage','Garage'],['boutique','Boutique en ligne'],['immobilier','Agence immobilière'],['boulangerie','Boulangerie'],['batiment','Artisan du bâtiment'],['bienetre','Bien-être et santé'],['depannage','Plombier et électricien']];
+  var T=[['vtc','Chauffeur VTC'],['restaurant','Restaurant'],['beaute','Coiffure et beauté'],['concession','Concession auto et moto'],['garage','Garage'],['boutique','Boutique en ligne'],['immobilier','Agence immobilière'],['boulangerie','Boulangerie'],['batiment','Artisan du bâtiment'],['bienetre','Bien-être et santé'],['depannage','Plombier et électricien']];
   var hd=document.getElementById('h-d'), hm=document.getElementById('h-m'), nm=document.getElementById('hsName'), tr=document.getElementById('hsTry');
   var i=0, timer=null, still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   hd.src=IMG['d-vtc-moderne']; hm.src=IMG['m-vtc-moderne'];

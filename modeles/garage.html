@@ -958,14 +958,14 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 (function(){
   if(!/[?&]concession=1\b/.test(location.search)) return;
   var d=document, q=function(s){return d.querySelector(s);}, qa=function(s){return [].slice.call(d.querySelectorAll(s));};
-  d.documentElement.setAttribute('data-conc','1'); d.title='Modèle Concession automobile MyCreativeSite';
+  d.documentElement.setAttribute('data-conc','1'); d.title='Modèle Concession auto et moto MyCreativeSite';
   ['#rdv','#prestations','#atelier'].forEach(function(s){var e=q(s); if(e) e.hidden=true;});
   qa('a[href="#prestations"]').forEach(function(a){a.hidden=true;});
   qa('a[href="#rdv"]').forEach(function(a){a.textContent=/rendez-vous/i.test(a.textContent)?'Voir nos véhicules':'Nos véhicules'; a.setAttribute('href','#vehicules');});
   var lg=q('header .logo'); if(lg) lg.textContent='LITTORAL AUTOMOBILES';
-  var k=q('.hero .kicker'); if(k) k.textContent='Concession automobile · Le Cannet';
+  var k=q('.hero .kicker'); if(k) k.textContent='Concession auto et moto · Le Cannet';
   var h=q('.hero h1'); if(h) h.textContent='Votre concession, des véhicules choisis avec soin.';
-  var p=q('.hero p'); if(p) p.textContent='Véhicules d\'occasion récents et garantis, reprise de votre voiture, financement sur mesure. Livraison possible.';
+  var p=q('.hero p'); if(p) p.textContent='Voitures et motos d\'occasion récentes et garanties, reprise de votre véhicule, financement sur mesure. Livraison possible.';
   var S=[['Garantie','12 mois minimum'],['Reprise','de votre véhicule actuel'],['Financement','crédit ou LOA, réponse rapide'],['4,8/5','sur Google']];
   qa('.stats .stat').forEach(function(s,i){ if(!S[i]) return; var b=s.querySelector('b'), sp=s.querySelector('span'); if(b) b.textContent=S[i][0]; if(sp) sp.textContent=S[i][1]; });
   var c2=q('#contact h2'), cp=q('#contact h2 + p'); if(c2) c2.textContent='Un véhicule vous intéresse ?'; if(cp) cp.textContent='Essai, reprise, financement : réponse sous 24 h.';

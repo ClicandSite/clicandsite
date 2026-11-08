@@ -898,3 +898,40 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 
 <script src="https://mycreativesite.fr/assets/cs-fiche.js?v=3" defer></script>
 <script>if(/[?&]f=(essentiel|pro|premium|boutique)\b/i.test(location.search)){var cf=document.createElement("script");cf.src="/assets/cs-formule.js?v=1";document.body.appendChild(cf);}</script>
+<!-- 08/11/2026 (Anthony : « on voit mal comment changer de thème ») : barre de styles claire — flèches, nom du style, numéro, et tous les styles en grille -->
+<style>
+.picker .wrap.pk{display:flex;flex-wrap:nowrap;align-items:center;gap:10px;overflow:visible;padding-block:10px}
+.picker .pk-t{font:700 .85rem system-ui,sans-serif;color:#fff;white-space:nowrap}
+.picker .pk-nav{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;min-width:0}
+.picker .pk-nav .pk-a{width:40px;height:40px;border-radius:50%;border:1px solid #4a4a52;background:#1d1d22;color:#fff;font:700 1.25rem/1 system-ui,sans-serif;cursor:pointer;flex:none;padding:0}
+.picker .pk-nav .pk-a:hover{background:#fff;color:#111}
+.picker .pk-cur{min-width:0;text-align:center;padding:0 8px}
+.picker .pk-cur b{display:block;font:700 1rem system-ui,sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picker .pk-cur small{font:500 .75rem system-ui,sans-serif;color:#a9aab2}
+.picker .pk-all{font:700 .82rem system-ui,sans-serif;border:1px solid #fff;background:#fff;color:#111;border-radius:999px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+.picker .pk-grid{display:none;background:#111;border-top:1px solid #2a2a30}
+.picker.open .pk-grid{display:block}
+.picker .pk-grid .wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;padding-block:14px;max-height:60vh;overflow:auto}
+.picker .pk-grid button{font:600 .85rem system-ui,sans-serif;border:1px solid #3a3a40;background:transparent;color:#e8e8ea;border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;flex:none}
+.picker .pk-grid button[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
+@media (max-width:640px){.picker .pk-grid .wrap{grid-template-columns:1fr 1fr}.picker .pk-grid button{font-size:.8rem;padding:9px 10px}.picker .pk-t{display:none}.picker .pk-all{padding:9px 12px}.picker .pk-nav .pk-a{width:36px;height:36px}}
+</style>
+<script>
+(function(){
+  var P=document.querySelector('.picker'); if(!P||P.__pk) return; P.__pk=1;
+  var W=P.querySelector('.wrap'), btns=[].slice.call(W.querySelectorAll('button[data-s]'));
+  var grid=document.createElement('div'); grid.className='pk-grid'; var gw=document.createElement('div'); gw.className='wrap'; grid.appendChild(gw);
+  btns.forEach(function(b){ gw.appendChild(b); b.addEventListener('click',function(){ P.classList.remove('open'); upd(); }); });
+  var lbl=W.querySelector('.lbl'); if(lbl) lbl.remove();
+  W.classList.add('pk');
+  W.innerHTML='<span class="pk-t">Choisissez votre style</span><div class="pk-nav"><button type="button" class="pk-a" data-d="-1" aria-label="Style précédent">‹</button><div class="pk-cur" aria-live="polite"><b></b><small></small></div><button type="button" class="pk-a" data-d="1" aria-label="Style suivant">›</button></div><button type="button" class="pk-all" aria-expanded="false">Tous les styles ▾</button>';
+  P.appendChild(grid);
+  var cur=W.querySelector('.pk-cur b'), num=W.querySelector('.pk-cur small'), all=W.querySelector('.pk-all');
+  function idx(){ var s=document.documentElement.getAttribute('data-style')||'moderne'; for(var i=0;i<btns.length;i++) if(btns[i].dataset.s===s) return i; return 0; }
+  function upd(){ var i=idx(), t=btns[i].textContent.replace(/^\s*\d+\s*·\s*/,''); cur.textContent=t; num.textContent='Style '+(i+1)+' sur '+btns.length; all.setAttribute('aria-expanded',P.classList.contains('open')?'true':'false'); all.textContent=P.classList.contains('open')?'Fermer ▴':'Tous les styles ▾'; }
+  W.querySelectorAll('.pk-a').forEach(function(a){ a.addEventListener('click',function(){ var i=(idx()+Number(a.dataset.d)+btns.length)%btns.length; btns[i].click(); }); });
+  all.addEventListener('click',function(){ P.classList.toggle('open'); upd(); if(P.classList.contains('open')){ var c=btns[idx()]; try{ c.scrollIntoView({block:'nearest'}); }catch(e){} } });
+  document.addEventListener('keydown',function(e){ if(e.target.closest&&e.target.closest('input,textarea,select'))return; if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ if(!document.querySelector('.cs-fiche')){ var i=(idx()+(e.key==='ArrowRight'?1:-1)+btns.length)%btns.length; btns[i].click(); } } if(e.key==='Escape') { P.classList.remove('open'); upd(); } });
+  new MutationObserver(upd).observe(document.documentElement,{attributes:true,attributeFilter:['data-style']}); upd();
+})();
+</script>

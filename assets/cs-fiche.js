@@ -69,6 +69,7 @@
     '.cs-fiche .fm{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}.cs-fiche .fm span{font-size:.85rem;padding:6px 10px;border-radius:999px;background:var(--soft,#f2f3f7);color:var(--ink,#16181f)}' +
     '.cs-fiche h3{font-size:1rem;margin:26px 0 10px;font-family:var(--body,inherit);font-weight:700}' +
     '.cs-fiche .fd p{margin:0 0 10px;color:var(--ink,#16181f);line-height:1.6;font-size:.98rem}' +
+    '.cs-fiche .fs{display:grid;grid-template-columns:auto 1fr;margin:0;border:1px solid rgba(127,127,127,.25);border-radius:10px;overflow:hidden;font-size:.93rem}.cs-fiche .fs dt,.cs-fiche .fs dd{margin:0;padding:8px 12px;border-top:1px solid rgba(127,127,127,.18)}.cs-fiche .fs dt{opacity:.7}.cs-fiche .fs dd{font-weight:600}.cs-fiche .fs dt:nth-of-type(1),.cs-fiche .fs dd:nth-of-type(1){border-top:0}@media (max-width:560px){.cs-fiche .fs{grid-template-columns:1fr 1fr}}' +
     '.cs-fiche .ff{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}' +
     '.cs-fiche .ff li{display:flex;gap:8px;font-size:.93rem;align-items:baseline}.cs-fiche .ff li:before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent,#7C3AED);transform:translateY(-1px)}' +
     '.cs-fiche .en{display:grid;grid-template-columns:1fr 1fr;gap:22px}' +
@@ -154,6 +155,10 @@
     var C = immo ? null : CFG[trade(card)];
     if (desc) { H(immo ? L('Description du bien', 'Description') : L(C.d[0], C.d[1])); var fd = document.createElement('div'); fd.className = 'fd';
       desc.split(/\n+/).forEach(function (l) { l = l.trim(); if (!l) return; var p = document.createElement('p'); p.textContent = l; fd.appendChild(p); }); col.appendChild(fd); }
+    // 08/11/2026 : fiche technique (année, km, boîte… / surface, chambres, charges…) en tableau
+    var specs = String(f.specs || '').split(/\n/).map(function (l) { var k = l.indexOf(' : '); return k > 0 ? [l.slice(0, k).trim(), l.slice(k + 3).trim()] : null; }).filter(function (x) { return x && x[0] && x[1]; });
+    if (specs.length) { H(immo ? L('Le bien en détail', 'Property details') : L('Fiche technique', 'Specifications')); var tb = document.createElement('dl'); tb.className = 'fs';
+      specs.slice(0, 40).forEach(function (x) { var dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = x[0]; dd.textContent = x[1]; tb.append(dt, dd); }); col.appendChild(tb); }
     var feats = String(f.feats || '').split(/\n|·/).map(function (s) { return s.trim(); }).filter(Boolean);
     if (feats.length) { H(immo ? L('Caractéristiques', 'Features') : L(C.f[0], C.f[1])); var ul = document.createElement('ul'); ul.className = 'ff';
       feats.slice(0, 40).forEach(function (s) { var li = document.createElement('li'); li.textContent = s; ul.appendChild(li); }); col.appendChild(ul); }

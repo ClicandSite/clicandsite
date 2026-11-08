@@ -67,3 +67,7 @@ begin
 end $$;
 revoke all on function public.cs_abra_profile(text,jsonb) from public, anon, authenticated;
 grant execute on function public.cs_abra_profile(text,jsonb) to service_role;
+
+-- 08/11/2026 : CRM inclus dans le Pack Auto & Immo (cs_site_premium, cs_my_sites) et état de la diffusion pour l'espace client
+-- (cs_abra_status(p_site) : propriétaire du site ou admin). Appliqué via les migrations crm_autoimmo_20261108,
+-- crm_autoimmo_my_sites_20261108 et cs_abra_status_20261108.

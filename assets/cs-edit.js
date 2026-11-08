@@ -66,7 +66,7 @@
   }
 
   // 08/11/2026 : fiche détaillée des annonces et réalisations (tous les métiers à liste : immobilier, garage, bâtiment, beauté, bien-être, boulangerie, boutique, dépannage), lue et écrite dans data-fiche (voir cs-fiche.js)
-  var FICHE = ['desc', 'feats', 'dpe', 'dpe_v', 'ges', 'ges_v', 'energy', 'legal', 'ref'];
+  var FICHE = ['desc', 'feats', 'specs', 'dpe', 'dpe_v', 'ges', 'ges_v', 'energy', 'legal', 'ref']; // 08/11/2026 : specs = fiche technique (« Libellé : valeur » par ligne), remplie par l'onglet Mes véhicules / Mes biens
   function okPh(u) { return !!safeUrl(u) || (typeof u === 'string' && /^cls:[a-z]{1,2}\d{1,2}$/.test(u)); }
   function readFiche(el) { try { return JSON.parse(el.getAttribute('data-fiche') || '{}') || {}; } catch (e) { return {}; } }
   function readItem(el, def) {
@@ -383,7 +383,7 @@
       if (!c) return;
       var bi = c.en && c.en.on && c.en.dict && typeof c.en.dict === 'object';
       EN = bi && wantLang() === 'en';
-      var go = function () { if (!window.CSFiche && q(document, '.props > .prop, .vgrid > .car')) { var sf = document.createElement('script'); sf.src = 'https://mycreativesite.fr/assets/cs-fiche.js?v=2'; document.head.appendChild(sf); }
+      var go = function () { if (!window.CSFiche && q(document, '.props > .prop, .vgrid > .car')) { var sf = document.createElement('script'); sf.src = 'https://mycreativesite.fr/assets/cs-fiche.js?v=3'; document.head.appendChild(sf); }
         apply(document, c); siteIcon(document, c); if (bi) { langSwitch(document, EN ? 'en' : 'fr'); if (EN) translate(document, c.en.dict); }
         if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();

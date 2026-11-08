@@ -1,6 +1,7 @@
 // 08/11/2026 (Claude, demande d'Anthony) — Flux API direct MyCreativeSite → Abracadeal.
 // Pack Auto & Immo (garages, agences) + diffusion incluse dans toutes les formules pour artisans, dépannage, beauté,
 // bien-être (prestations → Services) et boutiques (produits → Maison / Mode / High-tech).
+// 08/11/2026 : les fiches détaillées de l'onglet « Mes véhicules / Mes biens » (item.sp) sont envoyées champ par champ.
 // Pour chaque site concerné et payé :
 //   1) déclare l'entreprise chez Abracadeal (API partenaires) : son compte Pro est ouvert automatiquement,
 //      avec les annonces illimitées incluses dans le pack ;
@@ -42,30 +43,46 @@ async function reference(it: any, i: number) {
 const sold = (it: any) => /vendu|loué|loue|sous compromis/i.test(str(it.tag));
 
 async function vehicle(it: any, i: number, loc: any) {
+  // 08/11/2026 : fiche détaillée de l'onglet « Mes véhicules » (it.sp) ; sinon, infos lues dans le texte court
+  const sp = it.sp && typeof it.sp === "object" ? it.sp : {};
   const meta = str(it.meta);
-  const year = (meta.match(/\b(19[5-9]\d|20[0-4]\d)\b/) || [])[1];
-  const km = (meta.match(/([\d\s.]+)\s*km/i) || [])[1];
-  const mk = str(it.mk);
-  let model = str(it.t);
-  if (mk && model.toLowerCase().startsWith(mk.toLowerCase())) model = model.slice(mk.length).trim();
+  const year = str(sp.an) || (meta.match(/\b(19[5-9]\d|20[0-4]\d)\b/) || [])[1];
+  const km = str(sp.km) || (meta.match(/([\d\s.]+)\s*km/i) || [])[1];
+  const mk = str(sp.mk) || str(it.mk);
+  let model = str(sp.mo) || str(it.t);
+  if (!str(sp.mo) && mk && model.toLowerCase().startsWith(mk.toLowerCase())) model = model.slice(mk.length).trim();
   const desc = [str(it.desc), str(it.feats) ? "Équipements :\n" + str(it.feats) : "", str(it.legal)].filter(Boolean).join("\n\n");
+  const opt = (k: string, v: unknown) => (str(v) ? { [k]: str(v) } : {});
   return {
     reference: await reference(it, i), titre: str(it.t), marque: mk, modele: model || str(it.t), prix: price(it.p),
-    annee: year ? Number(year) : null, kilometrage: km ? Number(km.replace(/\D/g, "")) : null, carburant: str(it.fuel) || null,
+    annee: year ? Number(String(year).replace(/\D/g, "")) : null, kilometrage: km ? Number(String(km).replace(/\D/g, "")) : null, carburant: str(sp.fu) || str(it.fuel) || null,
+    ...opt("boite", sp.bo), ...opt("version", sp.ve), ...opt("mise_en_circulation", sp.mec), ...opt("carrosserie", sp.ty), ...opt("couleur", sp.co),
+    ...opt("puissance_fiscale", sp.cv), ...opt("puissance_din", sp.ch), ...opt("portes", sp.po), ...opt("places", sp.pl),
+    ...opt("crit_air", str(sp.ca).replace(/\s*\(.*\)/, "")), ...opt("co2", sp.co2), ...opt("controle_technique", sp.ct), ...opt("garantie", str(sp.ga) && /^\d+$/.test(str(sp.ga)) ? sp.ga + " mois" : sp.ga),
     description: desc, ville: loc.city || null, code_postal: loc.postal_code || null, photos: photos(it),
   };
 }
 
 async function estate(it: any, i: number, loc: any) {
+  // 08/11/2026 : fiche détaillée de l'onglet « Mes biens » (it.sp)
+  const sp = it.sp && typeof it.sp === "object" ? it.sp : {};
   const meta = str(it.meta);
-  const surf = (meta.match(/([\d\s,.]+)\s*m²/i) || [])[1];
+  const surf = str(sp.su) || (meta.match(/([\d\s,.]+)\s*m²/i) || [])[1];
   const typ = ({ appartement: "appartement", maison: "maison", terrain: "terrain", local: "local commercial", parking: "parking" } as Record<string, string>)[str(it.type)] || "autre";
-  const desc = [str(it.desc), str(it.feats) ? "Caractéristiques :\n" + str(it.feats) : "", str(it.energy) ? "Dépenses d'énergie : " + str(it.energy) : "", str(it.legal)].filter(Boolean).join("\n\n");
+  const desc = [str(it.desc), str(it.feats) ? "Prestations :\n" + str(it.feats) : "", str(it.legal)].filter(Boolean).join("\n\n");
+  const opt = (k: string, v: unknown) => (str(v) ? { [k]: str(v) } : {});
+  const city = str(sp.vi) || str(it.city);
   return {
     reference: await reference(it, i), transaction: str(it.tr) === "location" ? "location" : "vente", type_bien: typ,
-    titre: str(it.t), description: desc, prix: price(it.p), surface: surf ? num(surf) : null, pieces: num(it.rooms),
-    ville: str(it.city) || loc.city || null, code_postal: str(it.city) ? null : (loc.postal_code || null),
+    titre: str(it.t), description: desc, prix: price(it.p), surface: surf ? num(surf) : null, pieces: num(sp.pi || it.rooms),
+    ville: city || loc.city || null, code_postal: str(sp.cp) || (city ? null : (loc.postal_code || null)),
     dpe: /^[A-G]$/.test(str(it.dpe)) ? str(it.dpe) : null, ges: /^[A-G]$/.test(str(it.ges)) ? str(it.ges) : null,
+    ...opt("consommation_energie", it.dpe_v), ...opt("date_dpe", sp.ddpe), ...opt("cout_energie_min", sp.emin), ...opt("cout_energie_max", sp.emax),
+    ...opt("surface_terrain", sp.te), ...opt("chambres", sp.cb), ...opt("salles_de_bain", sp.sb), ...opt("etage", sp.et), ...opt("nombre_etages", sp.ne),
+    ...opt("annee_construction", sp.an), ...opt("chauffage", sp.hc), ...opt("exposition", sp.ex), ...opt("quartier", sp.qu),
+    ...(sp.meu ? { meuble: "oui" } : {}), ...(sp.asc ? { ascenseur: "oui" } : {}),
+    ...opt("nombre_lots", sp.lots), ...opt("charges_annuelles", sp.chg), ...(str(sp.lots) ? { procedure: sp.proc ? "oui" : "non" } : {}), ...opt("taxe_fonciere", sp.tf),
+    ...opt("honoraires", sp.hon), ...opt("charges_mensuelles", sp.chm), ...opt("depot_garantie", sp.dg),
     photos: photos(it),
   };
 }

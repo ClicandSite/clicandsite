@@ -151,6 +151,7 @@ PAGES = [
          ("Je peux ajouter une intervention depuis le chantier ?","Oui, depuis votre téléphone, avec la photo et le prix."),
          ("Le site convient-il à un auto-entrepreneur ?","Oui, la formule Essentiel est faite pour démarrer, dès 29 € par mois.")]),
 ]
+# 08/11/2026 : page Cannes retirée (pas de pages par ville, Cannes non affiché sur le site). Gardée ici pour mémoire, non générée.
 LOCAL = dict(slug="creation-site-internet-cannes", k=None,
     title="Création de site internet à Cannes et sur la Côte d'Azur",
     meta="Création de site internet pour les professionnels à Cannes, Nice, Antibes, Grasse, Mougins et dans le Var. Agence basée à Cannes. En ligne en 48 h, dès 29 €/mois.",
@@ -376,7 +377,6 @@ e = html.escape
 
 def trade_links(cur):
     out = [f'<a href="/{p["slug"]}/">{NAMES[p["k"]]}</a>' for p in PAGES if p["slug"] != cur]
-    if cur != LOCAL["slug"]: out.append(f'<a href="/{LOCAL["slug"]}/">Cannes et Côte d\'Azur</a>')
     out += [f'<a href="/{c["slug"]}/">Site internet à {c["city"]}</a>' for c in CITIES if c["slug"] != cur]
     out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
@@ -385,8 +385,7 @@ def page(p):
     url = f'{SITE}/{p["slug"]}/'
     faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in p["faq"]]}
     svc_ld = {"@context":"https://schema.org","@type":"Service","name":p["title"],"serviceType":"Création de site internet","url":url,
-      "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr",
-                  "address":{"@type":"PostalAddress","streetAddress":"34 rue Borniol","postalCode":"06400","addressLocality":"Cannes","addressCountry":"FR"}},
+      "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr"},
       "areaServed":({"@type":"City","name":p["city"]} if p.get("city") else "FR"),
       "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in PRICES]}
     crumbs_ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
@@ -396,7 +395,7 @@ def page(p):
         visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec MyCreativeSite" fetchpriority="high"></div>'
         demo = f'<a class="btn ghost" href="/modeles/{k}.html#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={k}&amp;style={p["style"]}">Essayer l\'espace client</a>'
     else:
-        visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite à Cannes" fetchpriority="high"></div>'
+        visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite" fetchpriority="high"></div>'
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
@@ -547,17 +546,17 @@ def build_blog():
     return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 
 def main():
-    for p in PAGES + [LOCAL] + CITIES + INTENT:
+    for p in PAGES + CITIES + INTENT:
         os.makedirs(p["slug"], exist_ok=True)
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     blog = build_blog()
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + [LOCAL] + CITIES + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
+    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + CITIES + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     sm += [f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><priority>{pr}</priority></url>' for u, pr in urls]
     sm.append("</urlset>")
     open("sitemap.xml", "w").write("\n".join(sm) + "\n")
-    print("pages :", len(PAGES) + 1 + len(CITIES) + len(INTENT), "· sitemap :", len(urls), "adresses")
+    print("pages :", len(PAGES) + len(CITIES) + len(INTENT), "· sitemap :", len(urls), "adresses")
 
 if __name__ == "__main__":
     main()

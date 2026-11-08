@@ -67,9 +67,9 @@ Deno.serve(async (req) => {
       subscription_data: { metadata: { plan: String(s.plan).toLowerCase(), site: slug, options: opts.join(",") } },
       custom_fields: [{ key: "entreprise", label: { type: "custom", custom: "Nom de votre entreprise" }, type: "text", text: { default_value: String(s.name || "").slice(0, 100) } }],
     };
-    // 08/11/2026 : Pack Auto & Immo, et diffusion Abracadeal incluse (à partir de la formule Pro) pour artisans, dépannage, beauté, bien-être et boutiques :
+    // 08/11/2026 (Anthony : « Abracadeal seulement à 99 € ») : Pack Auto & Immo et Boutique, diffusion Abracadeal incluse :
     // SIRET et adresse demandés au paiement pour ouvrir le compte Abracadeal automatiquement.
-    if (String(s.plan).toLowerCase() === "autoimmo" || (["batiment", "depannage", "beaute", "bienetre", "boutique"].includes(String(s.trade || "")) && /^(pro|premium|boutique)/.test(String(s.plan).toLowerCase()))) {
+    if (/^(autoimmo|boutique)/.test(String(s.plan).toLowerCase())) {
       (body.custom_fields as unknown[]).push({ key: "siret", label: { type: "custom", custom: "SIRET de votre entreprise (14 chiffres)" }, type: "numeric", numeric: { minimum_length: 14, maximum_length: 14 } });
       body.billing_address_collection = "required";
     }

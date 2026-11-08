@@ -172,8 +172,8 @@ async function handle(key: string, s: any) {
   else if (sector === "services") listings = await serviceListings(s, loc);
   else for (let i = 0; i < items.length; i++) listings.push(await (sector === "vehicules" ? vehicle(items[i], i, loc) : estate(items[i], i, loc)));
   // Une prestation peut être « sur devis » (sans prix) ; un véhicule, un bien ou un produit doit avoir un prix.
-  // 08/11/2026 (Anthony) : Pro 20 annonces, Premium 50, illimité à 99 € (Boutique, Pack Auto & Immo) — les premières du site
-  const LIMIT = /^(boutique|autoimmo)/.test(str(s.plan)) ? Infinity : /^premium/.test(str(s.plan)) ? 50 : 20;
+  // 08/11/2026 (Anthony) : diffusion uniquement dans les formules à 99 € (Boutique, Pack Auto & Immo), en illimité
+  const LIMIT = Infinity;
   const send = listings.filter((l) => (l.prix || sector === "services") && l.photos.length).slice(0, LIMIT);
   const hash = await sha(JSON.stringify(send));
   if (hash === s.last_hash && s.agency_status === "active") return { slug: s.slug, action: "unchanged" };

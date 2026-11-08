@@ -72,3 +72,4 @@ grant execute on function public.cs_abra_profile(text,jsonb) to service_role;
 -- (cs_abra_status(p_site) : propriétaire du site ou admin). Appliqué via les migrations crm_autoimmo_20261108,
 -- crm_autoimmo_my_sites_20261108 et cs_abra_status_20261108.
 -- 08/11/2026 : diffusion des artisans, dépannage, beauté, bien-être et boutiques à partir de la formule Pro (migration abracadeal_from_pro_20261108).
+-- 09/11/2026 : diffusion Abracadeal seulement à 99 € (Pack Auto & Immo, Boutique) — migration abracadeal_only_99_20261109.

@@ -121,7 +121,7 @@
     }
   }
   function writeItem(el, def, o) {
-    Object.keys(def.f).forEach(function (k) { if (o[k] !== undefined) setTxt(q(el, def.f[k]), String(o[k])); });
+    Object.keys(def.f).forEach(function (k) { if (o[k] !== undefined) { var tg = q(el, def.f[k]); setTxt((tg && q(tg, 'a[data-cs-page]')) || tg, String(o[k])); } }); // 09/11/2026 : le lien vers la page de l'annonce (site généré) est gardé
     if (def.meta && typeof o.meta === 'string') {
       var box = q(el, def.meta);
       if (box) { box.textContent = ''; o.meta.split('·').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 6).forEach(function (s) { var sp = el.ownerDocument.createElement('span'); sp.textContent = s; box.appendChild(sp); }); }
@@ -485,6 +485,7 @@
           el.min = el.type === 'date' ? iso : iso + 'T00:00';
           el.value = ''; el.required = true; return;
         }
+        if (el.readOnly) return; // 09/11/2026 : champ « Véhicule / Bien concerné » des pages d'annonces, gardé tel quel
         if (!el.type || el.type === 'text' || el.type === 'tel') {
           if (el.value && !el.placeholder) el.placeholder = 'Ex. : ' + el.value;
           el.value = '';

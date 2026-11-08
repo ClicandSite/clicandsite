@@ -1,0 +1,41 @@
+# MyCreativeSite · mise à jour automatique du site de __DOMAIN__ (09/11/2026)
+# Toutes les 15 minutes : lit le contenu publié dans l'espace client, génère les pages (SEO) et met le site en ligne si quelque chose a changé.
+name: Mise à jour du site
+on:
+  schedule: [{ cron: '*/15 * * * *' }]
+  workflow_dispatch:
+permissions: { contents: write, pages: write, id-token: write }
+concurrency: { group: site, cancel-in-progress: false }
+env: { SLUG: '__SLUG__', DOMAIN: '__DOMAIN__' }
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Générer les pages
+        run: |
+          mkdir -p /tmp/gen && cd /tmp/gen && npm init -y >/dev/null && npm i --no-audit --no-fund jsdom@24 >/dev/null
+          curl -fsSL "https://mycreativesite.fr/scripts/cs-build-site.mjs?t=$(date +%s)" -o build.mjs
+          node build.mjs --slug "$SLUG" --domain "$DOMAIN" --out "$GITHUB_WORKSPACE/site"
+      - name: Enregistrer s'il y a du changement
+        id: diff
+        run: |
+          git config user.name "MyCreativeSite" && git config user.email "contact@mycreativesite.fr"
+          git add -A site
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            # Tous les 30 jours, un passage pour que GitHub garde la mise à jour automatique active
+            last=$(git log -1 --format=%ct); now=$(date +%s)
+            if [ $((now-last)) -gt 2592000 ]; then date -u > .keepalive && git add .keepalive && git commit -qm "Site toujours actif" && git push -q; fi
+          else
+            git commit -qm "Mise à jour du site $(date -u +%Y-%m-%dT%H:%M)" && git push -q
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.diff.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - if: steps.diff.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/deploy-pages@v4

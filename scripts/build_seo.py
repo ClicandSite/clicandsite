@@ -381,6 +381,14 @@ def trade_links(cur):
     out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
 
+GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables"}
+def guide(p):
+    g = GUIDES.get(p.get("k"))
+    if not g: return ""
+    from articles import ARTICLES
+    a = next(x for x in ARTICLES if x["slug"] == g)
+    return f'<p style="margin-top:18px">À lire : <a href="/conseils/{g}/">{e(a["title"])}</a></p>'
+
 def page(p):
     url = f'{SITE}/{p["slug"]}/'
     faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in p["faq"]]}
@@ -450,7 +458,7 @@ def page(p):
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>Questions fréquentes</h2>
-  <div class="faq">{faq}</div>
+  <div class="faq">{faq}</div>{guide(p)}
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>À découvrir aussi</h2>
@@ -466,7 +474,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}
@@ -546,6 +554,7 @@ def build_blog():
     return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 
 def main():
+    import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     for p in PAGES + CITIES + INTENT:
         os.makedirs(p["slug"], exist_ok=True)
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))

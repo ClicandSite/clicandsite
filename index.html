@@ -235,6 +235,11 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .logo-mark{width:34px;height:34px;flex:none;display:block}
 .logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 :root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+.plans.duo{grid-template-columns:repeat(2,1fr);margin-top:30px}
+.plans.duo .plan{position:relative}
+.plans.duo .plan .for{min-height:0}
+.plan .lnk2{text-align:center;font-weight:600;font-size:.92rem;color:var(--brand);margin-top:-6px}
+@media (max-width:860px){.plans.duo{grid-template-columns:1fr}}
 .shopband{margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:26px;align-items:start;border-color:var(--brand);background:var(--paper)}
 .shopband .sb-l{display:flex;flex-direction:column;gap:14px}
 .shopband .sb-btns{display:flex;flex-wrap:wrap;gap:10px}
@@ -635,7 +640,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Réservation ou demande de rendez-vous simple, reçue par mail et dans votre espace</li>
           <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vos devis en PDF avec votre logo (et bons de commande pour les VTC)</li>
           <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>QR code de votre site inclus</li>
-          <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Artisans, dépannage, beauté, bien-être : vos prestations publiées aussi sur <a href="https://abracadeal.fr/" target="_blank" rel="noopener">Abracadeal</a>, incluses (SIRET demandé au paiement, compte ouvert pour vous)</li>
+          <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Artisans, dépannage, beauté, bien-être : vos prestations publiées aussi sur Abracadeal, incluses</li>
         </ul>
         <a class="btn ghost" href="#commande" data-plan="Essentiel">Choisir Essentiel</a>
       </div>
@@ -671,16 +676,15 @@ html.fv-open,html.fv-open body{overflow:hidden}
       </div>
     </div>
 
-    <div class="plan shopband" id="boutique">
-      <div class="sb-l">
-        <span class="eyebrow">Nouveau</span>
+    <!-- 08/11/2026 (Anthony : « mets-les comme les 3 ») : Boutique et Pack Auto & Immo en cartes, même format que les 3 formules -->
+    <div class="plans duo">
+      <div class="plan" id="boutique">
+        <span class="badge">Nouveau</span>
         <h3>Boutique</h3>
         <p class="for">Pour vendre vos produits en ligne : créateurs, épiceries fines, caves, fleuristes, concept stores.</p>
         <div class="price"><b>99 €</b><span>/ mois</span></div>
         <p class="setup">+ <b>490 €</b> de mise en ligne, une fois</p>
-        <div class="sb-btns"><a class="btn" href="#commande" data-plan="Boutique">Choisir Boutique</a><a class="btn ghost" href="modeles/boutique.html#moderne" target="_blank" rel="noopener">Voir la boutique d'exemple</a></div>
-      </div>
-      <ul>
+        <ul>
         <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tout Premium, CRM compris</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Catalogue de produits que vous gérez vous-même : photos, prix, rayons</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Panier et paiement par carte : l'argent arrive directement sur votre compte (frais Stripe en plus)</li>
@@ -689,26 +693,27 @@ html.fv-open,html.fv-open body{overflow:hidden}
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vos produits publiés aussi sur Abracadeal, sans limite et synchronisés avec votre catalogue</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Passerelle fournisseurs (dropshipping) en préparation</li>
       </ul>
-    </div>
-
-    <!-- 08/11/2026 (Anthony) : Pack Auto & Immo — site + annonces illimitées sur Abracadeal -->
-    <div class="plan shopband" id="auto-immo" style="margin-top:22px">
-      <div class="sb-l">
-        <span class="eyebrow">Garages, concessions, agences immobilières</span>
-        <h3>Pack Auto &amp; Immo</h3>
-        <p class="for">Votre site professionnel et vos annonces publiées en illimité sur Abracadeal, le site de petites annonces partenaire. Vous mettez à jour votre stock une seule fois : site et annonces suivent.</p>
-        <div class="price"><b>99 €</b><span>/ mois</span></div>
-        <p class="setup">+ <b>290 €</b> de mise en ligne, une fois · votre SIRET est demandé au paiement : votre espace Abracadeal est ouvert et relié à votre site automatiquement</p>
-        <div class="sb-btns"><a class="btn" href="#commande" data-plan="AutoImmo">Choisir le Pack Auto &amp; Immo</a><a class="btn ghost" href="site-internet-garage/">Voir un site de garage</a></div>
+        <a class="btn" href="#commande" data-plan="Boutique">Choisir Boutique</a>
+        <a class="lnk2" href="modeles/boutique.html#moderne" target="_blank" rel="noopener">Voir la boutique d'exemple</a>
       </div>
-      <ul>
+      <div class="plan" id="auto-immo">
+        <span class="badge">Garages et agences immo</span>
+        <h3>Pack Auto &amp; Immo</h3>
+        <p class="for">Pour les garages, concessions et agences immobilières : votre site et vos annonces en illimité sur Abracadeal. Une seule mise à jour, site et annonces suivent.</p>
+        <div class="price"><b>99 €</b><span>/ mois</span></div>
+        <p class="setup">+ <b>290 €</b> de mise en ligne, une fois</p>
+        <ul>
         <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tout Pro : réservations, avis Google, modifications faites par nous</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vos véhicules ou vos biens en vitrine sur votre site, avec photos et fiches détaillées</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Annonces illimitées sur Abracadeal, synchronisées avec votre site : prix, photos, vendus</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Votre page professionnelle sur Abracadeal, visible sur Google</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aucune passerelle ni logiciel de diffusion à payer en plus</li>
+        <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>SIRET demandé au paiement : votre espace Abracadeal est ouvert et relié à votre site automatiquement</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Bientôt : diffusion de vos annonces sur d’autres plateformes</li>
       </ul>
+        <a class="btn" href="#commande" data-plan="AutoImmo">Choisir le Pack Auto &amp; Immo</a>
+        <a class="lnk2" href="site-internet-garage/">Voir un site de garage</a>
+      </div>
     </div>
     <p class="legal">TVA non applicable, art. 293 B du CGI : le prix affiché est le prix payé. <a href="cgv.html">Conditions générales</a>. Sans engagement : vous résiliez quand vous voulez, l'abonnement s'arrête à la fin du mois en cours.</p>
 

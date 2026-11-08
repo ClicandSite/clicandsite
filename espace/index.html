@@ -756,6 +756,10 @@ async function openSite(s){
     $('draftTxt').innerHTML=paid?'<b>Paiement reçu, merci !</b> Votre site est enregistré et prêt : on réserve votre nom de domaine et il part en ligne sous 24 h (jours ouvrés). Vous pouvez encore le modifier.':'<b>Votre site n\'est pas encore en ligne.</b> Remplissez-le à votre rythme, puis validez-le : après le paiement, on réserve votre nom de domaine et il part en ligne.';
     const pl=String(s.plan||'').toLowerCase(), url=PAYLINK[pl], pb=$('draftPay');
     pb.hidden=paid||!url; if(url) pb.href=url+'?client_reference_id='+encodeURIComponent(s.slug)+'&prefilled_email='+encodeURIComponent(SESSION_EMAIL||''); } }
+  // 08/11/2026 : paiement avec les options choisies à la commande (fonction cs-checkout) ; le lien Stripe simple reste en secours
+  if($('draftPay')&&!$('draftPay').__cs){ $('draftPay').__cs=1; $('draftPay').addEventListener('click',async(e)=>{ if(!site||DEMO) return; e.preventDefault(); const pb=$('draftPay'), fb=pb.href, old=pb.textContent; pb.textContent='Ouverture du paiement…';
+    try{ const r=await fetch('https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-checkout',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify({slug:site.slug})}); const j=await r.json(); location.href=(r.ok&&j.url)?j.url:fb; }
+    catch(x){ location.href=fb; } finally{ setTimeout(()=>{ pb.textContent=old; },3000); } }); }
   if(mode==='crm'||params.get('vue')==='demandes'){ params.delete('vue'); await setMode('crm'); }
   else if(params.get('vue')==='infos'&&!$('briefTab').hidden){ params.delete('vue'); await setMode('brief'); }
   setStatus(DEMO?'Démo':(s.status==='en_ligne'?'Site en ligne':'Site en préparation'), DEMO?'':'saved');

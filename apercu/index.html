@@ -70,6 +70,12 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
     info.querySelector('b').textContent=s.name;
     var plan=String(s.plan||'').toLowerCase(), pay=document.getElementById('pay');
     var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
+    // 08/11/2026 : paiement avec les options choisies à la commande (fonction cs-checkout) ; le lien Stripe simple reste en secours
+    pay.addEventListener('click',function(e){ e.preventDefault(); var fb=pay.href, old=pay.textContent; pay.textContent='Ouverture du paiement…';
+      fetch(API+'/functions/v1/cs-checkout',{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({slug:slug})})
+      .then(function(r){ return r.json().then(function(j){ location.href=(r.ok&&j.url)?j.url:fb; }); })
+      .catch(function(){ location.href=fb; }).then(function(){ setTimeout(function(){ pay.textContent=old; },3000); }); });
+    if(new URLSearchParams(location.search).get('paiement')==='ok'&&!paid&&!live){ info.innerHTML='<b></b> · merci, votre paiement est en cours de validation : votre site part en ligne sous 24 h.'; info.querySelector('b').textContent=s.name; pay.hidden=true; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
     f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=29#'+encodeURIComponent(s.style||'moderne');
     var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';

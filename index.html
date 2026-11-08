@@ -244,7 +244,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .spec-col:last-child{padding-right:0}
 .spec-col .for{min-height:0}
 .spec-col .btn{margin-top:auto}
-.spec-ver{display:grid;gap:8px}.spec-ver a{display:grid;gap:2px;border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;text-decoration:none;color:inherit;background:var(--bg)}.spec-ver a:hover{border-color:var(--brand)}.spec-ver b{font-size:.98rem}.spec-ver span{font-size:.86rem;color:var(--muted)}
+.spec-ver{display:grid;gap:8px}.spec-ver a{display:grid;gap:2px;border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;text-decoration:none;color:inherit;background:var(--bg)}.spec-ver a:hover{border-color:var(--brand)}.spec-ver b{font-size:.98rem}.spec-ver a.star{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--bg))}.spec-ver em{font-style:normal;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--grad);color:#fff;border-radius:999px;padding:3px 8px;margin-left:6px;vertical-align:2px}.spec-ver span{font-size:.86rem;color:var(--muted)}
 .spec .lnk2{text-align:center;font-weight:600;font-size:.92rem;color:var(--brand)}
 .anchor{display:block;position:relative;top:-90px;visibility:hidden}
 @media (max-width:860px){.spec-cols{grid-template-columns:1fr}.spec-col,.spec-col:first-child,.spec-col:last-child{padding:18px 0 0;border-right:0}.spec-col+.spec-col{border-top:1px solid var(--line);margin-top:18px}}
@@ -443,7 +443,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
 <div class="hero" id="accueil">
   <div class="wrap">
     <div>
-      <span class="eyebrow">Sites pros clés en main · 10 métiers</span>
+      <span class="eyebrow">Sites pros clés en main · 11 métiers</span>
       <h1 style="margin-top:14px">Votre site pro, <span class="u">en ligne en 48 h</span>.</h1>
       <p class="lead">Choisissez un modèle pensé pour votre métier, envoyez-nous vos infos et vos photos. On s'occupe de tout le reste. Ensuite, vous changez vous-même vos prix, horaires et photos depuis votre espace client.</p>
       <div class="ctas">
@@ -472,7 +472,8 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <span class="lbl">Des modèles faits pour :</span>
     <button type="button" class="pill" data-ht="vtc" aria-pressed="true">Chauffeurs VTC</button>
     <button type="button" class="pill" data-ht="restaurant" aria-pressed="false">Restaurants</button>
-    <button type="button" class="pill" data-ht="garage" aria-pressed="false">Garages et concessions</button>
+    <button type="button" class="pill" data-ht="concession" aria-pressed="false">Concessions automobiles</button>
+    <button type="button" class="pill" data-ht="garage" aria-pressed="false">Garages</button>
     <button type="button" class="pill" data-ht="immobilier" aria-pressed="false">Agences immobilières</button>
     <button type="button" class="pill" data-ht="batiment" aria-pressed="false">Artisans du bâtiment</button>
     <button type="button" class="pill" data-ht="beaute" aria-pressed="false">Coiffeurs et instituts</button>
@@ -488,7 +489,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Les modèles</span>
-      <h2>10 métiers, 25 styles. Essayez-les en vrai.</h2>
+      <h2>11 métiers, 25 styles. Essayez-les en vrai.</h2>
       <p>Choisissez votre métier, votre formule et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
     </div>
     <div class="cfg">
@@ -692,7 +693,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <!-- 08/11/2026 (Anthony : « pas intuitif avec le switch ») : une carte, même prix, les deux offres côte à côte -->
     <span id="auto-immo" class="anchor"></span>
     <div class="plan spec" id="boutique">
-      <span class="badge">Formules spécialisées</span>
+      <span class="badge">Formules spécialisées · Boutiques, concessions, garages, agences</span>
       <div class="spec-head">
         <div class="price"><b>99 €</b><span>/ mois</span></div>
         <p class="setup">+ <b>490 €</b> de mise en ligne, une fois · au choix selon votre activité</p>
@@ -716,8 +717,8 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <h3>Pack Auto &amp; Immo</h3>
           <p class="for">Votre site et vos annonces en illimité sur Abracadeal. Une seule mise à jour, site et annonces suivent. Trois versions au choix :</p>
           <div class="spec-ver">
+            <a class="star" href="modeles/garage.html?concession=1#luxe" target="_blank" rel="noopener"><b>🚗 Concession automobile <em>Nouveau</em></b><span>100 % vente de véhicules : stock en vitrine, fiches complètes, reprise et financement. Pas d'atelier, pas de rendez-vous.</span></a>
             <a href="modeles/garage.html#moderne" target="_blank" rel="noopener"><b>🔧 Garage</b><span>Atelier (rendez-vous, entretien, tarifs) et véhicules à vendre</span></a>
-            <a href="modeles/garage.html?concession=1#luxe" target="_blank" rel="noopener"><b>🚗 Concession</b><span>100 % vente de véhicules : pas d'atelier, pas de rendez-vous</span></a>
             <a href="modeles/immobilier.html#riviera" target="_blank" rel="noopener"><b>🏠 Agence immobilière</b><span>Biens à vendre et à louer, DPE et GES, estimation</span></a>
           </div>
           <ul>
@@ -891,9 +892,9 @@ window.addEventListener('resize',function(){ show(); });
   g.addEventListener('click',function(e){var c=e.target.closest('.gcard'); if(!c) return; cur.k=c.dataset.k; cur.s=c.dataset.s; if(/^signature/.test(cur.s)&&FR[cur.f]<3) cur.f='premium'; show(); document.getElementById('modeles').scrollIntoView({behavior:'smooth'});});
 })();
 document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){document.getElementById('o-plan').value=a.dataset.plan;/* 08/11/2026 : Pack Auto & Immo → métier garage ou immobilier */var t=document.getElementById('o-trade');if(a.dataset.plan==='AutoImmo'&&t&&!/^(garage|immobilier)$/.test(t.value)){t.value='garage';t.dispatchEvent(new Event('change'));}});});
-/* 07/11/2026 : l'accueil fait défiler les 10 métiers (demande d'Anthony : ne pas donner l'impression d'un site réservé aux VTC). */
+/* 07/11/2026 : l'accueil fait défiler les 11 métiers (demande d'Anthony : ne pas donner l'impression d'un site réservé aux VTC). */
 (function(){
-  var T=[['vtc','Chauffeur VTC'],['restaurant','Restaurant'],['beaute','Coiffure et beauté'],['garage','Garage et concession'],['boutique','Boutique en ligne'],['immobilier','Agence immobilière'],['boulangerie','Boulangerie'],['batiment','Artisan du bâtiment'],['bienetre','Bien-être et santé'],['depannage','Plombier et électricien']];
+  var T=[['vtc','Chauffeur VTC'],['restaurant','Restaurant'],['beaute','Coiffure et beauté'],['concession','Concession automobile'],['garage','Garage'],['boutique','Boutique en ligne'],['immobilier','Agence immobilière'],['boulangerie','Boulangerie'],['batiment','Artisan du bâtiment'],['bienetre','Bien-être et santé'],['depannage','Plombier et électricien']];
   var hd=document.getElementById('h-d'), hm=document.getElementById('h-m'), nm=document.getElementById('hsName'), tr=document.getElementById('hsTry');
   var i=0, timer=null, still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   hd.src=IMG['d-vtc-moderne']; hm.src=IMG['m-vtc-moderne'];

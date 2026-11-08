@@ -236,17 +236,17 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 :root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 .plan.spec{position:relative;margin-top:30px;border-color:var(--brand);background:var(--paper)}
-.spec-tabs{display:inline-flex;gap:4px;padding:4px;border:1.5px solid var(--line);border-radius:999px;align-self:flex-start;max-width:100%}
-.spec-tabs button{white-space:nowrap}
-.spec-tabs button{border:0;background:none;color:var(--muted);font:inherit;font-weight:600;font-size:.92rem;padding:8px 16px;border-radius:999px;cursor:pointer}
-.spec-tabs button.on{background:var(--grad);color:#fff}
-.spec-pane{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:30px;align-items:start}
-.spec-pane[hidden]{display:none}
-.spec-l{display:flex;flex-direction:column;gap:14px}
-.spec-l .for{min-height:0}
+.spec-head{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.spec-head .setup{border:0;padding:0;margin:0}
+.spec-cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.spec-col{display:flex;flex-direction:column;gap:14px;padding:4px 26px}
+.spec-col:first-child{padding-left:0;border-right:1px solid var(--line)}
+.spec-col:last-child{padding-right:0}
+.spec-col .for{min-height:0}
+.spec-col .btn{margin-top:auto}
 .spec .lnk2{text-align:center;font-weight:600;font-size:.92rem;color:var(--brand)}
 .anchor{display:block;position:relative;top:-90px;visibility:hidden}
-@media (max-width:860px){.spec-pane{grid-template-columns:1fr}.spec-tabs button{padding:8px 11px;font-size:.84rem}}
+@media (max-width:860px){.spec-cols{grid-template-columns:1fr}.spec-col,.spec-col:first-child,.spec-col:last-child{padding:18px 0 0;border-right:0}.spec-col+.spec-col{border-top:1px solid var(--line);margin-top:18px}}
 .plans.duo{grid-template-columns:repeat(2,1fr);margin-top:30px}
 .plans.duo .plan{position:relative}
 .plans.duo .plan .for{min-height:0}
@@ -688,24 +688,19 @@ html.fv-open,html.fv-open body{overflow:hidden}
       </div>
     </div>
 
-    <!-- 08/11/2026 (Anthony : « on relierait pas les 2 ») : Boutique et Pack Auto & Immo réunis dans une seule carte, avec un choix -->
+    <!-- 08/11/2026 (Anthony : « pas intuitif avec le switch ») : une carte, même prix, les deux offres côte à côte -->
     <span id="auto-immo" class="anchor"></span>
     <div class="plan spec" id="boutique">
-      <span class="badge">Formules spécialisées · 99 € / mois</span>
-      <div class="spec-tabs" role="tablist">
-        <button type="button" role="tab" class="on" data-spec="boutique" aria-selected="true">Boutique</button>
-        <button type="button" role="tab" data-spec="autoimmo" aria-selected="false">Garages &amp; agences immo</button>
+      <span class="badge">Formules spécialisées</span>
+      <div class="spec-head">
+        <div class="price"><b>99 €</b><span>/ mois</span></div>
+        <p class="setup">+ <b>490 €</b> de mise en ligne, une fois · au choix selon votre activité</p>
       </div>
-      <div class="spec-pane" data-pane="boutique">
-        <div class="spec-l">
+      <div class="spec-cols">
+        <div class="spec-col">
           <h3>Boutique</h3>
           <p class="for">Pour vendre vos produits en ligne : créateurs, épiceries fines, caves, fleuristes, concept stores.</p>
-          <div class="price"><b>99 €</b><span>/ mois</span></div>
-          <p class="setup">+ <b>490 €</b> de mise en ligne, une fois</p>
-          <a class="btn" href="#commande" data-plan="Boutique">Choisir Boutique</a>
-          <a class="lnk2" href="modeles/boutique.html#moderne" target="_blank" rel="noopener">Voir la boutique d'exemple</a>
-        </div>
-        <ul>
+          <ul>
         <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tout Premium, CRM compris</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Catalogue de produits que vous gérez vous-même : photos, prix, rayons</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Panier et paiement par carte : l'argent arrive directement sur votre compte (frais Stripe en plus)</li>
@@ -714,17 +709,13 @@ html.fv-open,html.fv-open body{overflow:hidden}
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vos produits publiés aussi sur Abracadeal, sans limite et synchronisés avec votre catalogue</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Passerelle fournisseurs (dropshipping) en préparation</li>
       </ul>
-      </div>
-      <div class="spec-pane" data-pane="autoimmo" hidden>
-        <div class="spec-l">
+          <a class="btn" href="#commande" data-plan="Boutique">Choisir Boutique</a>
+          <a class="lnk2" href="modeles/boutique.html#moderne" target="_blank" rel="noopener">Voir la boutique d'exemple</a>
+        </div>
+        <div class="spec-col">
           <h3>Pack Auto &amp; Immo</h3>
           <p class="for">Pour les garages, concessions et agences immobilières : votre site et vos annonces en illimité sur Abracadeal. Une seule mise à jour, site et annonces suivent.</p>
-          <div class="price"><b>99 €</b><span>/ mois</span></div>
-          <p class="setup">+ <b>490 €</b> de mise en ligne, une fois</p>
-          <a class="btn" href="#commande" data-plan="AutoImmo">Choisir le Pack Auto &amp; Immo</a>
-          <a class="lnk2" href="site-internet-garage/">Voir un site de garage</a>
-        </div>
-        <ul>
+          <ul>
         <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tout Pro : réservations, avis Google, modifications faites par nous</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vos véhicules ou vos biens en vitrine sur votre site, avec photos et fiches détaillées</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Annonces illimitées sur Abracadeal, synchronisées avec votre site : prix, photos, vendus</li>
@@ -733,16 +724,11 @@ html.fv-open,html.fv-open body{overflow:hidden}
         <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>SIRET demandé au paiement : votre espace Abracadeal est ouvert et relié à votre site automatiquement</li>
         <li class="plus"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Bientôt : diffusion de vos annonces sur d’autres plateformes</li>
       </ul>
+          <a class="btn" href="#commande" data-plan="AutoImmo">Choisir le Pack Auto &amp; Immo</a>
+          <a class="lnk2" href="site-internet-garage/">Voir un site de garage</a>
+        </div>
       </div>
     </div>
-    <script>
-    (function(){var card=document.getElementById('boutique');if(!card)return;
-    function show(k){card.querySelectorAll('.spec-tabs button').forEach(function(b){var on=b.dataset.spec===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});card.querySelectorAll('.spec-pane').forEach(function(p){p.hidden=p.dataset.pane!==k})}
-    card.querySelectorAll('.spec-tabs button').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.spec)})});
-    function fromHash(){if(location.hash==='#auto-immo')show('autoimmo');else if(location.hash==='#boutique')show('boutique')}
-    fromHash();window.addEventListener('hashchange',fromHash);
-    window.csShowSpec=show;})();
-    </script>
     <p class="legal">TVA non applicable, art. 293 B du CGI : le prix affiché est le prix payé. <a href="cgv.html">Conditions générales</a>. Sans engagement : vous résiliez quand vous voulez, l'abonnement s'arrête à la fin du mois en cours.</p>
 
     <div class="head" style="margin-top:64px;margin-bottom:10px">

@@ -291,6 +291,53 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .fullv iframe{flex:1;width:100%;border:0;background:#fff}
 html.fv-open,html.fv-open body{overflow:hidden}
 .fullv{touch-action:pan-x pan-y}
+
+/* 08/11/2026 : explorateur refait (choix à gauche, site en grand à droite ; sur téléphone, le site d'abord) */
+.explorer{padding-block:64px}
+.explorer .head{margin-bottom:22px;max-width:none;gap:8px}
+.explorer .head h2{font-size:clamp(1.6rem,2.6vw,2.2rem)}
+#modeles{scroll-margin-top:60px}
+.studio{display:grid;grid-template-columns:330px minmax(0,1fr);gap:32px;align-items:start}
+.panel{position:sticky;top:84px;display:grid;gap:20px;max-height:calc(100vh - 100px);overflow:auto;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--bg);scrollbar-width:thin}
+.panel .lbl{display:flex;align-items:center;gap:8px;font-size:.78rem;font-family:var(--body);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.panel .lbl .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--brand);color:var(--brand-ink);font-size:.72rem;letter-spacing:0}
+.panel .lbl .cur{margin-left:auto;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:700;font-size:.85rem}
+.panel .tabs,.panel .chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.panel .tabs button,.panel .chips button{font:600 .84rem/1.2 var(--body);padding:8px 10px;border-radius:9px;min-height:38px;white-space:normal}
+.panel .chips button .sw{width:16px;height:16px}
+.view{position:sticky;top:84px;min-width:0}
+.vbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.seg{display:inline-flex;padding:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
+.seg button{font:600 .88rem var(--body);padding:8px 16px;border:0;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.now{font-weight:700;font-size:.95rem;text-align:right}
+.screens .laptop.live{width:100%}
+.screens .viewport{height:calc(100vh - 290px);min-height:400px;max-height:760px}
+.screens .phone.live{display:none;margin:0 auto;width:calc((100vh - 290px) * .4621 + 16px);min-width:220px;max-width:380px}
+.screens[data-v="m"] .laptop.live{display:none}
+.screens[data-v="m"] .phone.live{display:block}
+.screens .pscreen{aspect-ratio:390/844}
+.explorer .desc{margin:14px 0 0;max-width:none;min-height:0;font-size:.93rem}
+.explorer .ex-actions{margin-top:14px}
+@media (max-width:920px){
+  .explorer{padding-block:40px 48px}
+  .explorer .head{margin-bottom:14px}
+  .explorer .head p{font-size:.95rem}
+  .studio{grid-template-columns:minmax(0,1fr);gap:12px}
+  .panel,.view,.pgroup{min-width:0}
+  .panel{grid-template-columns:minmax(0,1fr)}
+  .panel{top:60px;z-index:5;max-height:none;overflow:visible;gap:8px;padding:10px 0;margin:0 -16px;border:0;border-radius:0;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .panel .lbl{display:none}
+  .panel .tabs,.panel .chips{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:0 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .panel .tabs::-webkit-scrollbar,.panel .chips::-webkit-scrollbar{display:none}
+  .panel .tabs button,.panel .chips button{flex:none;white-space:nowrap;min-height:36px;padding:7px 12px;font-size:.85rem;scroll-snap-align:start}
+  .view{position:static}
+  .vbar{display:none}
+  .screens .laptop.live{display:none!important}
+  .screens .phone.live{display:block!important;width:min(100%,400px);max-width:none;min-width:0;padding:6px;border-radius:26px}
+  .screens .pscreen{aspect-ratio:auto;height:calc(100svh - 240px);min-height:420px;max-height:760px;border-radius:20px}
+  .explorer .ex-actions .btn{flex:1 1 auto;text-align:center}
+}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -357,17 +404,18 @@ html.fv-open,html.fv-open body{overflow:hidden}
   </div>
 </div>
 
-<section class="explorer" id="modeles" style="margin-top:56px">
+<section class="explorer" id="modeles">
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Les modèles</span>
       <h2>10 métiers, 20 styles. Essayez-les en vrai.</h2>
-      <p>Ce ne sont pas des images : faites défiler les écrans, cliquez, testez la réservation. C'est exactement le site que vos clients verront.</p>
+      <p>Choisissez votre métier et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
     </div>
-    <div class="ex-bar">
-      <div>
-        <h3 class="lbl">Votre métier</h3>
-        <div class="tabs" role="group" aria-label="Métier">
+    <div class="studio">
+      <div class="panel">
+        <div class="pgroup">
+          <h3 class="lbl"><span class="n">1</span>Votre métier</h3>
+          <div class="tabs scrollrow" role="group" aria-label="Métier">
           <button type="button" data-k="vtc" aria-pressed="true">Chauffeur VTC</button>
           <button type="button" data-k="restaurant" aria-pressed="false">Restaurant</button>
           <button type="button" data-k="garage" aria-pressed="false">Garage et concession</button>
@@ -379,10 +427,10 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <button type="button" data-k="depannage" aria-pressed="false">Dépannage à domicile</button>
           <button type="button" data-k="boutique" aria-pressed="false">Boutique en ligne</button>
         </div>
-      </div>
-      <div>
-        <h3 class="lbl">Le style</h3>
-        <div class="chips" role="group" aria-label="Style">
+        </div>
+        <div class="pgroup">
+          <h3 class="lbl"><span class="n">2</span>Le style <span class="cur" id="ex-sname">Moderne</span></h3>
+          <div class="chips scrollrow" role="group" aria-label="Style">
           <button type="button" data-s="moderne" aria-pressed="true"><span class="sw" style="background:#0B0B0C"></span>Moderne</button>
           <button type="button" data-s="luxe" aria-pressed="false"><span class="sw" style="background:#C9B28A"></span>Luxe</button>
           <button type="button" data-s="riviera" aria-pressed="false"><span class="sw" style="background:#0E6BA8"></span>Riviera</button>
@@ -404,18 +452,24 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <button type="button" data-s="soleil" aria-pressed="false"><span class="sw" style="background:#E85D04"></span>Soleil</button>
           <button type="button" data-s="marine" aria-pressed="false"><span class="sw" style="background:#0B1F3A"></span>Marine chic</button>
         </div>
+        </div>
       </div>
-    </div>
-    <p class="desc" id="desc" aria-live="polite"></p>
-    <div class="stage">
-      <div class="laptop live"><div class="bar"><i></i><i></i><i></i><span class="url" id="ex-url">azur-prestige.fr</span></div><div class="viewport" id="vp-d"><iframe id="if-d" title="Aperçu du modèle sur ordinateur" loading="lazy"></iframe></div></div>
-      <div class="phone live"><div class="pscreen" id="vp-m"><iframe id="if-m" title="Aperçu du modèle sur téléphone" loading="lazy"></iframe></div></div>
-    </div>
-    <div class="ex-actions">
-      <a class="btn" id="ex-choose" href="#commande">Choisir ce modèle</a>
-      <a class="btn ghost" id="ex-open" href="modeles/vtc.html#moderne" target="_blank" rel="noopener">Ouvrir le modèle en grand</a>
-      <a class="btn ghost" id="ex-edit" href="espace/?demo=vtc" target="_blank" rel="noopener">Essayer l'espace client</a>
-      <span class="hint">Faites défiler l'intérieur des écrans pour voir tout le site.</span>
+      <div class="view">
+        <div class="vbar">
+          <div class="seg" role="group" aria-label="Appareil"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
+          <span class="now" id="ex-now">Chauffeur VTC · Moderne</span>
+        </div>
+        <div class="screens" data-v="d">
+          <div class="laptop live"><div class="bar"><i></i><i></i><i></i><span class="url" id="ex-url">azur-prestige.fr</span></div><div class="viewport" id="vp-d"><iframe id="if-d" title="Aperçu du modèle sur ordinateur"></iframe></div></div>
+          <div class="phone live"><div class="pscreen" id="vp-m"><iframe id="if-m" title="Aperçu du modèle sur téléphone"></iframe></div></div>
+        </div>
+        <p class="desc" id="desc" aria-live="polite"></p>
+        <div class="ex-actions">
+          <a class="btn" id="ex-choose" href="#commande">Choisir ce modèle</a>
+          <a class="btn ghost" id="ex-open" href="modeles/vtc.html#moderne" target="_blank" rel="noopener">Voir en plein écran</a>
+          <a class="btn ghost" id="ex-edit" href="espace/?demo=vtc" target="_blank" rel="noopener">Essayer l'espace client</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -664,21 +718,26 @@ function fit(){
   if(vd.clientWidth){var a=vd.clientWidth/1280; ifd.style.transform='scale('+a+')'; ifd.style.height=(vd.clientHeight/a)+'px';}
   if(vm.clientWidth){var b=vm.clientWidth/390; ifm.style.transform='scale('+b+')'; ifm.style.height=(vm.clientHeight/b)+'px';}
 }
+var view='d';
+function mob(){ return window.matchMedia('(max-width:920px)').matches; }
 function show(){
-  var url=FILES[cur.k]+'#'+cur.s;
-  if(ifd.getAttribute('src')!==url){ifd.setAttribute('src',url);}
-  if(ifm.getAttribute('src')!==url){ifm.setAttribute('src',url);}
+  var url=FILES[cur.k]+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
+  if(f.getAttribute('src')!==url){f.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
   document.getElementById('ex-edit').href='espace/?demo='+cur.k+'&style='+cur.s;
   document.getElementById('ex-url').textContent=URLS[cur.k];
+  document.getElementById('ex-sname').textContent=SN[cur.s];
+  document.getElementById('ex-now').textContent=NAMES[cur.k]+' · '+SN[cur.s];
   document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s];
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.k===cur.k?'true':'false');});
   document.querySelectorAll('.chips button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.s===cur.s?'true':'false');});
+  document.querySelectorAll('.scrollrow').forEach(function(r){ var on=r.querySelector('[aria-pressed="true"]'); if(!on||r.scrollWidth<=r.clientWidth+2) return; var a=r.getBoundingClientRect(), o=on.getBoundingClientRect(); if(o.left<a.left+16||o.right>a.right-16){ r.scrollTo({left:Math.max(0,r.scrollLeft+o.left-a.left-16),behavior:'smooth'}); } });
   fit();
 }
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){cur.k=b.dataset.k;show();});});
 document.querySelectorAll('.chips button').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;show();});});
-window.addEventListener('resize',fit);
+document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){ view=b.dataset.v; document.querySelector('.screens').dataset.v=view; document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); show(); });});
+window.addEventListener('resize',function(){ show(); });
 (function(){
   var g=document.getElementById('grid'), html='';
   var PICK={vtc:'luxe',restaurant:'chaleureux',garage:'audacieux',immobilier:'riviera',batiment:'moderne',beaute:'luxe',bienetre:'chaleureux',boulangerie:'chaleureux',depannage:'audacieux',boutique:'moderne'};

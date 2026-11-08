@@ -1034,6 +1034,7 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 <script>if(/[?&]f=(essentiel|pro|premium|boutique)\b/i.test(location.search)){var cf=document.createElement("script");cf.src="/assets/cs-formule.js?v=1";document.body.appendChild(cf);}</script>
 <!-- 08/11/2026 (Anthony : « on voit mal comment changer de thème ») : barre de styles claire — flèches, nom du style, numéro, et tous les styles en grille -->
 <style>
+.picker{position:relative;z-index:60;isolation:isolate}
 .picker .wrap.pk{display:flex;flex-wrap:nowrap;align-items:center;gap:10px;overflow:visible;padding-block:10px}
 .picker .pk-t{font:700 .85rem system-ui,sans-serif;color:#fff;white-space:nowrap}
 .picker .pk-nav{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;min-width:0}

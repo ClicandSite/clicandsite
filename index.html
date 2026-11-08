@@ -106,6 +106,7 @@ section{padding-block:80px}
 .chips button{display:inline-flex;align-items:center;gap:8px}
 .chips button .sw{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.15)}
 .chips button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.chips button:disabled{opacity:.4;cursor:not-allowed}
 .desc{font-size:.95rem;color:var(--muted);min-height:4.8em}
 .desc b{color:var(--ink)}
 .count{font-family:var(--display);font-size:2.6rem;font-weight:800;letter-spacing:-.03em;line-height:1}
@@ -336,7 +337,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
   .vbar{display:none}
   .screens .laptop.live{display:none!important}
   .screens .phone.live{display:block!important;width:min(100%,400px);max-width:none;min-width:0;padding:6px;border-radius:26px}
-  .screens .pscreen{aspect-ratio:auto;height:calc(100svh - 240px);min-height:420px;max-height:760px;border-radius:20px}
+  .screens .pscreen{aspect-ratio:auto;height:calc(100svh - 286px);min-height:420px;max-height:760px;border-radius:20px}
   .explorer .ex-actions .btn{flex:1 1 auto;text-align:center}
 }
 </style>
@@ -410,7 +411,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <div class="head">
       <span class="eyebrow">Les modèles</span>
       <h2>10 métiers, 21 styles. Essayez-les en vrai.</h2>
-      <p>Choisissez votre métier et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
+      <p>Choisissez votre métier, votre formule et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
     </div>
     <div class="studio">
       <div class="panel">
@@ -430,7 +431,16 @@ html.fv-open,html.fv-open body{overflow:hidden}
         </div>
         </div>
         <div class="pgroup">
-          <h3 class="lbl"><span class="n">2</span>Le style <span class="cur" id="ex-sname">Moderne</span></h3>
+          <h3 class="lbl"><span class="n">2</span>La formule <span class="cur" id="ex-fname">Pro</span></h3>
+          <div class="chips fchips scrollrow" role="group" aria-label="Formule">
+          <button type="button" data-f="essentiel" aria-pressed="false">Essentiel <small style="opacity:.7">29 €</small></button>
+          <button type="button" data-f="pro" aria-pressed="true">Pro <small style="opacity:.7">49 €</small></button>
+          <button type="button" data-f="premium" aria-pressed="false">Premium <small style="opacity:.7">79 €</small></button>
+          <button type="button" data-f="boutique" aria-pressed="false">Boutique <small style="opacity:.7">99 €</small></button>
+        </div>
+        </div>
+        <div class="pgroup">
+          <h3 class="lbl"><span class="n">3</span>Le style <span class="cur" id="ex-sname">Moderne</span></h3>
           <div class="chips scrollrow" role="group" aria-label="Style">
           <button type="button" data-s="moderne" aria-pressed="true"><span class="sw" style="background:#0B0B0C"></span>Moderne</button>
           <button type="button" data-s="luxe" aria-pressed="false"><span class="sw" style="background:#C9B28A"></span>Luxe</button>
@@ -697,7 +707,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
 
 <script>
 var IMG={"d-garage-audacieux": "/img/g/d-garage-audacieux.jpg", "d-immobilier-riviera": "/img/g/d-immobilier-riviera.jpg", "d-restaurant-chaleureux": "/img/g/d-restaurant-chaleureux.jpg", "d-vtc-luxe": "/img/g/d-vtc-luxe.jpg", "d-vtc-moderne": "/img/g/d-vtc-moderne.jpg", "m-vtc-moderne": "/img/g/m-vtc-moderne.jpg", "d-batiment-moderne": "/img/g/d-batiment-moderne.jpg", "d-beaute-luxe": "/img/g/d-beaute-luxe.jpg", "d-bienetre-chaleureux": "/img/g/d-bienetre-chaleureux.jpg", "d-boulangerie-chaleureux": "/img/g/d-boulangerie-chaleureux.jpg", "d-depannage-audacieux": "/img/g/d-depannage-audacieux.jpg", "d-boutique-moderne": "/img/g/d-boutique-moderne.jpg"};
-var FILES={vtc:'modeles/vtc.html?v=27',restaurant:'modeles/restaurant.html?v=27',garage:'modeles/garage.html?v=27',immobilier:'modeles/immobilier.html?v=27',batiment:'modeles/batiment.html?v=27',beaute:'modeles/beaute.html?v=27',bienetre:'modeles/bienetre.html?v=27',boulangerie:'modeles/boulangerie.html?v=27',depannage:'modeles/depannage.html?v=27',boutique:'modeles/boutique.html?v=27'};
+var FILES={vtc:'modeles/vtc.html?v=28',restaurant:'modeles/restaurant.html?v=28',garage:'modeles/garage.html?v=28',immobilier:'modeles/immobilier.html?v=28',batiment:'modeles/batiment.html?v=28',beaute:'modeles/beaute.html?v=28',bienetre:'modeles/bienetre.html?v=28',boulangerie:'modeles/boulangerie.html?v=28',depannage:'modeles/depannage.html?v=28',boutique:'modeles/boutique.html?v=28'};
 var URLS={vtc:'azur-prestige.fr',restaurant:'chez-marius.fr',garage:'garage-du-littoral.fr',immobilier:'maisons-esterel.fr',batiment:'azur-renovation.fr',beaute:'maison-lila.fr',bienetre:'studio-respire.fr',boulangerie:'maison-fournier.fr',depannage:'azur-depannage.fr',boutique:'atelier-solene.fr'};
 var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage et concession',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile',boutique:'Boutique en ligne'};
 var SN={"moderne": "Moderne", "luxe": "Luxe", "riviera": "Riviera", "chaleureux": "Chaleureux", "audacieux": "Audacieux", "minimal": "Minimal crème", "nuit": "Nuit bleue", "provence": "Provence lavande", "ocean": "Océan", "pop": "Pop vitaminé", "corporate": "Pro sérieux", "retro": "Rétro", "zen": "Zen nature", "neon": "Néon", "poudre": "Rose poudré", "terracotta": "Terracotta", "graphite": "Graphite", "foret": "Forêt", "soleil": "Soleil", "marine": "Marine chic", "signature": "Signature"};
@@ -714,7 +724,10 @@ var DESC={
   boutique:'<b>Vente en ligne</b> avec panier et <b>paiement par carte</b>, retrait en boutique ou livraison, catalogue filtrable par rayon et par budget. Formule Boutique.'
 };
 var SDESC={"moderne": "blanc et noir, grandes photos.", "luxe": "noir et champagne, tout centré.", "riviera": "bleu mer, photo à droite.", "chaleureux": "tons pierre et olive, photo encadrée.", "audacieux": "couleurs vives, titres en majuscules.", "minimal": "crème et noir, très épuré, photo encadrée.", "nuit": "bleu nuit et serif élégant, grande photo.", "provence": "lavande et crème, tout centré.", "ocean": "turquoise, chiffres clés en tête.", "pop": "rose et jaune vitaminés, photo à droite.", "corporate": "bleu franc, sobre et rassurant.", "retro": "tons vintage brique et sable.", "zen": "vert sauge, calme et centré.", "neon": "fond sombre, accents fluo.", "poudre": "rose poudré, arrondis doux.", "terracotta": "terre cuite et serif classique.", "graphite": "gris anthracite, élégant.", "foret": "vert forêt, photo encadrée.", "soleil": "orange et jaune soleil.", "marine": "bleu marine et touches dorées.", "signature": "vert profond et or, l'univers du site Elite Prestige Services. Réservé aux formules Premium et Boutique."};
-var cur={k:'vtc',s:'moderne'};
+var cur={k:'vtc',s:'moderne',f:'pro'};
+/* 08/11/2026 : aperçu des modèles par formule (?f=…, voir assets/cs-formule.js) */
+var FR={essentiel:1,pro:2,premium:3,boutique:4}, FN={essentiel:'Essentiel',pro:'Pro',premium:'Premium',boutique:'Boutique'};
+var FDESC={essentiel:'<b>Essentiel</b> : le site, les demandes par mail et dans « Mes clients », devis PDF. Pas d\'avis Google.',pro:'<b>Pro</b> : + avis Google avec bouton « Laisser un avis », réservations payées en ligne (bouton Réserver sur les tarifs) et modifications faites par nous.',premium:'<b>Premium</b> : + bouton FR / EN (site traduit en anglais), CRM avec relances et historique, style Signature, logo offert. Essayez le bouton EN en haut du site.',boutique:'<b>Boutique</b> : + panier et paiement par carte, retrait ou livraison. Essayez « Ajouter au panier ».'};
 var ifd=document.getElementById('if-d'), ifm=document.getElementById('if-m');
 function fit(){
   var vd=document.getElementById('vp-d'), vm=document.getElementById('vp-m');
@@ -724,22 +737,28 @@ function fit(){
 var view='d';
 function mob(){ return window.matchMedia('(max-width:920px)').matches; }
 function show(){
-  var url=FILES[cur.k]+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
+  if(cur.k==='boutique') cur.f='boutique';
+  if(cur.s==='signature'&&FR[cur.f]<3) cur.s='luxe';
+  var url=FILES[cur.k]+'&f='+cur.f+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
   if(f.getAttribute('src')!==url){f.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
   document.getElementById('ex-edit').href='espace/?demo='+cur.k+'&style='+cur.s;
   document.getElementById('ex-url').textContent=URLS[cur.k];
   document.getElementById('ex-sname').textContent=SN[cur.s];
+  document.getElementById('ex-fname').textContent=FN[cur.f];
+  document.querySelectorAll('.fchips button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.f===cur.f?'true':'false'); x.disabled=cur.k==='boutique'&&x.dataset.f!=='boutique'; x.title=x.disabled?'La boutique en ligne demande la formule Boutique':'';});
+  var op=document.getElementById('o-plan'); if(op) op.value=FN[cur.f];
   document.getElementById('ex-now').textContent=NAMES[cur.k]+' · '+SN[cur.s];
-  document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s];
+  document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s]+'<br>'+FDESC[cur.f];
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.k===cur.k?'true':'false');});
-  document.querySelectorAll('.chips button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.s===cur.s?'true':'false');});
+  document.querySelectorAll('.chips button[data-s]').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.s===cur.s?'true':'false');});
   document.querySelectorAll('.scrollrow').forEach(function(r){ var on=r.querySelector('[aria-pressed="true"]'); if(!on||r.scrollWidth<=r.clientWidth+2) return; var a=r.getBoundingClientRect(), o=on.getBoundingClientRect(); if(o.left<a.left+16||o.right>a.right-16){ r.scrollTo({left:Math.max(0,r.scrollLeft+o.left-a.left-16),behavior:'smooth'}); } });
   fit();
 }
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){cur.k=b.dataset.k;show();});});
-document.querySelectorAll('.chips button').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;show();});});
+document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;if(cur.s==='signature'&&FR[cur.f]<3)cur.f='premium';show();});});
 document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){ view=b.dataset.v; document.querySelector('.screens').dataset.v=view; document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); show(); });});
+document.querySelectorAll('.fchips button').forEach(function(b){b.addEventListener('click',function(){cur.f=b.dataset.f;show();});});
 window.addEventListener('resize',function(){ show(); });
 (function(){
   var g=document.getElementById('grid'), html='';

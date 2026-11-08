@@ -156,6 +156,20 @@
     return c;
   }
 
+  // 08/11/2026 : logo MyCreativeSite à côté de la mention « Site réalisé par MyCreativeSite » en bas de chaque site
+  var MCS_LOGO = 'https://mycreativesite.fr/img/m-badge.webp';
+  function credit(doc) {
+    var f = q(doc, 'footer'); if (!f || q(f, '.mcs-logo')) return;
+    var el = qa(f, 'a, span, p, small, div').filter(function (e) { return /MyCreativeSite/i.test(e.textContent) && !qa(e, 'a, span, p, small, div').some(function (k) { return /MyCreativeSite/i.test(k.textContent); }); })[0];
+    if (!el) return;
+    var img = doc.createElement('img'); img.className = 'mcs-logo'; img.src = MCS_LOGO; img.alt = ''; img.width = 18; img.height = 18; img.loading = 'lazy';
+    img.style.cssText = 'width:18px;height:18px;vertical-align:-4px;margin-right:6px;display:inline-block';
+    if (el.tagName === 'A') { el.insertBefore(img, el.firstChild); return; }
+    var a = doc.createElement('a'); a.className = 'mcs'; a.href = 'https://mycreativesite.fr/'; a.target = '_blank'; a.rel = 'noopener';
+    a.style.cssText = 'color:inherit;text-decoration:none;display:inline-flex;align-items:center';
+    while (el.firstChild) a.appendChild(el.firstChild);
+    a.insertBefore(img, a.firstChild); el.appendChild(a);
+  }
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;
     if (!Array.isArray(c.reviews)) c = Object.assign({}, c, { reviews: [] }); // pas d'avis d'exemple sur un vrai site
@@ -181,6 +195,7 @@
     if (p.team) setImg(q(doc, '.team .photo'), p.team);
     if (Array.isArray(p.gallery)) qa(doc, '.gallery > .photo').forEach(function (e, i) { if (p.gallery[i]) setImg(e, p.gallery[i]); });
     if (c.style && doc.documentElement) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
+    credit(doc);
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }
 
@@ -343,7 +358,7 @@
     else { a.style.cssText += ';position:fixed;top:12px;right:12px;z-index:2147482000;background:#fff;color:#16181f'; doc.body.appendChild(a); }
   }
 
-  window.CSEdit = { extract: extract, apply: apply, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
+  window.CSEdit = { extract: extract, apply: apply, credit: credit, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;

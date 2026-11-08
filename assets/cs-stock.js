@@ -131,8 +131,8 @@
   function abraBox() {
     var pack = String(site.plan || '').toLowerCase() === 'autoimmo';
     var b = el('div', 'stk-ab');
-    if (DEMO) { b.innerHTML = '<span class="stk-dot ok"></span><span>Avec le <b>Pack Auto &amp; Immo</b>, chaque annonce enregistrée ici part aussi sur <b>Abracadeal</b>, sans rien faire de plus.</span>'; return b; }
-    if (!pack) { b.innerHTML = '<span class="stk-dot"></span><span>Publiez aussi ces annonces sur <b>Abracadeal</b>, en illimité, avec le Pack Auto &amp; Immo.</span><a class="btn sm" href="mailto:contact@mycreativesite.fr?subject=Pack%20Auto%20%26%20Immo">Je suis intéressé</a>'; return b; }
+    if (DEMO) { b.innerHTML = '<span class="stk-dot ok"></span><span>Avec le <b>Pack Auto, Moto &amp; Immo</b>, chaque annonce enregistrée ici part aussi sur <b>Abracadeal</b>, sans rien faire de plus.</span>'; return b; }
+    if (!pack) { b.innerHTML = '<span class="stk-dot"></span><span>Publiez aussi ces annonces sur <b>Abracadeal</b>, en illimité, avec le Pack Auto, Moto &amp; Immo.</span><a class="btn sm" href="mailto:contact@mycreativesite.fr?subject=Pack%20Auto%20%26%20Immo">Je suis intéressé</a>'; return b; }
     var a = ST.abra || {}, s = a.agency_status, r = a.last_result || {};
     var cls = s === 'active' ? 'ok' : (s === 'pending' || !s) ? 'wait' : 'bad';
     var txt = s === 'active' ? '<b>Diffusion Abracadeal active</b>' + (a.online != null ? ' · ' + a.online + ' annonce' + (a.online > 1 ? 's' : '') + ' en ligne' : '') + (a.synced_at ? ' · dernière mise à jour ' + new Date(a.synced_at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '') + '. Vos changements y passent dans les 10 minutes après l\'enregistrement.'

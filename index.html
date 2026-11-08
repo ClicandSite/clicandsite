@@ -720,7 +720,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <h3>Pack Auto &amp; Immo</h3>
           <p class="for">Pour les garages, concessions et agences immobilières : votre site et vos annonces en illimité sur Abracadeal. Une seule mise à jour, site et annonces suivent.</p>
           <div class="price"><b>99 €</b><span>/ mois</span></div>
-          <p class="setup">+ <b>290 €</b> de mise en ligne, une fois</p>
+          <p class="setup">+ <b>490 €</b> de mise en ligne, une fois</p>
           <a class="btn" href="#commande" data-plan="AutoImmo">Choisir le Pack Auto &amp; Immo</a>
           <a class="lnk2" href="site-internet-garage/">Voir un site de garage</a>
         </div>
@@ -941,7 +941,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
   ['o-trade','o-style'].forEach(function(id){ $(id).addEventListener('change',line); });
   // 08/11/2026 : le style Signature est réservé aux formules Premium et Boutique
   // 08/11/2026 : options ajoutées au paiement ; logo et bilingue déjà inclus en Premium et Boutique
-  var PL={Essentiel:[29,190],Pro:[49,290],Premium:[79,490],Boutique:[99,490],AutoImmo:[99,290]}, OP={logo:[0,19],google:[0,149],mail:[5,0],bilingue:[10,0]};
+  var PL={Essentiel:[29,190],Pro:[49,290],Premium:[79,490],Boutique:[99,490],AutoImmo:[99,490]}, OP={logo:[0,19],google:[0,149],mail:[5,0],bilingue:[10,0]};
   function sum(){ var pl=$('o-plan').value, inc=/^(Premium|Boutique)$/.test(pl), p=PL[pl]||[0,0], m=p[0], u=p[1];
     document.querySelectorAll('#o-opts label[data-o]').forEach(function(l){ var o=l.dataset.o, i=l.querySelector('input'), isInc=inc&&(o==='logo'||o==='bilingue');
       i.disabled=isInc; if(isInc) i.checked=false; l.classList.toggle('inc',isInc); var b=l.querySelector('b'); if(!b.dataset.t) b.dataset.t=b.textContent; b.textContent=isInc?b.dataset.t.replace(/ · .*/,'')+' · inclus en '+pl:b.dataset.t;

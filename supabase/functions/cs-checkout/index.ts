@@ -17,8 +17,8 @@ const PLAN: Record<string, { monthly: string; setup: string }> = {
   pro: { monthly: "price_1UZDbXEVjm0uqFCc5ed7JRlp", setup: "price_1UYmdNEVjm0uqFCcLvQUK9Tx" },
   premium: { monthly: "price_1UZDbYEVjm0uqFCcjq9X3VHV", setup: "price_1UYmdPEVjm0uqFCcNdD6SaXX" },
   boutique: { monthly: "price_1UZ76PEVjm0uqFCczretGSsA", setup: "price_1UYmdPEVjm0uqFCcNdD6SaXX" },
-  // 08/11/2026 : Pack Auto & Immo — 99 €/mois + 290 € (même mise en ligne que Pro) ; annonces illimitées sur Abracadeal
-  autoimmo: { monthly: "price_1UZdDdEVjm0uqFCcnQKR8aXu", setup: "price_1UYmdNEVjm0uqFCcLvQUK9Tx" },
+  // 08/11/2026 : Pack Auto & Immo — 99 €/mois + 490 € (même mise en ligne que Boutique, demande d'Anthony) ; annonces illimitées sur Abracadeal
+  autoimmo: { monthly: "price_1UZdDdEVjm0uqFCcnQKR8aXu", setup: "price_1UYmdPEVjm0uqFCcNdD6SaXX" },
 };
 const OPTION: Record<string, string> = {
   logo: "price_1UZYzmEVjm0uqFCceEefBac4",      // 19 € une fois

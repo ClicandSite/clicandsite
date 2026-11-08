@@ -55,7 +55,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
 (function(){
   function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
   var API='https://avcynjwcyygygkjuxsdt.supabase.co', KEY='sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO';
-  var PAY={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07',autoimmo:'https://buy.stripe.com/28E9AT6KzeD1gH7gAMgfu0a'};
+  var PAY={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07',autoimmo:'https://buy.stripe.com/5kQcN56Kz8eD2Qhacogfu0b'};
   var slug=(new URLSearchParams(location.search).get('s')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
   var info=document.getElementById('info'), stage=document.getElementById('stage');
   document.getElementById('closeX').addEventListener('click',function(e){ if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){ e.preventDefault(); history.back(); } });

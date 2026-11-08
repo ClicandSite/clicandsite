@@ -646,6 +646,7 @@ body>header.top{order:-19}
 :root[data-hs="d"] .head h2::before{content:"";display:inline-block;width:30px;height:3px;background:var(--accent);vertical-align:middle;margin-right:14px}
 
 /* 21 · SIGNATURE (formules Premium et Boutique) : vert profond et or, finitions haut de gamme */
+:root[data-style^="signature"]{--veil:11,20,17}
 :root[data-style="signature"]{
   --bg:#0F1A16; --soft:#16241F; --ink:#EDE6D6; --muted:#B4BDB6; --line:#2A3D36; --btn:#C9AD73; --btn-fg:#1A1408; --accent:#C9AD73;
   --hero:radial-gradient(90% 70% at 50% 35%,#1d2e28,#0f1a16 60%,#0b1411); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
@@ -653,20 +654,48 @@ body>header.top{order:-19}
   --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
   --cta-bg:#16241F; --cta-fg:#EDE6D6; --cta-sub:#B4BDB6; color-scheme:dark;
 }
-:root[data-style="signature"] .btn{letter-spacing:0;text-transform:none;font-size:.92rem;font-weight:700}
-:root[data-style="signature"] .logo{letter-spacing:.06em;font-weight:600}
-:root[data-style="signature"] .card,:root[data-style="signature"] .rev{border:1px solid var(--line)}
-:root[data-style="signature"] .rev{background:var(--soft)}
-:root[data-style="signature"] .rev .s{color:var(--accent)}
-:root[data-style="signature"] .cta{border:1px solid var(--line);border-radius:24px;margin-inline:max(16px,calc((100vw - 1160px)/2))}
-:root[data-style="signature"] .photo.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,20,17,.15),rgba(11,20,17,.55) 70%,#0F1A16);z-index:0;pointer-events:none}
-:root[data-style="signature"] .photo.hero .wrap{position:relative;z-index:1}
-:root[data-style="signature"] .kicker{color:var(--accent)}
-:root[data-style="signature"] .stats .stat b{color:var(--accent);font-family:var(--display)}
-:root[data-style="signature"] .head h2{font-size:clamp(1.9rem,4.4vw,2.6rem)}
+:root[data-style="signatureonyx"]{
+  --bg:#0B0B0C; --soft:#161616; --ink:#F1ECE2; --muted:#A9A49B; --line:#2B2B2B; --btn:#D4AF6A; --btn-fg:#141007; --accent:#D4AF6A;
+  --hero:radial-gradient(90% 70% at 50% 35%,#262420,#0e0e0e 60%,#050505); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
+  --display:"Playfair Display", Georgia, serif; --body:"Manrope", system-ui, sans-serif;
+  --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
+  --cta-bg:#161616; --cta-fg:#F1ECE2; --cta-sub:#A9A49B; --veil:8,8,8; color-scheme:dark;
+}
+:root[data-style="signaturesaphir"]{
+  --bg:#0C1424; --soft:#13203A; --ink:#E9EEF7; --muted:#A3B0C8; --line:#24365A; --btn:#C9D3E6; --btn-fg:#0C1424; --accent:#C9D3E6;
+  --hero:radial-gradient(90% 70% at 50% 35%,#20345c,#0c1424 60%,#060b15); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
+  --display:"Playfair Display", Georgia, serif; --body:"Manrope", system-ui, sans-serif;
+  --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
+  --cta-bg:#13203A; --cta-fg:#E9EEF7; --cta-sub:#A3B0C8; --veil:10,16,30; color-scheme:dark;
+}
+:root[data-style="signaturebordeaux"]{
+  --bg:#1E0C12; --soft:#2A121A; --ink:#F3E6E2; --muted:#C3A9AC; --line:#45212C; --btn:#D4AF6A; --btn-fg:#1E0C12; --accent:#D4AF6A;
+  --hero:radial-gradient(90% 70% at 50% 35%,#4a1a28,#1e0c12 60%,#0f060a); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
+  --display:"Playfair Display", Georgia, serif; --body:"Manrope", system-ui, sans-serif;
+  --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
+  --cta-bg:#2A121A; --cta-fg:#F3E6E2; --cta-sub:#C3A9AC; --veil:25,8,14; color-scheme:dark;
+}
+:root[data-style="signatureivoire"]{
+  --bg:#F7F2E9; --soft:#EFE7D8; --ink:#1F1A14; --muted:#6B6152; --line:#DCCFB8; --btn:#1F1A14; --btn-fg:#F7F2E9; --accent:#A8844A;
+  --hero:radial-gradient(90% 70% at 50% 35%,#3a3127,#1f1a14 60%,#0e0b08); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
+  --display:"Playfair Display", Georgia, serif; --body:"Manrope", system-ui, sans-serif;
+  --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
+  --cta-bg:#1F1A14; --cta-fg:#F7F2E9; --cta-sub:#CDBFA6; --veil:31,26,20; color-scheme:light;
+}
+:root[data-style^="signature"] .btn{letter-spacing:0;text-transform:none;font-size:.92rem;font-weight:700}
+:root[data-style^="signature"] .logo{letter-spacing:.06em;font-weight:600}
+:root[data-style^="signature"] .card,:root[data-style^="signature"] .rev{border:1px solid var(--line)}
+:root[data-style^="signature"] .rev{background:var(--soft)}
+:root[data-style^="signature"] .rev .s{color:var(--accent)}
+:root[data-style^="signature"] .cta{border:1px solid var(--line);border-radius:24px;margin-inline:max(16px,calc((100vw - 1160px)/2))}
+:root[data-style^="signature"] .photo.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--veil),.15),rgba(var(--veil),.55) 70%,var(--bg));z-index:0;pointer-events:none}
+:root[data-style^="signature"] .photo.hero .wrap{position:relative;z-index:1}
+:root[data-style^="signature"] .kicker{color:var(--accent)}
+:root[data-style^="signature"] .stats .stat b{color:var(--accent);font-family:var(--display)}
+:root[data-style^="signature"] .head h2{font-size:clamp(1.9rem,4.4vw,2.6rem)}
 .embed .picker{display:none}
 </style>
-<script>(function(){var M={"moderne":["moderne","moderne","a","a","a","a","a"],"luxe":["luxe","luxe","b","a","b","a","b"],"riviera":["riviera","riviera","c","c","a","c","a"],"chaleureux":["chaleureux","chaleureux","a","a","c","a","d"],"audacieux":["audacieux","audacieux","d","d","a","a","c"],"minimal":["chaleureux","moderne","b","b","b","d","c"],"nuit":["moderne","luxe","c","e","d","b","b"],"provence":["luxe","chaleureux","b","c","c","a","b"],"ocean":["audacieux","riviera","c","c","c","a","b"],"pop":["riviera","audacieux","d","c","c","d","a"],"corporate":["moderne","riviera","d","d","c","c","d"],"retro":["chaleureux","luxe","d","d","c","c","b"],"zen":["luxe","riviera","c","b","b","a","d"],"neon":["moderne","audacieux","b","c","b","d","c"],"poudre":["riviera","moderne","c","c","b","c","b"],"terracotta":["moderne","chaleureux","c","b","c","a","d"],"graphite":["luxe","moderne","d","e","d","a","c"],"foret":["chaleureux","riviera","c","e","d","b","d"],"soleil":["audacieux","chaleureux","b","e","b","a","b"],"marine":["riviera","luxe","b","d","d","b","d"],"signature":["luxe","luxe","c","c","c","b","a"]},A=["data-l","data-p","data-hd","data-cd","data-rv","data-st","data-hs"],R=document.documentElement;function s(){var k=R.getAttribute("data-style")||"moderne",m=M[k]||M.moderne;for(var i=0;i<A.length;i++)if(R.getAttribute(A[i])!==m[i])R.setAttribute(A[i],m[i]);}new MutationObserver(s).observe(R,{attributes:true,attributeFilter:["data-style"]});s();})();</script>
+<script>(function(){var M={"moderne":["moderne","moderne","a","a","a","a","a"],"luxe":["luxe","luxe","b","a","b","a","b"],"riviera":["riviera","riviera","c","c","a","c","a"],"chaleureux":["chaleureux","chaleureux","a","a","c","a","d"],"audacieux":["audacieux","audacieux","d","d","a","a","c"],"minimal":["chaleureux","moderne","b","b","b","d","c"],"nuit":["moderne","luxe","c","e","d","b","b"],"provence":["luxe","chaleureux","b","c","c","a","b"],"ocean":["audacieux","riviera","c","c","c","a","b"],"pop":["riviera","audacieux","d","c","c","d","a"],"corporate":["moderne","riviera","d","d","c","c","d"],"retro":["chaleureux","luxe","d","d","c","c","b"],"zen":["luxe","riviera","c","b","b","a","d"],"neon":["moderne","audacieux","b","c","b","d","c"],"poudre":["riviera","moderne","c","c","b","c","b"],"terracotta":["moderne","chaleureux","c","b","c","a","d"],"graphite":["luxe","moderne","d","e","d","a","c"],"foret":["chaleureux","riviera","c","e","d","b","d"],"soleil":["audacieux","chaleureux","b","e","b","a","b"],"marine":["riviera","luxe","b","d","d","b","d"],"signature":["luxe","luxe","c","c","c","b","a"],"signatureonyx":["luxe","luxe","c","c","c","b","a"],"signaturesaphir":["luxe","luxe","c","c","c","b","a"],"signaturebordeaux":["luxe","luxe","c","c","c","b","a"],"signatureivoire":["luxe","luxe","c","c","c","b","a"]},A=["data-l","data-p","data-hd","data-cd","data-rv","data-st","data-hs"],R=document.documentElement;function s(){var k=R.getAttribute("data-style")||"moderne",m=M[k]||M.moderne;for(var i=0;i<A.length;i++)if(R.getAttribute(A[i])!==m[i])R.setAttribute(A[i],m[i]);}new MutationObserver(s).observe(R,{attributes:true,attributeFilter:["data-style"]});s();})();</script>
 <div class="picker" role="group" aria-label="Choisir un style">
   <div class="wrap">
     <span class="lbl">Style</span>
@@ -690,7 +719,11 @@ body>header.top{order:-19}
     <button type="button" data-s="foret">18 · Forêt</button>
     <button type="button" data-s="soleil">19 · Soleil</button>
     <button type="button" data-s="marine">20 · Marine chic</button>
-    <button type="button" data-s="signature">21 · Signature (Premium)</button>
+    <button type="button" data-s="signature">21 · Signature Émeraude (Premium)</button>
+    <button type="button" data-s="signatureonyx">22 · Signature Onyx (Premium)</button>
+    <button type="button" data-s="signaturesaphir">23 · Signature Saphir (Premium)</button>
+    <button type="button" data-s="signaturebordeaux">24 · Signature Bordeaux (Premium)</button>
+    <button type="button" data-s="signatureivoire">25 · Signature Ivoire (Premium)</button>
   </div>
 </div>
 
@@ -872,7 +905,7 @@ body>header.top{order:-19}
 
 <script>
 document.getElementById('bookform').addEventListener('submit',function(e){e.preventDefault();document.getElementById('ok').hidden=false;});
-var STYLES=["moderne", "luxe", "riviera", "chaleureux", "audacieux", "minimal", "nuit", "provence", "ocean", "pop", "corporate", "retro", "zen", "neon", "poudre", "terracotta", "graphite", "foret", "soleil", "marine", "signature"];
+var STYLES=["moderne", "luxe", "riviera", "chaleureux", "audacieux", "minimal", "nuit", "provence", "ocean", "pop", "corporate", "retro", "zen", "neon", "poudre", "terracotta", "graphite", "foret", "soleil", "marine", "signature", "signatureonyx", "signaturesaphir", "signaturebordeaux", "signatureivoire"];
 function setStyle(s){
   if(STYLES.indexOf(s)<0) s='moderne';
   document.documentElement.setAttribute('data-style',s);

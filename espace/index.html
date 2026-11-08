@@ -281,7 +281,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
 <script>
 const SB = supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-espace'}});
 const $ = id => document.getElementById(id);
-const STYLES = {'moderne': 'Moderne', 'luxe': 'Luxe', 'riviera': 'Riviera', 'chaleureux': 'Chaleureux', 'audacieux': 'Audacieux', 'minimal': 'Minimal crème', 'nuit': 'Nuit bleue', 'provence': 'Provence lavande', 'ocean': 'Océan', 'pop': 'Pop vitaminé', 'corporate': 'Pro sérieux', 'retro': 'Rétro', 'zen': 'Zen nature', 'neon': 'Néon', 'poudre': 'Rose poudré', 'terracotta': 'Terracotta', 'graphite': 'Graphite', 'foret': 'Forêt', 'soleil': 'Soleil', 'marine': 'Marine chic', 'signature': 'Signature ★ Premium'};
+const STYLES = {'moderne': 'Moderne', 'luxe': 'Luxe', 'riviera': 'Riviera', 'chaleureux': 'Chaleureux', 'audacieux': 'Audacieux', 'minimal': 'Minimal crème', 'nuit': 'Nuit bleue', 'provence': 'Provence lavande', 'ocean': 'Océan', 'pop': 'Pop vitaminé', 'corporate': 'Pro sérieux', 'retro': 'Rétro', 'zen': 'Zen nature', 'neon': 'Néon', 'poudre': 'Rose poudré', 'terracotta': 'Terracotta', 'graphite': 'Graphite', 'foret': 'Forêt', 'soleil': 'Soleil', 'marine': 'Marine chic', 'signature': 'Signature Émeraude ★', 'signatureonyx': 'Signature Onyx ★', 'signaturesaphir': 'Signature Saphir ★', 'signaturebordeaux': 'Signature Bordeaux ★', 'signatureivoire': 'Signature Ivoire ★'};
 const PAYLINK={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07'};
 let SESSION_EMAIL='';
 const ITEMS = {garage:'Véhicules en stock', immobilier:'Biens en vente et location', batiment:'Réalisations', beaute:'Réalisations', bienetre:'Soins', boulangerie:'Produits en vitrine', boutique:'Produits de la boutique', depannage:'Interventions', vtc:'Éléments', restaurant:'Éléments'};
@@ -323,7 +323,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=28#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=29#'+styleName;
   });
 }
 
@@ -490,7 +490,7 @@ function buildForms(){
   const sw=document.createElement('div'); sw.className='styles';
   Object.keys(STYLES).forEach(k=>{ const x=document.createElement('button'); x.type='button'; x.textContent=STYLES[k]; x.setAttribute('aria-pressed',(c.style||site.style)===k?'true':'false');
     // 08/11/2026 : le style Signature est réservé aux formules Premium et Boutique
-    if(k==='signature'&&planRank()<3){ x.title='Réservé aux formules Premium et Boutique'; x.style.opacity='.55'; x.addEventListener('click',()=>{ const box=sw.parentNode; if(!box.querySelector('.upsell')){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Le style Signature est inclus en Premium.</b> Vert profond et or, notre design le plus haut de gamme, avec le CRM, le site en anglais et le logo offert.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Premium">Passer en Premium</a>'; box.appendChild(u); } }); sw.appendChild(x); return; }
+    if(/^signature/.test(k)&&planRank()<3){ x.title='Réservé aux formules Premium et Boutique'; x.style.opacity='.55'; x.addEventListener('click',()=>{ const box=sw.parentNode; if(!box.querySelector('.upsell')){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Le style Signature est inclus en Premium.</b> Vert profond et or, notre design le plus haut de gamme, avec le CRM, le site en anglais et le logo offert.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Premium">Passer en Premium</a>'; box.appendChild(u); } }); sw.appendChild(x); return; }
     x.addEventListener('click',()=>{ c.style=k; sw.querySelectorAll('button').forEach(y=>y.setAttribute('aria-pressed',y===x?'true':'false')); refresh(); markDirty(); }); sw.appendChild(x); });
   b.appendChild(sw);
 

@@ -12,6 +12,18 @@
   var L = function (fr, en) { return EN() ? en : fr; };
   var DPE = { A: '#009C6D', B: '#52B153', C: '#A5CC74', D: '#F4E70F', E: '#F2A541', F: '#EB6B2C', G: '#D7221F' };
   var GES = { A: '#F6EDFD', B: '#E4C7F6', C: '#D4A9F0', D: '#C68BEA', E: '#B46DE2', F: '#9D4FD8', G: '#7E2FC4' };
+  // Libellés par métier ([français, anglais]) ; le métier est indiqué par <html data-trade="…">
+  var CFG = {
+    garage: { lbl: ['Véhicule concerné', 'Vehicle'], cta: ['Je suis intéressé', 'I\'m interested'], d: ['Description', 'Description'], f: ['Équipements et caractéristiques', 'Equipment and features'], ph: ['Ex. : je souhaite l\'essayer, reprise de mon véhicule possible ?', 'e.g. I would like a test drive, can you take my car in part-exchange?'] },
+    batiment: { lbl: ['Réalisation', 'Project'], cta: ['Un projet similaire ? Demander un devis', 'A similar project? Request a quote'], d: ['Le chantier', 'The project'], f: ['Travaux réalisés', 'Work carried out'], ph: ['Ex. : je voudrais le même type de travaux, ma surface est d\'environ…', 'e.g. I would like similar work, my surface area is about…'] },
+    beaute: { lbl: ['Prestation', 'Service'], cta: ['Je veux la même : prendre rendez-vous', 'I want the same: book an appointment'], d: ['La prestation', 'The service'], f: ['Le détail', 'Details'], ph: ['Ex. : je suis disponible le samedi matin.', 'e.g. I am available on Saturday mornings.'] },
+    bienetre: { lbl: ['Soin', 'Treatment'], cta: ['Réserver ce soin', 'Book this treatment'], d: ['Le soin', 'The treatment'], f: ['Déroulé et bienfaits', 'How it works and benefits'], ph: ['Ex. : je préfère en fin de journée.', 'e.g. I prefer late afternoon.'] },
+    boulangerie: { lbl: ['Produit', 'Product'], cta: ['Commander', 'Order'], d: ['Le produit', 'The product'], f: ['Ingrédients et allergènes', 'Ingredients and allergens'], ph: ['Ex. : 4 pièces pour samedi 9 h.', 'e.g. 4 pieces for Saturday 9 am.'] },
+    depannage: { lbl: ['Intervention', 'Job'], cta: ['Même souci ? Être rappelé', 'Same problem? Get a call back'], d: ['L\'intervention', 'The job'], f: ['Ce qui a été fait', 'What was done'], ph: ['Ex. : fuite sous l\'évier depuis ce matin.', 'e.g. leak under the sink since this morning.'] },
+    boutique: { lbl: ['Produit', 'Product'], cta: ['Demander ce produit', 'Ask about this product'], d: ['Le produit', 'The product'], f: ['Caractéristiques', 'Features'], ph: ['Ex. : est-il disponible en deux exemplaires ?', 'e.g. do you have two of them?'], shop: true },
+    autre: { lbl: ['Concerné', 'About'], cta: ['Je suis intéressé', 'I\'m interested'], d: ['Description', 'Description'], f: ['Détails', 'Details'], ph: ['Votre message', 'Your message'] }
+  };
+  function trade(card) { if (card && card.classList.contains('prop')) return 'immobilier'; var t = document.documentElement.getAttribute('data-trade'); if (t && CFG[t]) return t; return document.getElementById('v-mk') ? 'garage' : 'autre'; }
   var TYPES = { appartement: ['Appartement', 'Apartment'], maison: ['Maison, villa', 'House, villa'], terrain: ['Terrain', 'Land'], local: ['Local, bureau', 'Commercial premises'], parking: ['Parking, box', 'Parking'], autre: ['Autre', 'Other'] };
 
   function qa(r, s) { return [].slice.call(r.querySelectorAll(s)); }
@@ -139,10 +151,11 @@
     if (chips.length) { var fm = document.createElement('div'); fm.className = 'fm'; chips.forEach(function (s) { var sp = document.createElement('span'); sp.textContent = s; fm.appendChild(sp); }); col.appendChild(fm); }
     var H = function (t) { var e = document.createElement('h3'); e.textContent = t; col.appendChild(e); };
     var desc = String(f.desc || '').trim();
-    if (desc) { H(immo ? L('Description du bien', 'Description') : L('Description', 'Description')); var fd = document.createElement('div'); fd.className = 'fd';
+    var C = immo ? null : CFG[trade(card)];
+    if (desc) { H(immo ? L('Description du bien', 'Description') : L(C.d[0], C.d[1])); var fd = document.createElement('div'); fd.className = 'fd';
       desc.split(/\n+/).forEach(function (l) { l = l.trim(); if (!l) return; var p = document.createElement('p'); p.textContent = l; fd.appendChild(p); }); col.appendChild(fd); }
     var feats = String(f.feats || '').split(/\n|·/).map(function (s) { return s.trim(); }).filter(Boolean);
-    if (feats.length) { H(immo ? L('Caractéristiques', 'Features') : L('Équipements et caractéristiques', 'Equipment and features')); var ul = document.createElement('ul'); ul.className = 'ff';
+    if (feats.length) { H(immo ? L('Caractéristiques', 'Features') : L(C.f[0], C.f[1])); var ul = document.createElement('ul'); ul.className = 'ff';
       feats.slice(0, 40).forEach(function (s) { var li = document.createElement('li'); li.textContent = s; ul.appendChild(li); }); col.appendChild(ul); }
     if (immo) {
       var d = /^[A-G]$/.test(f.dpe || '') ? f.dpe : '', g = /^[A-G]$/.test(f.ges || '') ? f.ges : '';
@@ -167,14 +180,18 @@
     form.innerHTML = '<label for="' + bid + '"></label><input id="' + bid + '" readonly>' +
       '<label for="' + bid + 'm"></label><textarea id="' + bid + 'm" rows="3"></textarea>' +
       '<button class="btn" type="submit"></button><div class="okf" hidden></div>';
-    form.querySelector('label').textContent = immo ? L('Bien concerné', 'Property') : L('Véhicule concerné', 'Vehicle');
+    form.querySelector('label').textContent = immo ? L('Bien concerné', 'Property') : L(C.lbl[0], C.lbl[1]);
     form.querySelector('input').value = title + (f.ref ? ' (réf. ' + f.ref + ')' : '') + (price ? ' · ' + price : '');
     form.querySelectorAll('label')[1].textContent = L('Votre message (facultatif)', 'Your message (optional)');
-    form.querySelector('textarea').placeholder = immo ? (loc ? L('Ex. : je souhaite visiter, je suis disponible le samedi.', 'e.g. I would like to visit, I am available on Saturdays.') : L('Ex. : je souhaite visiter ce bien, financement validé.', 'e.g. I would like to visit, financing approved.')) : L('Ex. : je souhaite l\'essayer, reprise de mon véhicule possible ?', 'e.g. I would like a test drive, can you take my car in part-exchange?');
-    var sb = form.querySelector('button'); sb.textContent = immo ? L('Demander une visite', 'Request a visit') : L('Je suis intéressé', 'I\'m interested');
+    form.querySelector('textarea').placeholder = immo ? (loc ? L('Ex. : je souhaite visiter, je suis disponible le samedi.', 'e.g. I would like to visit, I am available on Saturdays.') : L('Ex. : je souhaite visiter ce bien, financement validé.', 'e.g. I would like to visit, financing approved.')) : L(C.ph[0], C.ph[1]);
+    var sb = form.querySelector('button'); sb.textContent = immo ? L('Demander une visite', 'Request a visit') : L(C.cta[0], C.cta[1]);
     // Sur un vrai site, cs-edit.js intercepte l'envoi (demande dans « Mes clients ») ; sur le modèle, simple confirmation.
     form.addEventListener('submit', function (e) { e.preventDefault(); var ok = form.querySelector('.okf'); ok.textContent = L('Merci, votre demande est envoyée. Nous vous recontactons rapidement.', 'Thank you, your request has been sent. We will get back to you shortly.'); ok.hidden = false; });
-    as.appendChild(form);
+    var add = C && C.shop ? card.querySelector('.add') : null;
+    if (add && !add.disabled) {
+      var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'btn'; ab.textContent = L('Ajouter au panier', 'Add to basket');
+      ab.onclick = function () { close(); add.click(); }; as.appendChild(ab);
+    } else as.appendChild(form);
     var tel = qa(document, 'a[href^="tel:"]')[0];
     if (tel) { var tb = document.createElement('a'); tb.className = 'btn ghost'; tb.href = tel.getAttribute('href'); tb.textContent = L('Appeler', 'Call'); as.appendChild(tb); }
 
@@ -209,7 +226,7 @@
     s.value = want.indexOf(cur) >= 0 ? cur : ''; return true;
   }
   function filters() {
-    var props = qa(document, '.props > .prop'), cars = qa(document, '.vgrid > .car'), ch = false;
+    var live = function (c) { return !c.hasAttribute('data-cs-empty'); }, props = qa(document, '.props > .prop').filter(live), cars = document.getElementById('v-mk') ? qa(document, '.vgrid > .car').filter(live) : [], ch = false;
     if (props.length) {
       ch = opts('s-city', props.map(function (p) { return p.dataset.city || ''; })) || ch;
       ch = opts('s-type', props.map(function (p) { return p.dataset.type || ''; }), function (v) { return TYPES[v] ? TYPES[v][0] : v; }) || ch;
@@ -221,9 +238,17 @@
       var m = document.getElementById('v-mk'); if (m) m.dispatchEvent(new Event('change'));
     }
   }
+  function filters2() {
+    var cars = qa(document, '.vgrid > .car').filter(function (c) { return !c.hasAttribute('data-cs-empty'); }), ev = null;
+    if (!cars.length || document.getElementById('v-mk')) return;
+    if (document.getElementById('r-type')) { opts('r-type', cars.map(function (c) { return c.dataset.type || ''; })); ev = 'r-type'; }
+    if (document.getElementById('r-city')) opts('r-city', cars.map(function (c) { return c.dataset.city || ''; }));
+    if (document.getElementById('q-cat')) { opts('q-cat', cars.map(function (c) { return txt(c.querySelector('.meta > span')); })); ev = 'q-cat'; }
+    if (ev) document.getElementById(ev).dispatchEvent(new Event('change'));
+  }
   function init() {
     if (!document.getElementById('cs-fiche-css')) { var st = document.createElement('style'); st.id = 'cs-fiche-css'; st.textContent = css; document.head.appendChild(st); }
-    cards(); filters();
+    cards(); filters(); filters2();
   }
   window.CSFiche = { open: open, refresh: init };
   document.addEventListener('cs:applied', function () { setTimeout(init, 0); });

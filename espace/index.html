@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=9"></script>
+<script src="/assets/cs-edit.js?v=10"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -323,7 +323,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=23#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=24#'+styleName;
   });
 }
 
@@ -430,31 +430,46 @@ function photosField(label, arr, max){
   });
   w.append(l,g,inp); draw(); return w;
 }
+const ITEM_CFG={
+  immobilier:{},
+  garage:{noun:'véhicule',add:'Ajouter un véhicule',title:'Modèle',sum:'Fiche du véhicule : photos, description, équipements',feats:'Équipements (un par ligne)',featsPh:'GPS\nCaméra de recul\nCarPlay',desc:'Présentez le véhicule : historique, entretien, état…',legal:'Bon à savoir (garantie, reprise, financement…)',meta:'2021 · 42 000 km · Essence',tag:'Garantie 12 mois, Vendu…'},
+  batiment:{noun:'réalisation',add:'Ajouter une réalisation',cat:'Type de travaux (pour le filtre)',catPh:'Cuisine, Salle de bain…',city:true,sum:'Fiche de la réalisation : photos, description, travaux',feats:'Travaux réalisés (un par ligne)',featsPh:'Démolition de cloison\nÉlectricité aux normes\nCuisine sur mesure',desc:'Racontez le chantier : la demande du client, les contraintes, le résultat…',legal:'Bon à savoir (garanties, assurance décennale, aides…)',meta:'Cannes · 16 m² · 3 semaines',tag:'Cuisine, Façade…'},
+  beaute:{noun:'réalisation',add:'Ajouter une réalisation',cat:'Catégorie (pour le filtre)',catPh:'Coupe, Couleur, Beauté…',sum:'Fiche de la prestation : photos, description, détail',feats:'Le détail de la prestation (un par ligne)',featsPh:'Diagnostic\nBalayage\nSoin\nBrushing',desc:'Décrivez la prestation et le résultat…',legal:'Bon à savoir (durée, entretien, précautions…)',meta:'Balayage · Patine · 2 h 30',tag:'Couleur, Nouveau…'},
+  bienetre:{noun:'soin',add:'Ajouter un soin',cat:'Catégorie (pour le filtre)',catPh:'Massage, Yoga, Spa…',sum:'Fiche du soin : photos, description, déroulé',feats:'Déroulé et bienfaits (un par ligne)',featsPh:'Accueil et échange\nMassage 60 min\nThé offert',desc:'Décrivez le soin, ses bienfaits, pour qui il est fait…',legal:'Bon à savoir (contre-indications, mutuelle, cartes cadeaux…)',meta:'Huile bio · 75 min',tag:'Massage, Nouveau…'},
+  boulangerie:{noun:'produit',add:'Ajouter un produit',cat:'Rayon (pour le filtre)',catPh:'Pains, Viennoiseries, Pâtisseries…',sum:'Fiche du produit : photos, description, ingrédients',feats:'Ingrédients et allergènes (un par ligne)',featsPh:'Farine Label Rouge\nLevain naturel\nAllergènes : gluten',desc:'Présentez le produit : recette, fabrication, jours de vente…',legal:'Bon à savoir (commande à l\'avance, conservation…)',meta:'Levain · 250 g',tag:'Nouveau, Le samedi…'},
+  depannage:{noun:'intervention',add:'Ajouter une intervention',cat:'Catégorie (pour le filtre)',catPh:'Plomberie, Électricité…',sum:'Fiche de l\'intervention : photos, description, travaux',feats:'Ce qui a été fait (une ligne par étape)',featsPh:'Recherche de la fuite\nSiphon remplacé\nTest d\'étanchéité',desc:'Racontez l\'intervention : le problème, la solution, le délai…',legal:'Bon à savoir (garantie, délai d\'intervention…)',meta:'Nice Port · Siphon changé · 40 min',tag:'Plomberie, Urgence…'},
+  boutique:{noun:'produit',add:'Ajouter un produit',sum:'Fiche du produit : photos, description, caractéristiques',feats:'Caractéristiques (une par ligne)',featsPh:'Grès émaillé\nHauteur 18 cm\nFait main',desc:'Présentez le produit : matière, fabrication, usage…',legal:'Bon à savoir (entretien, délais, retours…)',meta:'Déco · H. 18 cm · Pièce unique',tag:'Nouveau, Best-seller…',hint:'La première info sert de rayon pour le filtre (exemple : Déco · H. 18 cm · Pièce unique). Prix en chiffres (24,90 €) pour que le produit soit achetable ; « Sur devis » le rend visible mais pas achetable.'}
+};
 function itemsFiche(d,c){
   const immo=site.trade==='immobilier';
-  const b=section(ITEMS[site.trade],false,immo?'Chaque bien a sa fiche complète : photos, description, caractéristiques, DPE et GES. Vos visiteurs l\'ouvrent en cliquant sur l\'annonce.':'Chaque véhicule a sa fiche complète : photos, description et équipements. Vos visiteurs l\'ouvrent en cliquant sur l\'annonce.');
+  const K=ITEM_CFG[site.trade]||{};
+  const b=section(ITEMS[site.trade],site.trade==='boutique',immo?'Chaque bien a sa fiche complète : photos, description, caractéristiques, DPE et GES. Vos visiteurs l\'ouvrent en cliquant sur l\'annonce.':'Chaque '+K.noun+' a sa fiche complète : photos, description et détails. Vos visiteurs l\'ouvrent en cliquant dessus.'+(K.hint?' '+K.hint:''));
   const LET=[['','Non renseigné'],['A','A'],['B','B'],['C','C'],['D','D'],['E','E'],['F','F'],['G','G']];
   const FUEL=[['Essence','Essence'],['Diesel','Diesel'],['Hybride','Hybride'],['Hybride rechargeable','Hybride rechargeable'],['Électrique','Électrique'],['GPL','GPL']];
   const TYPES=[['appartement','Appartement'],['maison','Maison, villa'],['terrain','Terrain'],['local','Local, bureau'],['parking','Parking, box'],['autre','Autre']];
+  const dl=document.createElement('datalist'); dl.id='cs-cats'; b.appendChild(dl);
+  const cats=()=>{ dl.textContent=''; [...new Set(c.items.map(x=>(x.type||'').trim()).filter(Boolean))].forEach(v=>{ const o=document.createElement('option'); o.value=v; dl.appendChild(o); }); }; cats();
   listEditor(b,c.items,(it,o,i)=>{
     if(!Array.isArray(o.photos)) o.photos=[];
     const ph=(k,t)=>{ const f=it.querySelector(k); if(f) f.placeholder=t; };
-    it.append(field(immo?'Titre de l\'annonce':'Modèle',o.t,v=>o.t=v));
+    it.append(field(immo?'Titre de l\'annonce':(K.title||'Titre'),o.t,v=>o.t=v));
     let r=document.createElement('div'); r.className='row';
     if(immo){ r.append(selField('Transaction',o.tr||'vente',[['vente','À vendre'],['location','À louer']],v=>o.tr=v),selField('Type de bien',o.type||'appartement',TYPES,v=>o.type=v)); it.appendChild(r);
       r=document.createElement('div'); r.className='row'; r.append(field('Ville (pour la recherche)',o.city,v=>o.city=v),field('Nombre de pièces',o.rooms,v=>o.rooms=v)); it.appendChild(r);
       r.querySelectorAll('input')[1].inputMode='numeric'; }
-    else { r.append(field('Marque (pour la recherche)',o.mk,v=>o.mk=v),selField('Énergie',o.fuel||'Essence',FUEL,v=>o.fuel=v)); it.appendChild(r); }
+    else if(site.trade==='garage'){ r.append(field('Marque (pour la recherche)',o.mk,v=>o.mk=v),selField('Énergie',o.fuel||'Essence',FUEL,v=>o.fuel=v)); it.appendChild(r); }
+    else if(K.cat){ const cf=field(K.cat,o.type,v=>o.type=v); const ci=cf.querySelector('input'); ci.placeholder=K.catPh; ci.setAttribute('list',dl.id); r.appendChild(cf);
+      if(K.city) r.appendChild(field('Ville',o.city,v=>o.city=v)); else r.style.gridTemplateColumns='1fr'; it.appendChild(r); }
     r=document.createElement('div'); r.className='row'; r.append(field('Prix',o.p,v=>o.p=v),field('Étiquette sur la photo (facultatif)',o.tag,v=>o.tag=v)); it.appendChild(r);
-    r.querySelectorAll('input')[1].placeholder=immo?'Exclusivité, Nouveau, Vendu…':'Garantie 12 mois, Vendu…';
-    const mi=field('Infos courtes sur l\'annonce, séparées par « · »',o.meta,v=>o.meta=v); mi.querySelector('input').placeholder=immo?'Cannes, Croisette · 3 pièces · 78 m² · Parking':'2021 · 42 000 km · Essence'; it.appendChild(mi);
+    r.querySelectorAll('input')[1].placeholder=immo?'Exclusivité, Nouveau, Vendu…':K.tag;
+    const mi=field('Infos courtes, séparées par « · »',o.meta,v=>o.meta=v); mi.querySelector('input').placeholder=immo?'Cannes, Croisette · 3 pièces · 78 m² · Parking':K.meta; it.appendChild(mi);
     it.appendChild(photoField('Photo principale',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u));
 
     const fd=document.createElement('details'); fd.className='fiche'; const sm=document.createElement('summary');
-    sm.textContent=immo?'Fiche du bien : photos, description, DPE et GES':'Fiche du véhicule : photos, description, équipements'; const fb=document.createElement('div'); fb.className='fbody'; fd.append(sm,fb); it.appendChild(fd);
+    sm.textContent=immo?'Fiche du bien : photos, description, DPE et GES':K.sum; const fb=document.createElement('div'); fb.className='fbody'; fd.append(sm,fb); it.appendChild(fd);
     fb.appendChild(photosField('Autres photos (20 maximum, la photo principale s\'affiche en premier)',o.photos,20));
-    const de=field('Description',o.desc,v=>o.desc=v,true); de.querySelector('textarea').rows=7; de.querySelector('textarea').placeholder=immo?'Présentez le bien : situation, pièces, état, atouts… Un retour à la ligne crée un nouveau paragraphe.':'Présentez le véhicule : historique, entretien, état…'; fb.appendChild(de);
-    const fe=field(immo?'Caractéristiques (une par ligne)':'Équipements (un par ligne)',o.feats,v=>o.feats=v,true); fe.querySelector('textarea').rows=5; fe.querySelector('textarea').placeholder=immo?'3 chambres\nTerrasse de 15 m²\nParking en sous-sol\nAscenseur':'GPS\nCaméra de recul\nCarPlay'; fb.appendChild(fe);
+    const de=field('Description',o.desc,v=>o.desc=v,true); de.querySelector('textarea').rows=7; de.querySelector('textarea').placeholder=(immo?'Présentez le bien : situation, pièces, état, atouts…':K.desc)+' Un retour à la ligne crée un nouveau paragraphe.'; fb.appendChild(de);
+    const fe=field(immo?'Caractéristiques (une par ligne)':K.feats,o.feats,v=>o.feats=v,true); fe.querySelector('textarea').rows=5; fe.querySelector('textarea').placeholder=immo?'3 chambres\nTerrasse de 15 m²\nParking en sous-sol\nAscenseur':K.featsPh; fb.appendChild(fe);
     fb.appendChild(field('Référence (facultatif)',o.ref,v=>o.ref=v));
     if(immo){
       const h=document.createElement('div'); h.className='grp'; h.textContent='Diagnostic énergétique (obligatoire dans les annonces)'; fb.appendChild(h);
@@ -463,9 +478,9 @@ function itemsFiche(d,c){
       const en=field('Dépenses annuelles d\'énergie estimées',o.energy,v=>o.energy=v); en.querySelector('input').placeholder='entre 1 050 € et 1 470 € par an (prix de l\'énergie indexés sur l\'année 2023).'; fb.appendChild(en);
       const lg=field('Informations légales',o.legal,v=>o.legal=v,true); lg.querySelector('textarea').rows=4;
       lg.querySelector('textarea').placeholder=(o.tr==='location')?'Loyer charges comprises, provision sur charges, dépôt de garantie, honoraires locataire (dont état des lieux).':'Honoraires (à la charge du vendeur ou de l\'acquéreur), copropriété : nombre de lots, charges annuelles, procédure en cours.'; fb.appendChild(lg);
-    } else { const lg=field('Bon à savoir (garantie, reprise, financement…)',o.legal,v=>o.legal=v,true); fb.appendChild(lg); }
+    } else { const lg=field(K.legal,o.legal,v=>o.legal=v,true); fb.appendChild(lg); }
   },()=>immo?{t:'Nouveau bien',tr:'vente',type:'appartement',city:'',rooms:'',p:'',tag:'',meta:'',img:null,photos:[],desc:'',feats:'',ref:'',dpe:'',dpe_v:'',ges:'',ges_v:'',energy:'',legal:''}
-           :{t:'Nouveau véhicule',mk:'',fuel:'Essence',p:'',tag:'',meta:'',img:null,photos:[],desc:'',feats:'',ref:'',legal:''},immo?'Ajouter un bien':'Ajouter un véhicule');
+           :Object.assign({t:site.trade==='garage'?'Nouveau véhicule':'Nouveau',p:'',tag:'',meta:'',img:null,photos:[],desc:'',feats:'',ref:'',legal:''},site.trade==='garage'?{mk:'',fuel:'Essence'}:K.cat?{type:'',city:K.city?'':undefined}:{}),immo?'Ajouter un bien':K.add);
 }
 function buildForms(){
   const d=doc(); const P=$('panel'); P.textContent=''; const c=state; c.text=c.text||{}; c.photos=c.photos||{};
@@ -496,7 +511,7 @@ function buildForms(){
       listEditor(b,g,(it,o)=>{ const r=document.createElement('div'); r.className='row3'; r.append(field('Intitulé',o.t,v=>o.t=v),field('Détail',o.d,v=>o.d=v),field('Prix',o.p,v=>o.p=v)); it.appendChild(r); },
         ()=>({t:'Nouveau',d:'',p:''}),'Ajouter une ligne'); }); }
 
-  if(c.items&&c.items.length&&(site.trade==='immobilier'||site.trade==='garage')) itemsFiche(d,c);
+  if(c.items&&c.items.length&&ITEM_CFG[site.trade]) itemsFiche(d,c);
   else if(c.items&&c.items.length){ b=section(ITEMS[site.trade]||'Éléments',site.trade==='boutique',site.trade==='boutique'?'Infos séparées par « · ». La première sert de rayon pour le filtre (exemple : Déco · H. 18 cm · Pièce unique). Prix en chiffres (24,90 €) pour que le produit soit achetable ; « Sur devis » le rend visible mais pas achetable.':'Les infos sont séparées par « · » (exemple : 2021 · 42 000 km · Essence).');
     listEditor(b,c.items,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Infos',o.meta,v=>o.meta=v),field('Prix',o.p,v=>o.p=v),
       photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },

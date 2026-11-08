@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=11"></script>
+<script src="/assets/cs-edit.js?v=12"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -498,6 +498,20 @@ function buildForms(){
   [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
   if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u));
   { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('div[style]').appendChild(h); b.appendChild(f); }
+
+  // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)
+  if(site.trade==='garage'){ b=section('Type d\'établissement',false,'Concession ou négoce sans atelier ? Cochez la case : la partie atelier (prestations, forfaits, rendez-vous) disparaît du site et les boutons mènent à vos véhicules.');
+    const lb=document.createElement('label'); lb.style.cssText='display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=c.concession===true; cb.style.cssText='width:20px;height:20px';
+    // Textes d'accueil du modèle encore d'origine : on propose une version concession (et inversement).
+    const GT={title:'Votre garage et concession, sans mauvaise surprise.',subtitle:'Véhicules d\'occasion garantis, reprise de votre voiture, entretien toutes marques. Prix annoncé avant les travaux.'};
+    const CT={title:'Votre concession, des véhicules choisis avec soin.',subtitle:'Véhicules d\'occasion garantis, reprise de votre voiture, financement sur mesure. Livraison possible.'};
+    cb.addEventListener('change',()=>{ c.concession=cb.checked; const from=cb.checked?GT:CT, to=cb.checked?CT:GT;
+      Object.keys(to).forEach(k=>{ if((c.text[k]||'').trim()===from[k]) c.text[k]=to[k]; });
+      const GS=[['Devis gratuit','et prix fixé avant travaux'],['Prêt','véhicule de courtoisie']], CS=[['Financement','sur mesure, réponse rapide'],['Reprise','de votre véhicule actuel']];
+      (c.stats||[]).forEach(st=>{ (cb.checked?GS:CS).forEach((g,gi)=>{ if((st.v||'').trim()===g[0]&&(st.l||'').trim()===g[1]){ const t=(cb.checked?CS:GS)[gi]; st.v=t[0]; st.l=t[1]; } }); });
+      buildForms(); refresh(); markDirty(); });
+    lb.append(cb,document.createTextNode('Concession : vente de véhicules uniquement, sans atelier')); b.appendChild(lb); }
 
   if(c.stats&&c.stats.length){ b=section('Chiffres clés',false,'Les 4 points forts affichés sous l\'accueil.');
     listEditor(b,c.stats,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('En gros',o.v,v=>o.v=v),field('En dessous',o.l,v=>o.l=v)); it.appendChild(r); }); }

@@ -170,6 +170,17 @@
     while (el.firstChild) a.appendChild(el.firstChild);
     a.insertBefore(img, a.firstChild); el.appendChild(a);
   }
+  // 08/11/2026 (Anthony) : format « concession » des sites garage — vente de véhicules uniquement, sans atelier
+  // (pas de vidange, pas de rendez-vous atelier) : on masque l'atelier et les boutons « Prendre RDV » mènent aux véhicules.
+  function concession(doc, on) {
+    ['#prestations', '#atelier', '#rdv'].forEach(function (sel) { var e = q(doc, sel); if (!e) return;
+      if (on) { if (!e.hasAttribute('data-cs-conc')) { e.setAttribute('data-cs-conc', e.hidden ? '1' : '0'); } e.hidden = true; }
+      else if (e.hasAttribute('data-cs-conc')) { e.hidden = e.getAttribute('data-cs-conc') === '1'; e.removeAttribute('data-cs-conc'); } });
+    qa(doc, 'a[href="#prestations"]').forEach(function (a) { a.hidden = !!on; });
+    qa(doc, 'a[href="#rdv"], a[data-cs-rdv]').forEach(function (a) {
+      if (on) { if (!a.hasAttribute('data-cs-rdv')) a.setAttribute('data-cs-rdv', a.textContent); a.textContent = /prendre rendez-vous/i.test(a.getAttribute('data-cs-rdv')) ? 'Voir nos véhicules' : 'Nos véhicules'; a.setAttribute('href', '#vehicules'); }
+      else if (a.hasAttribute('data-cs-rdv')) { a.textContent = a.getAttribute('data-cs-rdv'); a.removeAttribute('data-cs-rdv'); a.setAttribute('href', '#rdv'); } });
+  }
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;
     if (!Array.isArray(c.reviews)) c = Object.assign({}, c, { reviews: [] }); // pas d'avis d'exemple sur un vrai site
@@ -195,6 +206,7 @@
     if (p.team) setImg(q(doc, '.team .photo'), p.team);
     if (Array.isArray(p.gallery)) qa(doc, '.gallery > .photo').forEach(function (e, i) { if (p.gallery[i]) setImg(e, p.gallery[i]); });
     if (c.style && doc.documentElement) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
+    concession(doc, c.concession === true);
     credit(doc);
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }

@@ -180,6 +180,10 @@
     qa(doc, 'a[href="#rdv"], a[data-cs-rdv]').forEach(function (a) {
       if (on) { if (!a.hasAttribute('data-cs-rdv')) a.setAttribute('data-cs-rdv', a.textContent); a.textContent = /prendre rendez-vous/i.test(a.getAttribute('data-cs-rdv')) ? 'Voir nos véhicules' : 'Nos véhicules'; a.setAttribute('href', '#vehicules'); }
       else if (a.hasAttribute('data-cs-rdv')) { a.textContent = a.getAttribute('data-cs-rdv'); a.removeAttribute('data-cs-rdv'); a.setAttribute('href', '#rdv'); } });
+    // 09/11/2026 : encadré de contact du bas, texte atelier d'origine → texte concession (et inversement)
+    var ch = q(doc, '#contact h2'), cp = ch && ch.nextElementSibling;
+    var G = ['Un bruit, un voyant, une révision ?', 'Devis gratuit sous 24 h.'], C = ['Un véhicule vous intéresse ?', 'Essai, reprise, financement : réponse sous 24 h.'];
+    if (ch) { var from = on ? G : C, to = on ? C : G; if (txt(ch) === from[0]) ch.textContent = to[0]; if (cp && txt(cp) === from[1]) cp.textContent = to[1]; }
   }
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;

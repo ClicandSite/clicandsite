@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=13"></script>
+<script src="/assets/cs-edit.js?v=14"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -1250,7 +1250,7 @@ async function boot(){
     const t=['vtc','restaurant','garage','immobilier','batiment','beaute','bienetre','boulangerie','depannage','boutique'].includes(params.get('demo'))?params.get('demo'):'garage';
     $('demoTrade').value=t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
     const st=Object.keys(STYLES).includes(params.get('style'))?params.get('style'):'moderne';
-    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:st,content:{},status:'brouillon'});
+    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:st,content:(t==='garage'&&params.get('concession')==='1')?{concession:true}:{},status:'brouillon'}); // 09/11/2026 : démo concession
   }
   const {data:{session}}=await SB.auth.getSession();
   if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }

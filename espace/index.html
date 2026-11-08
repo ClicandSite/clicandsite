@@ -489,8 +489,8 @@ function buildForms(){
   let b=section('Style du site',false,'Change les couleurs et la mise en page. Vos textes et photos restent.');
   const sw=document.createElement('div'); sw.className='styles';
   Object.keys(STYLES).forEach(k=>{ const x=document.createElement('button'); x.type='button'; x.textContent=STYLES[k]; x.setAttribute('aria-pressed',(c.style||site.style)===k?'true':'false');
-    // 08/11/2026 : le style Signature (univers du site Elite Prestige Services) est réservé aux formules Premium et Boutique
-    if(k==='signature'&&planRank()<3){ x.title='Réservé aux formules Premium et Boutique'; x.style.opacity='.55'; x.addEventListener('click',()=>{ const box=sw.parentNode; if(!box.querySelector('.upsell')){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Le style Signature est inclus en Premium.</b> Le design de notre client Elite Prestige Services, avec le CRM, le site en anglais et le logo offert.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Premium">Passer en Premium</a>'; box.appendChild(u); } }); sw.appendChild(x); return; }
+    // 08/11/2026 : le style Signature est réservé aux formules Premium et Boutique
+    if(k==='signature'&&planRank()<3){ x.title='Réservé aux formules Premium et Boutique'; x.style.opacity='.55'; x.addEventListener('click',()=>{ const box=sw.parentNode; if(!box.querySelector('.upsell')){ const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Le style Signature est inclus en Premium.</b> Vert profond et or, notre design le plus haut de gamme, avec le CRM, le site en anglais et le logo offert.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Premium">Passer en Premium</a>'; box.appendChild(u); } }); sw.appendChild(x); return; }
     x.addEventListener('click',()=>{ c.style=k; sw.querySelectorAll('button').forEach(y=>y.setAttribute('aria-pressed',y===x?'true':'false')); refresh(); markDirty(); }); sw.appendChild(x); });
   b.appendChild(sw);
 

@@ -172,7 +172,9 @@ async function handle(key: string, s: any) {
   else if (sector === "services") listings = await serviceListings(s, loc);
   else for (let i = 0; i < items.length; i++) listings.push(await (sector === "vehicules" ? vehicle(items[i], i, loc) : estate(items[i], i, loc)));
   // Une prestation peut être « sur devis » (sans prix) ; un véhicule, un bien ou un produit doit avoir un prix.
-  const send = listings.filter((l) => (l.prix || sector === "services") && l.photos.length);
+  // 08/11/2026 (Anthony) : Pro 20 annonces, Premium 50, illimité à 99 € (Boutique, Pack Auto & Immo) — les premières du site
+  const LIMIT = /^(boutique|autoimmo)/.test(str(s.plan)) ? Infinity : /^premium/.test(str(s.plan)) ? 50 : 20;
+  const send = listings.filter((l) => (l.prix || sector === "services") && l.photos.length).slice(0, LIMIT);
   const hash = await sha(JSON.stringify(send));
   if (hash === s.last_hash && s.agency_status === "active") return { slug: s.slug, action: "unchanged" };
   if (!send.length) {
@@ -200,7 +202,7 @@ async function handle(key: string, s: any) {
     }
   }
   const ok = res.status < 400 && res.data?.ok !== false;
-  await db.rpc("cs_abra_mark", { p_site: s.id, p_status: "active", p_hash: ok ? hash : null, p_result: { ...res.data, skipped_without_price_or_photo: listings.length - send.length }, p_error: ok ? null : JSON.stringify(res.data).slice(0, 500) });
+  await db.rpc("cs_abra_mark", { p_site: s.id, p_status: "active", p_hash: ok ? hash : null, p_result: { ...res.data, skipped_without_price_or_photo: listings.filter((l) => !((l.prix || sector === "services") && l.photos.length)).length, limit: LIMIT === Infinity ? null : LIMIT }, p_error: ok ? null : JSON.stringify(res.data).slice(0, 500) });
   return { slug: s.slug, action: "sync", ok, sent: send.length, result: res.data };
 }
 

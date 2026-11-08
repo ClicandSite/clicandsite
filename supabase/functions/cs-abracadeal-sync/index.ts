@@ -1,5 +1,7 @@
-// 08/11/2026 (Claude, demande d'Anthony) — Flux API direct MyCreativeSite → Abracadeal (Pack Auto & Immo).
-// Pour chaque site au Pack Auto & Immo payé (garage ou agence immobilière) :
+// 08/11/2026 (Claude, demande d'Anthony) — Flux API direct MyCreativeSite → Abracadeal.
+// Pack Auto & Immo (garages, agences) + diffusion incluse dans toutes les formules pour artisans, dépannage, beauté,
+// bien-être (prestations → Services) et boutiques (produits → Maison / Mode / High-tech).
+// Pour chaque site concerné et payé :
 //   1) déclare l'entreprise chez Abracadeal (API partenaires) : son compte Pro est ouvert automatiquement,
 //      avec les annonces illimitées incluses dans le pack ;
 //   2) envoie son stock (véhicules ou biens du site) en mode « full » : ajouts, mises à jour et retraits automatiques ;
@@ -68,6 +70,52 @@ async function estate(it: any, i: number, loc: any) {
   };
 }
 
+// ---- Métiers hors auto / immo (08/11/2026)
+const SERVICE_SUB: Record<string, string> = { batiment: "artisans-travaux", depannage: "depannage", beaute: "beaute-bienetre", bienetre: "beaute-bienetre" };
+const SHOP_RULES: [string, string, RegExp][] = [
+  ["mode", "chaussures", /chaussure|basket|sneaker|botte|sandale|escarpin/i], ["mode", "sacs", /\bsacs?\b|pochette|maroquin/i],
+  ["mode", "montres-bijoux", /bijou|montre|bague|collier|bracelet|boucle/i], ["mode", "vetements-femme", /femme|robe|jupe|chemisier/i],
+  ["mode", "vetements-homme", /homme|chemise|costume/i], ["mode", "accessoires-mode", /accessoire|ceinture|écharpe|echarpe|chapeau|lunette/i],
+  ["mode", "autre-mode", /v[êe]tement|mode|textile|t-shirt|pull|veste|manteau/i],
+  ["hightech", "telephones", /t[ée]l[ée]phone|smartphone|iphone/i], ["hightech", "ordinateurs", /ordinateur|pc\b|laptop|macbook/i],
+  ["hightech", "audio", /audio|enceinte|casque|écouteur|ecouteur/i], ["hightech", "accessoires-hightech", /chargeur|c[âa]ble|coque|high-?tech/i],
+  ["maison", "luminaire", /lampe|luminaire|suspension|applique/i], ["maison", "cuisine", /cuisine|vaisselle|tasse|assiette|mug|bol\b/i],
+  ["maison", "meubles", /meuble|table|chaise|fauteuil|canap|commode|étag|etag/i], ["maison", "linge-maison", /linge|coussin|plaid|drap|nappe/i],
+  ["maison", "jardin", /jardin|plante|pot\b|fleur/i], ["maison", "decoration", /d[ée]co|vase|bougie|cadre|miroir|c[ée]ramique|poterie/i],
+];
+function shopClass(it: any) { const t = [it.meta, it.t, it.desc].map(str).join(" "); for (const [sec, sub, re] of SHOP_RULES) if (re.test(t)) return { sec, sub }; return { sec: "maison", sub: "autre-maison" }; }
+function textPrice(v: unknown) { const m = String(v ?? "").replace(/\s/g, "").match(/(\d+(?:[.,]\d{1,2})?)/); if (!m) return null; const n = Math.round(Number(m[1].replace(",", "."))); return n > 0 ? n : null; }
+function extraPhotos(s: any) { const out: string[] = []; for (const it of Array.isArray(s.items) ? s.items : []) out.push(...photos(it)); const h = s.photos?.hero; if (isUrl(h)) out.push(h); return [...new Set(out)]; }
+async function serviceListings(s: any, loc: any) {
+  const sub = SERVICE_SUB[s.trade];
+  const cards = (Array.isArray(s.cards) ? s.cards : []).filter((c: any) => c && str(c.t));
+  const fallback = extraPhotos(s);
+  const src = cards.length ? cards.map((c: any) => ({ t: c.t, desc: c.d, p: c.p, img: c.img, photos: [] }))
+    : (Array.isArray(s.items) ? s.items : []).filter((it: any) => it && str(it.t));
+  const out = [];
+  for (let i = 0; i < src.length; i++) {
+    const it = src[i]; const ph = photos(it).length ? photos(it) : fallback.slice(0, 1);
+    const title = (str(it.t) + (loc.city && !str(it.t).toLowerCase().includes(loc.city.toLowerCase()) ? " — " + loc.city : "")).slice(0, 100);
+    out.push({ reference: await reference(it, i), titre: title, sous_categorie: sub, prix: textPrice(it.p),
+      description: [str(it.desc), str(it.feats), str(it.p) && !textPrice(it.p) ? "Tarif : " + str(it.p) : ""].filter(Boolean).join("\n\n"),
+      ville: str(it.city) || loc.city || null, code_postal: str(it.city) ? null : (loc.postal_code || null), photos: ph });
+  }
+  return out;
+}
+async function shopListings(s: any, loc: any) {
+  const items = (Array.isArray(s.items) ? s.items : []).filter((it: any) => it && str(it.t) && !sold(it));
+  const cls = items.map(shopClass);
+  const count: Record<string, number> = {}; for (const c of cls) count[c.sec] = (count[c.sec] || 0) + 1;
+  const sector = Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] || "maison";
+  const out = [];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    out.push({ reference: await reference(it, i), titre: str(it.t).slice(0, 100), sous_categorie: cls[i].sec === sector ? cls[i].sub : "", prix: textPrice(it.p),
+      description: [str(it.desc), str(it.feats)].filter(Boolean).join("\n\n"), ville: loc.city || null, code_postal: loc.postal_code || null, photos: photos(it) });
+  }
+  return { sector, listings: out };
+}
+
 async function call(key: string, method: string, path: string, body?: unknown) {
   const r = await fetch(API + path, { method, headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(150000) });
   const d = await r.json().catch(() => ({}));
@@ -90,7 +138,9 @@ async function handle(key: string, s: any) {
     return { slug: s.slug, action: "wait", reason: "siret" };
   }
   const loc = address(p);
-  const sector = s.trade === "garage" ? "vehicules" : "immobilier";
+  let sector = s.trade === "garage" ? "vehicules" : s.trade === "immobilier" ? "immobilier" : SERVICE_SUB[s.trade] ? "services" : "maison";
+  let shop: any = null;
+  if (s.trade === "boutique") { shop = await shopListings(s, loc); sector = shop.sector; }
   const ag = await call(key, "PUT", "/agencies/" + encodeURIComponent(agency), {
     siret, name: str(p.company) || s.name, sector, email: str(p.email) || s.owner_email, phone: str(p.phone), city: loc.city, postal_code: loc.postal_code, consent: true,
   });
@@ -100,9 +150,12 @@ async function handle(key: string, s: any) {
     return { slug: s.slug, action: "agency", status: st };
   }
   const items = (Array.isArray(s.items) ? s.items : []).filter((it: any) => it && !sold(it));
-  const listings = [] as any[];
-  for (let i = 0; i < items.length; i++) listings.push(await (sector === "vehicules" ? vehicle(items[i], i, loc) : estate(items[i], i, loc)));
-  const send = listings.filter((l) => l.prix && l.photos.length);
+  let listings = [] as any[];
+  if (shop) listings = shop.listings;
+  else if (sector === "services") listings = await serviceListings(s, loc);
+  else for (let i = 0; i < items.length; i++) listings.push(await (sector === "vehicules" ? vehicle(items[i], i, loc) : estate(items[i], i, loc)));
+  // Une prestation peut être « sur devis » (sans prix) ; un véhicule, un bien ou un produit doit avoir un prix.
+  const send = listings.filter((l) => (l.prix || sector === "services") && l.photos.length);
   const hash = await sha(JSON.stringify(send));
   if (hash === s.last_hash && s.agency_status === "active") return { slug: s.slug, action: "unchanged" };
   if (!send.length) {

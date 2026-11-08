@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
   }
   const { data, error } = await db.rpc("cs_stripe_apply", a);
   if (error) return res({ error: error.message }, 500);
-  // 08/11/2026 (Anthony) : Pack Auto & Immo — les infos saisies au paiement (SIRET, entreprise, adresse, téléphone, e-mail)
+  // 08/11/2026 (Anthony) : Pack Auto & Immo et diffusion Abracadeal incluse — les infos saisies au paiement (SIRET, entreprise, adresse, téléphone, e-mail)
   // remplissent le profil du site, puis le compte Abracadeal est ouvert et relié tout de suite (sans attendre le cron).
   // (les paiements par lien Stripe n'ont pas toujours la formule dans metadata : le champ SIRET suffit à reconnaître le pack)
   if (ev.type === "checkout.session.completed" && o.client_reference_id && (String(o.metadata?.plan || "").toLowerCase() === "autoimmo" || (o.custom_fields || []).some((f: any) => f.key === "siret"))) {

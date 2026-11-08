@@ -47,3 +47,23 @@ create or replace function public.cs_abra_internal_key() returns text language s
 revoke all on function public.cs_abra_internal_key() from public, anon, authenticated;
 grant execute on function public.cs_abra_internal_key() to service_role;
 -- Cron toutes les 10 min : cs-abracadeal-sync (en-tête x-cs-key)
+
+-- 08/11/2026 : infos saisies au paiement du pack (SIRET, adresse…) → profil du site (cs_abra_profile, appelée par le webhook Stripe)
+create or replace function public.cs_abra_profile(p_slug text, p_data jsonb)
+ returns uuid language plpgsql security definer set search_path to '' as $$
+declare v_site uuid; v_cur jsonb; v_new jsonb; k text;
+begin
+  select id into v_site from clicandsite.sites where slug=lower(p_slug);
+  if v_site is null then return null; end if;
+  select data into v_cur from clicandsite.pro_profiles where site_id=v_site;
+  v_new := coalesce(v_cur,'{}'::jsonb);
+  for k in select jsonb_object_keys(coalesce(p_data,'{}'::jsonb)) loop
+    if coalesce(p_data->>k,'')='' then continue; end if;
+    if k='siret' or coalesce(v_new->>k,'')='' then v_new := v_new || jsonb_build_object(k, p_data->>k); end if;
+  end loop;
+  insert into clicandsite.pro_profiles(site_id,data,updated_at) values(v_site,v_new,now())
+  on conflict (site_id) do update set data=excluded.data, updated_at=now();
+  return v_site;
+end $$;
+revoke all on function public.cs_abra_profile(text,jsonb) from public, anon, authenticated;
+grant execute on function public.cs_abra_profile(text,jsonb) to service_role;

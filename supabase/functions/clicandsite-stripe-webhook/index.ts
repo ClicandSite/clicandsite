@@ -36,5 +36,22 @@ Deno.serve(async (req) => {
   }
   const { data, error } = await db.rpc("cs_stripe_apply", a);
   if (error) return res({ error: error.message }, 500);
+  // 08/11/2026 (Anthony) : Pack Auto & Immo — les infos saisies au paiement (SIRET, entreprise, adresse, téléphone, e-mail)
+  // remplissent le profil du site, puis le compte Abracadeal est ouvert et relié tout de suite (sans attendre le cron).
+  // (les paiements par lien Stripe n'ont pas toujours la formule dans metadata : le champ SIRET suffit à reconnaître le pack)
+  if (ev.type === "checkout.session.completed" && o.client_reference_id && (String(o.metadata?.plan || "").toLowerCase() === "autoimmo" || (o.custom_fields || []).some((f: any) => f.key === "siret"))) {
+    const cf = (k: string) => (o.custom_fields || []).find((f: any) => f.key === k);
+    const siret = String(cf("siret")?.numeric?.value || cf("siret")?.text?.value || "").replace(/\D/g, "");
+    const ad = o.customer_details?.address || {};
+    const address = [ad.line1, ad.line2].filter(Boolean).join(", ") + (ad.postal_code || ad.city ? "\n" + [ad.postal_code, ad.city].filter(Boolean).join(" ") : "");
+    await db.rpc("cs_abra_profile", { p_slug: o.client_reference_id, p_data: {
+      siret: siret.length === 14 ? siret : "", company: cf("entreprise")?.text?.value || "", email: o.customer_details?.email || "",
+      phone: o.customer_details?.phone || "", address: address.trim() } });
+    const { data: ik } = await db.rpc("cs_abra_internal_key");
+    const job = fetch(Deno.env.get("SUPABASE_URL") + "/functions/v1/cs-abracadeal-sync", { method: "POST",
+      headers: { "Content-Type": "application/json", "x-cs-key": String(ik || "") }, body: JSON.stringify({ slug: o.client_reference_id }) }).catch((e) => console.error(e));
+    // @ts-ignore EdgeRuntime existe sur Supabase : la synchro continue après la réponse à Stripe
+    if (typeof EdgeRuntime !== "undefined") EdgeRuntime.waitUntil(job);
+  }
   return res(data);
 });

@@ -340,6 +340,65 @@ html.fv-open,html.fv-open body{overflow:hidden}
   .screens .pscreen{aspect-ratio:auto;height:calc(100svh - 286px);min-height:420px;max-height:760px;border-radius:20px}
   .explorer .ex-actions .btn{flex:1 1 auto;text-align:center}
 }
+
+/* 08/11/2026 (2) : configurateur au-dessus du site (métier avec icône, formule avec prix, styles en vignettes de couleurs) */
+.cfg{display:grid;gap:18px;padding:20px 22px;border:1px solid var(--line);border-radius:18px;background:var(--bg);box-shadow:0 10px 30px rgba(20,20,40,.05);margin-bottom:22px}
+.crow{display:grid;gap:10px;min-width:0}
+.clbl{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.clbl .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand);color:var(--brand-ink);font-size:.74rem;letter-spacing:0}
+.clbl .cur{text-transform:none;letter-spacing:0;color:var(--ink);font-size:.92rem;margin-left:4px}
+.clbl .snav{margin-left:auto;display:flex;gap:6px}
+.sarr{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:700 1.1rem/1 var(--body);cursor:pointer}
+.sarr:hover{border-color:var(--brand)}
+.cfg .mrow{display:flex;flex-wrap:wrap;gap:8px}
+.cfg .mrow button{display:inline-flex;align-items:center;gap:8px;font:600 .9rem var(--body);padding:9px 14px 9px 10px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;white-space:nowrap}
+.cfg .mrow button .ic{font-size:1.15rem;line-height:1}
+.cfg .mrow button:hover{border-color:var(--brand)}
+.cfg .mrow button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.cfg .fchips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cfg .fchips button{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:2px 10px;text-align:left;padding:12px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font-family:var(--body)}
+.cfg .fchips button b{font-size:1rem}
+.cfg .fchips button .fpr{font-weight:800;font-size:1rem;white-space:nowrap}
+.cfg .fchips button .fpr small{font-weight:500;font-size:.72rem;color:var(--muted);margin-left:2px}
+.cfg .fchips button .fdd{grid-column:1/-1;font-size:.82rem;color:var(--muted)}
+.cfg .fchips button:hover{border-color:var(--brand)}
+.cfg .fchips button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 1px var(--brand) inset}
+.cfg .fchips button:disabled{opacity:.4;cursor:not-allowed}
+.cfg .srow{display:flex;flex-wrap:nowrap;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;padding:6px 4px 8px;scrollbar-width:thin;padding-left:6px}
+.cfg .srow .st{flex:none;display:grid;gap:7px;justify-items:center;padding:0;border:0;background:none;cursor:pointer;scroll-snap-align:start;color:var(--ink);font-family:var(--body)}
+.cfg .srow .st .mini{position:relative;display:block;width:108px;height:70px;border-radius:12px;overflow:hidden;background:var(--tb);border:1px solid var(--tl);box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .15s}
+.cfg .srow .st .mh{position:absolute;inset:0 0 48% 0;background:var(--th)}
+.cfg .srow .st .mt{position:absolute;left:9px;bottom:5px;font:600 1.15rem/1 var(--tf);color:var(--ti)}
+.cfg .srow .st .mb{position:absolute;right:9px;bottom:10px;width:30px;height:11px;border-radius:6px;background:var(--ta)}
+.cfg .srow .st .nm{font-size:.8rem;font-weight:600;white-space:nowrap;line-height:1.2;text-align:center}
+.cfg .srow .st .nm small{display:block;font-size:.66rem;color:var(--brand);font-weight:700}
+.cfg .srow .st:hover .mini{transform:translateY(-2px)}
+.cfg .srow .st[aria-pressed="true"] .mini{outline:3px solid var(--brand);outline-offset:2px}
+.cfg .srow .st[aria-pressed="true"] .nm{color:var(--brand)}
+.explorer .view{position:static;min-width:0}
+.explorer .vbar{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.explorer .vbar .now{margin-left:auto}
+.explorer .vbar .btn{padding:11px 18px}
+.screens .viewport{height:calc(100vh - 170px);min-height:480px;max-height:820px}
+.screens .phone.live{width:calc((100vh - 170px) * .4621 + 16px)}
+@media (max-width:1100px){.cfg .fchips{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:920px){
+  .cfg{position:sticky;top:60px;z-index:5;gap:8px;padding:10px 0;margin:0 -16px 12px;border:0;border-radius:0;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 95%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:none}
+  .clbl{display:none}
+  .cfg .mrow,.cfg .fchips,.cfg .srow{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:0 16px;scroll-padding-inline:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .cfg .mrow::-webkit-scrollbar,.cfg .fchips::-webkit-scrollbar,.cfg .srow::-webkit-scrollbar{display:none}
+  .cfg .mrow button{flex:none;padding:7px 12px 7px 9px;font-size:.84rem}
+  .cfg .fchips button{flex:none;display:flex;gap:6px;padding:7px 12px;border-radius:999px;align-items:baseline}
+  .cfg .fchips button b{font-size:.86rem}.cfg .fchips button .fpr{font-size:.8rem;font-weight:600;color:var(--muted)}.cfg .fchips button .fpr small,.cfg .fchips button .fdd{display:none}
+  .cfg .srow .st{grid-auto-flow:column;align-items:center;gap:6px;padding:3px 11px 3px 3px;border:1.5px solid var(--line);border-radius:999px;background:var(--bg)}
+  .cfg .srow .st .mini{width:28px;height:28px;border-radius:50%;box-shadow:none}
+  .cfg .srow .st .mt{display:none}.cfg .srow .st .mb{right:5px;bottom:5px;width:9px;height:9px;border-radius:50%}
+  .cfg .srow .st .nm{font-size:.82rem}.cfg .srow .st .nm small{display:inline;margin-left:4px}
+  .cfg .srow .st[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+  .cfg .srow .st[aria-pressed="true"] .mini{outline:0}
+  .explorer .vbar{display:none}
+  .screens .pscreen{height:calc(100svh - 250px)}
+}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -413,74 +472,73 @@ html.fv-open,html.fv-open body{overflow:hidden}
       <h2>10 métiers, 21 styles. Essayez-les en vrai.</h2>
       <p>Choisissez votre métier, votre formule et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
     </div>
-    <div class="studio">
-      <div class="panel">
-        <div class="pgroup">
-          <h3 class="lbl"><span class="n">1</span>Votre métier</h3>
-          <div class="tabs scrollrow" role="group" aria-label="Métier">
-          <button type="button" data-k="vtc" aria-pressed="true">Chauffeur VTC</button>
-          <button type="button" data-k="restaurant" aria-pressed="false">Restaurant</button>
-          <button type="button" data-k="garage" aria-pressed="false">Garage et concession</button>
-          <button type="button" data-k="immobilier" aria-pressed="false">Agence immobilière</button>
-          <button type="button" data-k="batiment" aria-pressed="false">Bâtiment et rénovation</button>
-          <button type="button" data-k="beaute" aria-pressed="false">Coiffure et beauté</button>
-          <button type="button" data-k="bienetre" aria-pressed="false">Bien-être et santé</button>
-          <button type="button" data-k="boulangerie" aria-pressed="false">Boulangerie et pâtisserie</button>
-          <button type="button" data-k="depannage" aria-pressed="false">Dépannage à domicile</button>
-          <button type="button" data-k="boutique" aria-pressed="false">Boutique en ligne</button>
-        </div>
-        </div>
-        <div class="pgroup">
-          <h3 class="lbl"><span class="n">2</span>La formule <span class="cur" id="ex-fname">Pro</span></h3>
-          <div class="chips fchips scrollrow" role="group" aria-label="Formule">
-          <button type="button" data-f="essentiel" aria-pressed="false">Essentiel <small style="opacity:.7">29 €</small></button>
-          <button type="button" data-f="pro" aria-pressed="true">Pro <small style="opacity:.7">49 €</small></button>
-          <button type="button" data-f="premium" aria-pressed="false">Premium <small style="opacity:.7">79 €</small></button>
-          <button type="button" data-f="boutique" aria-pressed="false">Boutique <small style="opacity:.7">99 €</small></button>
-        </div>
-        </div>
-        <div class="pgroup">
-          <h3 class="lbl"><span class="n">3</span>Le style <span class="cur" id="ex-sname">Moderne</span></h3>
-          <div class="chips scrollrow" role="group" aria-label="Style">
-          <button type="button" data-s="moderne" aria-pressed="true"><span class="sw" style="background:#0B0B0C"></span>Moderne</button>
-          <button type="button" data-s="luxe" aria-pressed="false"><span class="sw" style="background:#C9B28A"></span>Luxe</button>
-          <button type="button" data-s="riviera" aria-pressed="false"><span class="sw" style="background:#0E6BA8"></span>Riviera</button>
-          <button type="button" data-s="chaleureux" aria-pressed="false"><span class="sw" style="background:#4D5B39"></span>Chaleureux</button>
-          <button type="button" data-s="audacieux" aria-pressed="false"><span class="sw" style="background:#2F2FE4"></span>Audacieux</button>
-          <button type="button" data-s="minimal" aria-pressed="false"><span class="sw" style="background:#1C1B19"></span>Minimal crème</button>
-          <button type="button" data-s="nuit" aria-pressed="false"><span class="sw" style="background:#8DB8FF"></span>Nuit bleue</button>
-          <button type="button" data-s="provence" aria-pressed="false"><span class="sw" style="background:#6E4C93"></span>Provence lavande</button>
-          <button type="button" data-s="ocean" aria-pressed="false"><span class="sw" style="background:#0E8C7F"></span>Océan</button>
-          <button type="button" data-s="pop" aria-pressed="false"><span class="sw" style="background:#FF3D7F"></span>Pop vitaminé</button>
-          <button type="button" data-s="corporate" aria-pressed="false"><span class="sw" style="background:#1F4FD1"></span>Pro sérieux</button>
-          <button type="button" data-s="retro" aria-pressed="false"><span class="sw" style="background:#B5452B"></span>Rétro</button>
-          <button type="button" data-s="zen" aria-pressed="false"><span class="sw" style="background:#5F8466"></span>Zen nature</button>
-          <button type="button" data-s="neon" aria-pressed="false"><span class="sw" style="background:#00E0B8"></span>Néon</button>
-          <button type="button" data-s="poudre" aria-pressed="false"><span class="sw" style="background:#C9506F"></span>Rose poudré</button>
-          <button type="button" data-s="terracotta" aria-pressed="false"><span class="sw" style="background:#C0582E"></span>Terracotta</button>
-          <button type="button" data-s="graphite" aria-pressed="false"><span class="sw" style="background:#18191C"></span>Graphite</button>
-          <button type="button" data-s="foret" aria-pressed="false"><span class="sw" style="background:#2F5D3A"></span>Forêt</button>
-          <button type="button" data-s="soleil" aria-pressed="false"><span class="sw" style="background:#E85D04"></span>Soleil</button>
-          <button type="button" data-s="marine" aria-pressed="false"><span class="sw" style="background:#0B1F3A"></span>Marine chic</button>
-          <button type="button" data-s="signature" aria-pressed="false"><span class="sw" style="background:#C9AD73;box-shadow:inset 0 0 0 3px #0F1A16"></span>Signature <small style="font-size:.72em;opacity:.75">· Premium</small></button>
-        </div>
-        </div>
+    <div class="cfg">
+      <div class="crow">
+        <div class="clbl"><span class="n">1</span>Votre métier</div>
+        <div class="tabs mrow scrollrow" role="group" aria-label="Métier">
+          <button type="button" data-k="vtc" aria-pressed="true"><span class="ic" aria-hidden="true">🚘</span>Chauffeur VTC</button>
+          <button type="button" data-k="restaurant" aria-pressed="false"><span class="ic" aria-hidden="true">🍽️</span>Restaurant</button>
+          <button type="button" data-k="garage" aria-pressed="false"><span class="ic" aria-hidden="true">🔧</span>Garage et concession</button>
+          <button type="button" data-k="immobilier" aria-pressed="false"><span class="ic" aria-hidden="true">🏠</span>Agence immobilière</button>
+          <button type="button" data-k="batiment" aria-pressed="false"><span class="ic" aria-hidden="true">🧱</span>Bâtiment et rénovation</button>
+          <button type="button" data-k="beaute" aria-pressed="false"><span class="ic" aria-hidden="true">✂️</span>Coiffure et beauté</button>
+          <button type="button" data-k="bienetre" aria-pressed="false"><span class="ic" aria-hidden="true">🌿</span>Bien-être et santé</button>
+          <button type="button" data-k="boulangerie" aria-pressed="false"><span class="ic" aria-hidden="true">🥐</span>Boulangerie et pâtisserie</button>
+          <button type="button" data-k="depannage" aria-pressed="false"><span class="ic" aria-hidden="true">🛠️</span>Dépannage à domicile</button>
+          <button type="button" data-k="boutique" aria-pressed="false"><span class="ic" aria-hidden="true">🛍️</span>Boutique en ligne</button>
+          </div>
       </div>
-      <div class="view">
-        <div class="vbar">
-          <div class="seg" role="group" aria-label="Appareil"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
-          <span class="now" id="ex-now">Chauffeur VTC · Moderne</span>
-        </div>
-        <div class="screens" data-v="d">
-          <div class="laptop live"><div class="bar"><i></i><i></i><i></i><span class="url" id="ex-url">azur-prestige.fr</span></div><div class="viewport" id="vp-d"><iframe id="if-d" title="Aperçu du modèle sur ordinateur"></iframe></div></div>
-          <div class="phone live"><div class="pscreen" id="vp-m"><iframe id="if-m" title="Aperçu du modèle sur téléphone"></iframe></div></div>
-        </div>
-        <p class="desc" id="desc" aria-live="polite"></p>
-        <div class="ex-actions">
-          <a class="btn" id="ex-choose" href="#commande">Choisir ce modèle</a>
-          <a class="btn ghost" id="ex-open" href="modeles/vtc.html#moderne" target="_blank" rel="noopener">Voir en plein écran</a>
-          <a class="btn ghost" id="ex-edit" href="espace/?demo=vtc" target="_blank" rel="noopener">Essayer l'espace client</a>
-        </div>
+      <div class="crow">
+        <div class="clbl"><span class="n">2</span>Votre formule <span class="cur" id="ex-fname">Pro</span></div>
+        <div class="fchips scrollrow" role="group" aria-label="Formule">
+          <button type="button" data-f="essentiel" aria-pressed="false"><b>Essentiel</b><span class="fpr">29 €<small>/mois</small></span><span class="fdd">Le site, simple et efficace</span></button>
+          <button type="button" data-f="pro" aria-pressed="true"><b>Pro</b><span class="fpr">49 €<small>/mois</small></span><span class="fdd">+ avis Google, réservations payées</span></button>
+          <button type="button" data-f="premium" aria-pressed="false"><b>Premium</b><span class="fpr">79 €<small>/mois</small></span><span class="fdd">+ anglais, CRM, style Signature</span></button>
+          <button type="button" data-f="boutique" aria-pressed="false"><b>Boutique</b><span class="fpr">99 €<small>/mois</small></span><span class="fdd">+ panier et vente en ligne</span></button>
+          </div>
+      </div>
+      <div class="crow">
+        <div class="clbl"><span class="n">3</span>Votre style <span class="cur" id="ex-sname">Moderne</span><span class="snav"><button type="button" class="sarr" data-d="-1" aria-label="Styles précédents">‹</button><button type="button" class="sarr" data-d="1" aria-label="Styles suivants">›</button></span></div>
+        <div class="chips srow scrollrow" role="group" aria-label="Style">
+          <button type="button" class="st" data-s="moderne" aria-pressed="true" style="--tb:#FFFFFF;--ti:#0B0B0C;--ta:#0B0B0C;--th:radial-gradient(120% 80% at 75% 20%,#3b4a63 0%,#151a24 45%,#07090d 100%);--tf:'Sora', system-ui, sans-serif;--tl:#E6E6E9"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Moderne</span></button>
+          <button type="button" class="st" data-s="luxe" aria-pressed="false" style="--tb:#0A0A0A;--ti:#EDE6D8;--ta:#C9B28A;--th:radial-gradient(90% 70% at 50% 35%,#2a2620 0%,#0f0e0c 55%,#050505 100%);--tf:'Cormorant Garamond', Georgia, serif;--tl:#2A2722"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Luxe</span></button>
+          <button type="button" class="st" data-s="riviera" aria-pressed="false" style="--tb:#F7FBFE;--ti:#0D2B45;--ta:#0E6BA8;--th:linear-gradient(180deg,#8fc3ea 0%,#cfe7f6 44%,#1d7ab8 45%,#0b4f80 100%);--tf:'Outfit', system-ui, sans-serif;--tl:#D3E3EF"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Riviera</span></button>
+          <button type="button" class="st" data-s="chaleureux" aria-pressed="false" style="--tb:#ECE6DF;--ti:#2B241E;--ta:#8A5A35;--th:linear-gradient(165deg,#c9a27a 0%,#8a5a35 50%,#3a2a1f 100%);--tf:'Lora', Georgia, serif;--tl:#D3C7B9"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Chaleureux</span></button>
+          <button type="button" class="st" data-s="audacieux" aria-pressed="false" style="--tb:#FFFFFF;--ti:#111111;--ta:#2F2FE4;--th:linear-gradient(135deg,#2F2FE4 0%,#2F2FE4 62%,#FF5A36 62%,#FF5A36 100%);--tf:'Archivo Black', Impact, sans-serif;--tl:#111111"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Audacieux</span></button>
+          <button type="button" class="st" data-s="minimal" aria-pressed="false" style="--tb:#FAF8F3;--ti:#1C1B19;--ta:#1C1B19;--th:linear-gradient(160deg,#d8d1c3,#8f877a);--tf:'Manrope', system-ui, sans-serif;--tl:#E3DED3"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Minimal crème</span></button>
+          <button type="button" class="st" data-s="nuit" aria-pressed="false" style="--tb:#0B1426;--ti:#E8EDF7;--ta:#8DB8FF;--th:radial-gradient(90% 70% at 50% 35%,#1e3159,#0b1426 60%,#050a14);--tf:'Playfair Display', Georgia, serif;--tl:#22314F"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Nuit bleue</span></button>
+          <button type="button" class="st" data-s="provence" aria-pressed="false" style="--tb:#F6F1EA;--ti:#2E2438;--ta:#6E4C93;--th:linear-gradient(165deg,#b9a3d0,#6e4c93 55%,#2e2438);--tf:'Fraunces', Georgia, serif;--tl:#DDD2E3"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Provence lavande</span></button>
+          <button type="button" class="st" data-s="ocean" aria-pressed="false" style="--tb:#F1FAF9;--ti:#06302F;--ta:#0E8C7F;--th:linear-gradient(180deg,#7fd3c8,#0e8c7f);--tf:'Poppins', system-ui, sans-serif;--tl:#C9E6E2"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Océan</span></button>
+          <button type="button" class="st" data-s="pop" aria-pressed="false" style="--tb:#FFF7F1;--ti:#1D1A1A;--ta:#FF3D7F;--th:linear-gradient(135deg,#FF3D7F 0%,#FF3D7F 60%,#FFC93C 60%);--tf:'Bebas Neue', Impact, sans-serif;--tl:#1D1A1A"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Pop vitaminé</span></button>
+          <button type="button" class="st" data-s="corporate" aria-pressed="false" style="--tb:#FFFFFF;--ti:#0F1E36;--ta:#1F4FD1;--th:linear-gradient(160deg,#34508f,#0f1e36);--tf:'Montserrat', system-ui, sans-serif;--tl:#DFE5EF"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Pro sérieux</span></button>
+          <button type="button" class="st" data-s="retro" aria-pressed="false" style="--tb:#F3E9D2;--ti:#3B2B24;--ta:#B5452B;--th:linear-gradient(165deg,#e2b57a,#b5452b 55%,#3b2b24);--tf:'DM Serif Display', Georgia, serif;--tl:#D8C6A2"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Rétro</span></button>
+          <button type="button" class="st" data-s="zen" aria-pressed="false" style="--tb:#F4F6F1;--ti:#2C372D;--ta:#5F8466;--th:radial-gradient(90% 70% at 50% 35%,#a9bfa5,#5f8466 60%,#2c372d);--tf:'Cormorant Garamond', Georgia, serif;--tl:#D6DDD0"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Zen nature</span></button>
+          <button type="button" class="st" data-s="neon" aria-pressed="false" style="--tb:#0C0C12;--ti:#F1F1F6;--ta:#00E0B8;--th:radial-gradient(120% 80% at 75% 20%,#3d1f6b,#0c0c12 60%);--tf:'Space Grotesk', system-ui, sans-serif;--tl:#262636"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Néon</span></button>
+          <button type="button" class="st" data-s="poudre" aria-pressed="false" style="--tb:#FFF7F7;--ti:#3A1F2B;--ta:#C9506F;--th:linear-gradient(180deg,#f6c9d3,#c9506f);--tf:'Playfair Display', Georgia, serif;--tl:#F2D6DC"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Rose poudré</span></button>
+          <button type="button" class="st" data-s="terracotta" aria-pressed="false" style="--tb:#FBF4EE;--ti:#2E1F17;--ta:#C0582E;--th:linear-gradient(160deg,#e3a27c,#8c3b1c);--tf:'Libre Baskerville', Georgia, serif;--tl:#E8D4C4"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Terracotta</span></button>
+          <button type="button" class="st" data-s="graphite" aria-pressed="false" style="--tb:#18191C;--ti:#EDEDEE;--ta:#D9D9DC;--th:radial-gradient(90% 70% at 50% 35%,#3a3b40,#18191c 60%);--tf:'Sora', system-ui, sans-serif;--tl:#303136"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Graphite</span></button>
+          <button type="button" class="st" data-s="foret" aria-pressed="false" style="--tb:#EEF2EA;--ti:#1D2A1C;--ta:#2F5D3A;--th:linear-gradient(165deg,#8fb08e,#2f5d3a 55%,#1d2a1c);--tf:'Lora', Georgia, serif;--tl:#CDD8C6"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Forêt</span></button>
+          <button type="button" class="st" data-s="soleil" aria-pressed="false" style="--tb:#FFFBEA;--ti:#1A1712;--ta:#E85D04;--th:linear-gradient(135deg,#E85D04 0%,#E85D04 60%,#FFBA08 60%);--tf:'Syne', system-ui, sans-serif;--tl:#1A1712"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Soleil</span></button>
+          <button type="button" class="st" data-s="marine" aria-pressed="false" style="--tb:#F7F8FB;--ti:#0B1F3A;--ta:#A9834B;--th:linear-gradient(180deg,#5b7598,#0b1f3a);--tf:'Playfair Display', Georgia, serif;--tl:#D9DFEA"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Marine chic</span></button>
+          <button type="button" class="st" data-s="signature" aria-pressed="false" style="--tb:#0F1A16;--ti:#EDE6D6;--ta:#C9AD73;--th:radial-gradient(90% 70% at 50% 35%,#1d2e28,#0f1a16 60%,#0b1411);--tf:'Playfair Display', Georgia, serif;--tl:#2A3D36"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Signature <small>Premium</small></span></button>
+          </div>
+      </div>
+    </div>
+    <div class="view">
+      <div class="vbar">
+        <div class="seg" role="group" aria-label="Appareil"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
+        <span class="now" id="ex-now">Chauffeur VTC · Moderne</span>
+        <a class="btn" id="ex-choose" href="#commande">Choisir ce modèle →</a>
+      </div>
+      <div class="screens" data-v="d">
+        <div class="laptop live"><div class="bar"><i></i><i></i><i></i><span class="url" id="ex-url">azur-prestige.fr</span></div><div class="viewport" id="vp-d"><iframe id="if-d" title="Aperçu du modèle sur ordinateur"></iframe></div></div>
+        <div class="phone live"><div class="pscreen" id="vp-m"><iframe id="if-m" title="Aperçu du modèle sur téléphone"></iframe></div></div>
+      </div>
+      <p class="desc" id="desc" aria-live="polite"></p>
+      <div class="ex-actions">
+        <a class="btn" id="ex-choose2" href="#commande">Choisir ce modèle</a>
+        <a class="btn ghost" id="ex-open" href="modeles/vtc.html#moderne" target="_blank" rel="noopener">Voir en plein écran</a>
+        <a class="btn ghost" id="ex-edit" href="espace/?demo=vtc" target="_blank" rel="noopener">Essayer l'espace client</a>
       </div>
     </div>
   </div>
@@ -759,6 +817,8 @@ document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener
 document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;if(cur.s==='signature'&&FR[cur.f]<3)cur.f='premium';show();});});
 document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){ view=b.dataset.v; document.querySelector('.screens').dataset.v=view; document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); show(); });});
 document.querySelectorAll('.fchips button').forEach(function(b){b.addEventListener('click',function(){cur.f=b.dataset.f;show();});});
+document.querySelectorAll('.sarr').forEach(function(b){b.addEventListener('click',function(){var r=document.querySelector('.srow'); r.scrollBy({left:(+b.dataset.d)*Math.max(240,r.clientWidth*.8),behavior:'smooth'});});});
+var ec2=document.getElementById('ex-choose2'); if(ec2) ec2.addEventListener('click',function(){ document.getElementById('ex-choose').click(); });
 window.addEventListener('resize',function(){ show(); });
 (function(){
   var g=document.getElementById('grid'), html='';

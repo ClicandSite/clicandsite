@@ -155,3 +155,7 @@ dict(slug="choisir-nom-de-domaine-entreprise", date="2026-11-06",
  ("cta","Lancer mon site"),
  ]),
 ]
+
+# 08/11/2026 : guides par métier (fichier séparé), affichés en tête avec l'article VTC.
+from articles_metiers import METIERS
+ARTICLES = ARTICLES[:1] + METIERS + ARTICLES[1:]

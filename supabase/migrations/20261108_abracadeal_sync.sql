@@ -1,0 +1,49 @@
+-- 08/11/2026 (Anthony) : flux API direct MyCreativeSite → Abracadeal pour le Pack Auto & Immo.
+create table if not exists clicandsite.abracadeal_sync (
+  site_id uuid primary key references clicandsite.sites(id) on delete cascade,
+  agency_status text, last_hash text, last_result jsonb, last_error text,
+  synced_at timestamptz, stopped_at timestamptz, updated_at timestamptz not null default now()
+);
+alter table clicandsite.abracadeal_sync enable row level security;
+insert into clicandsite.secrets(name,value) values('abracadeal_partner_key','<clé éditeur Abracadeal, stockée en base>')
+  on conflict do nothing;
+
+-- Sites à traiter : packs Auto & Immo payés (garage / immobilier) + anciens packs encore diffusés à arrêter.
+create or replace function public.cs_abra_targets()
+ returns jsonb language sql stable security definer set search_path to '' as $$
+ select coalesce(jsonb_agg(x),'[]'::jsonb) from (
+  select s.id, s.slug, s.name, s.trade, s.owner_email,
+         (lower(coalesce(s.plan,''))='autoimmo' and s.paid_at is not null and s.trade in ('garage','immobilier')
+           and coalesce(s.billing_status,'active') not in ('canceled','unpaid','incomplete_expired')) as eligible,
+         coalesce(s.content->'items','[]'::jsonb) as items,
+         coalesce(p.data,'{}'::jsonb) as profile,
+         a.agency_status, a.last_hash
+    from clicandsite.sites s
+    left join clicandsite.pro_profiles p on p.site_id=s.id
+    left join clicandsite.abracadeal_sync a on a.site_id=s.id
+   where (lower(coalesce(s.plan,''))='autoimmo' and s.paid_at is not null and s.trade in ('garage','immobilier'))
+      or (a.site_id is not null and coalesce(a.agency_status,'')<>'stopped')
+ ) x $$;
+create or replace function public.cs_abra_mark(p_site uuid, p_status text, p_hash text, p_result jsonb, p_error text)
+ returns void language sql security definer set search_path to '' as $$
+ insert into clicandsite.abracadeal_sync(site_id,agency_status,last_hash,last_result,last_error,synced_at,stopped_at,updated_at)
+ values(p_site,p_status,p_hash,p_result,p_error,now(),case when p_status='stopped' then now() end,now())
+ on conflict (site_id) do update set agency_status=excluded.agency_status,
+   last_hash=coalesce(excluded.last_hash,clicandsite.abracadeal_sync.last_hash), last_result=excluded.last_result,
+   last_error=excluded.last_error, synced_at=now(), stopped_at=excluded.stopped_at, updated_at=now() $$;
+create or replace function public.cs_abra_key() returns text language sql stable security definer set search_path to '' as $$
+ select value from clicandsite.secrets where name='abracadeal_partner_key' $$;
+revoke all on function public.cs_abra_targets() from public, anon, authenticated;
+revoke all on function public.cs_abra_mark(uuid,text,text,jsonb,text) from public, anon, authenticated;
+revoke all on function public.cs_abra_key() from public, anon, authenticated;
+grant execute on function public.cs_abra_targets() to service_role;
+grant execute on function public.cs_abra_mark(uuid,text,text,jsonb,text) to service_role;
+grant execute on function public.cs_abra_key() to service_role;
+
+-- Clé interne du cron + fonction (valeur stockée en base, pas ici)
+-- insert into clicandsite.secrets(name,value) values('abracadeal_sync_internal','<secret>');
+create or replace function public.cs_abra_internal_key() returns text language sql stable security definer set search_path to '' as $$
+ select value from clicandsite.secrets where name='abracadeal_sync_internal' $$;
+revoke all on function public.cs_abra_internal_key() from public, anon, authenticated;
+grant execute on function public.cs_abra_internal_key() to service_role;
+-- Cron toutes les 10 min : cs-abracadeal-sync (en-tête x-cs-key)

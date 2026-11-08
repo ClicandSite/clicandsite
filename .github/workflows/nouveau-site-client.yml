@@ -1,7 +1,8 @@
 # MyCreativeSite · mise en ligne d'un nouveau site client (09/11/2026)
 # Lancer avec le nom du site (slug, visible dans l'admin) et son domaine. Crée le dépôt ClicandSite/site-<slug>,
 # y installe la mise à jour automatique, active l'hébergement GitHub Pages sur le domaine et publie une première fois.
-# Prérequis (une fois) : secret SITES_TOKEN = jeton GitHub avec droits « Administration », « Contents », « Pages » et « Workflows » sur l'organisation ClicandSite.
+# Prérequis (une fois) : secret SITES_TOKEN = jeton GitHub (propriétaire ClicandSite, tous les dépôts) avec, en lecture/écriture :
+#   Repository : Actions, Administration, Contents, Pages, Workflows · Organization : Administration (création des dépôts).
 name: Nouveau site client
 on:
   workflow_dispatch:
@@ -22,7 +23,7 @@ jobs:
       - name: Créer le dépôt
         run: |
           R="ClicandSite/site-$SLUG"
-          gh repo view "$R" >/dev/null 2>&1 || gh repo create "$R" --public --description "Site $DOMAIN · réalisé par MyCreativeSite"
+          gh api "repos/$R" >/dev/null 2>&1 || gh api -X POST orgs/ClicandSite/repos -f name="site-$SLUG" -F private=false -f description="Site $DOMAIN · réalisé par MyCreativeSite" >/dev/null
           mkdir -p /tmp/r && cd /tmp/r && git init -q -b main
           mkdir -p .github/workflows site
           sed -e "s/__SLUG__/$SLUG/g" -e "s/__DOMAIN__/$DOMAIN/g" "$GITHUB_WORKSPACE/scripts/client-site/site.yml" > .github/workflows/site.yml

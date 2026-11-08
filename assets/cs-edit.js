@@ -65,12 +65,53 @@
     head.appendChild(box);
   }
 
+  // 08/11/2026 : fiche détaillée des biens (immobilier) et des véhicules (garage), lue et écrite dans data-fiche (voir cs-fiche.js)
+  var FICHE = ['desc', 'feats', 'dpe', 'dpe_v', 'ges', 'ges_v', 'energy', 'legal', 'ref'];
+  function okPh(u) { return !!safeUrl(u) || (typeof u === 'string' && /^cls:[a-z]{1,2}\d{1,2}$/.test(u)); }
+  function readFiche(el) { try { return JSON.parse(el.getAttribute('data-fiche') || '{}') || {}; } catch (e) { return {}; } }
   function readItem(el, def) {
     var o = {};
     Object.keys(def.f).forEach(function (k) { o[k] = txt(q(el, def.f[k])); });
     if (def.meta) o.meta = qa(el, def.meta + ' > span').map(txt).join(' · ');
     if (def.img) o.img = null;
+    var immo = el.classList.contains('prop'), car = el.classList.contains('car');
+    if (immo || car) {
+      var f = readFiche(el);
+      FICHE.forEach(function (k) { o[k] = typeof f[k] === 'string' ? f[k] : ''; });
+      o.photos = (Array.isArray(f.photos) ? f.photos : []).filter(okPh);
+      if (immo) { o.tr = el.dataset.tr || 'vente'; o.type = el.dataset.type || ''; o.city = el.dataset.city || ''; o.rooms = el.dataset.rooms || ''; o.tag = txt(q(el, '.tags .tag')); }
+      else { o.mk = el.dataset.mk || ''; o.fuel = el.dataset.fuel || ''; o.tag = txt(q(el, '.chip')); }
+    }
     return o;
+  }
+  function writeFiche(el, o) {
+    var immo = el.classList.contains('prop'), d = el.ownerDocument;
+    if (immo) {
+      if (typeof o.tr === 'string') el.dataset.tr = o.tr === 'location' ? 'location' : 'vente';
+      if (typeof o.type === 'string') el.dataset.type = o.type.replace(/[^a-z]/g, '');
+      if (typeof o.city === 'string') el.dataset.city = o.city.trim().slice(0, 60);
+      if (o.rooms !== undefined) el.dataset.rooms = String(parseInt(o.rooms, 10) || 0);
+      if (typeof o.tag === 'string') {
+        var ph = q(el, '.photo'), tg = q(el, '.tags');
+        if (!tg && ph && o.tag.trim()) { tg = d.createElement('div'); tg.className = 'tags'; ph.appendChild(tg); }
+        if (tg) { var t = q(tg, '.tag'); if (!t) { t = d.createElement('span'); t.className = 'tag'; tg.appendChild(t); } qa(tg, '.tag').slice(1).forEach(function (x) { x.remove(); }); t.textContent = o.tag.trim().slice(0, 30); tg.hidden = !o.tag.trim(); }
+      }
+      if (typeof o.dpe === 'string') {
+        var de = q(el, '.dpe'), b = de && q(de, 'b'), L = /^[A-G]$/.test(o.dpe) ? o.dpe : '';
+        if (de) { de.hidden = !L; if (b && L) { b.className = 'dpe-' + L; b.textContent = L; } }
+      }
+    } else {
+      if (typeof o.mk === 'string') el.dataset.mk = o.mk.trim().slice(0, 40);
+      if (typeof o.fuel === 'string') el.dataset.fuel = o.fuel.trim().slice(0, 30);
+      if (typeof o.p === 'string') el.dataset.pr = String(parseInt(o.p.replace(/[^\d,.]/g, '').replace(/[.,]\d{1,2}$/, '').replace(/\D/g, ''), 10) || 0);
+      if (typeof o.tag === 'string') { var c = q(el, '.chip'); if (c) { c.textContent = o.tag.trim().slice(0, 30); c.hidden = !o.tag.trim(); } }
+    }
+    if (FICHE.some(function (k) { return o[k] !== undefined; }) || Array.isArray(o.photos)) {
+      var f = readFiche(el), n = {};
+      FICHE.forEach(function (k) { var v = o[k] !== undefined ? o[k] : f[k]; if (typeof v === 'string' && v.trim()) n[k] = v.slice(0, 6000); });
+      var ph2 = Array.isArray(o.photos) ? o.photos : f.photos; n.photos = (Array.isArray(ph2) ? ph2 : []).filter(okPh).slice(0, 30);
+      el.setAttribute('data-fiche', JSON.stringify(n));
+    }
   }
   function writeItem(el, def, o) {
     Object.keys(def.f).forEach(function (k) { if (o[k] !== undefined) setTxt(q(el, def.f[k]), String(o[k])); });
@@ -79,6 +120,7 @@
       if (box) { box.textContent = ''; o.meta.split('·').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 6).forEach(function (s) { var sp = el.ownerDocument.createElement('span'); sp.textContent = s; box.appendChild(sp); }); }
     }
     if (def.img && o.img) setImg(q(el, def.img) || (el.classList.contains('photo') ? el : null), o.img);
+    if (el.classList.contains('prop') || el.classList.contains('car')) writeFiche(el, o);
   }
   // Ajuste le nombre d'éléments d'une liste (copie du dernier / suppression)
   function fit(nodes, n, max) {
@@ -87,8 +129,8 @@
     var parent = nodes[0].parentNode, last = nodes[nodes.length - 1];
     while (nodes.length < n) { var c = last.cloneNode(true); parent.insertBefore(c, last.nextSibling); last = c; nodes.push(c); }
     while (nodes.length > Math.max(n, 1)) nodes.pop().remove();
-    nodes.forEach(function (e) { e.hidden = false; });
-    if (n === 0) nodes[0].hidden = true; // garde un modèle caché pour pouvoir en rajouter
+    nodes.forEach(function (e) { e.hidden = false; e.removeAttribute('data-cs-empty'); });
+    if (n === 0) { nodes[0].hidden = true; nodes[0].setAttribute('data-cs-empty', ''); } // garde un modèle caché pour pouvoir en rajouter
     return n === 0 ? [] : nodes;
   }
 
@@ -205,6 +247,8 @@
     var w = doc.createTreeWalker(doc.body, 4), n;
     while ((n = w.nextNode())) if (!skip(n.parentElement)) add(frOf(n));
     ATTRS.forEach(function (a) { qa(doc, '[' + a + ']').forEach(function (el) { if (!skip(el)) add(el.__csfrA && el.__csfrA[a] != null ? el.__csfrA[a] : el.getAttribute(a)); }); });
+    qa(doc, '[data-fiche]').forEach(function (el) { if (el.hasAttribute('data-cs-empty')) return; var f = readFiche(el);
+      String(f.desc || '').split(/\n+/).forEach(add); String(f.feats || '').split(/\n|·/).forEach(add); add(f.legal); add(f.energy); });
     add(doc.__csTitle || doc.title);
     var md = q(doc, 'meta[name="description"]'); if (md) add(md.__csfr || md.content);
     return out;
@@ -305,7 +349,8 @@
       if (!c) return;
       var bi = c.en && c.en.on && c.en.dict && typeof c.en.dict === 'object';
       EN = bi && wantLang() === 'en';
-      var go = function () { apply(document, c); siteIcon(document, c); if (bi) { langSwitch(document, EN ? 'en' : 'fr'); if (EN) translate(document, c.en.dict); }
+      var go = function () { if (!window.CSFiche && q(document, '.props > .prop, .vgrid > .car')) { var sf = document.createElement('script'); sf.src = 'https://mycreativesite.fr/assets/cs-fiche.js?v=1'; document.head.appendChild(sf); }
+        apply(document, c); siteIcon(document, c); if (bi) { langSwitch(document, EN ? 'en' : 'fr'); if (EN) translate(document, c.en.dict); }
         if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });

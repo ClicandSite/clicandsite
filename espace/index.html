@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=8"></script>
+<script src="/assets/cs-edit.js?v=9"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -76,6 +76,18 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .photo .th{width:84px;height:60px;border-radius:8px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
 .photo .btn{font-size:.82rem;padding:6px 10px}
 .grp{font-weight:700;font-size:.9rem;margin-top:4px}
+/* 08/11/2026 : fiche détaillée des biens et véhicules */
+.fiche{border:1px dashed var(--line);border-radius:10px;background:var(--paper)}
+.fiche>summary{cursor:pointer;padding:10px 12px;font-weight:700;font-size:.9rem;color:var(--brand);list-style:none}
+.fiche>summary::-webkit-details-marker{display:none}
+.fiche>summary::before{content:"▸ ";}.fiche[open]>summary::before{content:"▾ ";}
+.fiche .fbody{padding:0 12px 12px;display:grid;gap:10px}
+.phs{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.phs .ph{position:relative;aspect-ratio:4/3;border-radius:8px;background:var(--soft) center/cover no-repeat;border:1px solid var(--line)}
+.phs .ph .x{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.7);color:#fff;font:700 13px/1 system-ui;cursor:pointer}
+.phs .ph .l{position:absolute;bottom:4px;left:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#111;font:700 13px/1 system-ui;cursor:pointer}
+.phs .add{aspect-ratio:4/3;border:1.5px dashed var(--line);border-radius:8px;background:var(--bg);font-weight:600;font-size:.8rem;color:var(--brand);cursor:pointer}
+.lvl{display:grid;grid-template-columns:110px 1fr;gap:8px}
 .preview{display:grid;grid-template-rows:auto 1fr;min-width:0;min-height:0;background:var(--bg)}
 .pv-bar{display:flex;gap:8px;align-items:center;padding:10px 14px}
 .pv-x{display:none;margin-left:auto;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 .95rem inherit;font-family:inherit;border-radius:999px;padding:8px 14px;cursor:pointer}
@@ -311,7 +323,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=22#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=23#'+styleName;
   });
 }
 
@@ -384,6 +396,77 @@ function listEditor(body, arr, render, makeNew, addLabel){
     if(makeNew){ const a=document.createElement('button'); a.type='button'; a.className='btn'; a.textContent='+ '+addLabel; a.addEventListener('click',()=>{ arr.push(makeNew()); refresh(); markDirty(); draw(); }); box.appendChild(a); } };
   draw();
 }
+
+/* 08/11/2026 : biens (immobilier) et véhicules (garage) avec fiche détaillée : photos, description, caractéristiques, DPE / GES, mentions */
+function selField(label, value, opts, onChange){
+  const w=document.createElement('div'); const id='f'+Math.random().toString(36).slice(2,9);
+  const l=document.createElement('label'); l.htmlFor=id; l.textContent=label;
+  const se=document.createElement('select'); se.id=id;
+  opts.forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; se.appendChild(o); });
+  if(value!=null&&!opts.some(o=>o[0]===value)&&value!==''){ const o=document.createElement('option'); o.value=value; o.textContent=value; se.appendChild(o); }
+  se.value=value==null?'':value;
+  se.addEventListener('change',()=>{ onChange(se.value); refresh(); markDirty(); });
+  w.append(l,se); return w;
+}
+function photosField(label, arr, max){
+  const w=document.createElement('div'); w.style.display='grid'; w.style.gap='6px';
+  const l=document.createElement('label'); l.textContent=label; l.style.margin='0';
+  const g=document.createElement('div'); g.className='phs';
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.multiple=true; inp.hidden=true;
+  const src=u=>{ if(/^cls:/.test(u)){ const d=doc(); if(!d) return ''; const t=d.createElement('div'); t.className='pimg '+u.slice(4); d.body.appendChild(t); const r=currentImg(t); t.remove(); return r; } return u; };
+  const draw=()=>{ g.textContent='';
+    arr.forEach((u,i)=>{ const t=document.createElement('div'); t.className='ph'; const im=src(u); if(im) t.style.backgroundImage='url("'+im.replace(/"/g,'%22')+'")';
+      const x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕'; x.title='Retirer la photo'; x.onclick=()=>{ arr.splice(i,1); draw(); refresh(); markDirty(); };
+      t.appendChild(x);
+      if(i>0){ const m=document.createElement('button'); m.type='button'; m.className='l'; m.textContent='‹'; m.title='Avancer la photo'; m.onclick=()=>{ [arr[i-1],arr[i]]=[arr[i],arr[i-1]]; draw(); refresh(); markDirty(); }; t.appendChild(m); }
+      g.appendChild(t); });
+    if(arr.length<max){ const a=document.createElement('button'); a.type='button'; a.className='add'; a.textContent='+ Ajouter des photos'; a.onclick=()=>inp.click(); g.appendChild(a); }
+  };
+  inp.addEventListener('change',async()=>{ const files=[...inp.files].slice(0,max-arr.length); inp.value=''; if(!files.length) return;
+    let n=0; toast('Envoi de '+files.length+' photo'+(files.length>1?'s':'')+'…');
+    for(const f of files){ if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum) : '+f.name); continue; }
+      try{ arr.push(await uploadPhoto(f)); n++; draw(); } catch(e){ toast('Envoi impossible : '+(e.message||e)); } }
+    if(n){ refresh(); markDirty(); toast(n+' photo'+(n>1?'s ajoutées':' ajoutée')); }
+  });
+  w.append(l,g,inp); draw(); return w;
+}
+function itemsFiche(d,c){
+  const immo=site.trade==='immobilier';
+  const b=section(ITEMS[site.trade],false,immo?'Chaque bien a sa fiche complète : photos, description, caractéristiques, DPE et GES. Vos visiteurs l\'ouvrent en cliquant sur l\'annonce.':'Chaque véhicule a sa fiche complète : photos, description et équipements. Vos visiteurs l\'ouvrent en cliquant sur l\'annonce.');
+  const LET=[['','Non renseigné'],['A','A'],['B','B'],['C','C'],['D','D'],['E','E'],['F','F'],['G','G']];
+  const FUEL=[['Essence','Essence'],['Diesel','Diesel'],['Hybride','Hybride'],['Hybride rechargeable','Hybride rechargeable'],['Électrique','Électrique'],['GPL','GPL']];
+  const TYPES=[['appartement','Appartement'],['maison','Maison, villa'],['terrain','Terrain'],['local','Local, bureau'],['parking','Parking, box'],['autre','Autre']];
+  listEditor(b,c.items,(it,o,i)=>{
+    if(!Array.isArray(o.photos)) o.photos=[];
+    const ph=(k,t)=>{ const f=it.querySelector(k); if(f) f.placeholder=t; };
+    it.append(field(immo?'Titre de l\'annonce':'Modèle',o.t,v=>o.t=v));
+    let r=document.createElement('div'); r.className='row';
+    if(immo){ r.append(selField('Transaction',o.tr||'vente',[['vente','À vendre'],['location','À louer']],v=>o.tr=v),selField('Type de bien',o.type||'appartement',TYPES,v=>o.type=v)); it.appendChild(r);
+      r=document.createElement('div'); r.className='row'; r.append(field('Ville (pour la recherche)',o.city,v=>o.city=v),field('Nombre de pièces',o.rooms,v=>o.rooms=v)); it.appendChild(r);
+      r.querySelectorAll('input')[1].inputMode='numeric'; }
+    else { r.append(field('Marque (pour la recherche)',o.mk,v=>o.mk=v),selField('Énergie',o.fuel||'Essence',FUEL,v=>o.fuel=v)); it.appendChild(r); }
+    r=document.createElement('div'); r.className='row'; r.append(field('Prix',o.p,v=>o.p=v),field('Étiquette sur la photo (facultatif)',o.tag,v=>o.tag=v)); it.appendChild(r);
+    r.querySelectorAll('input')[1].placeholder=immo?'Exclusivité, Nouveau, Vendu…':'Garantie 12 mois, Vendu…';
+    const mi=field('Infos courtes sur l\'annonce, séparées par « · »',o.meta,v=>o.meta=v); mi.querySelector('input').placeholder=immo?'Cannes, Croisette · 3 pièces · 78 m² · Parking':'2021 · 42 000 km · Essence'; it.appendChild(mi);
+    it.appendChild(photoField('Photo principale',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u));
+
+    const fd=document.createElement('details'); fd.className='fiche'; const sm=document.createElement('summary');
+    sm.textContent=immo?'Fiche du bien : photos, description, DPE et GES':'Fiche du véhicule : photos, description, équipements'; const fb=document.createElement('div'); fb.className='fbody'; fd.append(sm,fb); it.appendChild(fd);
+    fb.appendChild(photosField('Autres photos (20 maximum, la photo principale s\'affiche en premier)',o.photos,20));
+    const de=field('Description',o.desc,v=>o.desc=v,true); de.querySelector('textarea').rows=7; de.querySelector('textarea').placeholder=immo?'Présentez le bien : situation, pièces, état, atouts… Un retour à la ligne crée un nouveau paragraphe.':'Présentez le véhicule : historique, entretien, état…'; fb.appendChild(de);
+    const fe=field(immo?'Caractéristiques (une par ligne)':'Équipements (un par ligne)',o.feats,v=>o.feats=v,true); fe.querySelector('textarea').rows=5; fe.querySelector('textarea').placeholder=immo?'3 chambres\nTerrasse de 15 m²\nParking en sous-sol\nAscenseur':'GPS\nCaméra de recul\nCarPlay'; fb.appendChild(fe);
+    fb.appendChild(field('Référence (facultatif)',o.ref,v=>o.ref=v));
+    if(immo){
+      const h=document.createElement('div'); h.className='grp'; h.textContent='Diagnostic énergétique (obligatoire dans les annonces)'; fb.appendChild(h);
+      let l=document.createElement('div'); l.className='lvl'; l.append(selField('DPE',o.dpe||'',LET,v=>o.dpe=v),field('Consommation (kWh/m²/an)',o.dpe_v,v=>o.dpe_v=v)); fb.appendChild(l);
+      l=document.createElement('div'); l.className='lvl'; l.append(selField('GES',o.ges||'',LET,v=>o.ges=v),field('Émissions (kg CO₂/m²/an)',o.ges_v,v=>o.ges_v=v)); fb.appendChild(l);
+      const en=field('Dépenses annuelles d\'énergie estimées',o.energy,v=>o.energy=v); en.querySelector('input').placeholder='entre 1 050 € et 1 470 € par an (prix de l\'énergie indexés sur l\'année 2023).'; fb.appendChild(en);
+      const lg=field('Informations légales',o.legal,v=>o.legal=v,true); lg.querySelector('textarea').rows=4;
+      lg.querySelector('textarea').placeholder=(o.tr==='location')?'Loyer charges comprises, provision sur charges, dépôt de garantie, honoraires locataire (dont état des lieux).':'Honoraires (à la charge du vendeur ou de l\'acquéreur), copropriété : nombre de lots, charges annuelles, procédure en cours.'; fb.appendChild(lg);
+    } else { const lg=field('Bon à savoir (garantie, reprise, financement…)',o.legal,v=>o.legal=v,true); fb.appendChild(lg); }
+  },()=>immo?{t:'Nouveau bien',tr:'vente',type:'appartement',city:'',rooms:'',p:'',tag:'',meta:'',img:null,photos:[],desc:'',feats:'',ref:'',dpe:'',dpe_v:'',ges:'',ges_v:'',energy:'',legal:''}
+           :{t:'Nouveau véhicule',mk:'',fuel:'Essence',p:'',tag:'',meta:'',img:null,photos:[],desc:'',feats:'',ref:'',legal:''},immo?'Ajouter un bien':'Ajouter un véhicule');
+}
 function buildForms(){
   const d=doc(); const P=$('panel'); P.textContent=''; const c=state; c.text=c.text||{}; c.photos=c.photos||{};
   const T=(k,label,multi)=>{ if(c.text[k]===undefined) return null; return field(label,c.text[k],v=>c.text[k]=v,multi); };
@@ -413,7 +496,8 @@ function buildForms(){
       listEditor(b,g,(it,o)=>{ const r=document.createElement('div'); r.className='row3'; r.append(field('Intitulé',o.t,v=>o.t=v),field('Détail',o.d,v=>o.d=v),field('Prix',o.p,v=>o.p=v)); it.appendChild(r); },
         ()=>({t:'Nouveau',d:'',p:''}),'Ajouter une ligne'); }); }
 
-  if(c.items&&c.items.length){ b=section(ITEMS[site.trade]||'Éléments',site.trade==='boutique',site.trade==='boutique'?'Infos séparées par « · ». La première sert de rayon pour le filtre (exemple : Déco · H. 18 cm · Pièce unique). Prix en chiffres (24,90 €) pour que le produit soit achetable ; « Sur devis » le rend visible mais pas achetable.':'Les infos sont séparées par « · » (exemple : 2021 · 42 000 km · Essence).');
+  if(c.items&&c.items.length&&(site.trade==='immobilier'||site.trade==='garage')) itemsFiche(d,c);
+  else if(c.items&&c.items.length){ b=section(ITEMS[site.trade]||'Éléments',site.trade==='boutique',site.trade==='boutique'?'Infos séparées par « · ». La première sert de rayon pour le filtre (exemple : Déco · H. 18 cm · Pièce unique). Prix en chiffres (24,90 €) pour que le produit soit achetable ; « Sur devis » le rend visible mais pas achetable.':'Les infos sont séparées par « · » (exemple : 2021 · 42 000 km · Essence).');
     listEditor(b,c.items,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Infos',o.meta,v=>o.meta=v),field('Prix',o.p,v=>o.p=v),
       photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
       ()=>({t:'Nouveau',meta:'',p:'',img:null}),'Ajouter'); }

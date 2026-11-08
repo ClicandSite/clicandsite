@@ -35,9 +35,9 @@ jobs:
       - name: Activer l'hébergement sur le domaine
         run: |
           R="ClicandSite/site-$SLUG"
-          gh api -X POST "repos/$R/pages" -f build_type=workflow >/dev/null 2>&1 || gh api -X PUT "repos/$R/pages" -f build_type=workflow >/dev/null
-          gh api -X PUT "repos/$R/pages" -f cname="$DOMAIN" >/dev/null || true
-          gh workflow run site.yml -R "$R"
+          gh api -X POST "repos/$R/pages" -f build_type=workflow >/dev/null 2>&1 || gh api -X PUT "repos/$R/pages" -f build_type=workflow >/dev/null || { echo "::error::Activation de GitHub Pages refusée : droit « Pages » (lecture et écriture) manquant sur le jeton SITES_TOKEN"; exit 1; }
+          gh api -X PUT "repos/$R/pages" -f cname="$DOMAIN" >/dev/null || echo "::warning::Domaine pas encore enregistré dans Pages (à refaire quand le DNS sera en place)"
+          gh workflow run site.yml -R "$R" || { echo "::error::Lancement de la mise à jour refusé : droit « Actions » (lecture et écriture) manquant sur le jeton SITES_TOKEN"; exit 1; }
           echo "Site en cours de publication. DNS à régler chez le registrar de $DOMAIN :"
           echo "  A     @    185.199.108.153 / 185.199.109.153 / 185.199.110.153 / 185.199.111.153"
           echo "  CNAME www  clicandsite.github.io"

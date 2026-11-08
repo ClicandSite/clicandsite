@@ -71,7 +71,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
     var plan=String(s.plan||'').toLowerCase(), pay=document.getElementById('pay');
     var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
-    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=25#'+encodeURIComponent(s.style||'moderne');
+    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=26#'+encodeURIComponent(s.style||'moderne');
     var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';
     f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, c); if(lang==='en'&&en) CSEdit.translate(f.contentDocument, en); }catch(e){} };
     // 07/11/2026 : version anglaise (Premium, Boutique, option bilingue)

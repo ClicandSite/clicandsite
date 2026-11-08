@@ -565,8 +565,104 @@ body>header.top{order:-19}
 :root[data-style="pop"] .hero h1{background:#FFC93C}:root[data-style="pop"] .stats{background:#FFC93C;box-shadow:0 0 0 100vmax #FFC93C}@media (min-width:861px){:root[data-style="pop"][data-l="audacieux"] .photo.hero.pimg{background:var(--img) right center/auto 100% no-repeat,#FF3D7F}}
 :root[data-style="ocean"] .hero h1{background:#A8E6DC}:root[data-style="ocean"] .stats{background:#A8E6DC;box-shadow:0 0 0 100vmax #A8E6DC}@media (min-width:861px){:root[data-style="ocean"] .photo.hero.pimg{background:var(--img) right center/auto 100% no-repeat,#0E8C7F}}
 :root[data-style="soleil"] .hero h1{background:#FFBA08}:root[data-style="soleil"] .stats{background:#FFBA08;box-shadow:0 0 0 100vmax #FFBA08}@media (min-width:861px){:root[data-style="soleil"] .photo.hero.pimg{background:var(--img) right center/auto 100% no-repeat,#E85D04}}
+/* 08/11/2026 · Variantes de composants : chaque style combine sa mise en page (data-l), ses photos (data-p),
+   son en-tête (data-hd), ses cartes (data-cd), ses avis (data-rv), ses chiffres (data-st) et ses titres (data-hs). */
+/* En-tête b : logo centré, menu dessous (ordinateur) */
+@media (min-width:861px){
+  :root[data-hd="b"] .top .wrap{flex-direction:column;gap:10px;padding-block:20px 14px}
+  :root[data-hd="b"] .logo{letter-spacing:.2em;font-size:1.3rem}
+  :root[data-hd="b"] .nav{gap:30px}
+}
+/* En-tête c : verre dépoli, sans trait */
+:root[data-hd="c"] header.top{background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom-color:transparent;box-shadow:0 1px 0 color-mix(in srgb,var(--ink) 8%,transparent)}
+:root[data-hd="c"] .logo::before{content:"";display:inline-block;width:.5em;height:.5em;border-radius:50%;background:var(--accent);margin-right:.5em;vertical-align:.08em}
+/* En-tête d : bandeau aux couleurs du pied de page */
+:root[data-hd="d"] header.top{background:var(--cta-bg);border-bottom:0}
+:root[data-hd="d"] header.top .logo{color:var(--cta-fg)}
+:root[data-hd="d"] header.top .nav a.l{color:var(--cta-sub)}
+:root[data-hd="d"] header.top .btn{background:var(--cta-fg);border-color:var(--cta-fg);color:var(--cta-bg);box-shadow:none}
+:root[data-hd="d"] body::before{background:var(--cta-bg)}
+
+/* Cartes b : liste horizontale (ordinateur) */
+@media (min-width:861px){
+  :root[data-cd="b"] .cards{grid-template-columns:1fr;gap:0}
+  :root[data-cd="b"] .cards .card:nth-child(n){grid-template-columns:240px 1fr auto;grid-template-areas:"ph t pr" "ph d pr";column-gap:28px;row-gap:6px;align-items:center;padding-block:22px;border-top:var(--bw) solid var(--line)}
+  :root[data-cd="b"] .card:last-child{border-bottom:var(--bw) solid var(--line)}
+  :root[data-cd="b"] .cards .card:nth-child(n)>.photo{grid-area:ph;aspect-ratio:4/3}
+  :root[data-cd="b"] .cards .card:nth-child(n)>h3{grid-area:t;align-self:end;font-size:1.4rem}
+  :root[data-cd="b"] .cards .card:nth-child(n)>p{grid-area:d;align-self:start}
+  :root[data-cd="b"] .cards .card:nth-child(n)>.price{grid-area:pr;font-size:1.05rem}
+}
+/* Cartes c : tuiles sur fond, prix en pastille */
+:root[data-cd="c"] .card{background:var(--soft);padding:12px 12px 20px;border-radius:calc(var(--r) + 6px)}
+:root[data-cd="c"] .card>:not(.photo){padding-inline:8px}
+:root[data-cd="c"] .card .price{justify-self:start;background:var(--accent);color:var(--btn-fg);padding:5px 12px;border-radius:999px;margin-left:8px}
+/* Cartes d : cadre avec filet de couleur en haut */
+:root[data-cd="d"] .card{border:var(--bw) solid var(--line);border-top:4px solid var(--accent);background:var(--bg);padding-bottom:20px;border-radius:var(--r);overflow:hidden}
+:root[data-cd="d"] .card>:not(.photo){padding-inline:20px}
+:root[data-cd="d"] .card .photo{border-radius:0}
+/* Cartes e : numérotées, photo panoramique */
+:root[data-cd="e"] .cards{counter-reset:csc}
+:root[data-cd="e"] .card .photo{aspect-ratio:16/10}
+:root[data-cd="e"] .card h3::before{counter-increment:csc;content:"0" counter(csc);display:block;font:600 .78rem var(--body);letter-spacing:.18em;color:var(--accent);margin-bottom:8px}
+:root[data-cd="e"] .card .price{border-top:var(--bw) solid var(--line);padding-top:10px}
+
+/* Avis b : grandes citations, filet à gauche */
+:root[data-rv="b"] .rev{background:none;border-left:3px solid var(--accent);border-radius:0;padding:4px 0 4px 22px}
+:root[data-rv="b"] .rev p{font-family:var(--display);font-size:1.18rem;line-height:1.45}
+/* Avis c : guillemet décoratif, carte à bord fin */
+:root[data-rv="c"] .rev{position:relative;padding-top:58px;background:var(--bg);border:var(--bw) solid var(--line)}
+:root[data-rv="c"] .rev::before{content:"\201C";position:absolute;top:8px;left:20px;font:700 4rem/1 var(--display);color:var(--accent);opacity:.55}
+/* Avis d : bande sombre pleine largeur */
+:root[data-rv="d"] #avis{background:var(--cta-bg);color:var(--cta-fg);padding-top:72px!important}
+:root[data-rv="d"] #avis h2{color:var(--cta-fg)}
+:root[data-rv="d"] #avis .head p,:root[data-rv="d"] #avis .who{color:var(--cta-sub)}
+:root[data-rv="d"] #avis .rev{background:color-mix(in srgb,var(--cta-fg) 7%,transparent);border:1px solid color-mix(in srgb,var(--cta-fg) 14%,transparent);color:var(--cta-fg)}
+:root[data-rv="d"] #avis .rev p{color:var(--cta-fg)}
+@media (max-width:860px){:root[data-rv="d"] #avis{padding-top:52px!important}}
+
+/* Chiffres b : bandeau encadré avec séparateurs */
+:root[data-st="b"] .stats{gap:0;border:var(--bw) solid var(--line);border-radius:var(--r);padding:0;margin-top:44px}
+:root[data-st="b"] .stat{padding:22px 16px;text-align:center;border-left:var(--bw) solid var(--line)}
+:root[data-st="b"] .stat:first-child{border-left:0}
+@media (max-width:860px){:root[data-st="b"] .stat:nth-child(3){border-left:0}:root[data-st="b"] .stat:nth-child(n+3){border-top:var(--bw) solid var(--line)}}
+/* Chiffres c : pastilles */
+:root[data-st="c"] .stats{gap:12px}
+:root[data-st="c"] .stat{background:var(--soft);border-radius:var(--r);padding:20px 22px}
+/* Chiffres d : très grands, trait au-dessus */
+:root[data-st="d"] .stat{border-top:2px solid var(--ink);padding-top:14px}
+:root[data-st="d"] .stat b{font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.05;color:var(--ink)}
+
+/* Titres b : centrés avec petit trait */
+:root[data-hs="b"] .head{flex-direction:column;align-items:center;text-align:center}
+:root[data-hs="b"] .head h2::after{content:"";display:block;width:48px;height:2px;background:var(--accent);margin:14px auto 0}
+/* Titres c : très grands, trait dessous */
+:root[data-hs="c"] .head{border-bottom:var(--bw) solid var(--line);padding-bottom:18px}
+:root[data-hs="c"] .head h2{font-size:clamp(2rem,5vw,3.2rem);line-height:1.05}
+/* Titres d : trait de couleur devant */
+:root[data-hs="d"] .head h2::before{content:"";display:inline-block;width:30px;height:3px;background:var(--accent);vertical-align:middle;margin-right:14px}
+
+/* 21 · SIGNATURE (formules Premium et Boutique) : l'univers du site Elite Prestige Services, vert profond et or */
+:root[data-style="signature"]{
+  --bg:#0F1A16; --soft:#16241F; --ink:#EDE6D6; --muted:#B4BDB6; --line:#2A3D36; --btn:#C9AD73; --btn-fg:#1A1408; --accent:#C9AD73;
+  --hero:radial-gradient(90% 70% at 50% 35%,#1d2e28,#0f1a16 60%,#0b1411); --hero-fg:#F3EDE2; --hero-sub:#C9C2B2;
+  --display:"Playfair Display", Georgia, serif; --body:"Manrope", system-ui, sans-serif;
+  --hw:600; --tt:none; --ls:0; --r:20px; --rb:12px; --bw:1px; --align:center; --shadow:none;
+  --cta-bg:#16241F; --cta-fg:#EDE6D6; --cta-sub:#B4BDB6; color-scheme:dark;
+}
+:root[data-style="signature"] .btn{letter-spacing:0;text-transform:none;font-size:.92rem;font-weight:700}
+:root[data-style="signature"] .logo{letter-spacing:.06em;font-weight:600}
+:root[data-style="signature"] .card,:root[data-style="signature"] .rev{border:1px solid var(--line)}
+:root[data-style="signature"] .rev{background:var(--soft)}
+:root[data-style="signature"] .rev .s{color:var(--accent)}
+:root[data-style="signature"] .cta{border:1px solid var(--line);border-radius:24px;margin-inline:max(16px,calc((100vw - 1160px)/2))}
+:root[data-style="signature"] .photo.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,20,17,.15),rgba(11,20,17,.55) 70%,#0F1A16);z-index:0;pointer-events:none}
+:root[data-style="signature"] .photo.hero .wrap{position:relative;z-index:1}
+:root[data-style="signature"] .kicker{color:var(--accent)}
+:root[data-style="signature"] .stats .stat b{color:var(--accent);font-family:var(--display)}
+:root[data-style="signature"] .head h2{font-size:clamp(1.9rem,4.4vw,2.6rem)}
 </style>
-<script>(function(){var M={"moderne":["moderne","moderne"],"luxe":["luxe","luxe"],"riviera":["riviera","riviera"],"chaleureux":["chaleureux","chaleureux"],"audacieux":["audacieux","audacieux"],"minimal":["chaleureux","moderne"],"nuit":["moderne","luxe"],"provence":["luxe","chaleureux"],"ocean":["audacieux","riviera"],"pop":["riviera","audacieux"],"corporate":["moderne","riviera"],"retro":["chaleureux","luxe"],"zen":["luxe","riviera"],"neon":["moderne","audacieux"],"poudre":["riviera","moderne"],"terracotta":["moderne","chaleureux"],"graphite":["luxe","moderne"],"foret":["chaleureux","riviera"],"soleil":["audacieux","chaleureux"],"marine":["riviera","luxe"]},R=document.documentElement;function s(){var k=R.getAttribute("data-style")||"moderne",m=M[k]||["moderne","moderne"];if(R.getAttribute("data-l")!==m[0])R.setAttribute("data-l",m[0]);if(R.getAttribute("data-p")!==m[1])R.setAttribute("data-p",m[1]);}new MutationObserver(s).observe(R,{attributes:true,attributeFilter:["data-style"]});s();})();</script>
+<script>(function(){var M={"moderne":["moderne","moderne","a","a","a","a","a"],"luxe":["luxe","luxe","b","a","b","a","b"],"riviera":["riviera","riviera","c","c","a","c","a"],"chaleureux":["chaleureux","chaleureux","a","a","c","a","d"],"audacieux":["audacieux","audacieux","d","d","a","a","c"],"minimal":["chaleureux","moderne","b","b","b","d","c"],"nuit":["moderne","luxe","c","e","d","b","b"],"provence":["luxe","chaleureux","b","c","c","a","b"],"ocean":["audacieux","riviera","c","c","c","a","b"],"pop":["riviera","audacieux","d","c","c","d","a"],"corporate":["moderne","riviera","d","d","c","c","d"],"retro":["chaleureux","luxe","d","d","c","c","b"],"zen":["luxe","riviera","c","b","b","a","d"],"neon":["moderne","audacieux","b","c","b","d","c"],"poudre":["riviera","moderne","c","c","b","c","b"],"terracotta":["moderne","chaleureux","c","b","c","a","d"],"graphite":["luxe","moderne","d","e","d","a","c"],"foret":["chaleureux","riviera","c","e","d","b","d"],"soleil":["audacieux","chaleureux","b","e","b","a","b"],"marine":["riviera","luxe","b","d","d","b","d"],"signature":["luxe","luxe","c","c","c","b","a"]},A=["data-l","data-p","data-hd","data-cd","data-rv","data-st","data-hs"],R=document.documentElement;function s(){var k=R.getAttribute("data-style")||"moderne",m=M[k]||M.moderne;for(var i=0;i<A.length;i++)if(R.getAttribute(A[i])!==m[i])R.setAttribute(A[i],m[i]);}new MutationObserver(s).observe(R,{attributes:true,attributeFilter:["data-style"]});s();})();</script>
 <div class="picker" role="group" aria-label="Choisir un style">
   <div class="wrap">
     <span class="lbl">Style</span>
@@ -590,6 +686,7 @@ body>header.top{order:-19}
     <button type="button" data-s="foret">18 · Forêt</button>
     <button type="button" data-s="soleil">19 · Soleil</button>
     <button type="button" data-s="marine">20 · Marine chic</button>
+    <button type="button" data-s="signature">21 · Signature (Premium)</button>
   </div>
 </div>
 
@@ -753,7 +850,7 @@ document.querySelectorAll('.seg button').forEach(function(b){
 document.getElementById('search').addEventListener('submit',function(e){e.preventDefault();});
 document.getElementById('estform').addEventListener('submit',function(e){e.preventDefault();document.getElementById('ok2').hidden=false;});
 filter();
-var STYLES=["moderne", "luxe", "riviera", "chaleureux", "audacieux", "minimal", "nuit", "provence", "ocean", "pop", "corporate", "retro", "zen", "neon", "poudre", "terracotta", "graphite", "foret", "soleil", "marine"];
+var STYLES=["moderne", "luxe", "riviera", "chaleureux", "audacieux", "minimal", "nuit", "provence", "ocean", "pop", "corporate", "retro", "zen", "neon", "poudre", "terracotta", "graphite", "foret", "soleil", "marine", "signature"];
 function setStyle(s){
   if(STYLES.indexOf(s)<0) s='moderne';
   document.documentElement.setAttribute('data-style',s);

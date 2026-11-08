@@ -776,7 +776,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
 </footer>
 
 <script>
-var IMG={"d-garage-audacieux": "/img/g/d-garage-audacieux.jpg", "d-immobilier-riviera": "/img/g/d-immobilier-riviera.jpg", "d-restaurant-chaleureux": "/img/g/d-restaurant-chaleureux.jpg", "d-vtc-luxe": "/img/g/d-vtc-luxe.jpg", "d-vtc-moderne": "/img/g/d-vtc-moderne.jpg", "m-vtc-moderne": "/img/g/m-vtc-moderne.jpg", "d-batiment-moderne": "/img/g/d-batiment-moderne.jpg", "d-beaute-luxe": "/img/g/d-beaute-luxe.jpg", "d-bienetre-chaleureux": "/img/g/d-bienetre-chaleureux.jpg", "d-boulangerie-chaleureux": "/img/g/d-boulangerie-chaleureux.jpg", "d-depannage-audacieux": "/img/g/d-depannage-audacieux.jpg", "d-boutique-moderne": "/img/g/d-boutique-moderne.jpg"};
+var IMG={"d-garage-audacieux": "/img/g/d-garage-audacieux.jpg?v=2", "d-immobilier-riviera": "/img/g/d-immobilier-riviera.jpg?v=2", "d-restaurant-chaleureux": "/img/g/d-restaurant-chaleureux.jpg?v=2", "d-vtc-moderne": "/img/g/d-vtc-moderne.jpg", "m-vtc-moderne": "/img/g/m-vtc-moderne.jpg", "d-vtc-signature": "/img/g/d-vtc-signature.jpg?v=2", "d-batiment-corporate": "/img/g/d-batiment-corporate.jpg?v=2", "d-beaute-poudre": "/img/g/d-beaute-poudre.jpg?v=2", "d-bienetre-zen": "/img/g/d-bienetre-zen.jpg?v=2", "d-boulangerie-terracotta": "/img/g/d-boulangerie-terracotta.jpg?v=2", "d-depannage-soleil": "/img/g/d-depannage-soleil.jpg?v=2", "d-boutique-minimal": "/img/g/d-boutique-minimal.jpg?v=2"};
 var FILES={vtc:'modeles/vtc.html?v=29',restaurant:'modeles/restaurant.html?v=29',garage:'modeles/garage.html?v=29',immobilier:'modeles/immobilier.html?v=29',batiment:'modeles/batiment.html?v=29',beaute:'modeles/beaute.html?v=29',bienetre:'modeles/bienetre.html?v=29',boulangerie:'modeles/boulangerie.html?v=29',depannage:'modeles/depannage.html?v=29',boutique:'modeles/boutique.html?v=29'};
 var URLS={vtc:'azur-prestige.fr',restaurant:'chez-marius.fr',garage:'garage-du-littoral.fr',immobilier:'maisons-esterel.fr',batiment:'azur-renovation.fr',beaute:'maison-lila.fr',bienetre:'studio-respire.fr',boulangerie:'maison-fournier.fr',depannage:'azur-depannage.fr',boutique:'atelier-solene.fr'};
 var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage et concession',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile',boutique:'Boutique en ligne'};
@@ -834,7 +834,7 @@ var ec2=document.getElementById('ex-choose2'); if(ec2) ec2.addEventListener('cli
 window.addEventListener('resize',function(){ show(); });
 (function(){
   var g=document.getElementById('grid'), html='';
-  var PICK={vtc:'luxe',restaurant:'chaleureux',garage:'audacieux',immobilier:'riviera',batiment:'moderne',beaute:'luxe',bienetre:'chaleureux',boulangerie:'chaleureux',depannage:'audacieux',boutique:'moderne'};
+  var PICK={'vtc':'signature','restaurant':'chaleureux','garage':'audacieux','immobilier':'riviera','batiment':'corporate','beaute':'poudre','bienetre':'zen','boulangerie':'terracotta','depannage':'soleil','boutique':'minimal'};
   html+='<div class="gcards">';
   Object.keys(NAMES).forEach(function(k){
     var st=PICK[k]||'moderne';
@@ -842,7 +842,7 @@ window.addEventListener('resize',function(){ show(); });
   });
   html+='</div>';
   g.innerHTML=html;
-  g.addEventListener('click',function(e){var c=e.target.closest('.gcard'); if(!c) return; cur.k=c.dataset.k; cur.s=c.dataset.s; show(); document.getElementById('modeles').scrollIntoView({behavior:'smooth'});});
+  g.addEventListener('click',function(e){var c=e.target.closest('.gcard'); if(!c) return; cur.k=c.dataset.k; cur.s=c.dataset.s; if(/^signature/.test(cur.s)&&FR[cur.f]<3) cur.f='premium'; show(); document.getElementById('modeles').scrollIntoView({behavior:'smooth'});});
 })();
 document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){document.getElementById('o-plan').value=a.dataset.plan;});});
 /* 07/11/2026 : l'accueil fait défiler les 10 métiers (demande d'Anthony : ne pas donner l'impression d'un site réservé aux VTC). */

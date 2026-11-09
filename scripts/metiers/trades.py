@@ -39,8 +39,8 @@ T['autoecole'] = dict(
   addr="8 quai d'exemple, 06300 Nice", cta_h='Prêt à commencer ?', cta_p="Inscrivez-vous en ligne ou passez à l'agence avec une pièce d'identité.",
   phone='04 00 00 00 00', email='contact@autoecole-du-port.fr', cta_btn="Réserver une leçon", mbar=('Inscription', 'Appeler'),
   foot="Auto-école d'exemple · Agrément préfectoral affiché en agence",
-  H=['/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', 1007410, 210182, 3136673, '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg'],
-  P=[7144181, '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', 7144185, 7144176, 7144183, 3767206, 1073030, 2526127, 3584994, 3767207, 5835344, 7144184, 1073031, 5835336, 5835343, 7144177, 7144186, 7144179, 1007410],
+  H=['/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', '/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg'],
+  P=['/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', 3767206, 1073030, 2526127, '/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', 3767207, 5835344, 7144184, 1073031, 5835336, 5835343, 7144177, 7144186, 7144179, 1007410],
 )
 
 T['coach'] = dict(

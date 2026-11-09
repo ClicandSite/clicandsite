@@ -10,13 +10,14 @@
 <title>Aperçu de votre site · MyCreativeSite</title>
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap">
-<script src="/assets/cs-edit.js?v=17"></script>
+<script src="/assets/cs-edit.js?v=18"></script>
 <style>
 /* 07/11/2026 (Claude, demande d'Anthony) : aperçu provisoire du site d'un client, avant paiement.
    Le nom de domaine n'est réservé qu'après le paiement. Adresse : /apercu/?s=<identifiant du site> */
 :root{--bg:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 :root[data-theme="dark"]{--bg:#0D1020;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;grid-template-rows:auto 1fr}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);padding-top:max(10px,env(safe-area-inset-top,0px))}
@@ -77,7 +78,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       .catch(function(){ location.href=fb; }).then(function(){ setTimeout(function(){ pay.textContent=old; },3000); }); });
     if(new URLSearchParams(location.search).get('paiement')==='ok'&&!paid&&!live){ info.innerHTML='<b></b> · merci, votre paiement est en cours de validation : votre site part en ligne sous 24 h.'; info.querySelector('b').textContent=s.name; pay.hidden=true; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
-    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=29#'+encodeURIComponent(s.style||'moderne');
+    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=40#'+encodeURIComponent(s.style||'moderne');
     var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';
     f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, c); if(lang==='en'&&en) CSEdit.translate(f.contentDocument, en); }catch(e){} };
     // 07/11/2026 : version anglaise (Premium, Boutique, option bilingue)

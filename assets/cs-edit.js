@@ -19,15 +19,40 @@
     el.style.display = '';
     u = safeUrl(u); if (u) el.style.setProperty('--img', 'url("' + u.replace(/"/g, '%22') + '")');
   }
-  // 09/11/2026 (Anthony) : cadrage choisi par le pro (point central de la photo, en %)
-  function setPos(el, pos) {
+  // 09/11/2026 (Anthony) : cadrage choisi par le pro (point central de la photo, en %), un réglage ordinateur et un réglage téléphone.
+  // Marche quel que soit le style : photo sur le bloc, sur ::before / ::after, ou en bandeau sur téléphone (sans déformer l'image).
+  function okPos(v) { var m = typeof v === 'string' && v.match(/^(\d{1,3}) (\d{1,3})$/); return m ? [Math.min(100, +m[1]), Math.min(100, +m[2])] : null; }
+  function setPos(el, pos, posM) {
     if (!el) return;
-    var m = typeof pos === 'string' && pos.match(/^(\d{1,3}) (\d{1,3})$/);
-    if (!m) { el.style.backgroundPosition = ''; return; }
-    var cs = el.ownerDocument.defaultView.getComputedStyle(el);
-    if (!/cover/.test(cs.backgroundSize)) return;
-    var v = Math.min(100, +m[1]) + '% ' + Math.min(100, +m[2]) + '%', n = (cs.backgroundImage.match(/(?:url|gradient)\(/g) || [1]).length;
-    el.style.backgroundPosition = new Array(n).fill(v).join(', ');
+    var w = el.ownerDocument.defaultView; if (!w) return;
+    el.__csPos = [okPos(pos), okPos(posM)];
+    if (!w.__csPosEls) { w.__csPosEls = []; var t = null; w.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { w.__csPosEls.forEach(posFix); }, 80); }); }
+    if (w.__csPosEls.indexOf(el) < 0) w.__csPosEls.push(el);
+    posFix(el);
+  }
+  function posFix(el) {
+    var doc = el.ownerDocument, w = doc.defaultView;
+    if (!doc.getElementById('cs-pos-css')) { var st = doc.createElement('style'); st.id = 'cs-pos-css'; st.textContent = '.cs-pb::before{background-position:var(--cs-pos)!important}.cs-pa::after{background-position:var(--cs-pos)!important}'; (doc.head || doc.documentElement).appendChild(st); }
+    el.style.backgroundPosition = ''; el.style.backgroundSize = ''; el.classList.remove('cs-pb', 'cs-pa');
+    var P = el.__csPos || [], mob = w.matchMedia('(max-width:860px)').matches, p = (mob && P[1]) || P[0];
+    var cs = w.getComputedStyle(el), sz = cs.backgroundSize.split(',').pop().trim(), band = /^100% (\d+)px$/.exec(sz);
+    if (!p && !band) return;
+    p = p || [50, 50];
+    var val = p[0] + '% ' + p[1] + '%'; el.style.setProperty('--cs-pos', val);
+    var n = (cs.backgroundImage.match(/(?:url|gradient)\(/g) || [1]).length;
+    if (/url\(/.test(cs.backgroundImage)) {
+      if (/cover/.test(sz)) el.style.backgroundPosition = new Array(n).fill(val).join(', ');
+      else if (band) {
+        // bandeau en haut (téléphone) : l'image garde ses proportions et couvre le bandeau
+        var m = /url\(["']?(.*?)["']?\)\s*$/.exec(cs.getPropertyValue('--img') || '') || /url\(["']?(.*?)["']?\)/.exec(cs.backgroundImage);
+        if (m) { var im = new w.Image(); im.onload = function () {
+          var H = +band[1], W = el.clientWidth || w.innerWidth, k = Math.max(W / im.naturalWidth, H / im.naturalHeight), bw = Math.round(im.naturalWidth * k), bh = Math.round(im.naturalHeight * k);
+          el.style.backgroundSize = new Array(n).fill(bw + 'px ' + bh + 'px').join(', ');
+          el.style.backgroundPosition = new Array(n).fill(p[0] + '% ' + Math.round(-(bh - H) * p[1] / 100) + 'px').join(', ');
+        }; im.src = m[1]; }
+      }
+    }
+    ['before', 'after'].forEach(function (ps) { var c = w.getComputedStyle(el, '::' + ps); if (/url\(/.test(c.backgroundImage) && /cover/.test(c.backgroundSize)) el.classList.add(ps === 'before' ? 'cs-pb' : 'cs-pa'); });
   }
 
   // Champs simples : clé → sélecteur
@@ -231,7 +256,7 @@
     var p = c.photos || {};
     var pos = p.pos && typeof p.pos === 'object' ? p.pos : {};
     var he = q(doc, '.photo.hero'); if (p.hero) setImg(he, p.hero); else if (he) he.style.removeProperty('--img');
-    setPos(q(doc, '.photo.hero'), pos.hero);
+    setPos(q(doc, '.photo.hero'), pos.hero, pos.hero_m);
     var te = q(doc, '.team .photo'); if (p.team) setImg(te, p.team); else if (te) { te.style.removeProperty('--img'); te.style.display = ''; }
     setPos(q(doc, '.team .photo'), pos.team);
     if (Array.isArray(p.gallery)) qa(doc, '.gallery > .photo').forEach(function (e, i) { if (p.gallery[i]) setImg(e, p.gallery[i]); else { e.style.display = ''; e.style.removeProperty('--img'); } setPos(e, pos['g' + i]); });

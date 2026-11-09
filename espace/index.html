@@ -12,7 +12,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=17"></script>
+<script src="/assets/cs-edit.js?v=18"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -85,6 +85,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .mock-r{display:flex;align-items:flex-end;gap:14px}
 .mcol{display:grid;gap:5px;justify-items:center;font-size:.74rem;color:var(--muted)}
 .mf{position:relative;overflow:hidden;background:#333 center/cover no-repeat;border:3px solid #12162B;border-radius:8px;box-shadow:0 6px 16px -8px rgba(0,0,0,.4)}
+.mf{cursor:grab;touch-action:none}.mf.drag{cursor:grabbing;outline:3px solid var(--brand);outline-offset:2px}
 .mf.d{width:200px;height:112px}
 .mf.m{width:62px;height:112px;border-radius:12px;border-width:3px}
 .mf::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.5))}
@@ -343,7 +344,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=29#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=40#'+styleName;
   });
 }
 
@@ -388,9 +389,18 @@ function photoField(label, getEl, get, set, opt){
     const row=document.createElement('div'); row.className='mock-r';
     [['d','Ordinateur'],['m','Téléphone']].forEach(([k,lab])=>{ const c=document.createElement('div'); c.className='mcol';
       const f=document.createElement('div'); f.className='mf '+k; f.innerHTML='<i class="nav"></i><i class="k"></i><i class="t1"></i><i class="t2"></i><i class="bt"></i>';
-      const n=document.createElement('span'); n.textContent=lab; c.append(f,n); row.appendChild(c); mfs.push(f); });
+      const n=document.createElement('span'); n.textContent=lab; c.append(f,n); row.appendChild(c); mfs.push(f);
+      // faire glisser la photo dans le dessin pour la cadrer (ordinateur et téléphone réglés séparément)
+      let st=null;
+      f.addEventListener('pointerdown',e=>{ if(!ratio||get()==='none') return; e.preventDefault(); f.setPointerCapture(e.pointerId); const p0=(k==='m'?posM():null)||pos()||[50,50]; st={x:e.clientX,y:e.clientY,p:p0.slice()}; f.classList.add('drag'); });
+      f.addEventListener('pointermove',e=>{ if(!st) return; const fw=f.clientWidth, fh=f.clientHeight, iw=Math.max(fw,fh*ratio), ih=Math.max(fh,fw/ratio), ex=iw-fw, ey=ih-fh;
+        const nx=ex>1?Math.round(Math.max(0,Math.min(100,st.p[0]-(e.clientX-st.x)/ex*100))):st.p[0], ny=ey>1?Math.round(Math.max(0,Math.min(100,st.p[1]-(e.clientY-st.y)/ey*100))):st.p[1];
+        if(k==='m') opt.posM[1](nx+' '+ny); else opt.pos[1](nx+' '+ny); show(); refresh(); });
+      const end=()=>{ if(!st) return; st=null; f.classList.remove('drag'); markDirty(); };
+      f.addEventListener('pointerup',end); f.addEventListener('pointercancel',end); });
     mock.append(t,row); }
   let ratio=0, lastU='';
+  const posM=()=>{ const v=opt.posM?opt.posM[0]():''; const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})$/); return m?[+m[1],+m[2]]:null; };
   const show=()=>{
     const v=get(), off=v==='none', el=getEl();
     const u=off?'':(v||currentImg(el));
@@ -401,23 +411,23 @@ function photoField(label, getEl, get, set, opt){
     if(opt.pos&&ratio){ th.style.height=Math.round(132/Math.max(.6,Math.min(2.4,ratio)))+'px'; th.style.backgroundSize='100% 100%'; th.style.backgroundPosition='center'; }
     else if(el){ const r=el.getBoundingClientRect(); if(r.width&&r.height){ const k=Math.max(.35,Math.min(1.3,r.height/r.width)); th.style.height=Math.round(132*k)+'px'; } }
     const p=pos()||[50,50]; if(!(opt.pos&&ratio)) th.style.backgroundPosition=p[0]+'% '+p[1]+'%'; dot.style.left=p[0]+'%'; dot.style.top=p[1]+'%'; dot.hidden=!opt.pos||off||!u;
-    mfs.forEach(f=>{ f.style.backgroundImage=bg; f.style.backgroundPosition=p[0]+'% '+p[1]+'%'; });
+    const pm=posM()||p; mfs.forEach((f,i)=>{ const q=i?pm:p; f.style.backgroundImage=bg; f.style.backgroundPosition=q[0]+'% '+q[1]+'%'; });
     if(opt.remove==='hide'){ x.hidden=false; x.textContent=off?'Remettre la photo':'✕ Retirer'; }
     else { x.hidden=!v; x.textContent='Photo d\'origine'; }
-    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?(opt.mock?'Touchez sur la photo ce qui doit toujours rester visible (un visage, une voiture…). Le dessin en dessous montre le résultat.':'Touchez sur la photo ce qui doit rester visible.'):'');
+    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?(opt.mock?'1. Touchez sur la photo ce qui doit rester visible (un visage, une voiture…). 2. Si besoin, faites glisser la photo dans chaque dessin pour l\'ajuster.':'Touchez sur la photo ce qui doit rester visible.'):'');
   };
   th.addEventListener('click',e=>{ if(!opt.pos||get()==='none') return; const r=th.getBoundingClientRect();
     const px=Math.round(Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))), py=Math.round(Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)));
-    opt.pos[1](px+' '+py); show(); refresh(); markDirty(); });
+    opt.pos[1](px+' '+py); if(opt.posM) opt.posM[1](null); show(); refresh(); markDirty(); });
   x.addEventListener('click',()=>{ const v=get();
     if(opt.remove==='hide') set(v==='none'?null:'none'); else set(null);
-    if(opt.pos&&v!=='none') opt.pos[1](null);
+    if(opt.pos&&v!=='none') opt.pos[1](null); if(opt.posM) opt.posM[1](null);
     show(); refresh(); markDirty(); toast(get()==='none'?'Photo retirée':'Photo remise'); });
   b.addEventListener('click',()=>inp.click());
   inp.addEventListener('change',async()=>{ const f=inp.files[0]; inp.value=''; if(!f) return;
     if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum).'); return; }
     b.disabled=true; b.textContent='Envoi…';
-    try{ const u=await uploadPhoto(f); set(u); if(opt.pos) opt.pos[1](null); show(); refresh(); markDirty(); toast('Photo changée'); }
+    try{ const u=await uploadPhoto(f); set(u); if(opt.pos) opt.pos[1](null); if(opt.posM) opt.posM[1](null); show(); refresh(); markDirty(); toast('Photo changée'); }
     catch(e){ toast('Envoi impossible : '+(e.message||e)); }
     finally{ b.disabled=false; b.textContent='Changer la photo'; }
   });
@@ -572,7 +582,7 @@ function buildForms(){
 
   b=section('Accueil',true);
   [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
-  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),remove:'reset',mock:true}));
+  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),posM:PS('hero_m'),remove:'reset',mock:true}));
   { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('.pinfo').appendChild(h); b.appendChild(f); }
 
   // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)

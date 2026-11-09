@@ -468,7 +468,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
 /* 09/11/2026 (Anthony) : sur ordinateur, menu à gauche (formule, métiers, styles en liste) et le site en grand à droite */
 .mmore{display:none}
 @media (min-width:921px){
-  .explorer .wrap{max-width:1480px}
+
   .studio2{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;align-items:start}
   .studio2 .cfg{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow-y:auto;overflow-x:hidden;margin:0;padding:14px 12px;gap:14px;scrollbar-width:thin}
   .studio2 .clbl{padding:0 6px;font-size:.72rem}
@@ -579,6 +579,18 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   .studio2.wz .wnav{position:fixed;left:0;right:0;bottom:0;z-index:45;margin:0;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
   .studio2.wz .wnav[hidden]{display:none}
   .pickbar{display:none!important}
+}
+
+/* 09/11/2026 (Anthony) : toute la page à la même largeur que les modèles, mise en page plus aérée sur grand écran */
+@media (min-width:921px){
+  .wrap{max-width:1440px;padding-left:max(40px,env(safe-area-inset-left,0px));padding-right:max(40px,env(safe-area-inset-right,0px))}
+  .hero .wrap{gap:72px;padding-block:72px 48px}
+  .hero h1{font-size:clamp(2.4rem,4.2vw,4rem)}
+  .hero p.lead{font-size:1.12rem;max-width:52ch}
+  .head{max-width:820px}
+  .faq{max-width:none;grid-template-columns:1fr 1fr;align-items:start;gap:12px 16px}
+  .pricing .head{max-width:980px}
+  .refgrid{gap:24px}
 }
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>

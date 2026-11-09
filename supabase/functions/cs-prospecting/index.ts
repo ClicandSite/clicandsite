@@ -21,6 +21,10 @@ const json = (d: unknown, s = 200) => new Response(JSON.stringify(d), { status: 
 const html = (b: string, s = 200) => new Response(b, { status: s, headers: { "content-type": "text/html; charset=utf-8" } });
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
 const from = () => (Deno.env.get("CS_FROM") || "contact@mycreativesite.fr").trim();
+// 09/11/2026 (Anthony) : 2e boîte d'envoi (réglée dans l'admin), envois répartis entre les boîtes, chacune avec sa montée en douceur
+type Box = { n: number; email: string; user: string; pass: string; limit: number };
+let BOX: Box = { n: 1, email: "", user: "", pass: "", limit: 0 };
+const sender = () => BOX.email || from();
 
 // ---------- Modèles de mail (par métier) ----------
 type Tpl = { key: string; subject: string; body: string; btn: { label: string; url: string } };
@@ -169,8 +173,8 @@ function buildMime(to: string, t: Tpl, unsub: string) {
   const q = "cs_" + crypto.randomUUID().replace(/-/g, "");
   const text = t.body + "\n\n" + t.btn.label + " : " + t.btn.url + "\n\n—\n" + NAME + " · " + SITE + "\nNe plus recevoir nos messages : " + unsub + " (ou répondez STOP)";
   const m = [
-    ...stdHeaders(), `From: ${NAME} <${from()}>`, `Reply-To: ${from()}`, `To: ${to}`, `Subject: ${encHeader(t.subject)}`,
-    `List-Unsubscribe: <${unsub}>, <mailto:${from()}?subject=STOP>`, "List-Unsubscribe-Post: List-Unsubscribe=One-Click",
+    ...stdHeaders(), `From: ${NAME} <${sender()}>`, `Reply-To: ${sender()}`, `To: ${to}`, `Subject: ${encHeader(t.subject)}`,
+    `List-Unsubscribe: <${unsub}>, <mailto:${sender()}?subject=STOP>`, "List-Unsubscribe-Post: List-Unsubscribe=One-Click",
     "MIME-Version: 1.0", `Content-Type: multipart/alternative; boundary="${q}"`, "",
     "--" + q, "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text),
     "--" + q, "Content-Type: text/html; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(buildHtml(t.body, t.btn, unsub)),
@@ -178,7 +182,7 @@ function buildMime(to: string, t: Tpl, unsub: string) {
   ].join("\r\n");
   return m;
 }
-const stdHeaders = () => [`Date: ${new Date().toUTCString().replace("GMT", "+0000")}`, `Message-ID: <${crypto.randomUUID()}@mycreativesite.fr>`];
+const stdHeaders = () => [`Date: ${new Date().toUTCString().replace("GMT", "+0000")}`, `Message-ID: <${crypto.randomUUID()}@${sender().split("@")[1] || "mycreativesite.fr"}>`];
 async function gmailTokenOnce() {
   const a = (Deno.env.get("GMAIL_CLIENT_ID") || "").trim(), b = (Deno.env.get("GMAIL_CLIENT_SECRET") || "").trim(), c = (Deno.env.get("GMAIL_REFRESH_TOKEN") || "").trim().replace(/^["']|["']$/g, "");
   if (!a || !b || !c) throw new Error("Gmail OAuth secrets missing");
@@ -204,17 +208,24 @@ async function gmailSendRaw(tok: string, raw: string) {
   return d.id as string;
 }
 async function sendText(tok: string, to: string, subject: string, text: string) {
-  const m = [...stdHeaders(), `From: ${NAME} <${from()}>`, `To: ${to}`, `Subject: ${encHeader(subject)}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text), ""].join("\r\n");
+  const m = [...stdHeaders(), `From: ${NAME} <${sender()}>`, `To: ${to}`, `Subject: ${encHeader(subject)}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text), ""].join("\r\n");
   return sendMime(tok, to, m);
 }
 
 // ---------- Transport : SMTP (boîte OVH, prioritaire si SMTP_PASSWORD est posé) ou API Gmail ----------
 let SMTP_PASS = "";
-async function loadSmtpPass() { SMTP_PASS = Deno.env.get("SMTP_PASSWORD") || (await sql`select value from clicandsite.secrets where name='smtp_password'`)[0]?.value || ""; }
-const useSmtp = () => Boolean(SMTP_PASS);
+let BOX2: Box | null = null;
+async function loadSmtpPass() {
+  SMTP_PASS = Deno.env.get("SMTP_PASSWORD") || (await sql`select value from clicandsite.secrets where name='smtp_password'`)[0]?.value || "";
+  BOX = { n: 1, email: from(), user: Deno.env.get("SMTP_USER") || from(), pass: SMTP_PASS, limit: 0 };
+  const b = (await sql`select s.box2_email, s.box2_enabled, s.box2_limit, (select value from clicandsite.secrets where name='smtp_password_2') pw from clicandsite.mail_settings s where id=1`)[0];
+  BOX2 = b?.box2_enabled && b?.box2_email && b?.pw ? { n: 2, email: String(b.box2_email).trim(), user: String(b.box2_email).trim(), pass: b.pw, limit: Number(b.box2_limit) || 0 } : null;
+}
+const BOX1 = () => ({ ...BOX, n: 1, email: from(), user: Deno.env.get("SMTP_USER") || from(), pass: SMTP_PASS });
+const useSmtp = () => Boolean(BOX.pass || SMTP_PASS);
 async function smtpSend(to: string | null, mime: string): Promise<string> {
   const host = Deno.env.get("SMTP_HOST") || "ssl0.ovh.net", port = Number(Deno.env.get("SMTP_PORT") || "465");
-  const user = Deno.env.get("SMTP_USER") || from(), pass = SMTP_PASS;
+  const user = BOX.user || Deno.env.get("SMTP_USER") || from(), pass = BOX.pass || SMTP_PASS;
   const conn = await Deno.connectTls({ hostname: host, port });
   const enc = new TextEncoder(), dec = new TextDecoder();
   let buf = "";
@@ -237,7 +248,7 @@ async function smtpSend(to: string | null, mime: string): Promise<string> {
     await cmd(null, [220]); await cmd("EHLO mycreativesite.fr", [250]);
     await cmd("AUTH LOGIN", [334]); await cmd(btoa(user), [334]); await cmd(btoa(pass), [235]);
     if (to === null) { try { await cmd("QUIT", [221]); } catch (_) { /* ignore */ } return "login-ok"; }
-    await cmd(`MAIL FROM:<${from()}>`, [250]); await cmd(`RCPT TO:<${to}>`, [250, 251]); await cmd("DATA", [354]);
+    await cmd(`MAIL FROM:<${sender()}>`, [250]); await cmd(`RCPT TO:<${to}>`, [250, 251]); await cmd("DATA", [354]);
     const body = mime.replace(/\r?\n/g, "\r\n").split("\r\n").map((l) => (l.startsWith(".") ? "." + l : l)).join("\r\n");
     const r = await cmd(body + "\r\n.", [250]);
     try { await cmd("QUIT", [221]); } catch (_) { /* ignore */ }
@@ -275,7 +286,8 @@ async function report(date: string, to: string, tok: string) {
   const left = (await pending(s.trades, 10000)).length;
   const fails = await sql`select p.name, r.email, r.last_error from clicandsite.mail_recipients r join clicandsite.prospects p on p.id = r.prospect_id
     where r.status = 'échec' and (r.created_at at time zone 'Europe/Paris')::date = ${date}::date limit 15`;
-  const lines = [`Rapport prospection MyCreativeSite du ${frDate(date)}`, "", `Mails envoyés aujourd'hui : ${run.sent}`, `Échecs aujourd'hui : ${run.failed}`,
+  const per = await sql`select coalesce(sender, ${from()}) sender, count(*)::int n from clicandsite.mail_recipients where status='envoyé' and (sent_at at time zone 'Europe/Paris')::date = ${date}::date group by 1 order by 1`;
+  const lines = [`Rapport prospection MyCreativeSite du ${frDate(date)}`, "", `Mails envoyés aujourd'hui : ${run.sent}` + (per.length > 1 ? " (" + per.map((r: any) => r.sender + " : " + r.n).join(", ") + ")" : ""), `Échecs aujourd'hui : ${run.failed}`,
     `Total envoyé depuis le début : ${st.total}`, `Désinscriptions : ${st.unsub}`, `Pros avec e-mail restant à contacter : ${left}`,
     left < 40 ? "Attention : il reste moins de 2 jours d'envois, le robot de recherche doit trouver plus d'e-mails." : ""];
   if (fails.length) { lines.push("", "Adresses en échec :"); for (const f of fails) lines.push(`- ${f.name || "?"} <${f.email}> : ${String(f.last_error).slice(0, 120)}`); }
@@ -307,8 +319,10 @@ Deno.serve(async (req: Request) => {
     if (req.method === "GET" && u.searchParams.get("health") === "1") {
       let ok = false, er = "";
       try { if (useSmtp()) await smtpSend(null, ""); else await gmailToken(); ok = true; } catch (e) { er = e instanceof Error ? e.message : String(e); }
-      const s = (await sql`select enabled, daily_limit, trades from clicandsite.mail_settings where id=1`)[0];
-      return json({ ok, transport: useSmtp() ? "smtp" : "gmail", error: er || undefined, from: from(), settings: s, smtp_password_saved: Boolean(SMTP_PASS), secrets_present: Object.fromEntries(["SMTP_PASSWORD", "SMTP_USER", "GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
+      let ok2: boolean | undefined, er2 = "";
+      if (BOX2) { const keep = BOX; BOX = BOX2; try { await smtpSend(null, ""); ok2 = true; } catch (e) { ok2 = false; er2 = e instanceof Error ? e.message : String(e); } BOX = keep; }
+      const s = (await sql`select enabled, daily_limit, trades, box2_email, box2_limit from clicandsite.mail_settings where id=1`)[0];
+      return json({ ok, transport: useSmtp() ? "smtp" : "gmail", error: er || undefined, box2: BOX2 ? { email: BOX2.email, ok: ok2, error: er2 || undefined } : null, from: from(), settings: s, smtp_password_saved: Boolean(SMTP_PASS), secrets_present: Object.fromEntries(["SMTP_PASSWORD", "SMTP_USER", "GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
     }
     if (req.method !== "POST") return json({ error: "POST required" }, 405);
     const key = (await sql`select value from clicandsite.secrets where name='mail_internal'`)[0]?.value;
@@ -320,9 +334,10 @@ Deno.serve(async (req: Request) => {
     if (br?.mode === "test") {
       const to = String(br?.to || "").toLowerCase().trim();
       if (!TEST_TO.includes(to)) return json({ error: "test recipient not allowed" }, 400);
+      if (Number(br?.box) === 2) { if (!BOX2) return json({ error: "2e boîte non configurée" }, 400); BOX = BOX2; }
       const tok = await getToken(); const t = template(sample);
       const id = await sendMime(tok, to, buildMime(to, { ...t, subject: "[TEST] " + t.subject }, SITE));
-      return json({ ok: true, test: true, to, gmail_id: id });
+      return json({ ok: true, test: true, to, from: sender(), gmail_id: id });
     }
 
     const s = (await sql`select enabled, daily_limit, trades, report_to from clicandsite.mail_settings where id=1`)[0];
@@ -332,12 +347,21 @@ Deno.serve(async (req: Request) => {
     if (!manual && (np.weekday === "Sat" || np.weekday === "Sun")) return json({ ok: true, skipped: "week-end" });
 
     await sql`insert into clicandsite.mail_runs(run_date) values (${np.date}::date) on conflict do nothing`;
-    const already = (await sql`select count(*)::int n from clicandsite.mail_recipients where status='envoyé' and (sent_at at time zone 'Europe/Paris')::date = ${np.date}::date`)[0].n as number;
-    const limit = s.daily_limit as number;
+    const boxes: Box[] = [{ ...BOX1(), limit: s.daily_limit as number }];
+    if (BOX2) boxes.push(BOX2);
+    const sentBy = await sql`select coalesce(sender, ${from()}) sender, count(*)::int n from clicandsite.mail_recipients where status='envoyé' and (sent_at at time zone 'Europe/Paris')::date = ${np.date}::date group by 1`;
+    const done1 = (e: string) => (sentBy.find((r: any) => String(r.sender).toLowerCase() === e.toLowerCase())?.n as number) || 0;
+    const already = boxes.reduce((a, b) => a + done1(b.email), 0);
+    const limit = boxes.reduce((a, b) => a + b.limit, 0);
     const lastTick = !manual && np.hour === END_H - 1 && np.minute >= 50;
     const windowMin = (END_H - START_H) * 60, elapsed = (np.hour - START_H) * 60 + np.minute + 10;
-    const target = Math.min(limit, Math.ceil(limit * Math.min(elapsed, windowMin) / windowMin));
-    const take = manual ? Math.min(10, limit - already) : Math.min(MAX_PER_TICK, target - already);
+    const frac = Math.min(elapsed, windowMin) / windowMin;
+    const target = Math.min(limit, Math.ceil(limit * frac));
+    // file d'attente : chaque boîte a son quota du moment ; on alterne les boîtes
+    const queue: Box[] = [];
+    const want = boxes.map((b) => ({ b, n: manual ? Math.max(0, b.limit - done1(b.email)) : Math.max(0, Math.min(MAX_PER_TICK, Math.ceil(b.limit * frac) - done1(b.email))) }));
+    for (let i = 0; i < 10 && want.some((w) => w.n > 0); i++) for (const w of want) if (w.n > 0) { queue.push(w.b); w.n--; }
+    const take = Math.min(queue.length, manual ? 10 : MAX_PER_TICK * boxes.length);
 
     const lk = await sql`update clicandsite.mail_runs set status='running', started_at=now() where run_date=${np.date}::date and (status<>'running' or started_at < now() - make_interval(secs => ${LOCK_SECONDS})) returning run_date`;
     if (!lk.length) return json({ ok: true, skipped: "passage déjà en cours" });
@@ -355,15 +379,17 @@ Deno.serve(async (req: Request) => {
     let sent = 0, failed = 0;
     const list = take > 0 ? await pending(s.trades, take) : [];
     if (!manual && list.length) await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 20000)));
-    for (const p of list) {
+    for (let i = 0; i < list.length; i++) {
+      const p = list[i];
+      BOX = queue[i] || boxes[0];
       const t = template(p as any);
-      await sql`insert into clicandsite.mail_recipients(prospect_id, email, status, attempts, template) values (${p.id}::uuid, ${p.email}, 'en cours', 1, ${t.key})
-        on conflict (prospect_id) do update set status='en cours', attempts=clicandsite.mail_recipients.attempts+1, email=excluded.email, template=excluded.template`;
+      await sql`insert into clicandsite.mail_recipients(prospect_id, email, status, attempts, template, sender) values (${p.id}::uuid, ${p.email}, 'en cours', 1, ${t.key}, ${sender()})
+        on conflict (prospect_id) do update set status='en cours', attempts=clicandsite.mail_recipients.attempts+1, email=excluded.email, template=excluded.template, sender=excluded.sender`;
       try {
         const gid = await sendMime(tok, p.email, buildMime(p.email, t, await unsubUrl(p.id)));
         await sql`update clicandsite.mail_recipients set status='envoyé', sent_at=now(), gmail_id=${gid}, last_error=null where prospect_id=${p.id}::uuid`;
         await sql`update clicandsite.prospects set status='contacte', last_contact_at=now(), updated_at=now() where id=${p.id}::uuid and status in ('nouveau','a_contacter')`;
-        await sql`insert into clicandsite.interactions(prospect_id, kind, content) values (${p.id}::uuid, 'mail', ${"Mail de prospection envoyé (" + t.key + ") : " + t.subject})`;
+        await sql`insert into clicandsite.interactions(prospect_id, kind, content) values (${p.id}::uuid, 'mail', ${"Mail de prospection envoyé depuis " + sender() + " (" + t.key + ") : " + t.subject})`;
         await sql`update clicandsite.mail_runs set sent=sent+1 where run_date=${np.date}::date`;
         sent++;
       } catch (e) {
@@ -374,6 +400,7 @@ Deno.serve(async (req: Request) => {
       }
       if (list.length > 1) await new Promise((r) => setTimeout(r, manual ? 3000 : 8000 + Math.floor(Math.random() * 7000)));
     }
+    BOX = BOX1();
     const total = already + sent;
     const done = total >= limit || lastTick || (take > 0 && list.length < take);
     await sql`update clicandsite.mail_runs set status=${done ? "completed" : "partial"}, finished_at=now(), details=${JSON.stringify({ target, take, sent, failed })}::jsonb where run_date=${np.date}::date`;

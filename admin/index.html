@@ -140,6 +140,10 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="password" id="mailPw" autocomplete="new-password" placeholder="Mot de passe de la boîte OVH" style="min-width:240px"><button class="btn primary" id="mailPwSave" type="button">Enregistrer</button></div>
         <div class="meta">Il est gardé côté serveur et ne s'affiche jamais. À refaire seulement si tu changes le mot de passe de la boîte.</div>
       </details>
+      <details id="mailBox2"><summary>2e boîte d'envoi</summary>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="email" id="mailB2" placeholder="partenaires@mycreativesite.fr" style="min-width:240px"><input type="password" id="mailB2Pw" autocomplete="new-password" placeholder="Mot de passe de cette boîte" style="min-width:220px"><button class="btn primary" id="mailB2Save" type="button">Enregistrer</button><button class="btn" id="mailB2Test" type="button">Mail d'essai depuis cette boîte</button><button class="btn" id="mailB2Off" type="button">Mettre en pause</button></div>
+        <div class="meta" id="mailB2Meta">Les mails sont répartis entre les deux boîtes. La 2e boîte a sa propre montée en douceur : 5 mails le 1er jour, puis +3 par jour d'envoi, jusqu'à 40. Le mot de passe est gardé côté serveur et ne s'affiche jamais.</div>
+      </details>
     </div>
 
     <div class="filters">
@@ -275,12 +279,27 @@ async function mailStatus(){
   $('mailLimit').value=data.settings?data.settings.daily_limit:20;
   $('mailPwBox').open=!data.has_password;
   $('mailPwBox').querySelector('summary').textContent='Mot de passe de la boîte contact@mycreativesite.fr'+(data.has_password?' (enregistré)':' (à saisir)');
+  const st=data.settings||{}, b2=st.box2_email, b2on=!!(st.box2_enabled&&b2);
+  $('mailB2').value=b2||''; $('mailB2Off').hidden=!b2on; $('mailB2Test').hidden=!b2on;
+  $('mailBox2').querySelector('summary').textContent="2e boîte d'envoi"+(b2on?` : ${b2} · ${data.today_box2||0} envoyés aujourd'hui sur ${st.box2_limit} max`:(b2?` : ${b2} (en pause)`:' (à configurer)'));
+  $('mailLimit').title=b2on?'Limite de la boîte contact@mycreativesite.fr':'';
 }
 $('mailToggle').addEventListener('click',async()=>{const on=$('mailToggle').dataset.on==='1';if(!on&&!confirm("Démarrer l'envoi automatique des mails de prospection ?"))return;const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:!on,p_daily_limit:null,p_trades:null});if(error)alert(error.message);mailStatus();});
 $('mailLimit').addEventListener('change',async()=>{const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:null,p_daily_limit:+$('mailLimit').value,p_trades:null});if(error)alert(error.message);mailStatus();});
 $('mailPwSave').addEventListener('click',async()=>{const v=$('mailPw').value;if(!v){alert('Saisis le mot de passe');return;}const {error}=await sb.rpc('cs_admin_mail_password',{p_password:v});$('mailPw').value='';if(error){alert(error.message);return;}alert('Mot de passe enregistré. Clique maintenant sur « M\'envoyer un mail d\'essai ».');mailStatus();});
+$('mailB2Save').addEventListener('click',async()=>{const em=$('mailB2').value.trim(),pw=$('mailB2Pw').value;if(!em){alert("Saisis l'adresse de la boîte");return;}const {error}=await sb.rpc('cs_admin_mail_box2',{p_email:em,p_password:pw});$('mailB2Pw').value='';if(error){alert(error.message);return;}alert("2e boîte enregistrée. Clique maintenant sur « Mail d'essai depuis cette boîte ».");mailStatus();});
+$('mailB2Off').addEventListener('click',async()=>{if(!confirm('Mettre la 2e boîte en pause ?'))return;const {error}=await sb.rpc('cs_admin_mail_box2_off');if(error)alert(error.message);mailStatus();});
+async function mailTestRun(btn,box,label){btn.disabled=true;btn.textContent='Envoi en cours…';
+  const {data:id,error}=await sb.rpc('cs_admin_mail_test',{p_box:box});
+  if(error){alert(error.message);btn.disabled=false;btn.textContent=label;return;}
+  let res=null;for(let i=0;i<20&&!(res&&!res.pending);i++){await new Promise(r=>setTimeout(r,2000));res=(await sb.rpc('cs_admin_mail_test_result',{p_id:id})).data;}
+  btn.disabled=false;btn.textContent=label;
+  if(!res||res.pending){alert("Pas de réponse pour l'instant, regarde ta boîte mail dans une minute.");return;}
+  let j={};try{j=JSON.parse(res.content)}catch(_){}
+  alert(j.ok?'Mail d\'essai envoyé'+(j.from?' depuis '+j.from:'')+' à '+j.to+' : regarde ta boîte (et les spams).':'Échec : '+(j.error||res.content));}
+$('mailB2Test').addEventListener('click',()=>mailTestRun($('mailB2Test'),2,"Mail d'essai depuis cette boîte"));
 $('mailTest').addEventListener('click',async()=>{const b=$('mailTest');b.disabled=true;b.textContent='Envoi en cours…';
-  const {data:id,error}=await sb.rpc('cs_admin_mail_test');
+  const {data:id,error}=await sb.rpc('cs_admin_mail_test',{p_box:1});
   if(error){alert(error.message);b.disabled=false;b.textContent="M'envoyer un mail d'essai";return;}
   let res=null;for(let i=0;i<20&&!(res&&!res.pending);i++){await new Promise(r=>setTimeout(r,2000));res=(await sb.rpc('cs_admin_mail_test_result',{p_id:id})).data;}
   b.disabled=false;b.textContent="M'envoyer un mail d'essai";

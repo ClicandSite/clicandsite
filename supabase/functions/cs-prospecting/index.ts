@@ -1,5 +1,6 @@
 // MyCreativeSite — envoi automatique des mails de prospection (09/11/2026), même principe que le robot EPS.
-// - Envoi par l'API Gmail (secrets GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN, et CS_FROM = adresse d'envoi).
+// - Envoi par la boîte OVH contact@mycreativesite.fr en SMTP (secret SMTP_PASSWORD ; SMTP_USER/HOST/PORT facultatifs, ssl0.ovh.net:465),
+//   ou à défaut par l'API Gmail (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN). CS_FROM = adresse d'envoi.
 // - Jours ouvrés, 9 h – 18 h (Paris), envois étalés (objectif proportionnel à l'heure, 2 mails max par passage).
 // - Limite par jour et métiers ciblés : table clicandsite.mail_settings (réglable dans l'admin). Robot éteint par défaut.
 // - Cible : prospects « nouveau » / « à contacter » avec e-mail, sans site moderne, jamais écrits, hors opposition.
@@ -93,19 +94,20 @@ Vous recevez ce message car votre entreprise est référencée dans l'annuaire o
 <a href="${esc(unsub)}" style="color:#7a7290">Ne plus recevoir nos messages</a> (ou répondez STOP).
 </td></tr></table></td></tr></table></body></html>`;
 }
-function buildRaw(to: string, t: Tpl, unsub: string) {
+function buildMime(to: string, t: Tpl, unsub: string) {
   const q = "cs_" + crypto.randomUUID().replace(/-/g, "");
   const text = t.body + "\n\n" + t.btn.label + " : " + t.btn.url + "\n\n—\n" + NAME + " · " + SITE + "\nNe plus recevoir nos messages : " + unsub + " (ou répondez STOP)";
   const m = [
-    `From: ${NAME} <${from()}>`, `Reply-To: ${from()}`, `To: ${to}`, `Subject: ${encHeader(t.subject)}`,
+    ...stdHeaders(), `From: ${NAME} <${from()}>`, `Reply-To: ${from()}`, `To: ${to}`, `Subject: ${encHeader(t.subject)}`,
     `List-Unsubscribe: <${unsub}>, <mailto:${from()}?subject=STOP>`, "List-Unsubscribe-Post: List-Unsubscribe=One-Click",
     "MIME-Version: 1.0", `Content-Type: multipart/alternative; boundary="${q}"`, "",
     "--" + q, "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text),
     "--" + q, "Content-Type: text/html; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(buildHtml(t.body, t.btn, unsub)),
     "--" + q + "--", "",
   ].join("\r\n");
-  return b64urlUtf8(m);
+  return m;
 }
+const stdHeaders = () => [`Date: ${new Date().toUTCString().replace("GMT", "+0000")}`, `Message-ID: <${crypto.randomUUID()}@mycreativesite.fr>`];
 async function gmailTokenOnce() {
   const a = (Deno.env.get("GMAIL_CLIENT_ID") || "").trim(), b = (Deno.env.get("GMAIL_CLIENT_SECRET") || "").trim(), c = (Deno.env.get("GMAIL_REFRESH_TOKEN") || "").trim().replace(/^["']|["']$/g, "");
   if (!a || !b || !c) throw new Error("Gmail OAuth secrets missing");
@@ -130,10 +132,47 @@ async function gmailSendRaw(tok: string, raw: string) {
   if (!r.ok) throw new Error("Gmail " + r.status + ": " + (d?.error?.message || JSON.stringify(d).slice(0, 200)));
   return d.id as string;
 }
-async function gmailText(tok: string, to: string, subject: string, text: string) {
-  const m = [`From: ${NAME} <${from()}>`, `To: ${to}`, `Subject: ${encHeader(subject)}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text), ""].join("\r\n");
-  return gmailSendRaw(tok, b64urlUtf8(m));
+async function sendText(tok: string, to: string, subject: string, text: string) {
+  const m = [...stdHeaders(), `From: ${NAME} <${from()}>`, `To: ${to}`, `Subject: ${encHeader(subject)}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text), ""].join("\r\n");
+  return sendMime(tok, to, m);
 }
+
+// ---------- Transport : SMTP (boîte OVH, prioritaire si SMTP_PASSWORD est posé) ou API Gmail ----------
+const useSmtp = () => Boolean(Deno.env.get("SMTP_PASSWORD"));
+async function smtpSend(to: string | null, mime: string): Promise<string> {
+  const host = Deno.env.get("SMTP_HOST") || "ssl0.ovh.net", port = Number(Deno.env.get("SMTP_PORT") || "465");
+  const user = Deno.env.get("SMTP_USER") || from(), pass = Deno.env.get("SMTP_PASSWORD") || "";
+  const conn = await Deno.connectTls({ hostname: host, port });
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  let buf = "";
+  const read = async (): Promise<string> => {
+    const chunk = new Uint8Array(4096);
+    for (;;) {
+      const lines = buf.split("\r\n");
+      for (let i = 0; i < lines.length - 1; i++) if (/^\d{3} /.test(lines[i])) { const out = lines.slice(0, i + 1).join("\n"); buf = lines.slice(i + 1).join("\r\n"); return out; }
+      const n = await conn.read(chunk); if (n === null) throw new Error("SMTP: connexion fermée");
+      buf += dec.decode(chunk.subarray(0, n));
+    }
+  };
+  const cmd = async (c: string | null, ok: number[]) => {
+    if (c !== null) await conn.write(enc.encode(c + "\r\n"));
+    const r = await read(); const code = Number(r.slice(-200).match(/(\d{3}) [^\n]*$/)?.[1] || r.slice(0, 3));
+    if (!ok.includes(code)) throw new Error("SMTP " + code + ": " + r.slice(0, 200));
+    return r;
+  };
+  try {
+    await cmd(null, [220]); await cmd("EHLO mycreativesite.fr", [250]);
+    await cmd("AUTH LOGIN", [334]); await cmd(btoa(user), [334]); await cmd(btoa(pass), [235]);
+    if (to === null) { try { await cmd("QUIT", [221]); } catch (_) { /* ignore */ } return "login-ok"; }
+    await cmd(`MAIL FROM:<${from()}>`, [250]); await cmd(`RCPT TO:<${to}>`, [250, 251]); await cmd("DATA", [354]);
+    const body = mime.replace(/\r?\n/g, "\r\n").split("\r\n").map((l) => (l.startsWith(".") ? "." + l : l)).join("\r\n");
+    const r = await cmd(body + "\r\n.", [250]);
+    try { await cmd("QUIT", [221]); } catch (_) { /* ignore */ }
+    return "smtp:" + (r.match(/queued as ([^\s]+)/i)?.[1] || "ok");
+  } finally { try { conn.close(); } catch (_) { /* ignore */ } }
+}
+async function getToken(): Promise<string> { return useSmtp() ? "" : await gmailToken(); }
+async function sendMime(tok: string, to: string, mime: string) { return useSmtp() ? await smtpSend(to, mime) : await gmailSendRaw(tok, b64urlUtf8(mime)); }
 
 function parisNow() {
   const p = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short" }).formatToParts(new Date());
@@ -168,7 +207,7 @@ async function report(date: string, to: string, tok: string) {
     left < 40 ? "Attention : il reste moins de 2 jours d'envois, le robot de recherche doit trouver plus d'e-mails." : ""];
   if (fails.length) { lines.push("", "Adresses en échec :"); for (const f of fails) lines.push(`- ${f.name || "?"} <${f.email}> : ${String(f.last_error).slice(0, 120)}`); }
   lines.push("", "Robot de prospection MyCreativeSite");
-  await gmailText(tok, to, `Prospection MyCreativeSite — ${run.sent} envoyés le ${frDate(date)}`, lines.join("\n"));
+  await sendText(tok, to, `Prospection MyCreativeSite — ${run.sent} envoyés le ${frDate(date)}`, lines.join("\n"));
   await sql`update clicandsite.mail_runs set report_sent_at = now() where run_date = ${date}::date`;
 }
 
@@ -193,9 +232,9 @@ Deno.serve(async (req: Request) => {
     }
     if (req.method === "GET" && u.searchParams.get("health") === "1") {
       let ok = false, er = "";
-      try { await gmailToken(); ok = true; } catch (e) { er = e instanceof Error ? e.message : String(e); }
+      try { if (useSmtp()) await smtpSend(null, ""); else await gmailToken(); ok = true; } catch (e) { er = e instanceof Error ? e.message : String(e); }
       const s = (await sql`select enabled, daily_limit, trades from clicandsite.mail_settings where id=1`)[0];
-      return json({ ok, gmail_error: er || undefined, from: from(), settings: s, secrets_present: Object.fromEntries(["GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
+      return json({ ok, transport: useSmtp() ? "smtp" : "gmail", error: er || undefined, from: from(), settings: s, secrets_present: Object.fromEntries(["SMTP_PASSWORD", "SMTP_USER", "GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
     }
     if (req.method !== "POST") return json({ error: "POST required" }, 405);
     const key = (await sql`select value from clicandsite.secrets where name='mail_internal'`)[0]?.value;
@@ -207,8 +246,8 @@ Deno.serve(async (req: Request) => {
     if (br?.mode === "test") {
       const to = String(br?.to || "").toLowerCase().trim();
       if (!TEST_TO.includes(to)) return json({ error: "test recipient not allowed" }, 400);
-      const tok = await gmailToken(); const t = template(sample);
-      const id = await gmailSendRaw(tok, buildRaw(to, { ...t, subject: "[TEST] " + t.subject }, SITE));
+      const tok = await getToken(); const t = template(sample);
+      const id = await sendMime(tok, to, buildMime(to, { ...t, subject: "[TEST] " + t.subject }, SITE));
       return json({ ok: true, test: true, to, gmail_id: id });
     }
 
@@ -230,7 +269,7 @@ Deno.serve(async (req: Request) => {
     if (!lk.length) return json({ ok: true, skipped: "passage déjà en cours" });
 
     let tok: string;
-    try { tok = await gmailToken(); } catch (e) {
+    try { tok = await getToken(); } catch (e) {
       const m = e instanceof Error ? e.message : String(e);
       const r = (await sql`update clicandsite.mail_runs set status='partial', token_failures=token_failures+1, details=${JSON.stringify({ error: m })}::jsonb where run_date=${np.date}::date returning token_failures`)[0];
       console.error("cs-prospecting token", m, r?.token_failures);
@@ -247,7 +286,7 @@ Deno.serve(async (req: Request) => {
       await sql`insert into clicandsite.mail_recipients(prospect_id, email, status, attempts, template) values (${p.id}::uuid, ${p.email}, 'en cours', 1, ${t.key})
         on conflict (prospect_id) do update set status='en cours', attempts=clicandsite.mail_recipients.attempts+1, email=excluded.email, template=excluded.template`;
       try {
-        const gid = await gmailSendRaw(tok, buildRaw(p.email, t, await unsubUrl(p.id)));
+        const gid = await sendMime(tok, p.email, buildMime(p.email, t, await unsubUrl(p.id)));
         await sql`update clicandsite.mail_recipients set status='envoyé', sent_at=now(), gmail_id=${gid}, last_error=null where prospect_id=${p.id}::uuid`;
         await sql`update clicandsite.prospects set status='contacte', last_contact_at=now(), updated_at=now() where id=${p.id}::uuid and status in ('nouveau','a_contacter')`;
         await sql`insert into clicandsite.interactions(prospect_id, kind, content) values (${p.id}::uuid, 'mail', ${"Mail de prospection envoyé (" + t.key + ") : " + t.subject})`;

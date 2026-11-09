@@ -690,7 +690,7 @@
     }
     function refreshAg() { loadAg().then(function () { if (AGF) agForm(AGF); }).catch(function () {}); }
     window.CS_AGENDA_INIT = function (trade) {
-      if (!/^(beaute|bienetre|veterinaire|autoecole|coach|photographe|toiletteur|nautisme|kine|dentiste|bijouterie|liberal|services|evenementiel|tourisme|location|restaurant|garage)$/.test(trade || '')) return;
+      if (!/^(beaute|bienetre|veterinaire|autoecole|coach|photographe|toiletteur|nautisme|kine|dentiste|bijouterie|liberal|services|evenementiel|tourisme|location|infirmier|restaurant|garage)$/.test(trade || '')) return;
       var form = q(document, 'form#bookform'); if (!form || form.closest('[hidden]')) return;
       agCss(); AGF = form;
       loadAg().then(function () { agForm(form); }).catch(function () { /* le formulaire de demande reste en place */ });

@@ -38,6 +38,7 @@
     hebergement: { lbl: ['Logement', 'Room'], cta: ['Vérifier les disponibilités', 'Check availability'], d: ['Le logement', 'The room'], f: ['Équipements', 'Amenities'], ph: ['Ex. : 2 adultes du 12 au 15 juillet.', 'e.g. 2 adults from July 12 to 15.'] },
     tourisme: { lbl: ['Sortie', 'Tour'], cta: ['Réserver', 'Book'], d: ['La sortie', 'The tour'], f: ['Programme', 'Itinerary'], ph: ['Ex. : 2 adultes et 1 enfant, samedi.', 'e.g. 2 adults and 1 child, Saturday.'] },
     location: { lbl: ['Véhicule', 'Vehicle'], cta: ['Réserver', 'Book'], d: ['Le véhicule', 'The vehicle'], f: ['Inclus', 'Included'], ph: ['Ex. : départ samedi 8 h, retour dimanche soir.', 'e.g. pick-up Saturday 8 am, return Sunday evening.'] },
+    infirmier: { lbl: ['Soin', 'Care'], cta: ['Demander un passage', 'Request a visit'], d: ['Description', 'Description'], f: ['Déroulé', 'How it works'], ph: ['Ex. : prise de sang à domicile, ordonnance du Dr Martin.', 'e.g. home blood test, prescription available.'] },
     autre: { lbl: ['Concerné', 'About'], cta: ['Je suis intéressé', 'I\'m interested'], d: ['Description', 'Description'], f: ['Détails', 'Details'], ph: ['Votre message', 'Your message'] }
   };
   function trade(card) { if (card && card.classList.contains('prop')) return 'immobilier'; var t = document.documentElement.getAttribute('data-trade'); if (t && CFG[t]) return t; return document.getElementById('v-mk') ? 'garage' : 'autre'; }

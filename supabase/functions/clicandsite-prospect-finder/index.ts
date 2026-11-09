@@ -67,6 +67,7 @@ const NAF: Record<string, string> = {
   tourisme: "79.90Z,79.12Z",
   velo: "77.21Z",
   location: "77.11A,77.12Z,49.42Z",
+  infirmier: "86.90D",
 };
 // Modèle de site (colonne trade) de chaque clé de recherche (par défaut : la clé elle-même)
 const MODEL: Record<string, string> = {
@@ -137,6 +138,7 @@ const KEEP: Record<string, RegExp> = {
   conciergerie: /concierg|airbnb|saisonn|\bbnb\b|holiday|vacances|cl[ée]s? en main/i,
   velo: /v[ée]lo|bike|cycl|vtt/i,
   hebergement: /g[iî]te|chambre|h[ôo]te|b&b|bnb|mas\b|domaine|maison|bastide|cottage|lodge|chalet/i,
+  infirmier: /infirm|\bide\b|soins (à|a) domicile|cabinet de soins/i,
   bienetre: /mass|ost[ée]o|sophro|naturo|r[ée]flexo|shiatsu|spa\b|hammam|bien.?[êe]tre|relax|ayurv/i,
 };
 const DROP: Record<string, RegExp> = { fleuriste: /animal|animaux|aquari|zoo|graine|jardinerie|pet\b|croquette/i };

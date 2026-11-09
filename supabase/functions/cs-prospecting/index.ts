@@ -51,6 +51,7 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   hebergement: { label: "maison d'hôtes", page: "/site-internet-chambres-d-hotes-gite/", pack: false, plus: "vos chambres en photos, vos tarifs par saison et les réservations en direct, sans commission" },
   tourisme: { label: "guide", page: "/site-internet-tourisme-loisirs/", pack: false, plus: "votre programme, vos tarifs et la réservation en ligne, sans commission" },
   location: { label: "loueur de véhicules", page: "/site-internet-location-demenagement/", pack: false, plus: "votre flotte, vos tarifs et la réservation en ligne" },
+  infirmier: { label: "cabinet infirmier", page: "/site-internet-infirmier-liberal/", pack: false, plus: "la demande de passage en ligne, vos permanences et votre zone de soins à domicile, dans le respect de votre déontologie" },
 };
 // 09/11/2026 (liste d'Anthony) : le métier précis (segment) remplace le libellé générique, et parfois la phrase sur le contenu du site
 const SEG: Record<string, { label: string; plus?: string }> = {

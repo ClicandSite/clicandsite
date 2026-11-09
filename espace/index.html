@@ -79,6 +79,49 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .photo .pinfo{display:grid;gap:6px;min-width:0}.photo .pacts{display:flex;flex-wrap:wrap;gap:6px}
 .photo .px{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .photo .phint{font-size:.76rem;color:var(--muted);line-height:1.3}
+/* 10/11/2026 : carte et fenêtre « Gérer la bannière » */
+.bncard{display:flex;gap:12px;align-items:center}
+.bnth{width:132px;height:80px;flex:none;border-radius:10px;border:1px solid var(--line);background:var(--soft) center/cover no-repeat;cursor:pointer}
+.bncard>div:last-child{display:grid;gap:6px}.bncard b{font-size:.92rem}.bncard span{font-size:.78rem;color:var(--muted);line-height:1.3}.bncard .btn{justify-self:start}
+html.bnopen,html.bnopen body{overflow:hidden}
+.bnov{position:fixed;inset:0;z-index:300;background:rgba(18,22,43,.45);display:grid;place-items:center;padding:16px}
+.bnbox{background:#fff;color:var(--ink);border-radius:18px;width:min(1180px,100%);max-height:100%;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.bnhead{position:sticky;top:0;z-index:2;background:#fff;display:flex;gap:16px;align-items:flex-start;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}
+.bnhead h2{margin:0;font-size:1.35rem}.bnhead p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+.bngrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:28px;padding:20px 24px 26px}
+.bncol h3{margin:0 0 10px;font-size:1rem}.bncol h3:not(:first-child){margin-top:22px}
+.bndrop{display:grid;justify-items:center;gap:6px;padding:20px;border:2px dashed color-mix(in srgb,var(--brand) 55%,transparent);border-radius:14px;background:var(--paper);text-align:center;cursor:pointer}
+.bndrop .ic{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;font-size:1.2rem}
+.bndrop span{font-size:.85rem;color:var(--muted)}.bndrop small{font-size:.75rem;color:var(--muted)}.bndrop .btn{color:var(--brand);border-color:var(--brand)}
+.bndrop.over{background:var(--soft)}.bndrop.busy{opacity:.6;pointer-events:none}
+.bnseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.bnseg button{border:0;background:#fff;padding:8px 14px;font:600 .88rem inherit;font-family:inherit;cursor:pointer;color:var(--ink)}
+.bnseg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.bnsrc{border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}
+.bnimg{position:relative;width:100%;aspect-ratio:16/9;background:var(--soft) center/100% 100% no-repeat;border-radius:8px;overflow:hidden;cursor:crosshair}
+.bnimg::after{content:"";position:absolute;inset:0;background:rgba(18,22,43,.35);pointer-events:none}
+.bnrect{position:absolute;z-index:1;box-shadow:0 0 0 9999px rgba(18,22,43,.45);border:2px dashed #fff;border-radius:6px;cursor:grab;touch-action:none;background:rgba(255,255,255,.04)}
+.bnrect.m{border-color:#C4B5FD}.bnrect.drag{cursor:grabbing;border-style:solid}
+.bnrect span{position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border-radius:4px;background:var(--brand);border:2px solid #fff}
+.bnimg:has(.bnrect:not([hidden]))::after{display:none}
+.bntip{font-size:.82rem;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+.bnzoom{display:grid;gap:4px;font-size:.82rem;font-weight:600}.bnzoom input{width:100%;accent-color:var(--brand)}.bnzoom small{display:flex;justify-content:space-between;font-weight:400;color:var(--muted);font-size:.74rem}.bnzoom i{font-style:normal}
+.bnacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+@media (min-width:861px){.bngrid>.bncol:last-child{position:sticky;top:12px;align-self:start}}
+.bnsub{margin:-4px 0 12px;color:var(--muted);font-size:.88rem}
+.bnprev{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);gap:14px;align-items:start}
+.bnpv{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+.bnpl{font-size:.82rem;margin-bottom:8px}
+.bnshot{container-type:inline-size;position:relative;overflow:hidden;border-radius:8px;background:#222 center/cover no-repeat}
+.bnpv.d .bnshot{aspect-ratio:1280/720}.bnpv.m .bnshot{aspect-ratio:390/640}
+.bnov2{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55))}
+.bntx{position:absolute;left:7%;right:7%;top:50%;transform:translateY(-50%);color:#fff;display:grid;gap:4px}
+.bntx small{font-size:2cqw;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.bntx strong{font-size:4.6cqw;line-height:1.08}.bnpv.m .bntx strong{font-size:9cqw}.bnpv.m .bntx small{font-size:4.4cqw}.bnpv.m .bntx p{font-size:5.4cqw}.bnpv.m .bnb{font-size:4.6cqw}
+.bntx p{margin:0;font-size:2.2cqw;opacity:.9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bnb{justify-self:start;margin-top:4px;font-size:1.9cqw;font-weight:700;background:#fff;color:#12162B;border-radius:5px;padding:4px 8px}
+.bnlive{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:.85rem}
+@media (max-width:860px){.bnprev{grid-template-columns:1fr}.bnpv.m{width:min(240px,70%);justify-self:center}.bngrid{grid-template-columns:1fr}.bnov{padding:0}.bnbox{border-radius:0;height:100%}.bnhead{padding:14px 16px}.bngrid{padding:14px 16px 20px}}
 .photo.has-mock{flex-wrap:wrap}
 .mock{flex:1 1 100%;margin-top:4px;padding:12px;border:1px dashed var(--line);border-radius:12px;background:var(--soft)}
 .mock-t{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px}
@@ -393,6 +436,103 @@ function autoFocus(url){
     im.onerror=()=>res(null); im.src=url;
   });
 }
+/* ---------- Gestion de la bannière (10/11/2026, maquette validée par Anthony) ---------- */
+const BN={d:{w:1280,h:720,label:'Ordinateur'},m:{w:390,h:640,label:'Téléphone'}};
+function bnParse(v){ const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m?[+m[1],+m[2],m[3]===undefined?100:Math.min(200,+m[3])]:null; }
+function bnFmt(a){ return a[0]+' '+a[1]+(a[2]!==100?' '+a[2]:''); }
+function bannerCard(c,d){
+  const w=document.createElement('div'); w.className='bncard';
+  const th=document.createElement('div'); th.className='bnth';
+  const t=document.createElement('div'); t.innerHTML='<b>Bannière d\'accueil</b><span>La grande photo en haut de votre site, sur ordinateur et sur téléphone.</span>';
+  const bt=document.createElement('button'); bt.type='button'; bt.className='btn'; bt.textContent='Gérer la bannière';
+  const draw=()=>{ const u=c.photos.hero||currentImg(d.querySelector('.photo.hero')); th.style.backgroundImage=u?'url("'+u.replace(/"/g,'%22')+'")':''; };
+  bt.addEventListener('click',()=>bannerManager(c,d,draw)); th.addEventListener('click',()=>bannerManager(c,d,draw));
+  t.appendChild(bt); w.append(th,t); setTimeout(draw,60); return w;
+}
+function bannerManager(c,d,onClose){
+  const P=()=>{ c.photos.pos=c.photos.pos&&typeof c.photos.pos==='object'?c.photos.pos:{}; return c.photos.pos; };
+  const get=k=>bnParse(P()[k==='m'?'hero_m':'hero'])||(k==='m'?bnParse(P().hero):null)||[50,50,100];
+  const put=(k,a)=>{ P()[k==='m'?'hero_m':'hero']=bnFmt(a); };
+  const heroEl=()=>d.querySelector('.photo.hero');
+  const url=()=>c.photos.hero||currentImg(heroEl());
+  const tx=k=>(c.text&&typeof c.text[k]==='string'&&c.text[k])||(d.querySelector({kicker:'.photo.hero .kicker',title:'.photo.hero h1',subtitle:'.photo.hero p'}[k])?.textContent||'').trim();
+  const btnTxt=(d.querySelector('.photo.hero .btn, .hero .btn')?.textContent||'Réserver').trim();
+  let nat=null, mode='m';
+  const ov=document.createElement('div'); ov.className='bnov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Gérer la bannière');
+  ov.innerHTML=`<div class="bnbox">
+    <div class="bnhead"><div><h2>Gérer votre bannière</h2><p>Elle s'affiche en haut de votre site et s'adapte toute seule aux ordinateurs et aux téléphones.</p></div><button type="button" class="btn bnok">Terminé</button></div>
+    <div class="bngrid">
+      <div class="bncol">
+        <h3>1. Votre photo</h3>
+        <label class="bndrop"><input type="file" accept="image/jpeg,image/png,image/webp" hidden><span class="ic">⇪</span><b>Glissez votre photo ici</b><span>ou</span><span class="btn ghost">Parcourir mes fichiers</span><small>JPG, PNG ou WEBP, 15 Mo maximum. Idéal : une photo en largeur.</small></label>
+        <h3>2. Ajuster le cadrage</h3>
+        <div class="bnseg" role="group"><button type="button" data-k="m" aria-pressed="true">Téléphone</button><button type="button" data-k="d" aria-pressed="false">Ordinateur</button></div>
+        <div class="bnsrc"><div class="bnimg"><div class="bnrect"><span></span></div></div></div>
+        <p class="bntip">Déplacez le cadre sur ce qui est important (un visage, une voiture…). Ce qui est dans le cadre est ce que verront vos visiteurs.</p>
+        <label class="bnzoom"><span>Zoom</span><input type="range" min="100" max="200" step="5"><small><i>Normal</i><i>Zoom ×2</i></small></label>
+        <div class="bnacts"><button type="button" class="btn ghost bnauto">Recadrage automatique</button><button type="button" class="btn ghost bnreset">Photo d'origine</button></div>
+      </div>
+      <div class="bncol">
+        <h3>Aperçu en direct</h3><p class="bnsub">Voici comment votre bannière apparaîtra sur votre site.</p>
+        <div class="bnprev">
+          <div class="bnpv d"><div class="bnpl"><b>Ordinateur</b></div><div class="bnshot"></div></div>
+          <div class="bnpv m"><div class="bnpl"><b>Téléphone</b></div><div class="bnshot"></div></div>
+        </div>
+        <div class="bnlive">Les changements s'affichent aussi tout de suite sur votre site, à droite. Pensez à cliquer sur « Enregistrer » en haut.</div>
+      </div>
+    </div></div>`;
+  document.body.appendChild(ov); document.documentElement.classList.add('bnopen');
+  const $$=s=>ov.querySelector(s);
+  const img=$$('.bnimg'), rect=$$('.bnrect'), zoom=$$('.bnzoom input'), shots={d:$$('.bnpv.d .bnshot'),m:$$('.bnpv.m .bnshot')};
+  Object.entries(shots).forEach(([k,e])=>{ e.innerHTML='<div class="bnov2"></div><div class="bntx"><small></small><strong></strong><p></p><span class="bnb"></span></div>'; });
+  const scale=(k,z)=>{ const F=BN[k], cov=Math.max(F.w/nat[0],F.h/nat[1]); return cov*z/100; };
+  const draw=()=>{
+    const u=url(); const bg=u?'url("'+u.replace(/"/g,'%22')+'")':'';
+    img.style.backgroundImage=bg; $$('.bnreset').hidden=!c.photos.hero;
+    if(!nat){ rect.hidden=true; return; } rect.hidden=false;
+    img.style.aspectRatio=nat[0]+'/'+nat[1];
+    const a=get(mode), k=scale(mode,a[2]), F=BN[mode], rw=Math.min(100,F.w/k/nat[0]*100), rh=Math.min(100,F.h/k/nat[1]*100);
+    rect.style.width=rw+'%'; rect.style.height=rh+'%'; rect.style.left=(100-rw)*a[0]/100+'%'; rect.style.top=(100-rh)*a[1]/100+'%';
+    rect.className='bnrect '+mode; zoom.value=a[2];
+    ['d','m'].forEach(kk=>{ const e=shots[kk], b=get(kk), sc=scale(kk,b[2]), F2=BN[kk], q=e.clientWidth/F2.w;
+      e.style.backgroundImage=bg; e.style.backgroundSize=Math.round(nat[0]*sc*q)+'px '+Math.round(nat[1]*sc*q)+'px'; e.style.backgroundPosition=b[0]+'% '+b[1]+'%';
+      e.querySelector('small').textContent=tx('kicker'); e.querySelector('strong').textContent=tx('title'); e.querySelector('p').textContent=tx('subtitle'); e.querySelector('.bnb').textContent=btnTxt; });
+    ov.querySelectorAll('.bnseg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===mode?'true':'false'));
+  };
+  const load=()=>{ const u=url(); nat=null; if(!u){ draw(); return; } const im=new Image(); im.onload=()=>{ nat=[im.naturalWidth,im.naturalHeight]; draw(); }; im.src=u; };
+  const changed=()=>{ draw(); refresh(); markDirty(); };
+  // déplacer le cadre
+  let st=null;
+  rect.addEventListener('pointerdown',e=>{ e.preventDefault(); rect.setPointerCapture(e.pointerId); st={x:e.clientX,y:e.clientY,a:get(mode).slice(),r:img.getBoundingClientRect(),rw:rect.offsetWidth,rh:rect.offsetHeight}; rect.classList.add('drag'); });
+  rect.addEventListener('pointermove',e=>{ if(!st) return; const fx=st.r.width-st.rw, fy=st.r.height-st.rh; const a=st.a.slice();
+    if(fx>1) a[0]=Math.round(Math.max(0,Math.min(100,st.a[0]+(e.clientX-st.x)/fx*100))); if(fy>1) a[1]=Math.round(Math.max(0,Math.min(100,st.a[1]+(e.clientY-st.y)/fy*100)));
+    put(mode,a); draw(); refresh(); });
+  const end=()=>{ if(!st) return; st=null; rect.classList.remove('drag'); markDirty(); }; rect.addEventListener('pointerup',end); rect.addEventListener('pointercancel',end);
+  // toucher la photo : le cadre s'y centre
+  img.addEventListener('click',e=>{ if(e.target!==img||!nat) return; const r=img.getBoundingClientRect(), rw=rect.offsetWidth, rh=rect.offsetHeight, a=get(mode).slice();
+    const cx=e.clientX-r.left-rw/2, cy=e.clientY-r.top-rh/2; if(r.width-rw>1) a[0]=Math.round(Math.max(0,Math.min(100,cx/(r.width-rw)*100))); if(r.height-rh>1) a[1]=Math.round(Math.max(0,Math.min(100,cy/(r.height-rh)*100))); put(mode,a); changed(); });
+  zoom.addEventListener('input',()=>{ const a=get(mode).slice(); a[2]=+zoom.value; put(mode,a); draw(); refresh(); }); zoom.addEventListener('change',()=>markDirty());
+  ov.querySelectorAll('.bnseg button').forEach(x=>x.addEventListener('click',()=>{ mode=x.dataset.k; draw(); }));
+  const auto=async(quiet)=>{ const u=url(); if(!u) return; const f=await autoFocus(u); if(!f){ if(!quiet) toast('Recadrage automatique impossible sur cette photo'); return; }
+    put('d',[f[0],f[1],get('d')[2]]); put('m',[f[0],f[1],get('m')[2]]); changed(); if(!quiet) toast('Bannière recadrée automatiquement'); };
+  $$('.bnauto').addEventListener('click',()=>auto(false));
+  $$('.bnreset').addEventListener('click',()=>{ c.photos.hero=null; delete P().hero; delete P().hero_m; load(); refresh(); markDirty(); toast('Photo d\'origine remise'); });
+  // envoi : bouton ou glisser-déposer
+  const inp=$$('.bndrop input'), drop=$$('.bndrop');
+  const send=async f=>{ if(!f) return; if(!/^image\//.test(f.type)){ toast('Choisissez une photo (JPG, PNG ou WEBP).'); return; } if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum).'); return; }
+    drop.classList.add('busy'); drop.querySelector('b').textContent='Envoi en cours…';
+    try{ const u=await uploadPhoto(f); c.photos.hero=u; delete P().hero; delete P().hero_m; load(); refresh(); markDirty(); await auto(true); toast('Nouvelle bannière en place'); }
+    catch(e){ toast('Envoi impossible : '+(e.message||e)); }
+    finally{ drop.classList.remove('busy'); drop.querySelector('b').textContent='Glissez votre photo ici'; } };
+  inp.addEventListener('change',()=>{ const f=inp.files[0]; inp.value=''; send(f); });
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>send(e.dataTransfer.files[0]));
+  const close=()=>{ ov.remove(); document.documentElement.classList.remove('bnopen'); window.removeEventListener('resize',draw); if(onClose) onClose(); };
+  $$('.bnok').addEventListener('click',close); ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
+  document.addEventListener('keydown',function k(e){ if(e.key==='Escape'&&document.body.contains(ov)){ close(); document.removeEventListener('keydown',k); } });
+  window.addEventListener('resize',draw); load();
+}
 function photoField(label, getEl, get, set, opt){
   // 09/11/2026 (Anthony) : cadrage (on touche la photo pour choisir la partie à montrer) et bouton pour retirer la photo
   opt=opt||{};
@@ -624,7 +764,8 @@ function buildForms(){
 
   b=section('Accueil',true);
   [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
-  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),posM:PS('hero_m'),remove:'reset',mock:true}));
+  // 10/11/2026 (Anthony) : la bannière se gère dans une fenêtre dédiée (envoi, cadrage téléphone / ordinateur, aperçu en direct)
+  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(bannerCard(c,d));
   { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('.pinfo').appendChild(h); b.appendChild(f); }
 
   // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)

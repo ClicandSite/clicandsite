@@ -47,7 +47,7 @@ def plan(t):
     return base, sty
 
 DATE = {'fleuriste': ('Retrait ou livraison le', 'datetime-local', '2027-01-15T10:30'), 'traiteur': ("Date de l'événement", 'date', '2027-06-12'),
-        'nautisme': ('Date', 'date', '2027-07-15'), 'photographe': ('Date souhaitée', 'date', '2027-06-12'), 'bijouterie': ('Rendez-vous le', 'datetime-local', '2027-01-15T15:00')}
+        'nautisme': ('Date', 'date', '2027-07-15'), 'photographe': ('Date souhaitée', 'date', '2027-06-12'), 'bijouterie': ('Rendez-vous le', 'datetime-local', '2027-01-15T15:00'), 'evenementiel': ("Date de l'événement", 'date', '2027-06-12'), 'hebergement': ('Arrivée le', 'date', '2027-07-12'), 'tourisme': ('Date', 'date', '2027-05-20'), 'location': ('Départ le', 'datetime-local', '2027-01-15T08:00'), 'liberal': ('Jour et heure', 'datetime-local', '2027-01-15T10:00')}
 
 def fiche(it):
     d = {'desc': it[4], 'feats': '\n'.join(it[5]), 'photos': []}
@@ -223,7 +223,7 @@ def body(k, t):
     return ''.join(o)
 
 BRAND = {'autoecole': 'Auto-école du Port', 'coach': 'Studio Mouvement', 'photographe': 'Léa Duval Photographie', 'toiletteur': "L'Atelier des Pattes",
-         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades', 'bijouterie': 'Maison Arnaud Joaillier'}
+         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades', 'bijouterie': 'Maison Arnaud Joaillier', 'liberal': 'Cabinet Delmas', 'services': 'Maison Nette Services', 'evenementiel': 'Éclat Événements', 'hebergement': 'Le Mas des Oliviers', 'tourisme': 'Escapades Azur', 'location': 'Azur Loc & Déménagement'}
 
 def build(k):
     t = T[k]; t['brand'] = BRAND[k]

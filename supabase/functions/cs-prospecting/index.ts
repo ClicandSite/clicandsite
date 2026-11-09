@@ -45,6 +45,12 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   beaute: { label: "salon de beauté", page: "/site-internet-coiffeur-institut-beaute/", pack: false, plus: "la prise de rendez-vous en ligne, vos prestations et vos tarifs" },
   bienetre: { label: "praticien du bien-être", page: "/site-internet-masseur-osteopathe-bien-etre/", pack: false, plus: "la prise de rendez-vous en ligne, vos soins et vos tarifs" },
   boulangerie: { label: "boulangerie", page: "/site-internet-boulangerie/", pack: false, plus: "vos produits du moment en photos et la commande à retirer en boutique" },
+  liberal: { label: "cabinet", page: "/site-internet-profession-liberale/", pack: false, plus: "la présentation de vos missions, la prise de rendez-vous en ligne et vos informations pratiques" },
+  services: { label: "entreprise de services à domicile", page: "/site-internet-services-a-domicile/", pack: false, plus: "vos formules, vos tarifs, votre zone d'intervention et les demandes de devis en ligne" },
+  evenementiel: { label: "organisateur d'événements", page: "/site-internet-evenementiel/", pack: false, plus: "vos réalisations en photos, vos formules et les demandes de devis en ligne" },
+  hebergement: { label: "maison d'hôtes", page: "/site-internet-chambres-d-hotes-gite/", pack: false, plus: "vos chambres en photos, vos tarifs par saison et les réservations en direct, sans commission" },
+  tourisme: { label: "guide", page: "/site-internet-tourisme-loisirs/", pack: false, plus: "votre programme, vos tarifs et la réservation en ligne, sans commission" },
+  location: { label: "loueur de véhicules", page: "/site-internet-location-demenagement/", pack: false, plus: "votre flotte, vos tarifs et la réservation en ligne" },
 };
 // 09/11/2026 (liste d'Anthony) : le métier précis (segment) remplace le libellé générique, et parfois la phrase sur le contenu du site
 const SEG: Record<string, { label: string; plus?: string }> = {
@@ -71,8 +77,20 @@ const SEG: Record<string, { label: string; plus?: string }> = {
   jetski: { label: "loueur de jet-skis" }, skipper: { label: "skipper", plus: "vos sorties en mer, vos tarifs et la réservation en ligne" },
   plongee: { label: "club de plongée", plus: "vos baptêmes, formations et sorties, et la réservation en ligne" },
   video: { label: "vidéaste", plus: "vos vidéos en grand et les demandes de date en ligne" },
+  avocat: { label: "cabinet d'avocat", plus: "vos domaines d'intervention, la prise de rendez-vous en ligne et vos informations pratiques, dans le respect de votre déontologie" },
+  expert_comptable: { label: "cabinet d'expertise comptable" }, consultant: { label: "consultant" }, courtier_assurance: { label: "courtier en assurance" },
+  courtier_credit: { label: "courtier en crédit" }, formateur: { label: "formateur" }, traducteur: { label: "traducteur" }, architecte: { label: "cabinet d'architecte", plus: "vos projets en photos, vos missions et la prise de rendez-vous en ligne" },
+  bureau_etudes: { label: "bureau d'études" },
+  nettoyage: { label: "entreprise de nettoyage" }, aide_domicile: { label: "service d'aide à domicile" }, garde_enfants: { label: "service de garde d'enfants" },
+  couture: { label: "atelier de couture", plus: "vos prestations, vos tarifs de retouches et les demandes en ligne" }, cours: { label: "professeur particulier", plus: "vos matières, vos tarifs et la réservation des cours en ligne" },
+  wedding_planner: { label: "wedding planner" }, organisateur: { label: "organisateur d'événements" }, dj: { label: "DJ", plus: "vos formules, votre matériel et les demandes de date en ligne" },
+  loisirs: { label: "activité de loisirs", plus: "vos activités, vos tarifs et la réservation en ligne" },
+  gite: { label: "gîte" }, chambres_hotes: { label: "maison d'hôtes" }, conciergerie: { label: "conciergerie", plus: "vos services, vos logements en photos et les demandes en ligne" },
+  excursions: { label: "organisateur d'excursions" }, guide: { label: "guide" }, velo: { label: "loueur de vélos", plus: "vos vélos, vos tarifs et la réservation en ligne" },
+  demenagement: { label: "entreprise de déménagement", plus: "vos formules, les devis de déménagement en ligne et votre zone d'intervention" },
+  location_utilitaires: { label: "loueur d'utilitaires" }, location_voitures: { label: "loueur de voitures" },
 };
-const FEM = /^(clinique|agence|auto-école|concession|bijouterie|boulangerie|carrosserie|entreprise|pizzeria|pâtisserie|boucherie|poissonnerie|épicerie|maquilleuse|prothésiste)/;
+const FEM = /^(clinique|agence|auto-école|concession|bijouterie|boulangerie|carrosserie|entreprise|pizzeria|pâtisserie|boucherie|poissonnerie|épicerie|maquilleuse|prothésiste|maison|activité|conciergerie)/;
 function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null; date_creation?: string | Date | null }): Tpl {
   let t = TRADE[p.trade] || TRADE.restaurant;
   // 09/11/2026 (Anthony) : garage qui ne fait que l'entretien → version atelier, formules dès 29 € (le Pack reste pour ceux qui vendent des véhicules)

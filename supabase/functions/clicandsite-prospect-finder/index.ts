@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // MyCreativeSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
 // mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
 //    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment, vétérinaires,
-//    auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, loueurs de bateaux, kinés, dentistes, bijouteries,
+//    auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, loueurs de bateaux, kinés, dentistes, bijouteries, professions libérales, services à domicile, événementiel, hébergement, tourisme, location,
 //    et (09/11/2026) la liste d'Anthony rattachée aux modèles existants : paysagistes, serruriers, beauté, bien-être, snacks, commerces de bouche…
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
@@ -55,6 +55,18 @@ const NAF: Record<string, string> = {
   decoration: "74.10Z",
   plongee: "93.29Z,85.51Z",
   video: "59.11B",
+  // 09/11/2026 : lot 3 (nouveaux modèles)
+  liberal: "69.10Z,69.20Z,70.22Z,66.22Z,66.19B,85.59A,74.30Z,71.11Z,71.12B",
+  services: "81.21Z,88.10A,88.91B",
+  couture: "95.29Z,14.13Z",
+  cours: "85.59B",
+  evenementiel: "82.30Z",
+  animation: "93.29Z,90.01Z",
+  hebergement: "55.20Z",
+  conciergerie: "68.32A",
+  tourisme: "79.90Z,79.12Z",
+  velo: "77.21Z",
+  location: "77.11A,77.12Z,49.42Z",
 };
 // Modèle de site (colonne trade) de chaque clé de recherche (par défaut : la clé elle-même)
 const MODEL: Record<string, string> = {
@@ -63,6 +75,7 @@ const MODEL: Record<string, string> = {
   tatoueur: "beaute", restorapide: "restaurant", salon_the: "restaurant",
   boucherie: "boulangerie", poissonnerie: "boulangerie", epicerie_fine: "boulangerie",
   plongee: "nautisme", video: "photographe",
+  couture: "services", cours: "services", animation: "evenementiel", conciergerie: "hebergement", velo: "tourisme",
 };
 // Métier précis (segment) : d'après le code NAF et le nom, pour un mail qui parle du bon métier
 function segOf(key: string, naf: string, name: string): string | null {
@@ -89,6 +102,16 @@ function segOf(key: string, naf: string, name: string): string | null {
     case "nautisme": return /jet.?ski/.test(n) ? "jetski" : /skipper/.test(n) ? "skipper" : null;
     case "garage": return /carross/.test(n) ? "carrosserie" : /lavage|wash|detail|clean/.test(n) ? "lavage" : null;
     case "decoration": return /home.?stag/.test(n) ? "home_staging" : /architect/.test(n) ? "archi_interieur" : "decorateur";
+    case "liberal":
+      return ({ "6910Z": "avocat", "6920Z": "expert_comptable", "7022Z": "consultant", "6622Z": "courtier_assurance", "6619B": "courtier_credit", "8559A": "formateur", "7430Z": "traducteur", "7111Z": "architecte", "7112B": "bureau_etudes" } as Record<string, string>)[c] || null;
+    case "services": return ({ "8121Z": "nettoyage", "8810A": "aide_domicile", "8891B": "garde_enfants" } as Record<string, string>)[c] || null;
+    case "evenementiel": return /mariage|wedding/.test(n) ? "wedding_planner" : "organisateur";
+    case "animation": return /\bdj\b|disc.?jockey|sono|mix/.test(n) ? "dj" : "loisirs";
+    case "hebergement": return /g[iî]te/.test(n) ? "gite" : /chambre|h[ôo]te|b&b|bnb/.test(n) ? "chambres_hotes" : null;
+    case "tourisme": return /excursion|tour|circuit/.test(n) ? "excursions" : "guide";
+    case "location": return c === "4942Z" ? "demenagement" : c === "7712Z" ? "location_utilitaires" : "location_voitures";
+    case "couture": case "cours": case "conciergerie": case "velo":
+      return key;
     case "plongee": case "video": case "tatoueur": case "salon_the": case "boucherie": case "poissonnerie": case "epicerie_fine": case "etancheite":
     case "serrurier": case "multiservice": case "depanneur_auto": case "informatique": case "electromenager": case "diagnostic":
       return key;
@@ -108,6 +131,12 @@ const KEEP: Record<string, RegExp> = {
   decoration: /d[ée]co|int[ée]rieur|home.?stag|agencement|design/i,
   plongee: /plong|diving|subaqua|apn[ée]e/i,
   video: /vid[ée]o|film|drone|prod|motion/i,
+  couture: /coutur|retouche|atelier de couture|tailleur/i,
+  cours: /cours|soutien scolaire|prof|tutorat|r[ée]p[ée]tit|acad[ée]mie/i,
+  animation: /\bdj\b|disc.?jockey|sono|anim|mariage|wedding|f[eê]te|escape|karting|paintball|accrobranche|laser|bowling|loisir/i,
+  conciergerie: /concierg|airbnb|saisonn|\bbnb\b|holiday|vacances|cl[ée]s? en main/i,
+  velo: /v[ée]lo|bike|cycl|vtt/i,
+  hebergement: /g[iî]te|chambre|h[ôo]te|b&b|bnb|mas\b|domaine|maison|bastide|cottage|lodge|chalet/i,
   bienetre: /mass|ost[ée]o|sophro|naturo|r[ée]flexo|shiatsu|spa\b|hammam|bien.?[êe]tre|relax|ayurv/i,
 };
 const DROP: Record<string, RegExp> = { fleuriste: /animal|animaux|aquari|zoo|graine|jardinerie|pet\b|croquette/i };

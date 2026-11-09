@@ -5,7 +5,7 @@
    Le pro voit ses réservations jour par jour, ajoute un rendez-vous pris par téléphone, bloque un créneau ou annule.
    Utilise les fonctions de espace/index.html : site, state, SB, DEMO, toast, escH. Fonctions Supabase : cs_agenda_get / save / add / cancel. */
 (function () {
-  var TRADES = { beaute: 1, bienetre: 1, veterinaire: 1, autoecole: 1, coach: 1, photographe: 1, toiletteur: 1, nautisme: 1, kine: 1, dentiste: 1, bijouterie: 1, restaurant: 1, garage: 1 };
+  var TRADES = { beaute: 1, bienetre: 1, veterinaire: 1, autoecole: 1, coach: 1, photographe: 1, toiletteur: 1, nautisme: 1, kine: 1, dentiste: 1, bijouterie: 1, liberal: 1, services: 1, evenementiel: 1, tourisme: 1, location: 1, restaurant: 1, garage: 1 };
   var JOURS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'], ORDER = [1, 2, 3, 4, 5, 6, 0];
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   var A = { day: null, data: null, cfg: null, tab: 'jour', demo: null };
@@ -44,7 +44,7 @@
   function trade() { return site && site.trade; }
   function resto() { return trade() === 'restaurant'; }
   function placesLbl() {
-    return { beaute: 'Coiffeurs ou esthéticiennes disponibles en même temps', bienetre: 'Praticiens disponibles en même temps', veterinaire: 'Vétérinaires disponibles en même temps', autoecole: 'Moniteurs disponibles en même temps', coach: 'Places par séance', photographe: 'Séances en même temps', toiletteur: 'Postes de toilettage', nautisme: 'Bateaux disponibles par créneau', kine: 'Praticiens disponibles en même temps', dentiste: 'Praticiens disponibles en même temps', bijouterie: 'Conseillers disponibles en même temps', restaurant: 'Couverts disponibles par créneau', garage: 'Véhicules pris en charge en même temps (postes atelier)' }[trade()] || 'Places par créneau';
+    return { beaute: 'Coiffeurs ou esthéticiennes disponibles en même temps', bienetre: 'Praticiens disponibles en même temps', veterinaire: 'Vétérinaires disponibles en même temps', autoecole: 'Moniteurs disponibles en même temps', coach: 'Places par séance', photographe: 'Séances en même temps', toiletteur: 'Postes de toilettage', nautisme: 'Bateaux disponibles par créneau', kine: 'Praticiens disponibles en même temps', dentiste: 'Praticiens disponibles en même temps', bijouterie: 'Conseillers disponibles en même temps', liberal: 'Conseillers disponibles en même temps', services: 'Intervenants disponibles en même temps', evenementiel: 'Rendez-vous en même temps', tourisme: 'Places par sortie', location: 'Véhicules disponibles par créneau', restaurant: 'Couverts disponibles par créneau', garage: 'Véhicules pris en charge en même temps (postes atelier)' }[trade()] || 'Places par créneau';
   }
   function unit(n) { return resto() ? n + ' couvert' + (n > 1 ? 's' : '') : n + ' place' + (n > 1 ? 's' : ''); }
   function defaults() {

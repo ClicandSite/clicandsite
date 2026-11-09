@@ -334,6 +334,108 @@ PAGES = [
          ("Je paie une commission sur les ventes ou les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois."),
          ('Combien coûte un site internet pour une bijouterie ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
          ("Le site convient-il à un horloger seul, sans boutique de bijoux ?","Oui : vous gardez uniquement le rayon atelier et vos prestations de réparation.")]),
+  dict(slug='site-internet-profession-liberale', k='liberal', why=('Pourquoi un site pour une profession libérale ?', ["Avant de choisir un avocat, un expert-comptable ou un consultant, un client se renseigne en ligne : vos domaines d'intervention, votre façon de travailler, comment prendre rendez-vous. Sans site, il ne trouve que des annuaires.", 'Un site sobre, qui présente vos missions, vos honoraires selon les règles de votre profession et la prise de rendez-vous, rassure avant le premier contact et vous évite les appels inutiles.']), style='corporate',
+    title='Création de site internet pour profession libérale',
+    meta='Site internet pour avocat, expert-comptable, consultant, courtier, architecte ou formateur : missions, honoraires, prise de rendez-vous, dans le respect de votre déontologie. Dès 29 €/mois.',
+    h1='Le site internet des professions libérales',
+    lead="Avocats, experts-comptables, consultants, courtiers, formateurs, traducteurs, architectes et bureaux d'études : vos clients comprennent ce que vous faites et prennent rendez-vous en ligne.",
+    feats=[
+           ('Prise de rendez-vous','Au cabinet, en visio ou par téléphone, dans votre agenda.'),
+           ('Vos missions','Expliquées simplement, filtrables par domaine.'),
+           ('Honoraires','Présentés selon les règles de votre profession.'),
+           ('Informations pratiques','Documents à apporter, confidentialité, délais.'),
+           ('Le cabinet',"Équipe, inscription à l'Ordre, accès."),
+           ('Une présentation sobre',"Pas d'avis clients ni de promesse de résultat.")],
+    faq=[
+         ('Le site respecte-t-il les règles de ma profession ?','Oui : les textes restent informatifs et vous validez chaque texte avant la mise en ligne. Les mentions obligatoires de votre profession sont ajoutées.'),
+         ('Je peux recevoir des demandes en visio ?','Oui, le client choisit au cabinet, en visio ou par téléphone.'),
+         ('Combien coûte un site pour une profession libérale ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Le modèle convient-il à un avocat ?','Oui : le modèle est sans avis clients et présente les honoraires sous forme de convention, comme le prévoient les règles de la profession.')]),
+  dict(slug='site-internet-services-a-domicile', k='services', why=('Pourquoi un site pour une entreprise de services à domicile ?', ["Les familles comparent plusieurs entreprises avant de confier leurs clés : services proposés, zone d'intervention, prix, crédit d'impôt. Elles veulent un devis rapidement.", 'Un site clair, avec vos formules, vos tarifs et une demande de devis en ligne, vous apporte des clients réguliers sans passer par des plateformes qui prennent une commission.']), style='zen',
+    title='Création de site internet pour services à domicile',
+    meta="Site internet pour entreprise de ménage, repassage, aide à domicile, garde d'enfants ou nettoyage : formules, tarifs, zone d'intervention, devis en ligne. Dès 29 €/mois.",
+    h1='Le site internet des services à domicile',
+    lead="Ménage, repassage, aide aux personnes âgées, garde d'enfants, nettoyage de bureaux : vos clients voient vos formules et demandent un devis en ligne.",
+    feats=[
+           ('Demande de devis','Service, fréquence et créneau souhaité.'),
+           ('Vos formules','Ménage, linge, aide, filtrables.'),
+           ('Tarifs',"À l'heure ou au forfait, avec la mention du crédit d'impôt."),
+           ("Zone d'intervention",'Les communes que vous couvrez.'),
+           ('Vos intervenants','Formés, assurés, toujours les mêmes.'),
+           ('Avis clients','Remplacés par vos avis Google.')],
+    faq=[
+         ("Le site peut-il parler du crédit d'impôt ?","Oui, si votre entreprise est déclarée services à la personne : la mention et l'avance immédiate sont expliquées simplement."),
+         ('Je peux gérer plusieurs intervenants ?','Oui, depuis votre espace client.'),
+         ('Combien coûte un site pour une entreprise de ménage ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Je paie une commission sur les clients ?','Non : un abonnement fixe, sans commission.')]),
+  dict(slug='site-internet-evenementiel', k='evenementiel', why=("Pourquoi un site pour un professionnel de l'événementiel ?", ['Les futurs mariés et les entreprises comparent les organisateurs, décorateurs et DJ sur Google et sur les réseaux. Ils veulent voir vos réalisations et une idée de prix avant de demander un devis.', "Un site avec vos prestations en photos, vos formules et un formulaire de devis complet vous apporte des demandes déjà qualifiées : type d'événement, date, nombre d'invités."]), style='luxe',
+    title='Création de site internet pour wedding planner, DJ et événementiel',
+    meta="Site internet pour wedding planner, décorateur, DJ, organisateur d'événements ou d'activités : prestations en photos, tarifs indicatifs, demande de devis. Dès 29 €/mois.",
+    h1="Le site internet des professionnels de l'événementiel",
+    lead="Wedding planners, décorateurs, DJ, organisateurs d'événements et d'activités de loisirs : montrez vos réalisations et recevez des demandes de devis complètes.",
+    feats=[
+           ('Demande de devis',"Type d'événement, date et nombre d'invités."),
+           ('Vos prestations','En photos, filtrables : mariage, fête, entreprise.'),
+           ('Tarifs indicatifs','Pour filtrer les demandes dès le départ.'),
+           ('Votre équipe','Qui vous êtes et comment vous travaillez.'),
+           ('Location','Votre décoration et votre matériel à louer.'),
+           ('Avis clients','Remplacés par vos avis Google.')],
+    faq=[
+         ('Je peux montrer mes réalisations ?','Oui, vous ajoutez vos photos depuis votre téléphone.'),
+         ('Le site convient-il à un DJ ?','Oui : vos formules, votre matériel et vos dates disponibles.'),
+         ('Combien coûte un site pour un wedding planner ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Je paie une commission sur les événements ?','Non : un abonnement fixe, sans commission.')]),
+  dict(slug='site-internet-chambres-d-hotes-gite', k='hebergement', why=("Pourquoi un site pour des chambres d'hôtes ou un gîte ?", ["Les plateformes de réservation prennent une commission sur chaque nuit. Beaucoup de voyageurs cherchent ensuite le site de l'établissement pour réserver en direct.", 'Votre propre site présente vos chambres, vos tarifs par saison et reçoit les demandes de réservation : vous fidélisez vos clients et gardez la marge.']), style='terracotta',
+    title="Création de site internet pour chambres d'hôtes et gîte",
+    meta="Site internet pour chambres d'hôtes, gîte ou maison d'hôtes : chambres en photos, tarifs par saison, table d'hôtes, demande de réservation en direct. Dès 29 €/mois.",
+    h1="Le site internet des chambres d'hôtes et gîtes",
+    lead="Chambres d'hôtes, gîtes et maisons d'hôtes : vos voyageurs découvrent vos chambres et réservent en direct, sans commission.",
+    feats=[
+           ('Réservation en direct','Logement, dates et nombre de personnes.'),
+           ('Vos chambres','En photos, avec leurs équipements.'),
+           ('Tarifs par saison','Basse et haute saison, semaine au gîte.'),
+           ("Table d'hôtes",'Vos dîners et vos séjours.'),
+           ('Infos pratiques','Arrivée, départ, animaux, accès.'),
+           ('Avis clients','Remplacés par vos avis Google.')],
+    faq=[
+         ('Je garde mes annonces sur les plateformes ?','Oui, votre site vient en plus et vous apporte des réservations directes, sans commission.'),
+         ('Le site gère-t-il les acomptes ?',"Vous confirmez chaque demande et indiquez vos conditions d'acompte."),
+         ('Combien coûte un site pour un gîte ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Le site peut-il être en anglais ?','Oui, une version anglaise est disponible en option.')]),
+  dict(slug='site-internet-tourisme-loisirs', k='tourisme', why=('Pourquoi un site pour un guide ou une activité de loisirs ?', ["Les touristes réservent leurs visites et activités depuis leur téléphone, souvent la veille. Sans site, ils passent par des plateformes qui prennent jusqu'à un quart du prix.", 'Votre site présente votre programme, vos tarifs et vos points de départ, et prend les réservations directement, avec une version en anglais en option.']), style='riviera',
+    title='Création de site internet pour guide touristique et activités de loisirs',
+    meta="Site internet pour guide, organisateur d'excursions, loueur de vélos, école de plongée ou activité de loisirs : programme, tarifs, réservation en ligne. Dès 29 €/mois.",
+    h1='Le site internet du tourisme et des loisirs',
+    lead="Guides, organisateurs d'excursions, loueurs de vélos, écoles de plongée et activités de loisirs : vos clients réservent en ligne, sans commission.",
+    feats=[
+           ('Réservation en ligne','Sortie, date et nombre de participants.'),
+           ('Votre programme','Filtrable : visites, excursions, nature.'),
+           ('Tarifs','Par personne, réduits pour les enfants.'),
+           ('Points de départ',"Et prise en charge à l'hôtel."),
+           ('Langues','Version anglaise en option.'),
+           ('Avis clients','Remplacés par vos avis Google.')],
+    faq=[
+         ('Je garde mes annonces sur les plateformes ?','Oui, votre site vient en plus et vous apporte des réservations directes.'),
+         ('Le site peut-il être en anglais ?','Oui, une version anglaise est disponible en option.'),
+         ('Combien coûte un site pour un guide ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Je peux limiter le nombre de places ?','Oui, vous fixez le nombre de places par sortie dans votre agenda.')]),
+  dict(slug='site-internet-location-demenagement', k='location', why=('Pourquoi un site pour un loueur de véhicules ou un déménageur ?', ["Un client qui cherche un utilitaire pour demain ou un déménageur compare les prix sur son téléphone. Il veut savoir quel volume choisir, combien ça coûte et si c'est disponible.", 'Un site avec votre flotte, vos tarifs clairs et la réservation en ligne vous apporte ces clients directement, face aux grandes enseignes.']), style='audacieux',
+    title='Création de site internet pour location de véhicules et déménagement',
+    meta="Site internet pour loueur de voitures et d'utilitaires ou entreprise de déménagement : flotte, tarifs, réservation en ligne, devis de déménagement. Dès 29 €/mois.",
+    h1='Le site internet des loueurs de véhicules et déménageurs',
+    lead="Location de voitures et d'utilitaires, déménagement et monte-meuble : vos clients choisissent le bon véhicule et réservent en ligne.",
+    feats=[
+           ('Réservation en ligne','Véhicule, durée et heure de départ.'),
+           ('Votre flotte','Filtrable : utilitaires, voitures, déménagement.'),
+           ('Tarifs clairs','Kilomètres inclus et options.'),
+           ('Devis de déménagement','Volume, étages et date.'),
+           ('Infos pratiques','Documents, caution, horaires de retour.'),
+           ('Avis clients','Remplacés par vos avis Google.')],
+    faq=[
+         ('Je peux afficher mes disponibilités ?','Oui, vous fixez le nombre de véhicules par créneau dans votre agenda.'),
+         ('Le site gère-t-il les devis de déménagement ?','Oui, le client indique son volume, les étages et la date.'),
+         ('Combien coûte un site pour un loueur ?','Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Je paie une commission sur les locations ?','Non : un abonnement fixe, sans commission.')]),
   dict(slug="site-internet-boulangerie", k="boulangerie", style="chaleureux",
     title="Création de site internet pour boulangerie et pâtisserie",
     meta="Site internet pour boulangerie, pâtisserie et commerce de bouche : commande à retirer, vitrine de la semaine, gâteaux sur commande, horaires. Dès 29 €/mois.",
@@ -618,7 +720,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -630,7 +732,7 @@ def trade_links(cur):
 GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables",
   "garage": "site-internet-garage-les-indispensables", "concession": "concession-auto-moto-vendre-plus-avec-son-site", "immobilier": "site-internet-agence-immobiliere-les-indispensables",
   "batiment": "site-internet-artisan-batiment-les-indispensables", "beaute": "site-internet-coiffeur-institut-beaute-les-indispensables",
-  "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "veterinaire": "site-internet-veterinaire-les-indispensables", "autoecole": "site-internet-auto-ecole-les-indispensables", "coach": "site-internet-coach-sportif-les-indispensables", "photographe": "site-internet-photographe-les-indispensables", "toiletteur": "site-internet-toiletteur-les-indispensables", "fleuriste": "site-internet-fleuriste-les-indispensables", "traiteur": "site-internet-traiteur-les-indispensables", "nautisme": "site-internet-location-bateau-les-indispensables", "kine": "site-internet-kinesitherapeute-les-indispensables", "dentiste": "site-internet-dentiste-les-indispensables", "bijouterie": "site-internet-bijouterie-horlogerie-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
+  "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "veterinaire": "site-internet-veterinaire-les-indispensables", "autoecole": "site-internet-auto-ecole-les-indispensables", "coach": "site-internet-coach-sportif-les-indispensables", "photographe": "site-internet-photographe-les-indispensables", "toiletteur": "site-internet-toiletteur-les-indispensables", "fleuriste": "site-internet-fleuriste-les-indispensables", "traiteur": "site-internet-traiteur-les-indispensables", "nautisme": "site-internet-location-bateau-les-indispensables", "kine": "site-internet-kinesitherapeute-les-indispensables", "dentiste": "site-internet-dentiste-les-indispensables", "bijouterie": "site-internet-bijouterie-horlogerie-les-indispensables", "liberal": "site-internet-profession-liberale-les-indispensables", "services": "site-internet-services-a-domicile-les-indispensables", "evenementiel": "site-internet-evenementiel-les-indispensables", "hebergement": "site-internet-chambres-d-hotes-gite-les-indispensables", "tourisme": "site-internet-tourisme-loisirs-les-indispensables", "location": "site-internet-location-demenagement-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
   "depannage": "site-internet-plombier-electricien-les-indispensables", "boutique": "creer-boutique-en-ligne-les-indispensables"}
 def guide(p):
     g = GUIDES.get(p.get("k"))
@@ -739,7 +841,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle garage d'entretien": "/site-internet-garage-mecanique/", "Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle bijouterie-horlogerie": "/site-internet-bijouterie/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle garage d'entretien": "/site-internet-garage-mecanique/", "Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle bijouterie-horlogerie": "/site-internet-bijouterie/", "Voir le modèle profession libérale": "/site-internet-profession-liberale/", "Voir le modèle services à domicile": "/site-internet-services-a-domicile/", "Voir le modèle événementiel": "/site-internet-evenementiel/", "Voir le modèle chambres d'hôtes": "/site-internet-chambres-d-hotes-gite/", "Voir le modèle tourisme et loisirs": "/site-internet-tourisme-loisirs/", "Voir le modèle location et déménagement": "/site-internet-location-demenagement/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}

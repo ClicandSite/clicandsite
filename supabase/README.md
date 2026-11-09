@@ -67,3 +67,8 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Modèle `modeles/bijouterie.html` (scripts/metiers, clé `bijouterie`), page SEO `site-internet-bijouterie/`, article « les indispensables », migration `20261109_metier_bijouterie.sql`.
 - Robot de recherche : nouvelles clés (paysagiste, étanchéité, serrurier, multiservice, dépanneur auto, beauté, tatoueur, bien-être, restauration rapide, salon de thé, boulangerie, boucherie, poissonnerie, épicerie fine, réparation informatique et électroménager, diagnostiqueur, décoration, plongée, vidéo) rattachées à un modèle existant (`MODEL`) ; le métier précis va dans `segment` (`segOf`) et le mail le reprend (`SEG` dans cs-prospecting).
 - Migration `prospection_liste_anthony` : métiers depannage, beaute, bienetre, boulangerie ajoutés aux prospects et aux envois.
+
+## Lot 3 (09/11/2026) : 6 nouveaux modèles
+- `liberal` (professions libérales, sans avis, honoraires), `services` (services à domicile), `evenementiel`, `hebergement` (chambres d'hôtes et gîtes), `tourisme` (tourisme et loisirs), `location` (location et déménagement).
+- Pages SEO et articles « les indispensables » pour chacun ; migration `20261109_metiers_lot3.sql` (appliquée : metiers_lot3).
+- Robot : clés liberal, services, couture, cours, evenementiel, animation, hebergement, conciergerie, tourisme, velo, location (segments par code NAF ou nom).

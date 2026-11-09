@@ -39,3 +39,9 @@ jobs:
         with: { path: site }
       - if: steps.diff.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/deploy-pages@v4
+      - name: Activer le HTTPS dès que le certificat est prêt
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          if [ "$(gh api repos/${{ github.repository }}/pages -q .https_enforced 2>/dev/null)" = "false" ]; then
+            gh api -X PUT repos/${{ github.repository }}/pages -F https_enforced=true >/dev/null 2>&1 && echo "HTTPS activé" || echo "Certificat pas encore prêt, nouvel essai au prochain passage"
+          fi

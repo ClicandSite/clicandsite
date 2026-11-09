@@ -223,7 +223,7 @@ def body(k, t):
     return ''.join(o)
 
 BRAND = {'autoecole': 'Auto-école du Port', 'coach': 'Studio Mouvement', 'photographe': 'Léa Duval Photographie', 'toiletteur': "L'Atelier des Pattes",
-         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades', 'bijouterie': 'Maison Arnaud Joaillier', 'liberal': 'Cabinet Delmas', 'services': 'Maison Nette Services', 'evenementiel': 'Éclat Événements', 'hebergement': 'Le Mas des Oliviers', 'tourisme': 'Escapades Azur', 'location': 'Azur Loc & Déménagement', 'infirmier': 'Cabinet infirmier du Centre'}
+         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades', 'bijouterie': 'Maison Arnaud Joaillier', 'liberal': 'Cabinet Delmas', 'services': 'Maison Nette Services', 'evenementiel': 'Éclat Événements', 'hebergement': 'Le Mas des Oliviers', 'tourisme': 'Escapades Azur', 'location': 'Atlas Loc & Déménagement', 'infirmier': 'Cabinet infirmier du Centre'}
 
 def build(k):
     t = T[k]; t['brand'] = BRAND[k]

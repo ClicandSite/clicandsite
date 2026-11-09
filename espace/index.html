@@ -345,7 +345,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=40#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=41#'+styleName;
   });
 }
 

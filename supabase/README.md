@@ -43,3 +43,11 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Public : `cs_agenda_public(slug)` (créneaux sur 21 jours) et `cs_booking_submit` (verrou sur le site, re-vérifie le créneau, crée la demande « Mes clients » + la réservation confirmée ; `p_lead=false` quand l'acompte part par `cs-shop`).
 - Espace client, onglet « Mon agenda » (`assets/cs-agenda.js`) : semaine, réservations du jour, ajouter un rendez-vous pris par téléphone, bloquer un créneau, annuler, réglages. `cs_agenda_get / save / add / cancel`. Démo : `/espace/?demo=restaurant&vue=agenda`.
 - Site client (`assets/cs-edit.js`) : formulaire `#bookform` → sélecteur jour + heure (créneaux complets barrés). Agenda fermé, pas encore réglé ou plus aucun créneau sur 21 jours → bouton « Appeler le … » (numéro du bloc contact) à la place du formulaire.
+
+## Prospection par mail (09/11/2026)
+- Fonction `cs-prospecting` (même principe que le robot EPS) : API Gmail, jours ouvrés 9 h – 18 h (Paris), envois étalés (2 max par passage, cron `cs-prospecting` toutes les 10 min, clé `mail_internal`), rapport quotidien par Gmail à `mail_settings.report_to`.
+- Réglages : `clicandsite.mail_settings` (enabled, daily_limit = 20 au départ, trades). **Éteint tant qu'Anthony n'a pas validé le mail et branché Gmail.** Admin : `cs_admin_mail_status()`, `cs_admin_mail_settings(enabled, limit, trades)`.
+- Cible : prospects « nouveau » / « à contacter » avec e-mail, site absent, daté ou en panne, hors `opposition`. Après envoi : statut « contacte » + ligne dans `interactions`. Suivi : `mail_recipients`, `mail_runs`.
+- Désinscription : lien signé (HMAC) dans chaque mail + en-tête List-Unsubscribe → `opposition` + statut « refus ».
+- Secrets à poser : `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` (compte Google de l'adresse d'envoi), `CS_FROM` (défaut contact@mycreativesite.fr). Contrôle : `GET …/cs-prospecting?health=1`. Mail d'essai : POST `{mode:"test", to:"docheanthony@gmail.com"}`.
+- Robot de recherche (`robot_settings.enabled`) rallumé le 09/11 : il était arrêté, d'où seulement ~20 pros avec e-mail.

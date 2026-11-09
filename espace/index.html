@@ -12,7 +12,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=20"></script>
+<script src="/assets/cs-edit.js?v=21"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -82,7 +82,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .photo.has-mock{flex-wrap:wrap}
 .mock{flex:1 1 100%;margin-top:4px;padding:12px;border:1px dashed var(--line);border-radius:12px;background:var(--soft)}
 .mock-t{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px}
-.mock-r{display:flex;align-items:flex-end;gap:14px}
+.mock-r{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 26px}
 .mcol{display:grid;gap:5px;justify-items:center;align-content:end;font-size:.74rem;color:var(--muted);min-width:118px}
 .mf{position:relative;overflow:hidden;background:#333 center/cover no-repeat;border:3px solid #12162B;border-radius:8px;box-shadow:0 6px 16px -8px rgba(0,0,0,.4)}
 .mf{cursor:grab;touch-action:none;background-repeat:no-repeat!important;background-color:#2a2d3a!important}
@@ -383,8 +383,8 @@ function photoField(label, getEl, get, set, opt){
   const hint=document.createElement('span'); hint.className='phint';
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.hidden=true;
   // réglage « x y z » : point visible (x, y en %) et taille de la photo z (0 = photo entière, 100 = remplit tout)
-  const parse=v=>{ const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m?[+m[1],+m[2],m[3]===undefined?100:Math.min(100,+m[3])]:null; };
-  const fmt=a=>a[0]+' '+a[1]+(a[2]<100?' '+a[2]:'');
+  const parse=v=>{ const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m?[+m[1],+m[2],m[3]===undefined?100:Math.min(200,+m[3])]:null; };
+  const fmt=a=>a[0]+' '+a[1]+(a[2]!==100?' '+a[2]:'');
   const pos=()=>parse(opt.pos?opt.pos[0]():'');
   // 10/11/2026 (Anthony) : pour la bannière, dessin de ce que verront les visiteurs, sur ordinateur et sur téléphone
   let mock=null, mfs=[];
@@ -394,7 +394,7 @@ function photoField(label, getEl, get, set, opt){
     [['d','Ordinateur'],['m','Téléphone']].forEach(([k,lab])=>{ const c=document.createElement('div'); c.className='mcol';
       const f=document.createElement('div'); f.className='mf '+k; f.innerHTML='<i class="nav"></i><i class="k"></i><i class="t1"></i><i class="t2"></i><i class="bt"></i>';
       const n=document.createElement('span'); n.textContent=lab;
-      const zl=document.createElement('label'); zl.className='mz'; zl.innerHTML='<span>Taille de la photo</span><input type="range" min="0" max="100" step="5"><small><i>Entière</i><i>Remplie</i></small>';
+      const zl=document.createElement('label'); zl.className='mz'; zl.innerHTML='<span>Taille de la photo</span><input type="range" min="0" max="200" step="5"><small><i>Entière</i><i>Remplie</i><i>Zoom</i></small>';
       const zr=zl.querySelector('input'); zr.addEventListener('input',()=>{ const a=((k==='m'?posM():null)||pos()||[50,50,100]).slice(); a[2]=+zr.value; if(k==='m') opt.posM[1](fmt(a)); else opt.pos[1](fmt(a)); show(); refresh(); });
       zr.addEventListener('change',()=>markDirty()); f.__zr=zr;
       c.append(f,n,zl); row.appendChild(c); mfs.push(f);
@@ -411,7 +411,7 @@ function photoField(label, getEl, get, set, opt){
   let ratio=0, lastU='';
   const posM=()=>parse(opt.posM?opt.posM[0]():'');
   // même calcul que sur le site : entre « photo entière » (z=0) et « remplit tout » (z=100)
-  const scale=(W,H,z)=>{ const iw=ratio, ih=1, cov=Math.max(W/iw,H/ih), fit=Math.min(W/iw,H/ih), k=fit+(cov-fit)*z/100; return {w:iw*k, hh:ih*k, h:1}; };
+  const scale=(W,H,z)=>{ const iw=ratio, ih=1, cov=Math.max(W/iw,H/ih), fit=Math.min(W/iw,H/ih), k=z<=100?fit+(cov-fit)*z/100:cov*(1+(z-100)/100); return {w:iw*k, hh:ih*k, h:1}; };
   const show=()=>{
     const v=get(), off=v==='none', el=getEl();
     const u=off?'':(v||currentImg(el));
@@ -427,7 +427,7 @@ function photoField(label, getEl, get, set, opt){
       if(f.__zr) f.__zr.value=q[2]; });
     if(opt.remove==='hide'){ x.hidden=false; x.textContent=off?'Remettre la photo':'✕ Retirer'; }
     else { x.hidden=!v; x.textContent='Photo d\'origine'; }
-    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?(opt.mock?'1. Touchez sur la photo ce qui doit rester visible (un visage, une voiture…). 2. Si besoin, faites glisser la photo dans chaque dessin pour l\'ajuster.':'Touchez sur la photo ce qui doit rester visible.'):'');
+    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?(opt.mock?'1. Touchez sur la photo ce qui doit rester visible (un visage, une voiture…). 2. Dans chaque dessin, réglez la taille (vers « Zoom » pour agrandir) puis faites glisser la photo avec le doigt ou la souris.':'Touchez sur la photo ce qui doit rester visible.'):'');
   };
   th.addEventListener('click',e=>{ if(!opt.pos||get()==='none') return; const r=th.getBoundingClientRect();
     const px=Math.round(Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))), py=Math.round(Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)));

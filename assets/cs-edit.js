@@ -22,7 +22,7 @@
   // 09/11/2026 (Anthony) : cadrage choisi par le pro (point central de la photo, en %), un réglage ordinateur et un réglage téléphone.
   // Marche quel que soit le style : photo sur le bloc, sur ::before / ::after, ou en bandeau sur téléphone (sans déformer l'image).
   // « x y » ou « x y z » : point visible en % et taille z (0 = photo entière, 100 = remplit tout le bloc)
-  function okPos(v) { var m = typeof v === 'string' && v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m ? [Math.min(100, +m[1]), Math.min(100, +m[2]), m[3] === undefined ? 100 : Math.min(100, +m[3])] : null; }
+  function okPos(v) { var m = typeof v === 'string' && v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m ? [Math.min(100, +m[1]), Math.min(100, +m[2]), m[3] === undefined ? 100 : Math.min(200, +m[3])] : null; }
   function layers(bi) { var out = [], d = 0, cur = ''; for (var i = 0; i < bi.length; i++) { var ch = bi[i]; if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && !d) { out.push(cur.trim()); cur = ''; } else cur += ch; } if (cur.trim()) out.push(cur.trim()); return out; }
   function natSize(w, url, cb) { var c = w.__csNat || (w.__csNat = {}); if (c[url]) return cb(c[url]); var im = new w.Image(); im.onload = function () { c[url] = [im.naturalWidth, im.naturalHeight]; cb(c[url]); }; im.src = url; }
   function setPos(el, pos, posM) {
@@ -42,13 +42,13 @@
     if (!p && !band) return;
     p = p || [50, 50, 100];
     var urlm = /url\(["']?(.*?)["']?\)\s*$/.exec(cs.getPropertyValue('--img') || '') || /url\(["']?(.*?)["']?\)/.exec(cs.backgroundImage), url = urlm && urlm[1];
-    var sizeFor = function (W, H, nat) { var cov = Math.max(W / nat[0], H / nat[1]), fit = Math.min(W / nat[0], H / nat[1]), k = fit + (cov - fit) * p[2] / 100; return Math.round(nat[0] * k) + 'px ' + Math.round(nat[1] * k) + 'px'; };
+    var sizeFor = function (W, H, nat) { var cov = Math.max(W / nat[0], H / nat[1]), fit = Math.min(W / nat[0], H / nat[1]), k = p[2] <= 100 ? fit + (cov - fit) * p[2] / 100 : cov * (1 + (p[2] - 100) / 100); return Math.round(nat[0] * k) + 'px ' + Math.round(nat[1] * k) + 'px'; };
     var val = p[0] + '% ' + p[1] + '%'; el.style.setProperty('--cs-pos', val);
     var n = (cs.backgroundImage.match(/(?:url|gradient)\(/g) || [1]).length;
     if (/url\(/.test(cs.backgroundImage)) {
       if (/cover/.test(sz)) {
         el.style.backgroundPosition = new Array(n).fill(val).join(', ');
-        if (p[2] < 100 && url) natSize(w, url, function (nat) { var px = sizeFor(el.clientWidth, el.clientHeight, nat); el.style.backgroundSize = layers(cs.backgroundImage).map(function (l) { return /^url/.test(l) ? px : '100% 100%'; }).join(', '); el.style.backgroundRepeat = 'no-repeat'; });
+        if (p[2] !== 100 && url) natSize(w, url, function (nat) { var px = sizeFor(el.clientWidth, el.clientHeight, nat); el.style.backgroundSize = layers(cs.backgroundImage).map(function (l) { return /^url/.test(l) ? px : '100% 100%'; }).join(', '); el.style.backgroundRepeat = 'no-repeat'; });
       }
       else if (band) {
         // bandeau en haut (téléphone) : l'image garde ses proportions et couvre le bandeau
@@ -62,7 +62,7 @@
     }
     ['before', 'after'].forEach(function (ps) { var c = w.getComputedStyle(el, '::' + ps); if (/url\(/.test(c.backgroundImage) && /cover/.test(c.backgroundSize)) {
       el.classList.add(ps === 'before' ? 'cs-pb' : 'cs-pa');
-      if (p[2] < 100 && url) natSize(w, url, function (nat) { el.style.setProperty('--cs-size', sizeFor(parseFloat(c.width) || el.clientWidth, parseFloat(c.height) || el.clientHeight, nat)); el.classList.add('cs-pz'); });
+      if (p[2] !== 100 && url) natSize(w, url, function (nat) { el.style.setProperty('--cs-size', sizeFor(parseFloat(c.width) || el.clientWidth, parseFloat(c.height) || el.clientHeight, nat)); el.classList.add('cs-pz'); });
     } });
   }
 

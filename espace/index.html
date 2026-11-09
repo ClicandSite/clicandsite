@@ -512,6 +512,8 @@ function buildForms(){
   { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('div[style]').appendChild(h); b.appendChild(f); }
 
   // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)
+  // 09/11/2026 : un garage en Essentiel, Pro ou Premium a la version atelier (les véhicules à vendre sont dans le Pack Auto, Moto & Immo)
+  if(site.trade==='garage'&&!DEMO&&String(site.plan||'').toLowerCase()!=='autoimmo'&&c.atelier!==true){ c.atelier=true; }
   if(site.trade==='garage'){ b=section('Type d\'établissement',false,'Concession ou négoce sans atelier ? Cochez la case : la partie atelier (prestations, forfaits, rendez-vous) disparaît du site et les boutons mènent à vos véhicules.');
     const lb=document.createElement('label'); lb.style.cssText='display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer';
     const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=c.concession===true; cb.style.cssText='width:20px;height:20px';
@@ -1275,7 +1277,7 @@ async function boot(){
     const t=['vtc','restaurant','garage','immobilier','batiment','beaute','bienetre','veterinaire','autoecole','coach','photographe','toiletteur','fleuriste','traiteur','nautisme','kine','dentiste','boulangerie','depannage','boutique'].includes(params.get('demo'))?params.get('demo'):'garage';
     $('demoTrade').value=t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
     const st=Object.keys(STYLES).includes(params.get('style'))?params.get('style'):'moderne';
-    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:st,content:(t==='garage'&&params.get('concession')==='1')?{concession:true}:{},status:'brouillon'}); // 09/11/2026 : démo concession
+    return openSite({id:'demo',name:'Site d\'exemple',trade:t,style:st,content:(t==='garage'&&params.get('concession')==='1')?{concession:true}:(t==='garage'&&params.get('atelier')==='1')?{atelier:true}:{},status:'brouillon'}); // 09/11/2026 : démo concession
   }
   const {data:{session}}=await SB.auth.getSession();
   if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }

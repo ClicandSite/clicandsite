@@ -954,6 +954,21 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 
 <script src="https://mycreativesite.fr/assets/cs-fiche.js?v=3" defer></script>
 <script>if(/[?&]f=(essentiel|pro|premium|boutique|pack)\b/i.test(location.search)){var cf=document.createElement("script");cf.src="/assets/cs-formule.js?v=2";document.body.appendChild(cf);}</script>
+<!-- 09/11/2026 (Anthony : « dans Essentiel on peut rajouter garage simple, vidange, pneus ») : version « atelier » (?atelier=1) — entretien et réparation seulement, sans véhicules à vendre -->
+<script>
+(function(){
+  if(!/[?&]atelier=1\b/.test(location.search)) return;
+  var d=document, q=function(s){return d.querySelector(s);}, qa=function(s){return [].slice.call(d.querySelectorAll(s));};
+  d.documentElement.setAttribute('data-atelier','1'); d.title='Modèle Garage atelier MyCreativeSite';
+  ['#vehicules','#reprise'].forEach(function(s){var e=q(s); if(e) e.hidden=true;});
+  qa('a[href="#vehicules"],a[href="#reprise"]').forEach(function(a){a.hidden=true;});
+  var k=q('.hero .kicker'); if(k) k.textContent='Garage · Entretien et réparation toutes marques · Le Cannet';
+  var h=q('.hero h1'); if(h) h.textContent='Votre garage, sans mauvaise surprise.';
+  var p=q('.hero p'); if(p) p.textContent='Vidange, pneus, freins, diagnostic et révision constructeur, toutes marques. Prix annoncé avant les travaux, rendez-vous en ligne.';
+  var R=['Vidange faite le jour même, prix annoncé respecté. Je recommande.','Pneus changés rapidement et explications claires sur les freins.','Garage honnête : il m\'a dit ce qui pouvait attendre.'];
+  qa('.reviews .rev p').forEach(function(e,i){ if(R[i]) e.textContent=R[i]; });
+})();
+</script>
 <!-- 09/11/2026 (Anthony) : version « concession » du modèle garage (?concession=1) — vente de voitures uniquement : pas d'atelier, pas de vidange, pas de rendez-vous -->
 <script>
 (function(){

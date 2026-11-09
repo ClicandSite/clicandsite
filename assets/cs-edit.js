@@ -185,6 +185,13 @@
     var G = ['Un bruit, un voyant, une révision ?', 'Devis gratuit sous 24 h.'], C = ['Un véhicule vous intéresse ?', 'Essai, reprise, financement : réponse sous 24 h.'];
     if (ch) { var from = on ? G : C, to = on ? C : G; if (txt(ch) === from[0]) ch.textContent = to[0]; if (cp && txt(cp) === from[1]) cp.textContent = to[1]; }
   }
+  // 09/11/2026 (Anthony) : version « atelier » des sites garage (formules Essentiel, Pro, Premium) : entretien seulement, sans véhicules à vendre
+  function atelier(doc, on) {
+    ['#vehicules', '#reprise'].forEach(function (sel) { var e = q(doc, sel); if (!e) return;
+      if (on) { if (!e.hasAttribute('data-cs-at')) e.setAttribute('data-cs-at', e.hidden ? '1' : '0'); e.hidden = true; }
+      else if (e.hasAttribute('data-cs-at')) { e.hidden = e.getAttribute('data-cs-at') === '1'; e.removeAttribute('data-cs-at'); } });
+    qa(doc, 'a[href="#vehicules"], a[href="#reprise"]').forEach(function (a) { a.hidden = !!on; });
+  }
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;
     if (!Array.isArray(c.reviews)) c = Object.assign({}, c, { reviews: [] }); // pas d'avis d'exemple sur un vrai site
@@ -211,6 +218,7 @@
     if (Array.isArray(p.gallery)) qa(doc, '.gallery > .photo').forEach(function (e, i) { if (p.gallery[i]) setImg(e, p.gallery[i]); });
     if (c.style && doc.documentElement) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
     concession(doc, c.concession === true);
+    atelier(doc, c.atelier === true && c.concession !== true);
     credit(doc);
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }

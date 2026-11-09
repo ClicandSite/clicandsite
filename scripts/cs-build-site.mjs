@@ -81,7 +81,7 @@ async function main() {
   qa('meta[name="robots"], meta[name^="claude:"]').forEach((e) => e.remove());
   qa('.picker').forEach((e) => e.remove());
   qa('script').forEach((s) => { const t = s.textContent || '', src = s.getAttribute('src') || '';
-    if (/pk-grid|concession=1|cs-formule|classList\.add\("embed"\)/.test(t) || /cs-formule/.test(src)) s.remove(); });
+    if (/pk-grid|concession=1|atelier=1|cs-formule|classList\.add\("embed"\)/.test(t) || /cs-formule/.test(src)) s.remove(); });
   qa('style').forEach((s) => { if (/\.embed \.picker|pk-grid/.test(s.textContent)) s.remove(); });
   qa('.note').forEach((n) => { if (/exemple|d'exemple|Démonstration/i.test(n.textContent)) n.remove(); });
   qa('.ok').forEach((o) => { if (/Démonstration/i.test(o.textContent)) o.textContent = 'Merci, votre demande est envoyée. Nous vous recontactons rapidement.'; });
@@ -96,7 +96,7 @@ async function main() {
   const city = A.city;
   const phone = (c.contacts || []).find((x) => /t[ée]l/i.test(x.l) || /^[+\d][\d\s.]{8,}$/.test(clean(x.v)))?.v;
   const email = (c.contacts || []).find((x) => /@/.test(x.v))?.v;
-  const metier = trade === 'garage' ? (conc ? 'Concession auto et moto' : 'Garage et concession auto et moto') : METIER[trade] || '';
+  const metier = trade === 'garage' ? (conc ? 'Concession auto et moto' : c.atelier === true ? 'Garage, entretien et réparation automobile' : 'Garage et concession auto et moto') : METIER[trade] || '';
   const items = (Array.isArray(c.items) ? c.items : []).filter((o) => o && clean(o.t));
   const isCar = trade === 'garage', isImmo = trade === 'immobilier', withPages = isCar || isImmo;
   const dir = isImmo ? 'biens' : 'vehicules';

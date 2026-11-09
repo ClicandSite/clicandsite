@@ -3,7 +3,8 @@
 T = {}
 
 T['autoecole'] = dict(
-  name='Auto-école', title='Modèle Auto-école MyCreativeSite', logo='AUTO-ÉCOLE DU PORT', pick='pop',
+  name='Auto-école',
+  hero_pos={'moderne':'76% 30%','audacieux':'76% 30%','luxe':'70% 50%','riviera':'70% 50%','chaleureux':'76% 30%'}, title='Modèle Auto-école MyCreativeSite', logo='AUTO-ÉCOLE DU PORT', pick='pop',
   nav=[('#formules', 'Formules'), ('#tarifs', 'Tarifs'), ('#infos', 'Horaires')], navbtn='Inscription',
   kicker='Auto-école · Permis B, conduite accompagnée et boîte auto · Nice',
   h1="Votre permis, à votre rythme.",
@@ -39,7 +40,7 @@ T['autoecole'] = dict(
   addr="8 quai d'exemple, 06300 Nice", cta_h='Prêt à commencer ?', cta_p="Inscrivez-vous en ligne ou passez à l'agence avec une pièce d'identité.",
   phone='04 00 00 00 00', email='contact@autoecole-du-port.fr', cta_btn="Réserver une leçon", mbar=('Inscription', 'Appeler'),
   foot="Auto-école d'exemple · Agrément préfectoral affiché en agence",
-  H=['/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', '/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg'],
+  H=['/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg'],
   P=['/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', '/home/claude/mycreativesite/scripts/metiers/img/voiture-auto-ecole.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', '/home/claude/mycreativesite/scripts/metiers/img/agence-voitures.jpg', '/home/claude/mycreativesite/scripts/metiers/img/moniteur-eleve.jpg', 3767206, 1073030, 2526127, '/home/claude/mycreativesite/scripts/metiers/img/code-en-salle.jpg', 3767207, 5835344, 7144184, 1073031, 5835336, 5835343, 7144177, 7144186, 7144179, 1007410],
 )
 

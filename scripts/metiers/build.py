@@ -216,6 +216,10 @@ def body(k, t):
 <div class="mbar"><a class="btn" href="#rdv">{e(t['mbar'][0])}</a><a class="btn wa" href="#contact" style="background:var(--soft);border-color:var(--line);color:var(--ink)">{e(t['mbar'][1])}</a></div>
 
 <footer><div class="wrap"><span>© 2026 {e(t['brand'])} · {e(t['foot'])}</span>''')
+    hp = t.get('hero_pos')
+    if hp:  # cadrage de la photo d'accueil par style (téléphone : l'image est rognée en hauteur)
+        css = ''.join(f':root[data-p="{st}"]:not([data-l="riviera"]) .photo.hero.pimg.pimg,:root[data-p="{st}"][data-l="riviera"] .photo.hero.pimg.pimg::after,:root[data-p="{st}"][data-l="chaleureux"] .photo.hero.pimg.pimg::before{{background-position:{pos}}}' for st, pos in hp.items())
+        o.insert(0, f'<style>/* 09/11/2026 : cadrage des photos d\'accueil */{css}</style>\n')
     return ''.join(o)
 
 BRAND = {'autoecole': 'Auto-école du Port', 'coach': 'Studio Mouvement', 'photographe': 'Léa Duval Photographie', 'toiletteur': "L'Atelier des Pattes",

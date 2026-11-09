@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relier votre nom de domaine à votre site · MyCreativeSite</title>
+<meta name="description" content="Votre nom de domaine est chez OVH, IONOS, GoDaddy ou Gandi ? Les enregistrements DNS à ajouter pour le relier à votre site MyCreativeSite, pas à pas.">
+<link rel="canonical" href="https://mycreativesite.fr/aide/nom-de-domaine/">
+<meta property="og:title" content="Relier votre nom de domaine à votre site">
+<meta property="og:description" content="Votre nom de domaine est chez OVH, IONOS, GoDaddy ou Gandi ? Les enregistrements DNS à ajouter pour le relier à votre site MyCreativeSite, pas à pas.">
+<meta property="og:url" content="https://mycreativesite.fr/aide/nom-de-domaine/">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://mycreativesite.fr/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "HowTo", "name": "Relier son nom de domaine à son site MyCreativeSite", "inLanguage": "fr-FR", "step": [{"@type": "HowToStep", "text": "Ouvrir la zone DNS du nom de domaine chez son fournisseur."}, {"@type": "HowToStep", "text": "Ajouter quatre enregistrements A vers 185.199.108.153, 185.199.109.153, 185.199.110.153 et 185.199.111.153."}, {"@type": "HowToStep", "text": "Ajouter un enregistrement CNAME www vers clicandsite.github.io."}, {"@type": "HowToStep", "text": "Prévenir MyCreativeSite, qui active le HTTPS."}]}</script>
+<style>.logo-mark{width:34px;height:34px;flex:none;display:block}
+.logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+
+:root{--bg:#FFFFFF;--paper:#FAF8FF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--brand-ink:#FFFFFF;--soft:#E8EBFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,5vw,3.1rem)} h2{font-size:clamp(1.5rem,3vw,2.1rem)} h3{font-size:1.1rem}
+p{margin:0} a{color:inherit}
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:9px;font:800 1.2rem "Bricolage Grotesque",sans-serif;text-decoration:none}
+.logo svg{width:26px;height:26px} .logo i{font-style:normal;color:var(--brand)}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:13px 20px;font-weight:700;text-decoration:none;background:var(--grad);color:#fff;border:0}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:9px 14px;font-size:.92rem}
+.crumbs{font-size:.85rem;color:var(--muted);padding-block:18px 0}
+.crumbs a{color:var(--muted)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:28px 56px}
+.hero .lead{color:var(--muted);font-size:1.12rem;margin:18px 0 26px;max-width:56ch}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.shot{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(18,22,43,.45);background:var(--paper)}
+.shot img{display:block;width:100%;height:auto}
+section{padding-block:48px}
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px}
+.feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
+.feat p{color:var(--muted);font-size:.95rem}
+.prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.prices.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prices.four .pc{align-content:start}
+.pc.hi{border:2px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.pc.hi em{font-style:normal;font-size:.8rem;font-weight:700;color:var(--ink)}
+.pc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:4px}
+.pc b{font:800 2rem "Bricolage Grotesque",sans-serif}
+.pc span{color:var(--muted);font-size:.9rem}
+.note{color:var(--muted);font-size:.88rem;margin-top:12px}
+.faq{display:grid;gap:10px;margin-top:22px;max-width:780px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.faq summary{cursor:pointer;font-weight:700}
+.faq details p{color:var(--muted);margin-top:8px}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.links a{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 14px;text-decoration:none;font-size:.92rem}
+.cities{color:var(--muted);margin-top:14px;max-width:70ch}
+.cta{background:var(--ink);color:var(--bg);border-radius:20px;padding:34px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px}
+.cta p{opacity:.8;margin-top:6px}
+.cta .btn{background:var(--bg);color:var(--ink)}
+footer{border-top:1px solid var(--line);padding-block:26px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer nav{display:flex;flex-wrap:wrap;gap:16px}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.four{grid-template-columns:1fr}}
+
+.art{max-width:740px;padding-block:10px 40px}
+.art h1{margin:6px 0 14px}
+.art .date{color:var(--muted);font-size:.9rem}
+.art p{margin:14px 0;font-size:1.05rem}
+.art h2{margin:34px 0 6px;font-size:1.45rem}
+.art ul{margin:12px 0;padding-left:22px;font-size:1.03rem}
+.art li{margin:8px 0}
+.art .box{margin:34px 0 8px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
+.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;text-decoration:none;display:grid;gap:8px}
+.card p{color:var(--muted);font-size:.95rem}
+@media (max-width:760px){.list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="/"><img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt=""><span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
+<main><div class="wrap crumbs"><a href="/">Accueil</a> › Aide › Relier votre nom de domaine</div>
+<article class="wrap art">
+<h1>Relier votre nom de domaine à votre site MyCreativeSite</h1>
+<p>Vous avez déjà un nom de domaine (par exemple <b>votre-garage.fr</b>) acheté chez OVH, IONOS, GoDaddy ou ailleurs ? Vous le gardez, chez vous. Il suffit d'ajouter quelques lignes dans sa « zone DNS » pour qu'il affiche votre nouveau site. Comptez 5 minutes, puis jusqu'à 24 heures pour que tout soit pris en compte.</p>
+<h2>Les lignes à ajouter</h2>
+<p>Dans la zone DNS de votre domaine, ajoutez ces 5 enregistrements (et supprimez les anciens enregistrements A ou www qui pointent ailleurs) :</p>
+<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:.98rem" border="1" cellpadding="8"><thead><tr><th>Type</th><th>Nom / sous-domaine</th><th>Valeur / cible</th></tr></thead><tbody><tr><td>A</td><td>@ ou vide</td><td><code>185.199.108.153</code></td></tr><tr><td>A</td><td>@ ou vide</td><td><code>185.199.109.153</code></td></tr><tr><td>A</td><td>@ ou vide</td><td><code>185.199.110.153</code></td></tr><tr><td>A</td><td>@ ou vide</td><td><code>185.199.111.153</code></td></tr><tr><td>CNAME</td><td>www</td><td><code>clicandsite.github.io.</code></td></tr></tbody></table></div>
+<p>Vous préférez garder votre site actuel et mettre MyCreativeSite sur un sous-domaine (par exemple <b>annonces.votre-garage.fr</b>) ? Ajoutez seulement un enregistrement <b>CNAME</b> avec le nom <code>annonces</code> et la cible <code>clicandsite.github.io.</code></p>
+<h2>Où cliquer chez votre fournisseur</h2>
+<h3 style="margin-top:18px">OVHcloud</h3><p>Web Cloud › Noms de domaine › votre domaine › onglet « Zone DNS » › « Ajouter une entrée ». Supprimez d'abord les anciennes entrées A de la racine et l'entrée www si elles existent.</p><h3 style="margin-top:18px">IONOS</h3><p>Domaines &amp; SSL › votre domaine › « DNS » › « Ajouter un enregistrement ». Si IONOS propose de « relier à un produit IONOS », refusez : choisissez l'ajout manuel.</p><h3 style="margin-top:18px">GoDaddy</h3><p>Mes produits › Domaines › « DNS » › « Ajouter un nouvel enregistrement ». Remplacez l'enregistrement A « Parked » s'il existe.</p><h3 style="margin-top:18px">Gandi</h3><p>Noms de domaine › votre domaine › « Enregistrements DNS » › « Ajouter un enregistrement ».</p><h3 style="margin-top:18px">Google / Squarespace Domains, Namecheap, Hostinger…</h3><p>Cherchez « DNS » ou « Gérer les enregistrements » dans la fiche de votre domaine : les valeurs à saisir sont toujours les mêmes.</p>
+<h2>Et ensuite ?</h2>
+<ul><li>Envoyez-nous un mail à <b>contact@mycreativesite.fr</b> quand c'est fait : nous vérifions et activons le cadenas HTTPS (gratuit, automatique).</li>
+<li>Vos adresses e-mail sur ce domaine ne sont pas touchées : ne modifiez pas les lignes <b>MX</b>.</li>
+<li>Vous ne trouvez pas ? Donnez-nous un accès « technique » à votre espace, ou appelez votre fournisseur : la demande « ajouter des enregistrements A et CNAME » est classique.</li></ul>
+<div class="box"><div><b>Vous n'avez pas encore de nom de domaine ?</b><br>Nous le réservons pour vous, il est inclus dans toutes les formules.</div><a class="btn" href="/#commande">Je veux mon site</a></div>
+</article></main>
+<footer><div class="wrap"><span style="display:inline-flex;align-items:center;gap:8px"><img src="/img/m-badge.webp" alt="" width="20" height="20" style="width:20px;height:20px">© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
+</body>
+</html>

@@ -52,6 +52,10 @@ section{padding-block:48px}
 .feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
 .feat p{color:var(--muted);font-size:.95rem}
 .prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.prices.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prices.four .pc{align-content:start}
+.pc.hi{border:2px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.pc.hi em{font-style:normal;font-size:.8rem;font-weight:700;color:var(--ink)}
 .pc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:4px}
 .pc b{font:800 2rem "Bricolage Grotesque",sans-serif}
 .pc span{color:var(--muted);font-size:.9rem}
@@ -69,7 +73,7 @@ section{padding-block:48px}
 footer{border-top:1px solid var(--line);padding-block:26px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
-@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.four{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -99,7 +103,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>À découvrir aussi</h2>
-  <div class="links"><a href="/site-internet-restaurant/">Restaurant</a><a href="/site-internet-garage/">Garage et concession</a><a href="/site-internet-agence-immobiliere/">Agence immobilière</a><a href="/site-internet-artisan-batiment/">Artisan du bâtiment</a><a href="/site-internet-coiffeur-institut-beaute/">Coiffeur et institut de beauté</a><a href="/site-internet-masseur-osteopathe-bien-etre/">Masseur et ostéopathe</a><a href="/site-internet-boulangerie/">Boulangerie</a><a href="/site-internet-boutique-en-ligne/">Boutique en ligne</a><a href="/site-internet-plombier-electricien/">Plombier et électricien</a><a href="/site-internet-pas-cher/">Site pas cher</a><a href="/site-internet-rapide/">Site en 48 h</a><a href="/site-internet-cle-en-main/">Site clé en main</a><a href="/site-internet-facile-a-modifier/">Site facile à modifier</a></div>
+  <div class="links"><a href="/site-internet-restaurant/">Restaurant</a><a href="/site-internet-garage/">Garage auto et moto</a><a href="/site-internet-agence-immobiliere/">Agence immobilière</a><a href="/site-internet-concession-automobile/">Concession auto et moto</a><a href="/site-internet-concession-moto/">Concession auto et moto</a><a href="/site-internet-artisan-batiment/">Artisan du bâtiment</a><a href="/site-internet-coiffeur-institut-beaute/">Coiffeur et institut de beauté</a><a href="/site-internet-masseur-osteopathe-bien-etre/">Masseur et ostéopathe</a><a href="/site-internet-boulangerie/">Boulangerie</a><a href="/site-internet-boutique-en-ligne/">Boutique en ligne</a><a href="/site-internet-plombier-electricien/">Plombier et électricien</a><a href="/site-internet-diffusion-annonces-auto-immo/">Site + annonces auto, moto, immo</a><a href="/site-internet-pas-cher/">Site pas cher</a><a href="/site-internet-rapide/">Site en 48 h</a><a href="/site-internet-cle-en-main/">Site clé en main</a><a href="/site-internet-facile-a-modifier/">Site facile à modifier</a></div>
   
 </div></section>
 <section style="padding-top:0"><div class="wrap">

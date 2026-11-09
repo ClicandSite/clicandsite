@@ -7,6 +7,7 @@ import json, os, html, datetime
 SITE = "https://mycreativesite.fr"
 TODAY = datetime.date.today().isoformat()
 PRICES = [("Essentiel", 29, 190), ("Pro", 49, 290), ("Premium", 79, 490)]
+PACK = ("Pack Auto, Moto & Immo", 99, 490)  # site + annonces illimitées sur Abracadeal + CRM + une page Google par annonce
 
 PAGES = [
   dict(slug="site-internet-vtc", k="vtc", style="luxe",
@@ -37,34 +38,67 @@ PAGES = [
     faq=[("Je peux changer ma carte moi-même ?","Oui, depuis votre espace client : ajoutez un plat, changez un prix ou le menu du jour, le site est mis à jour aussitôt."),
          ("Le site remplace-t-il les plateformes de réservation ?","Il vous évite leurs commissions pour les clients qui vous trouvent directement. Vous pouvez aussi garder vos outils actuels."),
          ("Et si mon restaurant a déjà un site ?","On reprend vos textes et photos dans un modèle moderne, et on branche votre nom de domaine actuel.")]),
-  dict(slug="site-internet-garage", k="garage", style="audacieux",
-    title="Création de site internet pour garage et concession",
-    meta="Site internet pour garage automobile et concession : prise de rendez-vous atelier, tarifs, stock de véhicules d'occasion, reprise. En ligne en 48 h, dès 29 €/mois.",
-    h1="Le site internet des garages et des concessions indépendantes",
-    lead="Rendez-vous atelier, véhicules d'occasion, reprise : un site qui travaille pour vous pendant que vous êtes sous le capot.",
-    feats=[("Prise de rendez-vous","Prestation, date souhaitée, immatriculation : la demande arrive par mail."),
-           ("Stock de véhicules","Fiches avec photos, kilométrage, énergie et prix, filtrables par marque et budget."),
-           ("Estimation de reprise","Le client envoie son immatriculation et son kilométrage pour une estimation."),
-           ("Forfaits et tarifs","Vidange, pneus, freins, climatisation : des prix affichés qui donnent confiance."),
-           ("Présentation de l'atelier","Équipe, équipements, véhicule de prêt, moyens de paiement."),
-           ("Annonces sur Abracadeal","En Premium, vos véhicules sont aussi diffusés sur Abracadeal.")],
-    faq=[("Je peux ajouter mes véhicules moi-même ?","Oui : depuis votre espace client, vous ajoutez, modifiez ou retirez un véhicule avec ses photos et son prix."),
-         ("Le site convient-il à un garage sans vente de véhicules ?","Oui, la partie stock peut être retirée : le site se concentre alors sur l'atelier et les rendez-vous."),
+  dict(slug="site-internet-garage", k="garage", style="audacieux", pack=True,
+    title="Création de site internet pour garage auto et moto",
+    meta="Site internet pour garage auto et moto : rendez-vous atelier, forfaits, stock de véhicules d'occasion avec une page par véhicule sur Google, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    h1="Le site internet des garages auto et moto qui remplit l'atelier et vend les occasions",
+    lead="Rendez-vous atelier, forfaits affichés, véhicules d'occasion et reprise : un site qui travaille pour vous pendant que vous êtes sous le capot. Avec le Pack Auto, Moto & Immo, chaque véhicule a aussi sa page sur Google et part en annonce sur Abracadeal.",
+    feats=[("Prise de rendez-vous","Prestation, date souhaitée, immatriculation : la demande arrive par mail et dans votre espace « Mes clients »."),
+           ("Forfaits et tarifs","Vidange, pneus, freins, climatisation : des prix affichés qui donnent confiance avant même l'appel."),
+           ("Stock de véhicules","Voitures et motos avec photos, fiche technique complète, prix et statut (en vente, réservé, vendu), filtrables par marque, énergie et budget."),
+           ("Une page Google par véhicule","Pack Auto, Moto & Immo : chaque occasion a sa propre page (« Peugeot 308 2021 – 18 990 € – votre ville »), lisible par Google et partageable sur WhatsApp."),
+           ("Annonces illimitées sur Abracadeal","Pack Auto, Moto & Immo : vos véhicules sont publiés et mis à jour automatiquement sur Abracadeal, sans passerelle à payer."),
+           ("Estimation de reprise","Le client envoie son immatriculation et son kilométrage pour une estimation : un contact de plus à chaque visite.")],
+    faq=[("Je peux ajouter mes véhicules moi-même ?","Oui : dans votre espace client, l'onglet « Mes véhicules » vous fait remplir une vraie fiche (marque, modèle, année, kilométrage, énergie, boîte, puissance, équipements, jusqu'à 30 photos). Le site et Abracadeal se mettent à jour tout seuls."),
+         ("Je vends aussi des motos, c'est prévu ?","Oui : la fiche accepte voitures, motos et scooters, et Google les reconnaît comme tels."),
+         ("Je n'ai pas d'atelier, je fais uniquement de la vente","Choisissez la version concession : plus d'atelier ni de rendez-vous, tout le site est tourné vers vos véhicules à vendre."),
+         ("Quelle formule choisir ?","Pour un garage qui veut surtout des rendez-vous, Pro suffit. Si vous vendez des véhicules, le Pack Auto, Moto & Immo (99 € par mois) ajoute les annonces illimitées sur Abracadeal, le CRM et une page Google par véhicule."),
          ("Combien de temps pour être en ligne ?","En général 48 heures après réception de vos informations et photos.")]),
-  dict(slug="site-internet-agence-immobiliere", k="immobilier", style="riviera",
+  dict(slug="site-internet-agence-immobiliere", k="immobilier", style="riviera", pack=True,
     title="Création de site internet pour agence immobilière",
-    meta="Site internet pour agence immobilière indépendante : biens à vendre et à louer filtrables, étiquette DPE, estimation gratuite, présentation de l'agent. Dès 29 €/mois.",
-    h1="Un site d'agence immobilière qui génère des mandats",
-    lead="Vos biens bien présentés, une estimation en ligne qui capte les vendeurs, et une image d'agence locale de confiance.",
+    meta="Site internet pour agence immobilière indépendante : biens à vendre et à louer avec DPE et GES, une page Google par bien, estimation gratuite, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    h1="Un site d'agence immobilière qui génère des mandats et des visites",
+    lead="Vos biens bien présentés, une estimation en ligne qui capte les vendeurs, une page Google par bien et vos annonces diffusées sur Abracadeal sans passerelle payante.",
     feats=[("Recherche de biens","Achat ou location, ville, budget, nombre de pièces : filtres en direct."),
-           ("Fiches avec DPE","Photos, surface, pièces, prix et étiquette énergie conforme."),
-           ("Estimation gratuite","Un formulaire dédié pour recevoir des demandes de vendeurs."),
-           ("Présentation de l'agent","Votre parcours, vos langues, votre secteur : la confiance avant le premier appel."),
-           ("Mentions obligatoires","Carte professionnelle, garantie financière et honoraires affichés."),
-           ("Annonces sur Abracadeal","En Premium, vos biens sont aussi diffusés sur Abracadeal.")],
-    faq=[("Je peux ajouter mes biens moi-même ?","Oui, depuis votre espace client, avec photos, prix et caractéristiques."),
+           ("Fiches complètes et conformes","Surface, pièces, chambres, étage, DPE et GES avec leurs valeurs, dépenses d'énergie, copropriété et honoraires : les mentions obligatoires s'écrivent toutes seules."),
+           ("Une page Google par bien","Pack Auto, Moto & Immo : chaque bien a sa propre page (« Appartement 3 pièces 78 m² – Fréjus – 450 000 € »), lisible par Google et partageable."),
+           ("Annonces illimitées sur Abracadeal","Pack Auto, Moto & Immo : vos biens sont publiés et mis à jour automatiquement, retirés dès qu'ils sont vendus ou loués."),
+           ("Estimation gratuite","Un formulaire dédié pour recevoir des demandes de vendeurs, suivies dans votre CRM."),
+           ("Présentation de l'agent","Votre parcours, vos langues, votre secteur : la confiance avant le premier appel.")],
+    faq=[("Je peux ajouter mes biens moi-même ?","Oui : l'onglet « Mes biens » de votre espace client vous fait remplir une fiche complète (vente ou location, surface, DPE et GES, charges, honoraires, jusqu'à 30 photos). Le site et Abracadeal suivent automatiquement."),
+         ("Les mentions obligatoires sont-elles gérées ?","Oui : DPE et GES avec leurs étiquettes, dépenses d'énergie estimées, copropriété, honoraires, et en location le loyer charges comprises et le dépôt de garantie."),
          ("Le site est-il adapté à un agent indépendant ou mandataire ?","Oui : il met en avant votre nom, votre secteur et votre accompagnement personnel."),
-         ("Puis-je afficher mes honoraires ?","Oui, c'est d'ailleurs obligatoire : une rubrique est prévue pour votre barème.")]),
+         ("Faut-il payer une passerelle de diffusion ?","Non : avec le Pack Auto, Moto & Immo, la diffusion sur Abracadeal est incluse et illimitée.")]),
+  dict(slug="site-internet-concession-automobile", k="concession", style="luxe", pack=True,
+    title="Création de site internet pour concession automobile et moto",
+    meta="Site internet pour concession auto et moto : stock de véhicules d'occasion, une page Google par véhicule, reprise, financement, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
+    h1="Le site internet des concessions auto et moto qui vend vos véhicules",
+    lead="100 % vente : pas d'atelier, pas de rendez-vous, tout le site est tourné vers votre stock. Chaque véhicule a sa propre page sur Google et part automatiquement en annonce sur Abracadeal.",
+    feats=[("Votre stock en vitrine","Voitures et motos filtrables par marque, énergie et budget, avec photos, prix et statut (en vente, réservé, vendu)."),
+           ("Une page Google par véhicule","« BMW Série 3 2020 – 24 900 € – votre ville » : une vraie page par véhicule, avec fiche technique, équipements et photos, que Google peut afficher dans ses résultats."),
+           ("Annonces illimitées sur Abracadeal","Votre stock est publié et mis à jour tout seul sur Abracadeal. Un véhicule vendu disparaît partout en même temps."),
+           ("Fiche véhicule complète","Marque, modèle, version, année, kilométrage, énergie, boîte, puissance, couleur, Crit'Air, garantie, jusqu'à 30 photos : vous remplissez une fois, tout suit."),
+           ("Reprise et financement","Estimation de reprise en ligne et mise en avant du financement : les deux arguments qui font signer."),
+           ("Demandes suivies dans un CRM","« Je suis intéressé », demandes d'essai et de reprise arrivent dans votre espace, avec l'historique de chaque client.")],
+    faq=[("Quelle différence avec un site de garage ?","La version concession retire l'atelier, les forfaits et la prise de rendez-vous : les boutons mènent à vos véhicules et le site parle d'achat, de reprise et de financement."),
+         ("Je vends des voitures et des motos, ça marche ?","Oui : chaque fiche peut être une voiture, une moto ou un scooter, et Google les reconnaît comme tels."),
+         ("Combien coûte le Pack Auto, Moto & Immo ?","99 € par mois et 490 € de mise en ligne, une fois. Annonces illimitées sur Abracadeal, CRM et page Google par véhicule compris, sans engagement."),
+         ("Faut-il une passerelle ou un logiciel de diffusion ?","Non : la diffusion sur Abracadeal est incluse. Vous mettez à jour votre stock une seule fois, dans votre espace client."),
+         ("Mes véhicules apparaîtront-ils sur Google ?","Chaque véhicule a sa propre page avec un titre, une description et des données structurées (marque, modèle, kilométrage, prix) que Google sait lire. Le délai d'apparition dépend de Google, en général quelques jours à quelques semaines.")]),
+  dict(slug="site-internet-concession-moto", k="concession", style="nuit", pack=True,
+    title="Création de site internet pour concession et garage moto",
+    meta="Site internet pour concession moto et scooter : motos d'occasion avec une page Google par modèle, reprise, financement, atelier en option, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    h1="Un site pour vendre vos motos et scooters, même pendant que la boutique est fermée",
+    lead="Roadsters, trails, sportives, scooters : vos motos d'occasion en vitrine, chacune avec sa page sur Google, et diffusées sur Abracadeal sans rien ressaisir.",
+    feats=[("Vos motos en vitrine","Photos, cylindrée, kilométrage, année et prix, filtrables par marque et budget."),
+           ("Une page par moto","« Yamaha MT-07 2020 – 6 490 € – votre ville » : chaque moto a sa page, reconnue par Google comme une moto."),
+           ("Atelier en option","Entretien, pneus, préparation au contrôle : gardez la prise de rendez-vous si vous avez un atelier, retirez-la sinon."),
+           ("Reprise et financement","Le motard envoie sa moto actuelle pour une estimation, vous affichez vos solutions de financement."),
+           ("Annonces illimitées sur Abracadeal","Avec le Pack Auto, Moto & Immo, vos motos sont publiées et retirées automatiquement."),
+           ("Mis à jour depuis votre téléphone","Une moto vendue ? Vous la passez en « Vendu » en deux clics, le site et Abracadeal suivent.")],
+    faq=[("Je vends aussi des scooters et des quads, c'est possible ?","Oui : la fiche propose moto, scooter et autres types de véhicules."),
+         ("J'ai aussi un atelier, je garde la prise de rendez-vous ?","Oui : la version garage garde l'atelier et les rendez-vous. La version concession les retire pour ne parler que de vente."),
+         ("Combien ça coûte ?","Le site seul commence à 29 € par mois. Avec les annonces illimitées sur Abracadeal, le CRM et une page Google par moto, c'est le Pack Auto, Moto & Immo à 99 € par mois, sans engagement.")]),
   dict(slug="site-internet-artisan-batiment", k="batiment", style="moderne",
     title="Création de site internet pour artisan du bâtiment",
     meta="Site internet pour artisan du bâtiment et entreprise de rénovation : demande de devis, réalisations avant/après, tarifs au m², zone d'intervention, décennale. Dès 29 €/mois.",
@@ -262,6 +296,21 @@ CITY_SLUG = {}
 
 # Pages « intention » : ce que le pro tape dans Google (pas cher, rapide, clé en main, simple à modifier)
 INTENT = [
+  dict(slug="site-internet-diffusion-annonces-auto-immo", k="concession", style="luxe", pack=True, label="Site + annonces auto, moto, immo",
+    title="Site internet et diffusion d'annonces auto, moto et immobilier",
+    meta="Votre site professionnel et vos annonces de véhicules ou de biens diffusées en illimité sur Abracadeal, sans passerelle ni logiciel de multidiffusion à payer. 99 €/mois, sans engagement.",
+    h1="Votre site et vos annonces au même endroit, mis à jour une seule fois",
+    lead="Pour les garages, concessions auto et moto et agences immobilières : vous gérez votre stock dans votre espace, et votre site, vos pages Google et vos annonces sur Abracadeal suivent automatiquement.",
+    feats=[("Une seule saisie","Vous remplissez la fiche d'un véhicule ou d'un bien une fois : site, page Google et annonce sont créés en même temps."),
+           ("Annonces illimitées","Aucune limite de nombre d'annonces sur Abracadeal, aucun coût par annonce."),
+           ("Retrait automatique","Vendu, loué, sous compromis : l'annonce disparaît d'Abracadeal dans les minutes qui suivent."),
+           ("Une page Google par annonce","Titre, prix, photos et fiche technique sur une vraie page de votre site, avec les données structurées que Google sait lire."),
+           ("Compte Abracadeal ouvert pour vous","Votre SIRET est demandé au paiement : votre espace professionnel Abracadeal est créé et relié à votre site, sans démarche."),
+           ("CRM inclus","Toutes les demandes (site et annonces) sont suivies dans votre espace, client par client.")],
+    faq=[("Que remplace cette offre ?","Un site vitrine et un logiciel ou une passerelle de multidiffusion : ici, les deux sont réunis dans un seul abonnement."),
+         ("Mes annonces partent-elles sur d'autres sites que Abracadeal ?","Aujourd'hui la diffusion se fait sur Abracadeal. Votre site et vos pages Google restent par ailleurs visibles par tous."),
+         ("Combien ça coûte ?","99 € par mois et 490 € de mise en ligne, une fois. Sans engagement : vous arrêtez quand vous voulez, vos annonces sont alors retirées."),
+         ("Qui peut en profiter ?","Les garages et concessions auto et moto, et les agences immobilières. Pour les autres métiers, voyez nos formules Essentiel, Pro et Premium.")]),
   dict(slug="site-internet-pas-cher", k=None, label="Site pas cher",
     title="Création de site internet pas cher pour les pros",
     meta="Site internet professionnel pas cher : dès 29 €/mois et 190 € de mise en ligne, hébergement et nom de domaine inclus, sans engagement et sans frais cachés.",
@@ -352,6 +401,10 @@ section{padding-block:48px}
 .feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
 .feat p{color:var(--muted);font-size:.95rem}
 .prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.prices.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prices.four .pc{align-content:start}
+.pc.hi{border:2px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.pc.hi em{font-style:normal;font-size:.8rem;font-weight:700;color:var(--ink)}
 .pc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:4px}
 .pc b{font:800 2rem "Bricolage Grotesque",sans-serif}
 .pc span{color:var(--muted);font-size:.9rem}
@@ -369,20 +422,20 @@ section{padding-block:48px}
 footer{border-top:1px solid var(--line);padding-block:26px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
-@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices{grid-template-columns:1fr}}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.four{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage et concession","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
-    out = [f'<a href="/{p["slug"]}/">{NAMES[p["k"]]}</a>' for p in PAGES if p["slug"] != cur]
+    out = [f'<a href="/{p["slug"]}/">{p.get("label") or NAMES[p["k"]]}</a>' for p in PAGES if p["slug"] != cur]
     out += [f'<a href="/{c["slug"]}/">Site internet à {c["city"]}</a>' for c in CITIES if c["slug"] != cur]
     out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
 
 GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables",
-  "garage": "site-internet-garage-les-indispensables", "immobilier": "site-internet-agence-immobiliere-les-indispensables",
+  "garage": "site-internet-garage-les-indispensables", "concession": "concession-auto-moto-vendre-plus-avec-son-site", "immobilier": "site-internet-agence-immobiliere-les-indispensables",
   "batiment": "site-internet-artisan-batiment-les-indispensables", "beaute": "site-internet-coiffeur-institut-beaute-les-indispensables",
   "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
   "depannage": "site-internet-plombier-electricien-les-indispensables", "boutique": "creer-boutique-en-ligne-les-indispensables"}
@@ -399,18 +452,22 @@ def page(p):
     svc_ld = {"@context":"https://schema.org","@type":"Service","name":p["title"],"serviceType":"Création de site internet","url":url,
       "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr"},
       "areaServed":({"@type":"City","name":p["city"]} if p.get("city") else "FR"),
-      "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in PRICES]}
+      "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in (([PACK] if p.get("pack") else []) + PRICES)]}
     crumbs_ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
     if k:
         visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec MyCreativeSite" fetchpriority="high"></div>'
-        demo = f'<a class="btn ghost" href="/modeles/{k}.html#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={k}&amp;style={p["style"]}">Essayer l\'espace client</a>'
+        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else (k + ".html", k)
+        demo = f'<a class="btn ghost" href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
     else:
         visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite" fetchpriority="high"></div>'
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
+    if p.get("pack"):
+        prices = (f'<div class="pc hi"><em>Recommandé pour vous</em><span>{PACK[0]}</span><b>{PACK[1]} €</b><span>par mois · + {PACK[2]} € de mise en ligne</span>'
+                  '<span>Annonces illimitées sur Abracadeal, CRM, une page Google par véhicule ou par bien</span></div>') + prices
     faq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
     def _cl(c):
         sl = CITY_SLUG.get(c)
@@ -458,8 +515,8 @@ def page(p):
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>Des prix clairs, sans engagement</h2>
-  <div class="prices">{prices}</div>
-  <p class="note">TVA non applicable, art. 293 B du CGI. Hébergement, nom de domaine, version mobile et espace client inclus. <a href="/#tarifs">Détail des formules</a> · <a href="/cgv.html">Conditions générales</a></p>
+  <div class="prices{' four' if p.get('pack') else ''}">{prices}</div>
+  <p class="note">TVA non applicable, art. 293 B du CGI. Hébergement, nom de domaine, version mobile et espace client inclus. <a href="/#tarifs">Détail des formules</a>{' · <a href="/#auto-immo">Pack Auto, Moto &amp; Immo</a>' if p.get('pack') else ''} · <a href="/cgv.html">Conditions générales</a></p>
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>Questions fréquentes</h2>
@@ -479,7 +536,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}
@@ -559,6 +616,45 @@ def build_blog():
     open("conseils/index.html","w").write(shell("Conseils pour le site internet de votre entreprise","Guides pratiques pour les professionnels : prix d'un site internet, visibilité sur Google, mentions légales, nom de domaine.",SITE+"/conseils/",ld,body))
     return ["conseils/"] + [f"conseils/{a['slug']}/" for a in ARTICLES]
 
+def build_help():
+    """Page d'aide : relier un nom de domaine (chez OVH, IONOS, GoDaddy, Gandi…) à son site MyCreativeSite."""
+    url = SITE + "/aide/nom-de-domaine/"
+    rows = "".join(f'<tr><td>{a}</td><td>{b}</td><td><code>{c}</code></td></tr>' for a,b,c in [
+        ("A", "@ ou vide", "185.199.108.153"), ("A", "@ ou vide", "185.199.109.153"),
+        ("A", "@ ou vide", "185.199.110.153"), ("A", "@ ou vide", "185.199.111.153"),
+        ("CNAME", "www", "clicandsite.github.io.")])
+    regs = [
+        ("OVHcloud", "Web Cloud › Noms de domaine › votre domaine › onglet « Zone DNS » › « Ajouter une entrée ». Supprimez d'abord les anciennes entrées A de la racine et l'entrée www si elles existent."),
+        ("IONOS", "Domaines &amp; SSL › votre domaine › « DNS » › « Ajouter un enregistrement ». Si IONOS propose de « relier à un produit IONOS », refusez : choisissez l'ajout manuel."),
+        ("GoDaddy", "Mes produits › Domaines › « DNS » › « Ajouter un nouvel enregistrement ». Remplacez l'enregistrement A « Parked » s'il existe."),
+        ("Gandi", "Noms de domaine › votre domaine › « Enregistrements DNS » › « Ajouter un enregistrement »."),
+        ("Google / Squarespace Domains, Namecheap, Hostinger…", "Cherchez « DNS » ou « Gérer les enregistrements » dans la fiche de votre domaine : les valeurs à saisir sont toujours les mêmes.")]
+    regs_html = "".join(f'<h3 style="margin-top:18px">{a}</h3><p>{b}</p>' for a,b in regs)
+    body = f"""<div class="wrap crumbs"><a href="/">Accueil</a> › Aide › Relier votre nom de domaine</div>
+<article class="wrap art">
+<h1>Relier votre nom de domaine à votre site MyCreativeSite</h1>
+<p>Vous avez déjà un nom de domaine (par exemple <b>votre-garage.fr</b>) acheté chez OVH, IONOS, GoDaddy ou ailleurs ? Vous le gardez, chez vous. Il suffit d'ajouter quelques lignes dans sa « zone DNS » pour qu'il affiche votre nouveau site. Comptez 5 minutes, puis jusqu'à 24 heures pour que tout soit pris en compte.</p>
+<h2>Les lignes à ajouter</h2>
+<p>Dans la zone DNS de votre domaine, ajoutez ces 5 enregistrements (et supprimez les anciens enregistrements A ou www qui pointent ailleurs) :</p>
+<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:.98rem" border="1" cellpadding="8"><thead><tr><th>Type</th><th>Nom / sous-domaine</th><th>Valeur / cible</th></tr></thead><tbody>{rows}</tbody></table></div>
+<p>Vous préférez garder votre site actuel et mettre MyCreativeSite sur un sous-domaine (par exemple <b>annonces.votre-garage.fr</b>) ? Ajoutez seulement un enregistrement <b>CNAME</b> avec le nom <code>annonces</code> et la cible <code>clicandsite.github.io.</code></p>
+<h2>Où cliquer chez votre fournisseur</h2>
+{regs_html}
+<h2>Et ensuite ?</h2>
+<ul><li>Envoyez-nous un mail à <b>contact@mycreativesite.fr</b> quand c'est fait : nous vérifions et activons le cadenas HTTPS (gratuit, automatique).</li>
+<li>Vos adresses e-mail sur ce domaine ne sont pas touchées : ne modifiez pas les lignes <b>MX</b>.</li>
+<li>Vous ne trouvez pas ? Donnez-nous un accès « technique » à votre espace, ou appelez votre fournisseur : la demande « ajouter des enregistrements A et CNAME » est classique.</li></ul>
+<div class="box"><div><b>Vous n'avez pas encore de nom de domaine ?</b><br>Nous le réservons pour vous, il est inclus dans toutes les formules.</div><a class="btn" href="/#commande">Je veux mon site</a></div>
+</article>"""
+    ld = [{"@context":"https://schema.org","@type":"HowTo","name":"Relier son nom de domaine à son site MyCreativeSite","inLanguage":"fr-FR",
+           "step":[{"@type":"HowToStep","text":"Ouvrir la zone DNS du nom de domaine chez son fournisseur."},
+                   {"@type":"HowToStep","text":"Ajouter quatre enregistrements A vers 185.199.108.153, 185.199.109.153, 185.199.110.153 et 185.199.111.153."},
+                   {"@type":"HowToStep","text":"Ajouter un enregistrement CNAME www vers clicandsite.github.io."},
+                   {"@type":"HowToStep","text":"Prévenir MyCreativeSite, qui active le HTTPS."}]}]
+    os.makedirs("aide/nom-de-domaine", exist_ok=True)
+    open("aide/nom-de-domaine/index.html", "w").write(shell("Relier votre nom de domaine à votre site", "Votre nom de domaine est chez OVH, IONOS, GoDaddy ou Gandi ? Les enregistrements DNS à ajouter pour le relier à votre site MyCreativeSite, pas à pas.", url, ld, body, "article"))
+    return ["aide/nom-de-domaine/"]
+
 def main():
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     for p in PAGES + CITIES + INTENT:
@@ -566,14 +662,15 @@ def main():
         open(os.path.join(p["slug"], "index.html"), "w").write(page(p))
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     blog = build_blog()
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + CITIES + INTENT] + [(u, "0.6") for u in blog] + [("cgv.html", "0.3")]
+    aide = build_help()
+    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + CITIES + INTENT] + [(u, "0.6") for u in blog] + [(u, "0.4") for u in aide] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     from articles import ARTICLES
     adate = {f"conseils/{a['slug']}/": a["date"] for a in ARTICLES}
     sm += [f'  <url><loc>{SITE}/{u}</loc><lastmod>{adate.get(u, TODAY)}</lastmod><priority>{pr}</priority></url>' for u, pr in urls]
     sm.append("</urlset>")
     open("sitemap.xml", "w").write("\n".join(sm) + "\n")
-    links = "".join(f'<a class="card" href="/{p["slug"]}/"><h3>{NAMES[p["k"]]}</h3></a>' for p in PAGES)
+    links = "".join(f'<a class="card" href="/{p["slug"]}/"><h3>{p.get("label") or NAMES[p["k"]]}</h3></a>' for p in PAGES)
     body404 = f'<div class="wrap" style="padding-block:40px 60px"><h1>Page introuvable</h1><p class="lead" style="color:var(--muted);margin-top:12px">Cette page n\'existe pas ou a été déplacée. Voici nos modèles de site par métier :</p><div class="list">{links}</div><p style="margin-top:24px"><a class="btn" href="/">Retour à l\'accueil</a></p></div>'
     open("404.html", "w").write(shell("Page introuvable", "Cette page n'existe pas.", SITE + "/404.html", [], body404).replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="robots" content="noindex">', 1))
     print("pages :", len(PAGES) + len(CITIES) + len(INTENT), "· sitemap :", len(urls), "adresses")

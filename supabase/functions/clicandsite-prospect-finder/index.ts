@@ -5,6 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
 //    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
+// mode "nouveaux" : créations du jour au BODACC (garages, concessions auto et moto, agences immobilières), même avant ouverture.
 // N'ENVOIE AUCUN MAIL. Les pros trouvés attendent dans le CRM MyCreativeSite (projet Supabase séparé, schéma clicandsite) la validation d'Anthony.
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const db = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
@@ -14,7 +15,7 @@ const UA = "Mozilla/5.0 (compatible; MyCreativeSiteBot/1.0; +https://mycreatives
 const NAF: Record<string, string> = {
   vtc: "49.32Z,49.39B",
   restaurant: "56.10A",
-  garage: "45.20A,45.11Z",
+  garage: "45.20A,45.11Z,45.40Z",
   immobilier: "68.31Z",
   // Bâtiment : maisons, électricité, plomberie/chauffage, plâtrerie, menuiserie, carrelage, peinture, finition, couverture, maçonnerie
   batiment: "41.20A,43.21A,43.22A,43.22B,43.31Z,43.32A,43.33Z,43.34Z,43.39Z,43.91B,43.99C",
@@ -55,6 +56,7 @@ async function sirene(dept: string, trade: string, page: number) {
         lat: e.latitude ? +e.latitude : null, lon: e.longitude ? +e.longitude : null,
         phone: null, email: null, website: null,
         date_creation: res.date_creation || e.date_creation || null,
+        segment: trade === "garage" ? (/^45\.11/.test(e.activite_principale || res.activite_principale || "") ? "concession" : /^45\.40/.test(e.activite_principale || res.activite_principale || "") ? "moto" : "garage") : trade === "immobilier" ? "immobilier" : null,
         brand: CHAINS.test(name) || CHAINS.test(res.nom_complet || "") || (res.nombre_etablissements_ouverts || 0) > 5,
       });
     }
@@ -193,6 +195,84 @@ async function search(body: any) {
   }
 }
 
+// ── mode "nouveaux" : créations d'entreprises publiées au BODACC (journal officiel, gratuit, chaque jour) ──
+// Garages, concessions auto, motos et agences immobilières qui viennent de s'immatriculer, souvent avant même
+// d'ouvrir (date de début d'activité dans le futur) : ils n'ont presque jamais de site. Le crawl vérifie ensuite.
+const BODACC = "https://bodacc-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/annonces-commerciales/records";
+const BKEYS = ["véhicules", "véhicule", "automobiles", "automobile", "voitures", "motos", "motocycles", "scooters", "immobilier", "immobilière", "immobilières", "transactions"];
+const na = (x: string) => noAccent((x || "").toLowerCase());
+const GOODS = /piece|accessoire|equipement|pneu|produit|fourniture|jante|lubrifiant/;
+function classify(raw: string): string | null {
+  const t = na(raw).replace(/\s+/g, " ");
+  const immo = /transactions? (sur )?(immeubles|immobilieres?)|agen(ce|t)s? immobili|mandataire[^.;]{0,30}immobili|negociat(ion|eur)s? immobili|intermediai(re|tion)[^.;]{0,50}immobili|entremise[^.;]{0,60}immobili|gestion locative|administration de biens|courtage[^.;]{0,30}immobili/.test(t)
+    && !/hors (activite de )?transaction|sans exercice d.activites? de transaction/.test(t);
+  if (immo) return "immobilier";
+  const mo = /\bmotos?\b|motocycl|scooters?|deux[- ]roues/.test(t) && /(vente|negoce|commerce|reparation|entretien|mecanique|atelier|concession)/.test(t) && !/conseil[^.;]{0,40}moto/.test(t);
+  let sale = false;
+  for (const m of t.matchAll(/(achat|vente|revente|negoce|commerce(?: de detail| de gros)?|depot[- ]vente|import(?:ation)?)([^.;]{0,45}?)(vehicules?|automobiles?|voitures?)/g)) {
+    const before = t.slice(Math.max(0, (m.index || 0) - 30), m.index);
+    if (!GOODS.test(m[2]) && !/conseil|accompagnement|annonces/.test(before + m[2])) { sale = true; break; }
+  }
+  const repair = /(reparation|entretien|mecanique|carrosserie|diagnostic|maintenance|vidange)[^.;]{0,40}(vehicules?|automobiles?|voitures?|\bauto\b)|mecanique (generale|automobile)|garage automobile/.test(t)
+    && !/sans (aucune )?(entretien|intervention|reparation|mecanique)|hors mecanique/.test(t);
+  if (mo) return "moto";
+  if (repair) return "garage";
+  if (sale && !/sans achat ni (re)?vente|plateforme[^.;]{0,40}annonces/.test(t)) return "concession";
+  return null;
+}
+function jparse(x: any) { try { return typeof x === "string" ? JSON.parse(x) : x; } catch { return null; } }
+function bodaccRow(r: any) {
+  const ets = jparse(r.listeetablissements)?.etablissement; const e = Array.isArray(ets) ? ets[0] : ets;
+  const act = [e?.activite, ...(Array.isArray(ets) ? ets.slice(1).map((x: any) => x?.activite) : [])].filter(Boolean).join(" - ");
+  const seg = classify(act); if (!seg) return null;
+  const per = jparse(r.listepersonnes)?.personne; const pp = Array.isArray(per) ? per[0] : per;
+  let name = pp?.nomCommercial || e?.enseigne || pp?.denomination || "";
+  if (!name && pp?.nom) name = `${(pp.prenom || "").split(",")[0].trim()} ${pp.nom}`.trim();
+  if (!name) name = r.commercant || ""; name = name.replace(/\s+/g, " ").trim(); if (!name) return null;
+  if (name === name.toUpperCase()) name = titleCase(name);
+  const ad = e?.adresse || {};
+  const siren = ((r.registre || [])[0] || "").replace(/\D/g, ""); if (siren.length !== 9) return null;
+  const acte = jparse(r.acte) || {};
+  return {
+    source: "bodacc", source_id: "siren:" + siren, siret: siren, trade: seg === "immobilier" ? "immobilier" : "garage", segment: seg,
+    name, address: [ad.numeroVoie, ad.typeVoie, ad.nomVoie].filter(Boolean).join(" ") || null,
+    postcode: ad.codePostal || r.cp || null, city: ad.ville ? titleCase(ad.ville) : (r.ville || null), lat: null, lon: null,
+    phone: null, email: null, website: null, activite: act.slice(0, 600),
+    date_creation: acte.dateImmatriculation || r.dateparution || null, date_debut: acte.dateCommencementActivite || null,
+    brand: CHAINS.test(name) || /\b(iad|safti|capifrance|optimhome|megagence|proprietes privees)\b/i.test(na(act)),
+  };
+}
+async function nouveaux(body: any) {
+  const { data: cur } = await db.rpc("cs_robot_bodacc_cursor");
+  const c = cur as { enabled: boolean; day: string; offset: number };
+  if (!c?.enabled && !body.manual) return { skipped: "robot arrêté" };
+  let day = c.day, off = c.offset || 0, seen = 0, kept = 0, inserted = 0;
+  const today = new Date().toISOString().slice(0, 10);
+  const where = (d: string) => `familleavis="creation" and dateparution=date'${d}' and (` + BKEYS.map(k => `search(listeetablissements,"${k}")`).join(" or ") + ")";
+  try {
+    for (let i = 0; i < 8; i++) {
+      if (day > today) break;
+      const u = `${BODACC}?where=${encodeURIComponent(where(day))}&order_by=numeroannonce&limit=100&offset=${off}&select=registre,commercant,cp,ville,dateparution,listepersonnes,listeetablissements,acte`;
+      const r = await fetch(u, { headers: { "User-Agent": UA, "Accept": "application/json" }, signal: AbortSignal.timeout(25000) });
+      if (!r.ok) throw new Error("BODACC HTTP " + r.status);
+      const d = await r.json(); const res = d.results || []; seen += res.length;
+      const rows = res.map(bodaccRow).filter(Boolean);
+      kept += rows.length;
+      if (rows.length) { const { data: n, error } = await db.rpc("cs_robot_upsert", { p_rows: rows }); if (error) throw new Error(error.message); inserted += (n as number) || 0; }
+      if (res.length === 100 && off + 100 < 10000) off += 100;
+      else if (day < today) { day = new Date(Date.parse(day) + 864e5).toISOString().slice(0, 10); off = 0; }
+      else { off = 0; break; } // aujourd'hui : on repassera plus tard
+    }
+    await db.rpc("cs_robot_bodacc_save", { p_day: day, p_offset: off });
+    await db.rpc("cs_robot_log", { p_kind: "nouveaux", p_trade: null, p_area: day, p_found: kept, p_inserted: inserted, p_checked: seen, p_ok: true, p_error: null });
+    return { day, offset: off, seen, kept, inserted };
+  } catch (e) {
+    await db.rpc("cs_robot_bodacc_save", { p_day: day, p_offset: off });
+    await db.rpc("cs_robot_log", { p_kind: "nouveaux", p_trade: null, p_area: day, p_found: kept, p_inserted: inserted, p_checked: seen, p_ok: false, p_error: String(e).slice(0, 300) });
+    return { day, error: String(e) };
+  }
+}
+
 async function crawl(body: any) {
   const { data: st } = await db.rpc("cs_robot_crawl_settings");
   if (!(st as any)?.enabled && !body.manual) return { skipped: "robot arrêté" };
@@ -224,6 +304,8 @@ Deno.serve(async (req) => {
   const body = await req.json().catch(() => ({}));
   if (body.mode === "crawl") return json(await crawl(body));
   if (body.mode === "search") return json(await search(body));
+  if (body.mode === "nouveaux") return json(await nouveaux(body));
+  if (body.mode === "classify") return json((body.texts || []).map((t: string) => classify(t)));
   // lancement manuel depuis l'espace admin : une recherche puis une lecture de sites
   return json({ search: await search(body), crawl: await crawl(body) });
 });

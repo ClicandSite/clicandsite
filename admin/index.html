@@ -136,7 +136,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       <select id="fStatus"><option value="">Tous les statuts</option><option value="nouveau" selected>Nouveau</option><option value="a_contacter">À contacter</option><option value="contacte">Contacté</option><option value="interesse">Intéressé</option><option value="client">Client</option><option value="refus">Refus</option><option value="exclu">Exclu</option></select>
       <input id="fQ" placeholder="Nom, ville, email…">
       <select id="fContact"><option value="">Avec ou sans contact</option><option value="email">Avec email</option><option value="phone">Avec téléphone</option></select>
-      <select id="fAge"><option value="">Toutes les entreprises</option><option value="new">Créateurs (moins d'un an)</option></select>
+      <select id="fAge"><option value="">Toutes les entreprises</option><option value="new">Créateurs (moins d'un an)</option><option value="fresh">Nouveaux et futurs pros : auto, moto, immo</option></select>
       <button class="btn" id="refresh" type="button">Actualiser</button>
     </div>
     <p class="count" id="count"></p>
@@ -149,6 +149,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 const sb=supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-admin'}});
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SEG={concession:'Concession auto',moto:'Moto / scooter',garage:'Garage',immobilier:'Agence immobilière'};
 const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment',beaute:'Coiffure / beauté',bienetre:'Bien-être',boulangerie:'Boulangerie',depannage:'Dépannage',boutique:'Boutique',autre:'Autre métier'};
 const SITE={aucun:'Sans site',date:'Site daté',moderne:'Site moderne',injoignable:'Site en panne',a_verifier:'À vérifier'};
 const STATUS={nouveau:'Nouveau',a_contacter:'À contacter',contacte:'Contacté',interesse:'Intéressé',client:'Client',refus:'Refus',exclu:'Exclu'};
@@ -178,7 +179,7 @@ async function stats(){
 
 async function load(){
   const q=$('fQ').value.trim();
-  const {data,error}=await sb.rpc('cs_admin_prospects_v2',{p_trade:$('fTrade').value||null,p_status:$('fStatus').value||null,p_site:$('fSite').value||null,p_q:q||null,p_recent:$('fAge').value==='new',p_limit:500,p_offset:0});
+  const {data,error}=await sb.rpc('cs_admin_prospects_v2',{p_trade:$('fTrade').value||null,p_status:$('fStatus').value||null,p_site:$('fSite').value||null,p_q:q||null,p_recent:$('fAge').value==='new',p_fresh:$('fAge').value==='fresh',p_limit:500,p_offset:0});
   if(error){$('list').innerHTML=`<div class="msg">${esc(error.message)}</div>`;return;}
   const c=$('fContact').value;
   rows=(data.rows||[]).filter(r=>!c||(c==='email'?r.email:r.phone));
@@ -195,8 +196,10 @@ function render(){
     return `<article class="p" data-id="${r.id}">
       <div>
         <h3>${esc(r.name)}</h3>
-        <div class="meta">${esc(TRADE[r.trade])} · <span class="addr">${esc((r.address||'').toLowerCase())}</span>${r.address?', ':''}${esc([r.postcode,r.city].filter(Boolean).join(' '))}</div>
+        <div class="meta">${esc(SEG[r.segment]||TRADE[r.trade])} · <span class="addr">${esc((r.address||'').toLowerCase())}</span>${r.address?', ':''}${esc([r.postcode,r.city].filter(Boolean).join(' '))}</div>
         <div class="tags"><span class="tag ${r.site_status}">${SITE[r.site_status]}</span><span class="tag">Score <span class="score">${r.score}</span></span>${r.date_creation?`<span class="tag${(Date.now()-new Date(r.date_creation))<365*864e5?' aucun':''}">${(Date.now()-new Date(r.date_creation))<365*864e5?'Nouvelle entreprise · ':''}créée ${new Date(r.date_creation).toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}</span>`:''}</div>
+        ${r.date_debut&&new Date(r.date_debut)>Date.now()?`<div class="tags"><span class="tag aucun">Futur pro · ouvre le ${new Date(r.date_debut).toLocaleDateString('fr-FR')}</span></div>`:''}
+        ${r.activite?`<div class="reasons" title="${esc(r.activite)}">Activité déclarée : ${esc(r.activite.length>160?r.activite.slice(0,160)+'…':r.activite)}</div>`:''}
         ${reasons.length?`<div class="reasons">${reasons.map(esc).join(' · ')}</div>`:''}
       </div>
       <div class="contact">

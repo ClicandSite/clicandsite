@@ -798,7 +798,9 @@ async function openSite(s){
   if(!site||site.id!==s.id){ shopCfg=null; payCfg=null; }
   pvEN=false;
   site=s; dirty=false; $('save').disabled=true;
-  $('siteName').textContent=s.name; $('viewSite').hidden=!s.domain; if(s.domain) $('viewSite').href='https://'+s.domain.replace(/^https?:\/\//,'');
+  $('siteName').textContent=s.name; /* 09/11/2026 (Anthony) : « Voir mon site » ouvre le vrai domaine du client ; sans domaine réel (avant paiement, ou adresse de démo en .mycreativesite.fr), l'aperçu provisoire */
+  { const dm=(s.domain||'').replace(/^https?:\/\//,'').replace(/\/.*$/,''); const real=dm&&!/\.mycreativesite\.fr$/i.test(dm)&&s.status==='en_ligne';
+    $('viewSite').hidden=false; $('viewSite').href=real?'https://'+dm:'/apercu/?s='+encodeURIComponent(s.slug); $('viewSite').textContent=real?'Voir mon site':'Voir l\'aperçu de mon site'; }
   $('undo').hidden=DEMO;
   setStatus('Chargement…');
   const tok=openSite.tok=(openSite.tok||0)+1;

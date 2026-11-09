@@ -9,6 +9,7 @@ IMGD = '/tmp/nm/full'; os.makedirs(IMGD, exist_ok=True)
 e = lambda s: html.escape(str(s), quote=True)
 
 def fetch(i, w):
+    if isinstance(i, str): return i  # photo locale (ex. voiture d'auto-école retouchée)
     p = f'{IMGD}/{i}_{w}.jpg'
     if not os.path.exists(p) or os.path.getsize(p) < 3000:
         subprocess.run(['curl', '-s', '-m', '60', '-o', p, f'https://images.pexels.com/photos/{i}/pexels-photo-{i}.jpeg?auto=compress&cs=tinysrgb&w={w}'], check=True)

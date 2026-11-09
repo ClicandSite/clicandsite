@@ -389,7 +389,8 @@
       EN = bi && wantLang() === 'en';
       var go = function () { if (!window.CSFiche && q(document, '.props > .prop, .vgrid > .car')) { var sf = document.createElement('script'); sf.src = 'https://mycreativesite.fr/assets/cs-fiche.js?v=3'; document.head.appendChild(sf); }
         apply(document, c); siteIcon(document, c); if (bi) { langSwitch(document, EN ? 'en' : 'fr'); if (EN) translate(document, c.en.dict); }
-        if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); } };
+        if (c.shop) initShop(slug, c.shop); if (c.pay) { window.CS_PAY = c.pay; if (window.CS_PAY_INIT) window.CS_PAY_INIT(); }
+        if (window.CS_AGENDA_INIT) window.CS_AGENDA_INIT(document.documentElement.getAttribute('data-trade')); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);
@@ -468,7 +469,7 @@
     function collect(form) {
       var out = [], tel = '';
       qa(form, 'input,select,textarea').forEach(function (el) {
-        if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button' || el.closest('.cs-lead')) return;
+        if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button' || el.closest('.cs-lead') || el.closest('[data-cs-off]')) return;
         var v = el.tagName === 'SELECT' ? frTxt(el.options[el.selectedIndex]) : String(el.value || '').trim();
         if (el.type === 'date') v = niceDate(v, false);
         if (el.type === 'datetime-local') v = niceDate(v, true);
@@ -521,9 +522,10 @@
     function open(form, item) {
       var data = form ? collect(form) : { fields: [], tel: '' }, kind = form ? kindOf(form) : 'reservation', pay = payFor(item, kind);
       var wrap = document.createElement('div'); wrap.className = 'cs-lead'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
-      wrap.innerHTML = '<form class="cs-box" novalidate><h3>' + (item ? L('Réserver : ', 'Book: ') + esc(item.label || item.t) : (pay ? L('Réserver et payer', 'Book and pay') : L('Vos coordonnées', 'Your details'))) + '</h3><p>' + (pay ? L('Paiement sécurisé par carte, directement à ', 'Secure card payment, made directly to ') + esc(bizName()) + '.' : L('Pour que ' + esc(bizName()) + ' vous réponde.', 'So that ' + esc(bizName()) + ' can get back to you.')) + '</p>' +
+      var slot0 = form && form.__ag ? form.__slot : null;
+      wrap.innerHTML = '<form class="cs-box" novalidate><h3>' + (item ? L('Réserver : ', 'Book: ') + esc(item.label || item.t) : slot0 ? L('Réserver le ', 'Book on ') + esc(slotTxt(slot0)) : (pay ? L('Réserver et payer', 'Book and pay') : L('Vos coordonnées', 'Your details'))) + '</h3><p>' + (pay ? L('Paiement sécurisé par carte, directement à ', 'Secure card payment, made directly to ') + esc(bizName()) + '.' : L('Pour que ' + esc(bizName()) + ' vous réponde.', 'So that ' + esc(bizName()) + ' can get back to you.')) + '</p>' +
         (pay ? '<div class="cs-pay"><b>' + L('À payer maintenant : ', 'To pay now: ') + eur(pay.amount) + '</b><span>' + esc(pay.note) + '</span></div>' : '') +
-        (item ? '<label for="cs-d">' + L('Date et heure souhaitées', 'Preferred date and time') + '</label><input id="cs-d" type="datetime-local" required>' : '') +
+        (item && AG && AG.on ? '<div class="cs-ag cs-agp"></div>' : item ? '<label for="cs-d">' + L('Date et heure souhaitées', 'Preferred date and time') + '</label><input id="cs-d" type="datetime-local" required>' : '') +
         '<label for="cs-n">' + L('Nom', 'Name') + '</label><input id="cs-n" autocomplete="name" required maxlength="120">' +
         '<label for="cs-t">' + L('Téléphone', 'Phone') + '</label><input id="cs-t" type="tel" autocomplete="tel" inputmode="tel" maxlength="30">' +
         '<label for="cs-e">' + L('E-mail', 'Email') + (pay ? L(' (pour votre reçu)', ' (for your receipt)') : '') + '</label><input id="cs-e" type="email" autocomplete="email" maxlength="160">' +
@@ -533,10 +535,11 @@
         '<div class="cs-act"><button type="button" class="cs-cancel">' + L('Annuler', 'Cancel') + '</button><button class="btn" type="submit">' + (pay ? L('Payer ' + eur(pay.amount) + ' et réserver', 'Pay ' + eur(pay.amount) + ' and book') : L('Envoyer ma demande', 'Send my request')) + '</button></div>' +
         '<p class="cs-small">' + L('Vos coordonnées sont transmises uniquement à ' + esc(bizName()) + ' pour répondre à votre demande.', 'Your details are only shared with ' + esc(bizName()) + ' to answer your request.') + (pay ? L(' Le paiement est traité par Stripe.', ' Payment is processed by Stripe.') : '') + '</p></form>';
       document.body.appendChild(wrap);
-      var f = q(wrap, 'form'), err = q(wrap, '.cs-err');
+      var f = q(wrap, 'form'), err = q(wrap, '.cs-err'), agp = q(wrap, '.cs-agp');
+      if (agp) picker(agp, wrap, 1);
       if (q(wrap, '#cs-d')) { var t0 = new Date(Date.now() + 864e5); q(wrap, '#cs-d').min = t0.getFullYear() + '-' + pad(t0.getMonth() + 1) + '-' + pad(t0.getDate()) + 'T00:00'; }
       if (data.tel) q(wrap, '#cs-t').value = data.tel;
-      setTimeout(function () { q(wrap, item ? '#cs-d' : '#cs-n').focus(); }, 30);
+      setTimeout(function () { var fo = q(wrap, item && !agp ? '#cs-d' : '#cs-n'); if (fo) fo.focus(); }, 30);
       function close() { wrap.remove(); document.removeEventListener('keydown', onKey); }
       function onKey(e) { if (e.key === 'Escape') close(); }
       document.addEventListener('keydown', onKey);
@@ -547,13 +550,19 @@
         var n = q(wrap, '#cs-n').value.trim(), t = q(wrap, '#cs-t').value.trim(), m = q(wrap, '#cs-e').value.trim(), d = q(wrap, '#cs-d');
         err.hidden = true;
         if (d && !d.value) { err.textContent = L('Choisissez la date et l\'heure.', 'Choose the date and time.'); err.hidden = false; return; }
+        var slot = agp ? wrap.__slot : slot0;
+        if (agp && !slot) { err.textContent = L('Choisissez un créneau.', 'Choose a time slot.'); err.hidden = false; return; }
         if (!n) { err.textContent = L('Indiquez votre nom.', 'Please enter your name.'); err.hidden = false; return; }
         if (pay && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) { err.textContent = L('Indiquez votre e-mail pour recevoir le reçu de paiement.', 'Please enter your email to receive the payment receipt.'); err.hidden = false; return; }
         if (!t && !m) { err.textContent = L('Indiquez un téléphone ou un e-mail pour être recontacté.', 'Please enter a phone number or an email so we can get back to you.'); err.hidden = false; return; }
         var fields = data.fields.slice(); if (d) fields.unshift({ l: 'Date et heure', v: niceDate(d.value, true) });
         var b = q(f, '[type="submit"]'), lbl = b.textContent; b.disabled = true; b.textContent = pay ? L('Ouverture du paiement…', 'Opening payment…') : L('Envoi…', 'Sending…');
-        var req = pay
-          ? fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'book', slug: slug, item: item ? { src: item.src, g: item.g, i: item.i, t: item.t } : null, kind: kind, name: n, phone: t, email: m, message: q(wrap, '#cs-m').value, fields: fields, back: location.origin + location.pathname }) })
+        // 09/11/2026 : agenda — le créneau est réservé (et confirmé) avant le paiement éventuel
+        var hold = slot ? fetch(API + '/rest/v1/rpc/cs_booking_submit', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
+            body: JSON.stringify({ p_slug: slug, p_day: slot.d, p_time: slot.t, p_party: partyOf(form), p_service: item ? item.t : serviceOf(form), p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value, p_lead: !pay }) })
+            .then(function (r) { return r.json().then(function (j) { if (!r.ok) { var x = new Error((j && j.message) || L('Réservation impossible', 'Booking failed')); x.slot = 1; throw x; } return j; }); }) : Promise.resolve(null);
+        var req = slot && !pay ? hold.then(function (j) { return { ok: true, json: function () { return Promise.resolve(j); } }; }) : pay ? hold.then(function (j) { if (j && j.label) fields.unshift({ l: 'Créneau réservé (confirmé)', v: j.label }); return
+          fetch(SHOP_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ action: 'book', slug: slug, item: item ? { src: item.src, g: item.g, i: item.i, t: item.t } : null, kind: kind, name: n, phone: t, email: m, message: q(wrap, '#cs-m').value, fields: fields, back: location.origin + location.pathname }) }); })
           : fetch(API + '/rest/v1/rpc/cs_lead_submit', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
               body: JSON.stringify({ p_slug: slug, p_kind: kind, p_name: n, p_phone: t, p_email: m, p_message: q(wrap, '#cs-m').value, p_fields: fields, p_page: location.pathname, p_hp: q(wrap, '#cs-w').value }) });
         req.then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (r) {
@@ -562,9 +571,11 @@
           close();
           var ok = form && q(form, '.ok');
           if (form && !ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); }
-          if (ok) { ok.textContent = L('Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.', 'Thank you ' + n + ', your request has been sent. ' + bizName() + ' will get back to you shortly.'); ok.hidden = false; }
+          if (ok) { ok.textContent = slot ? L('C\'est confirmé, ' + n + ' : ' + bizName() + ' vous attend le ' + slotTxt(slot) + '. En cas d\'empêchement, merci de prévenir par téléphone.', 'Confirmed, ' + n + ': ' + bizName() + ' expects you on ' + slotTxt(slot) + '. If you cannot make it, please call to cancel.') : L('Merci ' + n + ', votre demande est bien envoyée. ' + bizName() + ' vous recontacte rapidement.', 'Thank you ' + n + ', your request has been sent. ' + bizName() + ' will get back to you shortly.'); ok.hidden = false; }
+          if (slot) { if (form) form.__slot = null; if (!item) refreshAg(); }
         }).catch(function (x) {
           b.disabled = false; b.textContent = lbl;
+          if (x && x.slot && slot) { if (agp) { wrap.__slot = null; picker(agp, wrap, 1); } else { close(); refreshAg(); var fo = form && q(form, '.ok'); if (fo) { fo.textContent = x.message; fo.hidden = false; } return; } }
           err.textContent = (x && x.message && !/fetch/i.test(x.message)) ? x.message : L('La demande n\'est pas partie. Vérifiez votre connexion et réessayez.', 'Your request was not sent. Check your connection and try again.');
           err.hidden = false;
         });
@@ -590,6 +601,92 @@
       qa(document, '.cards > .card').forEach(function (c, i) { if (c.hidden) return; var pe = q(c, '.price');
         add(c, { src: 'card', i: i, t: frTxt(q(c, 'h3')), label: txt(q(c, 'h3')), price: cents(frTxt(pe)) }, function (b) { (pe || c).insertAdjacentElement('afterend', b); }); });
     };
+
+    /* 09/11/2026 (Claude, demande d'Anthony) : agenda des rendez-vous (coiffure, bien-être, restaurant, garage).
+       Agenda ouvert dans l'espace du pro → le visiteur choisit un créneau libre, confirmé tout de suite.
+       Agenda pas encore ouvert, ou plus aucun créneau → bouton « Appeler » à la place du formulaire. */
+    var AG = null, AGF = null;
+    var JOURS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    function slotTxt(o) { var p = o.d.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]); return (EN ? DAYS : JOURS)[dt.getDay()] + ' ' + p[2] + '/' + p[1] + L(' à ', ' at ') + o.t.replace(':', EN ? ':' : 'h'); }
+    function partyOf(form) { var sel = form && qa(form, 'select').filter(function (x) { return /couvert|personne|guest/i.test(labelFor(form, x)); })[0]; return sel ? Math.max(1, parseInt(frTxt(sel.options[sel.selectedIndex]), 10) || 1) : 1; }
+    function serviceOf(form) { var sel = form && qa(form, 'select').filter(function (x) { return !x.closest('[data-cs-off]') && !/couvert|personne|avec|praticien/i.test(labelFor(form, x)); })[0]; return sel ? frTxt(sel.options[sel.selectedIndex]) : ''; }
+    function phoneNum() {
+      var a = q(document, 'a[href^="tel:"]'); if (a) return a.getAttribute('href').slice(4);
+      var r = qa(document, '.cinfo > div').filter(function (e) { return /t[ée]l|phone|portable|appel/i.test(frTxt(q(e, '.l'))) && /\d{2}.*\d{2}.*\d{2}/.test(txt(q(e, '.v'))); })[0];
+      return r ? txt(q(r, '.v')) : '';
+    }
+    function agCss() {
+      if (q(document, '#cs-ag-css')) return; var st = document.createElement('style'); st.id = 'cs-ag-css';
+      st.textContent = '.cs-ag{grid-column:1/-1;display:grid;gap:10px;min-width:0}.cs-ag .cs-agl{font-size:.75rem;font-weight:600;color:var(--muted,#5a5f6e)}' +
+        '.cs-ag .cs-days{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}.cs-ag .cs-times{display:flex;flex-wrap:wrap;gap:8px}' +
+        '.cs-ag button{font:inherit;cursor:pointer;border:1px solid var(--line,#d6d9e3);background:var(--soft,#f4f4f5);color:var(--ink,#16181f);border-radius:10px}' +
+        '.cs-ag .cs-days button{flex:none;display:grid;justify-items:center;gap:1px;min-width:62px;padding:8px 6px;font-size:.78rem;line-height:1.15}.cs-ag .cs-days button b{font-size:1.05rem}' +
+        '.cs-ag .cs-times button{padding:9px 13px;font-size:.9rem;font-weight:600}.cs-ag button[aria-pressed="true"]{background:var(--btn,#16181f);color:var(--btn-fg,#fff);border-color:var(--btn,#16181f)}' +
+        '.cs-ag button:disabled{opacity:.4;cursor:not-allowed;text-decoration:line-through}.cs-ag .cs-none{font-size:.88rem;color:var(--muted,#5a5f6e)}' +
+        '.cs-lead .cs-ag{margin:4px 0 6px}.cs-lead .cs-ag{--line:#d6d9e3;--soft:#f4f5f8;--ink:#16181f;--muted:#5a5f6e;--btn:#16181f;--btn-fg:#fff}' +
+        '.cs-call{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}.cs-call div{display:grid;gap:2px}.cs-call b{font-size:1.05rem}.cs-call span{color:var(--muted,#5a5f6e);font-size:.9rem}';
+      document.head.appendChild(st);
+    }
+    // Sélecteur jours + heures. host = élément qui garde le choix (__slot) ; inPop = dans la fenêtre de réservation
+    function picker(box, host, inPop) {
+      var form = inPop ? null : host, party = partyOf(form), byDay = {}, order = [];
+      (AG.slots || []).forEach(function (x) { if (!byDay[x.d]) { byDay[x.d] = []; order.push(x.d); } byDay[x.d].push(x); });
+      var free = function (x) { return x.left >= party; };
+      var cur = host.__slot && byDay[host.__slot.d] ? host.__slot.d : (order.filter(function (d) { return byDay[d].some(free); })[0] || order[0]);
+      box.textContent = '';
+      var l1 = document.createElement('div'); l1.className = 'cs-agl'; l1.textContent = L('Choisissez le jour', 'Choose the day'); box.appendChild(l1);
+      var days = document.createElement('div'); days.className = 'cs-days cs-notr'; box.appendChild(days);
+      var l2 = document.createElement('div'); l2.className = 'cs-agl'; l2.textContent = L('Puis l\'heure', 'Then the time'); box.appendChild(l2);
+      var times = document.createElement('div'); times.className = 'cs-times cs-notr'; box.appendChild(times);
+      function drawTimes() {
+        times.textContent = '';
+        var list = byDay[cur] || [];
+        if (!list.some(free)) { var n = document.createElement('div'); n.className = 'cs-none'; n.textContent = L('Complet ce jour-là. Choisissez un autre jour', 'Fully booked that day. Choose another day') + (phoneNum() ? L(' ou appelez-nous.', ' or call us.') : '.'); times.appendChild(n); return; }
+        list.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.textContent = x.t.replace(':', EN ? ':' : 'h'); b.disabled = !free(x);
+          b.setAttribute('aria-pressed', host.__slot && host.__slot.d === x.d && host.__slot.t === x.t ? 'true' : 'false');
+          b.onclick = function () { host.__slot = { d: x.d, t: x.t }; qa(times, 'button').forEach(function (k) { k.setAttribute('aria-pressed', k === b ? 'true' : 'false'); }); var ok = form && q(form, '.ok'); if (ok) ok.hidden = true; };
+          times.appendChild(b); });
+      }
+      order.forEach(function (d) { var p = d.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]), b = document.createElement('button'); b.type = 'button';
+        b.innerHTML = '<span>' + (EN ? DAYS : JOURS)[dt.getDay()] + '</span><b>' + (+p[2]) + '</b><span>' + (EN ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'])[dt.getMonth()] + '</span>';
+        b.disabled = !byDay[d].some(free); b.setAttribute('aria-pressed', d === cur ? 'true' : 'false');
+        b.onclick = function () { cur = d; if (host.__slot && host.__slot.d !== d) host.__slot = null; qa(days, 'button').forEach(function (k) { k.setAttribute('aria-pressed', k === b ? 'true' : 'false'); }); drawTimes(); };
+        days.appendChild(b); });
+      drawTimes();
+    }
+    function callBlock(form, why) {
+      var tel = phoneNum(); if (!tel) return false;
+      qa(form, ':scope > *').forEach(function (e) { if (!e.classList.contains('cs-call')) { e.setAttribute('data-cs-off', ''); e.hidden = true; } });
+      qa(form, 'input,select,textarea').forEach(function (e) { e.required = false; });
+      var c = q(form, '.cs-call'); if (!c) { c = document.createElement('div'); c.className = 'cs-call'; form.appendChild(c); }
+      c.innerHTML = '<div><b>' + esc(why || L('Réservation par téléphone', 'Book by phone')) + '</b><span>' + L('Appelez-nous, on vous donne un créneau tout de suite.', 'Call us and we will give you a time slot right away.') + '</span></div>' +
+        '<a class="btn" href="tel:' + esc(tel.replace(/[^0-9+]/g, '')) + '">' + L('Appeler le ', 'Call ') + esc(tel) + '</a>';
+      form.__ag = false; return true;
+    }
+    function agForm(form) {
+      if (!AG || !AG.on) { callBlock(form); return; }
+      if (!(AG.slots || []).some(function (x) { return x.left > 0; })) { if (callBlock(form, L('Plus de créneau en ligne ces prochains jours', 'No online slots left in the coming days'))) return; }
+      var c = q(form, '.cs-call'); if (c) { c.remove(); qa(form, '[data-cs-off]').forEach(function (e) { e.hidden = false; e.removeAttribute('data-cs-off'); }); }
+      qa(form, 'input[type="date"],input[type="datetime-local"],input[type="time"],select').forEach(function (el) {
+        if (el.tagName === 'SELECT' && !qa(el, 'option').some(function (o) { return /^\d{1,2}[:h]\d{2}$/.test(o.textContent.trim()); })) return;
+        var w = el.closest('.f') || el; w.hidden = true; w.setAttribute('data-cs-off', ''); el.required = false;
+      });
+      var pax = qa(form, 'select').filter(function (x) { return /couvert|personne/i.test(labelFor(form, x)); })[0];
+      if (pax && AG.maxparty) { qa(pax, 'option').forEach(function (o) { if ((parseInt(o.textContent, 10) || 0) > AG.maxparty) o.remove(); }); if (!pax.__csag) { pax.__csag = 1; pax.addEventListener('change', function () { form.__slot = null; picker(q(form, '.cs-ag'), form); }); } }
+      var box = q(form, '.cs-ag'); if (!box) { box = document.createElement('div'); box.className = 'cs-ag'; var sb = q(form, '[type="submit"]'); form.insertBefore(box, sb || null); }
+      form.__ag = true; picker(box, form);
+    }
+    function loadAg() {
+      return fetch(API + '/rest/v1/rpc/cs_agenda_public', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY }, body: JSON.stringify({ p_slug: slug, p_days: 21 }) })
+        .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { AG = j || { on: false }; return AG; });
+    }
+    function refreshAg() { loadAg().then(function () { if (AGF) agForm(AGF); }).catch(function () {}); }
+    window.CS_AGENDA_INIT = function (trade) {
+      if (!/^(beaute|bienetre|restaurant|garage)$/.test(trade || '')) return;
+      var form = q(document, 'form#bookform'); if (!form || form.closest('[hidden]')) return;
+      agCss(); AGF = form;
+      loadAg().then(function () { agForm(form); }).catch(function () { /* le formulaire de demande reste en place */ });
+    };
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     function ready() {
       qa(document, 'form').forEach(function (f) { if (!SKIP[f.id]) prepare(f); });
@@ -598,6 +695,7 @@
         if (!form || form.tagName !== 'FORM' || SKIP[form.id] || form.closest('.cs-lead')) return;
         e.preventDefault(); e.stopPropagation();
         if (typeof form.reportValidity === 'function' && !form.reportValidity()) return;
+        if (form.__ag && !form.__slot) { var ok = q(form, '.ok'); if (!ok) { ok = document.createElement('div'); ok.className = 'ok'; form.appendChild(ok); } ok.textContent = L('Choisissez d\'abord un jour et une heure.', 'First choose a day and a time.'); ok.hidden = false; var pk = q(form, '.cs-ag'); if (pk) pk.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
         open(form);
       }, true);
     }

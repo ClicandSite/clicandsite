@@ -35,3 +35,11 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Site client (`assets/cs-edit.js`) : bouton FR / EN dans le bandeau, `?lang=en` (choix mémorisé), liens hreflang ; chaque texte, placeholder, title, alt est remplacé par sa traduction (MutationObserver pour les textes ajoutés ensuite). Jamais traduits : nom (.logo), adresse, coordonnées, avis Google. Les demandes arrivent chez le pro avec les libellés en français.
 - Traduction (espace client, rubrique « Version anglaise ») : dictionnaire des modèles `assets/cs-en.json` (traduit à la main), puis fonction `cs-translate` (cache `clicandsite.tr_cache` ; DeepL si le secret `DEEPL_KEY` est ajouté), puis Google Traduction depuis le navigateur du pro (Google refuse les serveurs Supabase). Les textes nouveaux ou modifiés sont retraduits à l'enregistrement ; chaque phrase est corrigeable.
 - Ajouter une phrase à un modèle : penser à ajouter sa traduction dans `assets/cs-en.json`.
+
+## Agenda des rendez-vous (09/11/2026)
+- Métiers : coiffure et beauté, bien-être, restaurant, garage (atelier ; pas en format concession). Migration `supabase/migrations/20261109_agenda.sql`.
+- Réglages dans `sites.agenda` (horaires par jour, 2 plages max, créneau toutes les X min, durée occupée, places par créneau — couverts au restaurant —, délai minimum, jours à l'avance, couverts max par réservation, jours de fermeture). `cs_agenda_cfg` nettoie et complète.
+- Réservations : table `clicandsite.bookings` (confirme / annule / bloque, source site ou pro). Places libres = places − réservations qui chevauchent le créneau.
+- Public : `cs_agenda_public(slug)` (créneaux sur 21 jours) et `cs_booking_submit` (verrou sur le site, re-vérifie le créneau, crée la demande « Mes clients » + la réservation confirmée ; `p_lead=false` quand l'acompte part par `cs-shop`).
+- Espace client, onglet « Mon agenda » (`assets/cs-agenda.js`) : semaine, réservations du jour, ajouter un rendez-vous pris par téléphone, bloquer un créneau, annuler, réglages. `cs_agenda_get / save / add / cancel`. Démo : `/espace/?demo=restaurant&vue=agenda`.
+- Site client (`assets/cs-edit.js`) : formulaire `#bookform` → sélecteur jour + heure (créneaux complets barrés). Agenda fermé, pas encore réglé ou plus aucun créneau sur 21 jours → bouton « Appeler le … » (numéro du bloc contact) à la place du formulaire.

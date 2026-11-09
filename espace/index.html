@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=15"></script>
+<script src="/assets/cs-edit.js?v=16"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -242,7 +242,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
-      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="agenda" aria-pressed="false" id="agendaTab" hidden>Mon agenda</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -264,6 +264,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
   <div class="crm" id="brief" hidden><div class="crm-in" id="briefIn"></div></div>
   <div class="crm" id="devis" hidden><div class="crm-in" id="devisIn"></div></div>
   <div class="crm" id="stock" hidden><div class="crm-in" id="stockIn"></div></div>
+  <div class="crm" id="agenda" hidden><div class="crm-in" id="agendaIn"></div></div>
   <div class="main" id="mainEd">
     <div class="panel" id="panel"></div>
     <div class="preview">
@@ -768,6 +769,9 @@ async function openSite(s){
   // 08/11/2026 (Anthony) : vrai espace pour le stock des garages et des agences
   { const on=window.CSStock&&CSStock.enabled(); $('stockTab').hidden=!on; if(on) $('stockTab').textContent=CSStock.label(); if(!on&&mode==='stock') await setMode('edit'); else if(on&&mode==='stock') CSStock.open(); }
   if(params.get('vue')==='stock'&&window.CSStock&&CSStock.enabled()){ params.delete('vue'); await setMode('stock'); }
+  // 09/11/2026 (Anthony) : agenda des rendez-vous (coiffure, bien-être, restaurant, garage atelier)
+  { const on=window.CSAgenda&&CSAgenda.enabled(); $('agendaTab').hidden=!on; if(!on&&mode==='agenda') await setMode('edit'); else if(on&&mode==='agenda') CSAgenda.open(); }
+  if(params.get('vue')==='agenda'&&window.CSAgenda&&CSAgenda.enabled()){ params.delete('vue'); await setMode('agenda'); }
   const dr=$('draftBar'); if(dr){ const show=!DEMO&&s.status!=='en_ligne'; dr.hidden=!show; if(show){
     const paid=['active','trialing'].includes(s.billing_status);
     $('draftView').href='/apercu/?s='+encodeURIComponent(s.slug);
@@ -1215,11 +1219,12 @@ function printBon(q){
 let mode='edit';
 async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
-  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
+  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
   ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=other?'hidden':''; });
   if(m==='brief'){ await loadBrief(); return; }
   if(m==='devis'){ await loadDevis(); return; }
   if(m==='stock'){ if(window.CSStock) CSStock.open(); return; }
+  if(m==='agenda'){ if(window.CSAgenda) await CSAgenda.open(); return; }
   if(on){ if(!crm.loaded||crm.site!==site.id+':'+site.trade){ crm.loaded=false; crm.site=site.id+':'+site.trade; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
 }
 document.querySelector('.vseg[aria-label="Affichage"]').addEventListener('click',e=>{ const b=e.target.closest('button[data-mode]'); if(b) setMode(b.dataset.mode); });
@@ -1266,5 +1271,6 @@ async function boot(){
 boot();
 </script>
 <script src="/assets/cs-stock.js?v=1"></script>
+<script src="/assets/cs-agenda.js?v=1"></script>
 </body>
 </html>

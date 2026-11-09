@@ -82,7 +82,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .photo.has-mock{flex-wrap:wrap}
 .mock{flex:1 1 100%;margin-top:4px;padding:12px;border:1px dashed var(--line);border-radius:12px;background:var(--soft)}
 .mock-t{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px}
-.mock-r{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 26px}
+.mock-r{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 16px}
 .mcol{display:grid;gap:5px;justify-items:center;align-content:end;font-size:.74rem;color:var(--muted);min-width:118px}
 .mf{position:relative;overflow:hidden;background:#333 center/cover no-repeat;border:3px solid #12162B;border-radius:8px;box-shadow:0 6px 16px -8px rgba(0,0,0,.4)}
 .mf{cursor:grab;touch-action:none;background-repeat:no-repeat!important;background-color:#2a2d3a!important}
@@ -370,6 +370,29 @@ async function uploadPhoto(file){
   if(error) throw error;
   return SB.storage.from('site-photos').getPublicUrl(path).data.publicUrl;
 }
+/* 10/11/2026 (Anthony) : recadrage automatique. On repère la zone la plus détaillée et colorée de la photo
+   (le sujet : voiture, visage, plat…) et on la garde au centre, sur ordinateur comme sur téléphone. */
+function autoFocus(url){
+  return new Promise(res=>{
+    const im=new Image(); im.crossOrigin='anonymous';
+    im.onload=()=>{ try{
+      const W=96, H=Math.max(8,Math.round(W*im.naturalHeight/im.naturalWidth)), c=document.createElement('canvas'); c.width=W; c.height=H;
+      const g=c.getContext('2d'); g.drawImage(im,0,0,W,H); const d=g.getImageData(0,0,W,H).data;
+      const L=new Float32Array(W*H), S=new Float32Array(W*H);
+      for(let i=0;i<W*H;i++){ const r=d[i*4],gg=d[i*4+1],b=d[i*4+2]; L[i]=.299*r+.587*gg+.114*b; S[i]=Math.max(r,gg,b)-Math.min(r,gg,b); }
+      const w=new Float32Array(W*H); let max=0;
+      for(let y=1;y<H-1;y++) for(let x=1;x<W-1;x++){ const i=y*W+x; const e=Math.abs(L[i+1]-L[i-1])+Math.abs(L[i+W]-L[i-W]);
+        const bx=Math.min(x,W-1-x)/W, by=Math.min(y,H-1-y)/H, edge=Math.min(1,(bx+by)*5); // les bords comptent moins
+        w[i]=(e*.75+S[i]*.25)*(.35+.65*edge); if(w[i]>max) max=w[i]; }
+      // on garde les 18 % de points les plus « intéressants » et on prend leur centre
+      const sorted=Array.from(w).sort((a,b)=>b-a), cut=sorted[Math.floor(sorted.length*.18)]||0;
+      let sx=0, sy=0, sw=0; for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const v=w[y*W+x]; if(v>=cut&&v>0){ sx+=x*v; sy+=y*v; sw+=v; } }
+      if(!sw) return res(null);
+      res([Math.round(sx/sw/(W-1)*100), Math.round(sy/sw/(H-1)*100)]);
+    }catch(e){ res(null); } };
+    im.onerror=()=>res(null); im.src=url;
+  });
+}
 function photoField(label, getEl, get, set, opt){
   // 09/11/2026 (Anthony) : cadrage (on touche la photo pour choisir la partie à montrer) et bouton pour retirer la photo
   opt=opt||{};
@@ -381,6 +404,12 @@ function photoField(label, getEl, get, set, opt){
   const b=document.createElement('button'); b.type='button'; b.className='btn'; b.textContent='Changer la photo';
   const x=document.createElement('button'); x.type='button'; x.className='btn px';
   const hint=document.createElement('span'); hint.className='phint';
+  const au=document.createElement('button'); au.type='button'; au.className='btn px'; au.textContent='Recadrage automatique'; au.hidden=!opt.pos;
+  const doAuto=async(quiet)=>{ const el=getEl(), u=get()&&get()!=='none'?get():currentImg(el); if(!u||!opt.pos) return;
+    au.disabled=true; const f=await autoFocus(u); au.disabled=false;
+    if(!f){ if(!quiet) toast('Recadrage automatique impossible sur cette photo'); return; }
+    opt.pos[1](f[0]+' '+f[1]); if(opt.posM) opt.posM[1](f[0]+' '+f[1]); show(); refresh(); markDirty(); if(!quiet) toast('Photo recadrée automatiquement'); };
+  au.addEventListener('click',()=>doAuto(false));
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.hidden=true;
   // réglage « x y z » : point visible (x, y en %) et taille de la photo z (0 = photo entière, 100 = remplit tout)
   const parse=v=>{ const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})(?: (\d{1,3}))?$/); return m?[+m[1],+m[2],m[3]===undefined?100:Math.min(200,+m[3])]:null; };
@@ -440,11 +469,11 @@ function photoField(label, getEl, get, set, opt){
   inp.addEventListener('change',async()=>{ const f=inp.files[0]; inp.value=''; if(!f) return;
     if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum).'); return; }
     b.disabled=true; b.textContent='Envoi…';
-    try{ const u=await uploadPhoto(f); set(u); if(opt.pos) opt.pos[1](null); if(opt.posM) opt.posM[1](null); show(); refresh(); markDirty(); toast('Photo changée'); }
+    try{ const u=await uploadPhoto(f); set(u); if(opt.pos) opt.pos[1](null); if(opt.posM) opt.posM[1](null); show(); refresh(); markDirty(); toast('Photo changée'); if(opt.pos) doAuto(true); }
     catch(e){ toast('Envoi impossible : '+(e.message||e)); }
     finally{ b.disabled=false; b.textContent='Changer la photo'; }
   });
-  acts.append(b,x); info.append(l,acts,hint); w.append(th,info,inp); if(mock){ w.classList.add('has-mock'); w.appendChild(mock); } setTimeout(show,60); return w;
+  acts.append(b,au,x); info.append(l,acts,hint); w.append(th,info,inp); if(mock){ w.classList.add('has-mock'); w.appendChild(mock); } setTimeout(show,60); return w;
 }
 
 function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }

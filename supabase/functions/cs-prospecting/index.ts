@@ -42,7 +42,10 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   dentiste: { label: "cabinet dentaire", page: "/site-internet-dentiste/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
 };
 function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null }): Tpl {
-  const t = TRADE[p.trade] || TRADE.restaurant;
+  let t = TRADE[p.trade] || TRADE.restaurant;
+  // 09/11/2026 (Anthony) : garage qui ne fait que l'entretien → version atelier, formules dès 29 € (le Pack reste pour ceux qui vendent des véhicules)
+  if (p.trade === "garage" && (p.segment === "garage" || !p.segment)) t = { ...t, pack: false, plus: "la prise de rendez-vous atelier en ligne (vidange, pneus, freins) et vos forfaits avec leurs tarifs" };
+  if (p.trade === "garage" && (p.segment === "concession" || p.segment === "moto")) t = { ...t, label: p.segment === "moto" ? "concession moto" : "concession", plus: "vos véhicules en vente, une page par véhicule, diffusés automatiquement sur Abracadeal" };
   let page = t.page;
   if (p.segment === "concession") page = "/site-internet-concession-automobile/";
   if (p.segment === "moto") page = "/site-internet-concession-moto/";
@@ -64,7 +67,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "",
     `Je m'appelle Anthony, je dirige MyCreativeSite : nous créons des sites internet pour les professionnels, livrés en 48 h. Vous les modifiez vous-même en un clic depuis votre téléphone (photos, textes, horaires), et nous gardons la main pour toute réparation.`,
     "",
-    `Pour ${/^(clinique|agence|auto-école)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
+    `Pour ${/^(clinique|agence|auto-école|concession)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
     "",
     price,
     "",
@@ -253,7 +256,7 @@ Deno.serve(async (req: Request) => {
     const key = (await sql`select value from clicandsite.secrets where name='mail_internal'`)[0]?.value;
     if (!key || req.headers.get("x-cs-key") !== key) return json({ error: "Unauthorized" }, 401);
     const br = await req.json().catch(() => ({}));
-    const sample = { id: "00000000-0000-0000-0000-000000000000", name: br?.name || "Garage du Port", trade: br?.trade || "garage", city: br?.city || "Cannes", site_status: br?.site_status || "aucun", segment: null };
+    const sample = { id: "00000000-0000-0000-0000-000000000000", name: br?.name || "Garage du Port", trade: br?.trade || "garage", city: br?.city || "Cannes", site_status: br?.site_status || "aucun", segment: br?.segment || null };
 
     if (br?.mode === "preview") { const t = template(sample); return json({ subject: t.subject, body: t.body, button: t.btn }); }
     if (br?.mode === "test") {

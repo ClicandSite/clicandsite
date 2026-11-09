@@ -60,3 +60,28 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(run, 50); }); else setTimeout(run, 50);
   window.addEventListener('load', function () { setTimeout(run, 300); });
 })();
+
+/* 09/11/2026 (Anthony) : la bannière d'accueil s'agrandit toute seule si le titre ou le texte dépasse (ordinateur et téléphone, tous les styles) */
+(function () {
+  var busy = false;
+  function fit() {
+    if (busy) return; busy = true;
+    document.querySelectorAll('.photo.hero, .hero').forEach(function (h) {
+      if (h.__csfit && h.style.height === 'auto') { h.style.height = ''; h.style.minHeight = ''; }
+      var need = h.scrollHeight, have = h.clientHeight;
+      if (have && need > have + 2) { h.__csfit = 1; h.style.minHeight = have + 'px'; h.style.height = 'auto'; }
+    });
+    busy = false;
+  }
+  var t = null; function later() { clearTimeout(t); t = setTimeout(fit, 120); }
+  function start() {
+    fit();
+    window.addEventListener('resize', later);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+    try { new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ['data-style', 'data-l', 'data-p'] }); } catch (e) {}
+    document.querySelectorAll('.photo.hero, .hero').forEach(function (h) { try { new MutationObserver(later).observe(h, { childList: true, characterData: true, subtree: true }); } catch (e) {} });
+    document.addEventListener('cs:applied', later);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  window.addEventListener('load', later);
+})();

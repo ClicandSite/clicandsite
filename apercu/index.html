@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <script>/* 07/11/2026 : pas de zoom (pincer ou double-tap) dans l'espace client et l'aperçu, comme une appli */document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});</script>
 
@@ -14,7 +15,6 @@
 /* 07/11/2026 (Claude, demande d'Anthony) : aperçu provisoire du site d'un client, avant paiement.
    Le nom de domaine n'est réservé qu'après le paiement. Adresse : /apercu/?s=<identifiant du site> */
 :root{--bg:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0D1020;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}

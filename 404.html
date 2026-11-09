@@ -51,8 +51,8 @@ section{padding-block:48px}
 .feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
 .feat p{color:var(--muted);font-size:.95rem}
 .prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
-.prices.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.prices.four .pc{align-content:start}
+.prices.one{grid-template-columns:minmax(0,420px)}
+.prices.one .pc{align-content:start}
 .pc.hi{border:2px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.08)}
 .pc.hi em{font-style:normal;font-size:.8rem;font-weight:700;color:var(--ink)}
 .pc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:4px}
@@ -72,7 +72,7 @@ section{padding-block:48px}
 footer{border-top:1px solid var(--line);padding-block:26px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
-@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.four{grid-template-columns:1fr}}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}

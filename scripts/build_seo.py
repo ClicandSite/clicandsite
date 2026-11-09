@@ -7,7 +7,9 @@ import json, os, html, datetime
 SITE = "https://mycreativesite.fr"
 TODAY = datetime.date.today().isoformat()
 PRICES = [("Essentiel", 29, 190), ("Pro", 49, 290), ("Premium", 79, 490)]
-PACK = ("Pack Auto, Moto & Immo", 99, 490)  # site + annonces illimitées sur Abracadeal + CRM + une page Google par annonce
+PACK = ("Pack Auto, Moto & Immo", 99, 490)
+BOUTIQUE = ("Boutique", 99, 490)
+# 09/11/2026 (Anthony) : garages, concessions et agences → Pack seul ; boutiques → formule Boutique seule  # site + annonces illimitées sur Abracadeal + CRM + une page Google par annonce
 
 PAGES = [
   dict(slug="site-internet-vtc", k="vtc", style="luxe",
@@ -40,7 +42,7 @@ PAGES = [
          ("Et si mon restaurant a déjà un site ?","On reprend vos textes et photos dans un modèle moderne, et on branche votre nom de domaine actuel.")]),
   dict(slug="site-internet-garage", k="garage", style="audacieux", pack=True,
     title="Création de site internet pour garage auto et moto",
-    meta="Site internet pour garage auto et moto : rendez-vous atelier, forfaits, stock de véhicules d'occasion avec une page par véhicule sur Google, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    meta="Site internet pour garage auto et moto : rendez-vous atelier, forfaits, stock de véhicules d'occasion avec une page par véhicule sur Google, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Le site internet des garages auto et moto qui remplit l'atelier et vend les occasions",
     lead="Rendez-vous atelier, forfaits affichés, véhicules d'occasion et reprise : un site qui travaille pour vous pendant que vous êtes sous le capot. Avec le Pack Auto, Moto & Immo, chaque véhicule a aussi sa page sur Google et part en annonce sur Abracadeal.",
     feats=[("Prise de rendez-vous","Prestation, date souhaitée, immatriculation : la demande arrive par mail et dans votre espace « Mes clients »."),
@@ -52,11 +54,11 @@ PAGES = [
     faq=[("Je peux ajouter mes véhicules moi-même ?","Oui : dans votre espace client, l'onglet « Mes véhicules » vous fait remplir une vraie fiche (marque, modèle, année, kilométrage, énergie, boîte, puissance, équipements, jusqu'à 30 photos). Le site et Abracadeal se mettent à jour tout seuls."),
          ("Je vends aussi des motos, c'est prévu ?","Oui : la fiche accepte voitures, motos et scooters, et Google les reconnaît comme tels."),
          ("Je n'ai pas d'atelier, je fais uniquement de la vente","Choisissez la version concession : plus d'atelier ni de rendez-vous, tout le site est tourné vers vos véhicules à vendre."),
-         ("Quelle formule choisir ?","Pour un garage qui veut surtout des rendez-vous, Pro suffit. Si vous vendez des véhicules, le Pack Auto, Moto & Immo (99 € par mois) ajoute les annonces illimitées sur Abracadeal, le CRM et une page Google par véhicule."),
+         ("Quelle formule pour un garage ?","Le Pack Auto, Moto & Immo, à 99 € par mois et 490 € de mise en ligne : tout ce qu'il faut pour l'atelier, plus les annonces illimitées sur Abracadeal, le CRM et une page Google par véhicule."),
          ("Combien de temps pour être en ligne ?","En général 48 heures après réception de vos informations et photos.")]),
   dict(slug="site-internet-agence-immobiliere", k="immobilier", style="riviera", pack=True,
     title="Création de site internet pour agence immobilière",
-    meta="Site internet pour agence immobilière indépendante : biens à vendre et à louer avec DPE et GES, une page Google par bien, estimation gratuite, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    meta="Site internet pour agence immobilière indépendante : biens à vendre et à louer avec DPE et GES, une page Google par bien, estimation gratuite, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Un site d'agence immobilière qui génère des mandats et des visites",
     lead="Vos biens bien présentés, une estimation en ligne qui capte les vendeurs, une page Google par bien et vos annonces diffusées sur Abracadeal sans passerelle payante.",
     feats=[("Recherche de biens","Achat ou location, ville, budget, nombre de pièces : filtres en direct."),
@@ -87,7 +89,7 @@ PAGES = [
          ("Mes véhicules apparaîtront-ils sur Google ?","Chaque véhicule a sa propre page avec un titre, une description et des données structurées (marque, modèle, kilométrage, prix) que Google sait lire. Le délai d'apparition dépend de Google, en général quelques jours à quelques semaines.")]),
   dict(slug="site-internet-concession-moto", k="concession", style="nuit", pack=True,
     title="Création de site internet pour concession et garage moto",
-    meta="Site internet pour concession moto et scooter : motos d'occasion avec une page Google par modèle, reprise, financement, atelier en option, annonces illimitées sur Abracadeal. Dès 29 €/mois.",
+    meta="Site internet pour concession moto et scooter : motos d'occasion avec une page Google par modèle, reprise, financement, atelier en option, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Un site pour vendre vos motos et scooters, même pendant que la boutique est fermée",
     lead="Roadsters, trails, sportives, scooters : vos motos d'occasion en vitrine, chacune avec sa page sur Google, et diffusées sur Abracadeal sans rien ressaisir.",
     feats=[("Vos motos en vitrine","Photos, cylindrée, kilométrage, année et prix, filtrables par marque et budget."),
@@ -98,7 +100,7 @@ PAGES = [
            ("Mis à jour depuis votre téléphone","Une moto vendue ? Vous la passez en « Vendu » en deux clics, le site et Abracadeal suivent.")],
     faq=[("Je vends aussi des scooters et des quads, c'est possible ?","Oui : la fiche propose moto, scooter et autres types de véhicules."),
          ("J'ai aussi un atelier, je garde la prise de rendez-vous ?","Oui : la version garage garde l'atelier et les rendez-vous. La version concession les retire pour ne parler que de vente."),
-         ("Combien ça coûte ?","Le site seul commence à 29 € par mois. Avec les annonces illimitées sur Abracadeal, le CRM et une page Google par moto, c'est le Pack Auto, Moto & Immo à 99 € par mois, sans engagement.")]),
+         ("Combien ça coûte ?","Le Pack Auto, Moto & Immo : 99 € par mois et 490 € de mise en ligne, une fois. Annonces illimitées sur Abracadeal, CRM et une page Google par moto compris, sans engagement.")]),
   dict(slug="site-internet-artisan-batiment", k="batiment", style="moderne",
     title="Création de site internet pour artisan du bâtiment",
     meta="Site internet pour artisan du bâtiment et entreprise de rénovation : demande de devis, réalisations avant/après, tarifs au m², zone d'intervention, décennale. Dès 29 €/mois.",
@@ -401,8 +403,8 @@ section{padding-block:48px}
 .feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:8px;align-content:start}
 .feat p{color:var(--muted);font-size:.95rem}
 .prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
-.prices.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.prices.four .pc{align-content:start}
+.prices.one{grid-template-columns:minmax(0,420px)}
+.prices.one .pc{align-content:start}
 .pc.hi{border:2px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.08)}
 .pc.hi em{font-style:normal;font-size:.8rem;font-weight:700;color:var(--ink)}
 .pc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:4px}
@@ -422,7 +424,7 @@ section{padding-block:48px}
 footer{border-top:1px solid var(--line);padding-block:26px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
-@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.four{grid-template-columns:1fr}}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
 NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
@@ -448,11 +450,12 @@ def guide(p):
 
 def page(p):
     url = f'{SITE}/{p["slug"]}/'
+    plans = [PACK] if p.get("pack") else [BOUTIQUE] if p.get("k") == "boutique" else PRICES
     faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in p["faq"]]}
     svc_ld = {"@context":"https://schema.org","@type":"Service","name":p["title"],"serviceType":"Création de site internet","url":url,
       "provider":{"@type":"ProfessionalService","name":"MyCreativeSite","url":SITE+"/","email":"contact@mycreativesite.fr"},
       "areaServed":({"@type":"City","name":p["city"]} if p.get("city") else "FR"),
-      "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in (([PACK] if p.get("pack") else []) + PRICES)]}
+      "offers":[{"@type":"Offer","name":n,"price":m,"priceCurrency":"EUR","description":f"{m} € par mois + {s} € de mise en ligne"} for n,m,s in plans]}
     crumbs_ld = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
@@ -464,10 +467,13 @@ def page(p):
         visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite" fetchpriority="high"></div>'
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
-    prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in PRICES)
+    prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)
     if p.get("pack"):
-        prices = (f'<div class="pc hi"><em>Recommandé pour vous</em><span>{PACK[0]}</span><b>{PACK[1]} €</b><span>par mois · + {PACK[2]} € de mise en ligne</span>'
-                  '<span>Annonces illimitées sur Abracadeal, CRM, une page Google par véhicule ou par bien</span></div>') + prices
+        prices = (f'<div class="pc hi"><em>La formule de votre métier</em><span>{PACK[0]}</span><b>{PACK[1]} €</b><span>par mois · + {PACK[2]} € de mise en ligne</span>'
+                  '<span>Tout Pro, annonces illimitées sur Abracadeal, CRM, une page Google par véhicule ou par bien</span></div>')
+    elif p.get("k") == "boutique":
+        prices = (f'<div class="pc hi"><em>La formule de votre métier</em><span>{BOUTIQUE[0]}</span><b>{BOUTIQUE[1]} €</b><span>par mois · + {BOUTIQUE[2]} € de mise en ligne</span>'
+                  '<span>Tout Premium, catalogue, panier et paiement par carte, retrait ou livraison</span></div>')
     faq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
     def _cl(c):
         sl = CITY_SLUG.get(c)
@@ -515,7 +521,7 @@ def page(p):
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>Des prix clairs, sans engagement</h2>
-  <div class="prices{' four' if p.get('pack') else ''}">{prices}</div>
+  <div class="prices{' one' if len(plans) == 1 else ''}">{prices}</div>
   <p class="note">TVA non applicable, art. 293 B du CGI. Hébergement, nom de domaine, version mobile et espace client inclus. <a href="/#tarifs">Détail des formules</a>{' · <a href="/#auto-immo">Pack Auto, Moto &amp; Immo</a>' if p.get('pack') else ''} · <a href="/cgv.html">Conditions générales</a></p>
 </div></section>
 <section style="padding-top:0"><div class="wrap">

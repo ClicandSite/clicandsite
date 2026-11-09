@@ -375,7 +375,8 @@ html.fv-open,html.fv-open body{overflow:hidden}
 .cfg .mrow button .ic{font-size:1.15rem;line-height:1}
 .cfg .mrow button:hover{border-color:var(--brand)}
 .cfg .mrow button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.cfg .fchips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cfg .fchips{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cfg [hidden]{display:none!important} /* 09/11 : métiers et styles masqués selon la formule */
 .cfg .fchips button{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:2px 10px;text-align:left;padding:12px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font-family:var(--body)}
 .cfg .fchips button b{font-size:1rem}
 .cfg .fchips button .fpr{font-weight:800;font-size:1rem;white-space:nowrap}
@@ -491,11 +492,21 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <div class="head">
       <span class="eyebrow">Les modèles</span>
       <h2>11 métiers, 25 styles. Essayez-les en vrai.</h2>
-      <p>Choisissez votre métier, votre formule et votre style : le vrai site s'affiche à côté. Faites-le défiler, cliquez, testez la réservation.</p>
+      <p>Choisissez votre formule : seuls les métiers et les styles qu'elle comprend s'affichent. Le vrai site apparaît en dessous, exactement comme avec cette formule. Faites-le défiler, cliquez, testez.</p>
     </div>
     <div class="cfg">
       <div class="crow">
-        <div class="clbl"><span class="n">1</span>Votre métier</div>
+        <div class="clbl"><span class="n">1</span>Votre formule <span class="cur" id="ex-fname">Pro</span></div>
+        <div class="fchips scrollrow" role="group" aria-label="Formule">
+          <button type="button" data-f="essentiel" aria-pressed="false"><b>Essentiel</b><span class="fpr">29 €<small>/mois</small></span><span class="fdd">Le site, simple et efficace</span></button>
+          <button type="button" data-f="pro" aria-pressed="true"><b>Pro</b><span class="fpr">49 €<small>/mois</small></span><span class="fdd">+ avis Google, réservations payées</span></button>
+          <button type="button" data-f="premium" aria-pressed="false"><b>Premium</b><span class="fpr">79 €<small>/mois</small></span><span class="fdd">+ anglais, CRM, style Signature</span></button>
+          <button type="button" data-f="boutique" aria-pressed="false"><b>Boutique</b><span class="fpr">99 €<small>/mois</small></span><span class="fdd">Vente en ligne : panier et paiement</span></button>
+          <button type="button" data-f="pack" aria-pressed="false"><b>Pack Auto, Moto &amp; Immo</b><span class="fpr">99 €<small>/mois</small></span><span class="fdd">Garages, concessions, agences + Abracadeal</span></button>
+          </div>
+      </div>
+      <div class="crow">
+        <div class="clbl"><span class="n">2</span>Votre métier <span class="cur" id="ex-kname"></span></div>
         <div class="tabs mrow scrollrow" role="group" aria-label="Métier">
           <button type="button" data-k="vtc" aria-pressed="true"><span class="ic" aria-hidden="true">🚘</span>Chauffeur VTC</button>
           <button type="button" data-k="restaurant" aria-pressed="false"><span class="ic" aria-hidden="true">🍽️</span>Restaurant</button>
@@ -508,15 +519,6 @@ html.fv-open,html.fv-open body{overflow:hidden}
           <button type="button" data-k="boulangerie" aria-pressed="false"><span class="ic" aria-hidden="true">🥐</span>Boulangerie et pâtisserie</button>
           <button type="button" data-k="depannage" aria-pressed="false"><span class="ic" aria-hidden="true">🛠️</span>Dépannage à domicile</button>
           <button type="button" data-k="boutique" aria-pressed="false"><span class="ic" aria-hidden="true">🛍️</span>Boutique en ligne</button>
-          </div>
-      </div>
-      <div class="crow">
-        <div class="clbl"><span class="n">2</span>Votre formule <span class="cur" id="ex-fname">Pro</span></div>
-        <div class="fchips scrollrow" role="group" aria-label="Formule">
-          <button type="button" data-f="essentiel" aria-pressed="false"><b>Essentiel</b><span class="fpr">29 €<small>/mois</small></span><span class="fdd">Le site, simple et efficace</span></button>
-          <button type="button" data-f="pro" aria-pressed="true"><b>Pro</b><span class="fpr">49 €<small>/mois</small></span><span class="fdd">+ avis Google, réservations payées</span></button>
-          <button type="button" data-f="premium" aria-pressed="false"><b>Premium</b><span class="fpr">79 €<small>/mois</small></span><span class="fdd">+ anglais, CRM, style Signature</span></button>
-          <button type="button" data-f="boutique" aria-pressed="false"><b>Boutique</b><span class="fpr">99 €<small>/mois</small></span><span class="fdd">+ panier et vente en ligne</span></button>
           </div>
       </div>
       <div class="crow">
@@ -590,7 +592,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
       <p>Tout se fait en ligne. Pas de visio, pas de réunion : vous nous envoyez vos infos, on vous envoie votre site.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="n">1</span><h3>Vous choisissez</h3><p>Votre métier, votre style et votre formule. Vous pouvez changer de style plus tard sans frais.</p><span class="t">2 minutes</span></div>
+      <div class="step"><span class="n">1</span><h3>Vous choisissez</h3><p>Votre formule, votre métier et votre style. Vous pouvez changer de style plus tard sans frais.</p><span class="t">2 minutes</span></div>
       <div class="step"><span class="n">2</span><h3>Vous envoyez vos infos</h3><p>Nom, adresse, horaires, services, prix et photos. Un formulaire simple, depuis votre téléphone.</p><span class="t">15 minutes</span></div>
       <div class="step"><span class="n">3</span><h3>Votre site est en ligne</h3><p>On rédige les textes, on installe tout, on branche votre nom de domaine. Vous validez, c'est en ligne.</p><span class="t">48 heures</span></div>
     </div>
@@ -641,7 +643,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
     <div class="head">
       <span class="eyebrow">Tarifs</span>
       <h2>Un prix clair. Sans engagement.</h2>
-      <p>Des frais de mise en ligne une seule fois, puis un abonnement mensuel. Vous arrêtez quand vous voulez.</p>
+      <p>Des frais de mise en ligne une seule fois, puis un abonnement mensuel. Vous arrêtez quand vous voulez.<br>Essentiel, Pro et Premium : VTC, restaurants, artisans, beauté, bien-être, boulangeries, dépannage. Garages, concessions et agences immobilières : Pack Auto, Moto &amp; Immo. Vente en ligne : formule Boutique.</p>
     </div>
     <div class="plans">
       <div class="plan">
@@ -790,8 +792,9 @@ html.fv-open,html.fv-open body{overflow:hidden}
       </ol>
     </div>
     <form id="orderform">
+      <div class="f full"><label for="o-plan">Formule</label><select id="o-plan"><option>Essentiel</option><option selected>Pro</option><option>Premium</option><option>Boutique</option><option value="AutoImmo">Pack Auto, Moto &amp; Immo</option></select></div>
       <div class="f"><label for="o-trade">Votre métier</label><select id="o-trade"><option value="vtc">Chauffeur VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage ou concession (auto, moto)</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment, artisan</option><option value="beaute">Coiffure, beauté</option><option value="bienetre">Bien-être, santé</option><option value="boulangerie">Boulangerie, pâtisserie</option><option value="boutique">Boutique, vente en ligne</option><option value="depannage">Plomberie, électricité, dépannage</option><option value="autre">Autre métier</option></select></div>
-      <div class="f"><label for="o-style">Style</label><select id="o-style"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option><option value="minimal">Minimal crème</option><option value="nuit">Nuit bleue</option><option value="provence">Provence lavande</option><option value="ocean">Océan</option><option value="pop">Pop vitaminé</option><option value="corporate">Pro sérieux</option><option value="retro">Rétro</option><option value="zen">Zen nature</option><option value="neon">Néon</option><option value="poudre">Rose poudré</option><option value="terracotta">Terracotta</option><option value="graphite">Graphite</option><option value="foret">Forêt</option><option value="soleil">Soleil</option><option value="marine">Marine chic</option><option value="signature">Signature Émeraude (Premium)</option><option value="signatureonyx">Signature Onyx (Premium)</option><option value="signaturesaphir">Signature Saphir (Premium)</option><option value="signaturebordeaux">Signature Bordeaux (Premium)</option><option value="signatureivoire">Signature Ivoire (Premium)</option></select></div><p class="pickline" id="o-pick"></p><div class="f full"><label for="o-plan">Formule</label><select id="o-plan"><option>Essentiel</option><option selected>Pro</option><option>Premium</option><option>Boutique</option><option value="AutoImmo">Pack Auto, Moto &amp; Immo</option></select></div>
+      <div class="f"><label for="o-style">Style</label><select id="o-style"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option><option value="minimal">Minimal crème</option><option value="nuit">Nuit bleue</option><option value="provence">Provence lavande</option><option value="ocean">Océan</option><option value="pop">Pop vitaminé</option><option value="corporate">Pro sérieux</option><option value="retro">Rétro</option><option value="zen">Zen nature</option><option value="neon">Néon</option><option value="poudre">Rose poudré</option><option value="terracotta">Terracotta</option><option value="graphite">Graphite</option><option value="foret">Forêt</option><option value="soleil">Soleil</option><option value="marine">Marine chic</option><option value="signature">Signature Émeraude (Premium et +)</option><option value="signatureonyx">Signature Onyx (Premium et +)</option><option value="signaturesaphir">Signature Saphir (Premium et +)</option><option value="signaturebordeaux">Signature Bordeaux (Premium et +)</option><option value="signatureivoire">Signature Ivoire (Premium et +)</option></select></div><p class="pickline" id="o-pick"></p>
       <div class="f full"><label for="o-name">Nom de votre entreprise</label><input id="o-name" autocomplete="organization" placeholder="Garage du Port" required></div>
       <div class="f"><label for="o-city">Ville</label><input id="o-city" autocomplete="address-level2" placeholder="Votre ville"></div>
       <div class="f"><label for="o-tel">Téléphone</label><input id="o-tel" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"></div>
@@ -826,7 +829,7 @@ html.fv-open,html.fv-open body{overflow:hidden}
 
 <script>
 var IMG={"d-concession-luxe": "/img/g/d-concession-luxe.jpg?v=1", "d-garage-audacieux": "/img/g/d-garage-audacieux.jpg?v=2", "d-immobilier-riviera": "/img/g/d-immobilier-riviera.jpg?v=2", "d-restaurant-chaleureux": "/img/g/d-restaurant-chaleureux.jpg?v=2", "d-vtc-moderne": "/img/g/d-vtc-moderne.jpg", "m-vtc-moderne": "/img/g/m-vtc-moderne.jpg", "d-vtc-signature": "/img/g/d-vtc-signature.jpg?v=2", "d-batiment-corporate": "/img/g/d-batiment-corporate.jpg?v=2", "d-beaute-poudre": "/img/g/d-beaute-poudre.jpg?v=2", "d-bienetre-zen": "/img/g/d-bienetre-zen.jpg?v=2", "d-boulangerie-terracotta": "/img/g/d-boulangerie-terracotta.jpg?v=2", "d-depannage-soleil": "/img/g/d-depannage-soleil.jpg?v=2", "d-boutique-minimal": "/img/g/d-boutique-minimal.jpg?v=2"};
-var FILES={vtc:'modeles/vtc.html?v=29',restaurant:'modeles/restaurant.html?v=29',garage:'modeles/garage.html?v=29',concession:'modeles/garage.html?v=30&concession=1',immobilier:'modeles/immobilier.html?v=29',batiment:'modeles/batiment.html?v=29',beaute:'modeles/beaute.html?v=29',bienetre:'modeles/bienetre.html?v=29',boulangerie:'modeles/boulangerie.html?v=29',depannage:'modeles/depannage.html?v=29',boutique:'modeles/boutique.html?v=29'};
+var FILES={vtc:'modeles/vtc.html?v=31',restaurant:'modeles/restaurant.html?v=31',garage:'modeles/garage.html?v=31',concession:'modeles/garage.html?v=31&concession=1',immobilier:'modeles/immobilier.html?v=31',batiment:'modeles/batiment.html?v=31',beaute:'modeles/beaute.html?v=31',bienetre:'modeles/bienetre.html?v=31',boulangerie:'modeles/boulangerie.html?v=31',depannage:'modeles/depannage.html?v=31',boutique:'modeles/boutique.html?v=31'};
 var URLS={vtc:'azur-prestige.fr',restaurant:'chez-marius.fr',garage:'garage-du-littoral.fr',concession:'littoral-automobiles.fr',immobilier:'maisons-esterel.fr',batiment:'azur-renovation.fr',beaute:'maison-lila.fr',bienetre:'studio-respire.fr',boulangerie:'maison-fournier.fr',depannage:'azur-depannage.fr',boutique:'atelier-solene.fr'};
 var NAMES={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage',concession:'Concession auto et moto',immobilier:'Agence immobilière',batiment:'Bâtiment et rénovation',beaute:'Coiffure et beauté',bienetre:'Bien-être et santé',boulangerie:'Boulangerie et pâtisserie',depannage:'Dépannage à domicile',boutique:'Boutique en ligne'};
 var SN={"moderne": "Moderne", "luxe": "Luxe", "riviera": "Riviera", "chaleureux": "Chaleureux", "audacieux": "Audacieux", "minimal": "Minimal crème", "nuit": "Nuit bleue", "provence": "Provence lavande", "ocean": "Océan", "pop": "Pop vitaminé", "corporate": "Pro sérieux", "retro": "Rétro", "zen": "Zen nature", "neon": "Néon", "poudre": "Rose poudré", "terracotta": "Terracotta", "graphite": "Graphite", "foret": "Forêt", "soleil": "Soleil", "marine": "Marine chic", "signature": "Signature Émeraude", "signatureonyx": "Signature Onyx", "signaturesaphir": "Signature Saphir", "signaturebordeaux": "Signature Bordeaux", "signatureivoire": "Signature Ivoire"};
@@ -846,8 +849,14 @@ var DESC={
 var SDESC={"moderne": "blanc et noir, grandes photos.", "luxe": "noir et champagne, tout centré.", "riviera": "bleu mer, photo à droite.", "chaleureux": "tons pierre et olive, photo encadrée.", "audacieux": "couleurs vives, titres en majuscules.", "minimal": "crème et noir, très épuré, photo encadrée.", "nuit": "bleu nuit et serif élégant, grande photo.", "provence": "lavande et crème, tout centré.", "ocean": "turquoise, chiffres clés en tête.", "pop": "rose et jaune vitaminés, photo à droite.", "corporate": "bleu franc, sobre et rassurant.", "retro": "tons vintage brique et sable.", "zen": "vert sauge, calme et centré.", "neon": "fond sombre, accents fluo.", "poudre": "rose poudré, arrondis doux.", "terracotta": "terre cuite et serif classique.", "graphite": "gris anthracite, élégant.", "foret": "vert forêt, photo encadrée.", "soleil": "orange et jaune soleil.", "marine": "bleu marine et touches dorées.", "signature": "vert profond et or, notre design le plus haut de gamme. Réservé aux formules Premium et Boutique.", "signatureonyx": "noir profond et or, notre design le plus haut de gamme. Réservé aux formules Premium et Boutique.", "signaturesaphir": "bleu nuit et argent, notre design le plus haut de gamme. Réservé aux formules Premium et Boutique.", "signaturebordeaux": "bordeaux et or, notre design le plus haut de gamme. Réservé aux formules Premium et Boutique.", "signatureivoire": "ivoire et brun, version claire, notre design le plus haut de gamme. Réservé aux formules Premium et Boutique."};
 var cur={k:'vtc',s:'moderne',f:'pro'};
 /* 08/11/2026 : aperçu des modèles par formule (?f=…, voir assets/cs-formule.js) */
-var FR={essentiel:1,pro:2,premium:3,boutique:4}, FN={essentiel:'Essentiel',pro:'Pro',premium:'Premium',boutique:'Boutique'};
-var FDESC={essentiel:'<b>Essentiel</b> : le site, les demandes par mail et dans « Mes clients », devis PDF. Pas d\'avis Google.',pro:'<b>Pro</b> : + avis Google avec bouton « Laisser un avis », réservations payées en ligne (bouton Réserver sur les tarifs) et modifications faites par nous.',premium:'<b>Premium</b> : + bouton FR / EN (site traduit en anglais), CRM avec relances et historique, style Signature, logo offert. Essayez le bouton EN en haut du site.',boutique:'<b>Boutique</b> : + panier et paiement par carte, retrait ou livraison. Essayez « Ajouter au panier ».'};
+var FR={essentiel:1,pro:2,premium:3,boutique:4,pack:2}, FN={essentiel:'Essentiel',pro:'Pro',premium:'Premium',boutique:'Boutique',pack:'Pack Auto, Moto & Immo'}, FPLAN={essentiel:'Essentiel',pro:'Pro',premium:'Premium',boutique:'Boutique',pack:'AutoImmo'};
+/* 09/11/2026 (Anthony) : chaque formule a ses métiers et ses styles. Garage, concession, agence → Pack seul ; boutique → Boutique seule ; Essentiel 6 styles, Pro 20, Premium/Boutique/Pack 25. */
+var STD=['vtc','restaurant','batiment','beaute','bienetre','boulangerie','depannage'];
+var FK={essentiel:STD,pro:STD,premium:STD,boutique:['boutique'],pack:['garage','concession','immobilier']};
+var S6=['moderne','minimal','corporate','chaleureux','riviera','ocean'];
+function FS(f,s){ if(f==='essentiel') return S6.indexOf(s)>=0; if(f==='pro') return !/^signature/.test(s); return true; }
+function fOf(k){ if(FK[cur.f].indexOf(k)>=0) return cur.f; if(k==='boutique') return 'boutique'; if(/^(garage|concession|immobilier)$/.test(k)) return 'pack'; return 'pro'; }
+var FDESC={pack:'<b>Pack Auto, Moto &amp; Immo</b> : tout Pro + fichier clients (CRM) + vos véhicules ou vos biens publiés en illimité sur Abracadeal, synchronisés avec le site.',essentiel:'<b>Essentiel</b> : le site, les demandes par mail et dans « Mes clients », devis PDF. Pas d\'avis Google.',pro:'<b>Pro</b> : + avis Google avec bouton « Laisser un avis », réservations payées en ligne (bouton Réserver sur les tarifs) et modifications faites par nous.',premium:'<b>Premium</b> : + bouton FR / EN (site traduit en anglais), CRM avec relances et historique, style Signature, logo offert. Essayez le bouton EN en haut du site.',boutique:'<b>Boutique</b> : + panier et paiement par carte, retrait ou livraison. Essayez « Ajouter au panier ».'};
 var ifd=document.getElementById('if-d'), ifm=document.getElementById('if-m');
 function fit(){
   var vd=document.getElementById('vp-d'), vm=document.getElementById('vp-m');
@@ -857,8 +866,11 @@ function fit(){
 var view='d';
 function mob(){ return window.matchMedia('(max-width:920px)').matches; }
 function show(){
-  if(cur.k==='boutique') cur.f='boutique';
-  if(/^signature/.test(cur.s)&&FR[cur.f]<3) cur.s='luxe';
+  if(FK[cur.f].indexOf(cur.k)<0) cur.k=FK[cur.f][0];
+  if(!FS(cur.f,cur.s)) cur.s='moderne';
+  document.querySelectorAll('.tabs button').forEach(function(x){ x.hidden=FK[cur.f].indexOf(x.dataset.k)<0; });
+  document.querySelectorAll('.chips button[data-s]').forEach(function(x){ x.hidden=!FS(cur.f,x.dataset.s); });
+  var kn=document.getElementById('ex-kname'); if(kn) kn.textContent=NAMES[cur.k];
   var url=FILES[cur.k]+'&f='+cur.f+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
   if(f.getAttribute('src')!==url){f.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
@@ -866,8 +878,8 @@ function show(){
   document.getElementById('ex-url').textContent=URLS[cur.k];
   document.getElementById('ex-sname').textContent=SN[cur.s];
   document.getElementById('ex-fname').textContent=FN[cur.f];
-  document.querySelectorAll('.fchips button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.f===cur.f?'true':'false'); x.disabled=cur.k==='boutique'&&x.dataset.f!=='boutique'; x.title=x.disabled?'La boutique en ligne demande la formule Boutique':'';});
-  var op=document.getElementById('o-plan'); if(op) op.value=FN[cur.f];
+  document.querySelectorAll('.fchips button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.f===cur.f?'true':'false'); });
+  var op=document.getElementById('o-plan'); if(op){ op.value=FPLAN[cur.f]; op.dispatchEvent(new Event('change')); }
   document.getElementById('ex-now').textContent=NAMES[cur.k]+' · '+SN[cur.s];
   document.getElementById('desc').innerHTML=DESC[cur.k]+' Style '+SN[cur.s]+' : '+SDESC[cur.s]+'<br>'+FDESC[cur.f];
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.k===cur.k?'true':'false');});
@@ -875,8 +887,8 @@ function show(){
   document.querySelectorAll('.scrollrow').forEach(function(r){ var on=r.querySelector('[aria-pressed="true"]'); if(!on||r.scrollWidth<=r.clientWidth+2) return; var a=r.getBoundingClientRect(), o=on.getBoundingClientRect(); if(o.left<a.left+16||o.right>a.right-16){ r.scrollTo({left:Math.max(0,r.scrollLeft+o.left-a.left-16),behavior:'smooth'}); } });
   fit();
 }
-document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){cur.k=b.dataset.k;show();});});
-document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;if(/^signature/.test(cur.s)&&FR[cur.f]<3)cur.f='premium';show();});});
+document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){cur.k=b.dataset.k;cur.f=fOf(cur.k);show();});});
+document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;show();});});
 document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){ view=b.dataset.v; document.querySelector('.screens').dataset.v=view; document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); show(); });});
 document.querySelectorAll('.fchips button').forEach(function(b){b.addEventListener('click',function(){cur.f=b.dataset.f;show();});});
 document.querySelectorAll('.sarr').forEach(function(b){b.addEventListener('click',function(){var r=document.querySelector('.srow'); r.scrollBy({left:(+b.dataset.d)*Math.max(240,r.clientWidth*.8),behavior:'smooth'});});});
@@ -892,9 +904,9 @@ window.addEventListener('resize',function(){ show(); });
   });
   html+='</div>';
   g.innerHTML=html;
-  g.addEventListener('click',function(e){var c=e.target.closest('.gcard'); if(!c) return; cur.k=c.dataset.k; cur.s=c.dataset.s; if(/^signature/.test(cur.s)&&FR[cur.f]<3) cur.f='premium'; show(); document.getElementById('modeles').scrollIntoView({behavior:'smooth'});});
+  g.addEventListener('click',function(e){var c=e.target.closest('.gcard'); if(!c) return; cur.k=c.dataset.k; cur.f=fOf(cur.k); cur.s=c.dataset.s; if(!FS(cur.f,cur.s)&&FR[cur.f]>=2) cur.f='premium'; show(); document.getElementById('modeles').scrollIntoView({behavior:'smooth'});});
 })();
-document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){document.getElementById('o-plan').value=a.dataset.plan;/* 08/11/2026 : Pack Auto, Moto & Immo → métier garage ou immobilier */var t=document.getElementById('o-trade');if(a.dataset.plan==='AutoImmo'&&t&&!/^(garage|immobilier)$/.test(t.value)){t.value='garage';t.dispatchEvent(new Event('change'));}});});
+document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){var op=document.getElementById('o-plan');op.value=a.dataset.plan;op.dispatchEvent(new Event('change'));});});
 /* 07/11/2026 : l'accueil fait défiler les 11 métiers (demande d'Anthony : ne pas donner l'impression d'un site réservé aux VTC). */
 (function(){
   var T=[['vtc','Chauffeur VTC'],['restaurant','Restaurant'],['beaute','Coiffure et beauté'],['concession','Concession auto et moto'],['garage','Garage'],['boutique','Boutique en ligne'],['immobilier','Agence immobilière'],['boulangerie','Boulangerie'],['batiment','Artisan du bâtiment'],['bienetre','Bien-être et santé'],['depannage','Plombier et électricien']];
@@ -930,7 +942,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
   var NM={vtc:'Chauffeur VTC',restaurant:'Restaurant',garage:'Garage',immobilier:'Agence immobilière',batiment:'Bâtiment',beaute:'Coiffure et beauté',bienetre:'Bien-être',boulangerie:'Boulangerie',boutique:'Boutique en ligne',depannage:'Dépannage'};
   function line(){ var k=$('o-trade').value, st=$('o-style').value;
     $('o-pick').innerHTML=NM[k]?'Aperçu de votre choix : <a href="'+FILES[k].split('?')[0]+'#'+st+'" target="_blank" rel="noopener">'+NM[k]+', style '+(SN[st]||st)+'</a> · <a href="#modeles" id="o-change">changer</a>':'Dites-nous votre métier dans le message : on part du modèle le plus proche.'; }
-  function choose(k,st){ if(k&&$('o-trade').querySelector('option[value="'+k+'"]')) $('o-trade').value=k; if(st) $('o-style').value=st; line(); }
+  function choose(k,st){ if(k==='concession') k='garage'; if(k&&$('o-trade').querySelector('option[value="'+k+'"]')) $('o-trade').value=k; if(st) $('o-style').value=st; line(); }
   $('ex-choose').addEventListener('click',function(){ choose(cur.k,cur.s); });
   document.querySelectorAll('.tabs button,.chips button').forEach(function(b){ b.addEventListener('click',function(){ choose(cur.k,cur.s); }); });
   document.addEventListener('click',function(e){ var g=e.target.closest&&e.target.closest('.gcard'); if(g) setTimeout(function(){ choose(cur.k,cur.s); },0); });
@@ -945,9 +957,17 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
     $('o-sum').innerHTML='À payer à la validation : <b>'+u+' € une fois</b> puis <b>'+m+' € / mois</b>, sans engagement.'; }
   document.querySelectorAll('input[name=o-opt]').forEach(function(i){ i.addEventListener('change',sum); });
   $('o-plan').addEventListener('change',sum); document.addEventListener('click',function(){ setTimeout(sum,0); }); sum();
-  function sig(){ if(/^signature/.test($('o-style').value)&&!/^(Premium|Boutique)$/.test($('o-plan').value)) $('o-plan').value='Premium'; }
-  $('o-style').addEventListener('change',sig); $('o-plan').addEventListener('change',function(){ if(/^signature/.test($('o-style').value)&&!/^(Premium|Boutique)$/.test($('o-plan').value)) $('o-style').value='luxe', line(); });
-  document.addEventListener('click',function(){ setTimeout(sig,0); });
+  // 09/11/2026 : formulaire aligné sur les règles des formules (métiers et styles autorisés)
+  var PF={Essentiel:'essentiel',Pro:'pro',Premium:'premium',Boutique:'boutique',AutoImmo:'pack'};
+  var TK={essentiel:STD.concat(['autre']),pro:STD.concat(['autre']),premium:STD.concat(['autre']),boutique:['boutique'],pack:['garage','immobilier']};
+  function rules(){ var f=PF[$('o-plan').value]||'pro', t=$('o-trade'), st=$('o-style');
+    [].forEach.call(t.options,function(o){ o.hidden=o.disabled=TK[f].indexOf(o.value)<0; });
+    [].forEach.call(st.options,function(o){ o.hidden=o.disabled=!FS(f,o.value); });
+    if(TK[f].indexOf(t.value)<0) t.value=TK[f][0];
+    if(!FS(f,st.value)) st.value='moderne';
+    line(); }
+  $('o-plan').addEventListener('change',rules); rules();
+
   line();
   $('orderform').addEventListener('submit',function(e){
     e.preventDefault();

@@ -1,9 +1,9 @@
 /* MyCreativeSite · aperçu des modèles par formule (08/11/2026).
-   Chargé seulement quand l'adresse du modèle contient ?f=essentiel|pro|premium|boutique (explorateur de l'accueil).
+   Chargé seulement quand l'adresse du modèle contient ?f=essentiel|pro|premium|boutique|pack (explorateur de l'accueil).
    N'agit jamais sur un vrai site client : c'est une démonstration, rien n'est envoyé. */
 (function () {
   var F = (new URLSearchParams(location.search).get('f') || '').toLowerCase();
-  var RANK = { essentiel: 1, pro: 2, premium: 3, boutique: 4 };
+  var RANK = { essentiel: 1, pro: 2, premium: 3, boutique: 4, pack: 2 }; // 09/11 : Pack Auto, Moto & Immo = fonctions Pro (+ CRM et Abracadeal côté espace)
   var R = RANK[F]; if (!R) return;
   var d = document, H = d.documentElement;
   var trade = H.getAttribute('data-trade') || '';
@@ -37,7 +37,7 @@
     x.type = 'button'; x.onclick = function () { o.remove(); }; o.onclick = function (e) { if (e.target === o) o.remove(); };
     b.append(h, p, x); o.appendChild(b); d.body.appendChild(o);
   }
-  var LABEL = { essentiel: 'Essentiel', pro: 'Pro', premium: 'Premium', boutique: 'Boutique' };
+  var LABEL = { essentiel: 'Essentiel', pro: 'Pro', premium: 'Premium', boutique: 'Boutique', pack: 'Pack Auto, Moto & Immo' };
   d.body.appendChild(el('div', 'cf-tag', 'Aperçu formule ' + LABEL[F]));
 
   // Avis Google : à partir de Pro

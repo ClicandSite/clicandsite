@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Création de site internet clé en main pour artisans, commerçants et indépendants : en ligne en 48 h, dès 29 €/mois, hébergement et domaine inclus, sans engagement.">
 <link rel="canonical" href="https://mycreativesite.fr/">
@@ -29,9 +30,8 @@
   --display:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0D1020; --paper:#151A30; --ink:#EEF0F8; --muted:#9AA1BC; --line:#262C47;
-  --brand:#A98BFF; --brand-ink:#0D1020; --brand-soft:#2A1F4D; --pop:#FFB020; --device:#05070F; color-scheme:dark}}
+/* 09/11/2026 (Anthony) : site toujours en clair, même si le téléphone est en mode sombre */
+:root{color-scheme:light}
 :root[data-theme="dark"]{
   --bg:#0D1020; --paper:#151A30; --ink:#EEF0F8; --muted:#9AA1BC; --line:#262C47;
   --brand:#A98BFF; --brand-ink:#0D1020; --brand-soft:#2A1F4D; --pop:#FFB020; --device:#05070F; color-scheme:dark}
@@ -170,7 +170,6 @@ details p{color:var(--muted);padding-bottom:16px}
 /* commande */
 .order{background:var(--ink);color:#F2F3F9}
 :root[data-theme="dark"] .order{background:#1B2140}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .order{background:#1B2140}}
 .order .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
 .order h2{color:#fff}
 .order .sub{color:#B9BED6;margin-top:14px;max-width:40ch}
@@ -427,6 +426,44 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   .explorer .vbar{display:none}
   .screens .pscreen{height:calc(100svh - 250px)}
 }
+
+/* 09/11/2026 (Anthony) : refonte claire — arguments du haut avec icônes, étapes illustrées, commande sur fond clair, barre « Je veux ce modèle » sur téléphone */
+.args{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:30px;max-width:560px}
+.args>div{display:grid;gap:4px;align-content:start;padding:0 16px;border-left:1px solid var(--line)}
+.args>div:first-child{padding-left:0;border-left:0}
+.args .ai{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--brand-soft);color:var(--brand);margin-bottom:6px}
+.args .ai svg{width:22px;height:22px}
+.args b{font-size:.93rem;line-height:1.25}
+.args span:not(.ai){font-size:.84rem;color:var(--muted);line-height:1.35}
+.step{position:relative;background:var(--bg);box-shadow:0 14px 34px -26px rgba(18,22,43,.45)}
+.step .si{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--brand-soft);color:var(--brand)}
+.step .si svg{width:26px;height:26px}
+.step .n{position:absolute;top:22px;right:24px;font-size:1.5rem;opacity:.35}
+@media (min-width:861px){.steps{gap:34px}.step:not(:last-child)::after{content:"";position:absolute;right:-26px;top:48px;width:18px;height:18px;border-top:2px solid var(--brand);border-right:2px solid var(--brand);transform:rotate(45deg);opacity:.45}}
+.order{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)}
+:root[data-theme="dark"] .order{background:var(--paper)}
+.order h2{color:var(--ink)}
+.order .sub{color:var(--muted)}
+.order .eyebrow{color:var(--brand)}
+#orderform{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 24px 50px -34px rgba(18,22,43,.4)}
+.order label{color:var(--muted)}
+.order input,.order select,#orderform textarea{border:1px solid var(--line);background:#fff;color:var(--ink)}
+.order input:focus,.order select:focus,#orderform textarea:focus{border-color:var(--brand);outline:2px solid var(--brand-soft);outline-offset:0}
+.order a{color:var(--brand)}
+.who label{color:var(--ink);border:1px solid var(--line);background:#fff}
+.who label:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+.order form .btn{background:var(--grad);color:#fff}
+.ok{background:#E8F6EE;color:#14532D}
+.order .opts .optsum{color:var(--muted)}.order .opts .optsum b{color:var(--ink)}
+.order .opts label b{color:var(--ink)}
+.ok a.go{color:#14532D}
+.pickbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;align-items:center;gap:12px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);box-shadow:0 -10px 30px -20px rgba(18,22,43,.4)}
+.pickbar>span{flex:1;min-width:0;display:grid;line-height:1.2}
+.pickbar b{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pickbar small{font-size:.8rem;color:var(--muted)}
+.pickbar .btn{padding:12px 16px;font-size:.92rem;white-space:nowrap}
+@media (min-width:921px){.pickbar{display:none!important}}
+@media (max-width:520px){.args>div{padding:0 10px}.args b{font-size:.86rem}.args span:not(.ai){font-size:.78rem}}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -459,10 +496,10 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
         <a class="btn" href="#commande">Je veux mon site</a>
         <a class="btn ghost" href="#modeles">Essayer les modèles</a>
       </div>
-      <div class="proof">
-        <span><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Sans engagement</span>
-        <span><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Hébergement et domaine inclus</span>
-        <span><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Parfait sur téléphone</span>
+      <div class="args">
+        <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-3 7.6-7 9-4-1.4-7-4.8-7-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><b>Sans engagement</b><span>Vous arrêtez quand vous voulez.</span></div>
+        <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>
+        <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d'abord pour le téléphone.</span></div>
       </div>
     </div>
     <div class="hero-show">
@@ -616,6 +653,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   </div>
 </section>
 
+<div class="pickbar" id="pickbar" hidden><span><b id="pb-k">Chauffeur VTC</b><small id="pb-s">Moderne</small></span><a class="btn" href="#commande" id="pb-go">Je veux ce modèle</a></div>
 <section class="allgrid" id="tous">
   <div class="wrap">
     <div class="head">
@@ -636,9 +674,9 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
       <p>Tout se fait en ligne. Pas de visio, pas de réunion : vous nous envoyez vos infos, on vous envoie votre site.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="n">1</span><h3>Vous choisissez</h3><p>Votre formule, votre métier et votre style. Vous pouvez changer de style plus tard sans frais.</p><span class="t">2 minutes</span></div>
-      <div class="step"><span class="n">2</span><h3>Vous envoyez vos infos</h3><p>Nom, adresse, horaires, services, prix et photos. Un formulaire simple, depuis votre téléphone.</p><span class="t">15 minutes</span></div>
-      <div class="step"><span class="n">3</span><h3>Votre site est en ligne</h3><p>On rédige les textes, on installe tout, on branche votre nom de domaine. Vous validez, c'est en ligne.</p><span class="t">48 heures</span></div>
+      <div class="step"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M15 16l2 2 4-4"/></svg></span><span class="n">1</span><h3>Vous choisissez</h3><p>Votre formule, votre métier et votre style. Vous pouvez changer de style plus tard sans frais.</p><span class="t">2 minutes</span></div>
+      <div class="step"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></span><span class="n">2</span><h3>Vous envoyez vos infos</h3><p>Nom, adresse, horaires, services, prix et photos. Un formulaire simple, depuis votre téléphone.</p><span class="t">15 minutes</span></div>
+      <div class="step"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 10.5l2 2 4-4"/></svg></span><span class="n">3</span><h3>Votre site est en ligne</h3><p>On rédige les textes, on installe tout, on branche votre nom de domaine. Vous validez, c'est en ligne.</p><span class="t">48 heures</span></div>
     </div>
   </div>
 </section>
@@ -825,7 +863,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
 <section class="order" id="commande">
   <div class="wrap">
     <div>
-      <span class="eyebrow" style="color:var(--pop)">Commander</span>
+      <span class="eyebrow">Commander</span>
       <h2 style="margin-top:12px">Votre site en ligne dans 48 heures.</h2>
       <p class="sub">Choisissez votre modèle et votre style, laissez vos coordonnées. Rien n'est facturé avant que vous ayez validé votre site.</p>
       <ol class="steps-o">
@@ -1076,6 +1114,16 @@ show();
   });
 })();
 </script>
-<script>/* 09/11 : onglets Pack / Boutique (téléphone) */(function(){var t=document.querySelector('.spec-tabs'),c=document.querySelector('.spec-cols');if(!t||!c)return;t.addEventListener('click',function(e){var b=e.target.closest('button[data-sc]');if(!b)return;c.setAttribute('data-show',b.dataset.sc);t.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});});})();</script>
+<script>/* 09/11 : onglets Pack / Boutique (téléphone) */(function(){var t=document.querySelector('.spec-tabs'),c=document.querySelector('.spec-cols');if(!t||!c)return;t.addEventListener('click',function(e){var b=e.target.closest('button[data-sc]');if(!b)return;c.setAttribute('data-show',b.dataset.sc);t.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});});})();
+/* 09/11/2026 : barre « Je veux ce modèle » sur téléphone pendant qu'on regarde les modèles */
+(function(){
+  var bar=document.getElementById('pickbar'), sec=document.getElementById('modeles'), go=document.getElementById('pb-go');
+  if(!bar||!sec||!('IntersectionObserver' in window)) return;
+  function upd(){ var k=document.getElementById('ex-kname'), st=document.getElementById('ex-sname'); document.getElementById('pb-k').textContent=k&&k.textContent||''; document.getElementById('pb-s').textContent='Style '+(st&&st.textContent||''); }
+  new IntersectionObserver(function(es){ es.forEach(function(e){ bar.hidden=!e.isIntersecting; if(e.isIntersecting) upd(); }); },{rootMargin:'-30% 0px -30% 0px'}).observe(sec);
+  sec.addEventListener('click',function(){ setTimeout(upd,0); });
+  go.addEventListener('click',function(){ var c=document.getElementById('ex-choose'); if(c) c.click(); });
+})();
+</script>
 </body>
 </html>

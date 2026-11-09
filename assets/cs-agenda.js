@@ -17,7 +17,7 @@
     '.ag-week{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.ag-week button{flex:none;display:grid;justify-items:center;gap:1px;min-width:58px;padding:7px 6px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font:inherit;font-size:.78rem;cursor:pointer;color:var(--ink)}' +
     '.ag-week button b{font-size:1.05rem}.ag-week button i{font-style:normal;font-size:.7rem;font-weight:700;color:var(--brand)}.ag-week button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}.ag-week button[aria-pressed="true"] i{color:var(--bg)}.ag-week button.closed{opacity:.55}' +
     '.ag-list{display:grid;gap:8px}.ag-slot{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;align-items:start;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:10px 12px}' +
-    '.ag-slot>b{font-size:1rem;padding-top:2px}.ag-slot.free{padding:6px 12px;align-items:center}.ag-slot.free>b{font-size:.92rem;padding:0;font-weight:600}.ag-slot .fr{font-size:.8rem;color:var(--ok);font-weight:700}.ag-slot .fr.full{color:var(--bad)}' +
+    '.ag-top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.ag-blk{font-size:.78rem!important;padding:3px 9px!important}.ag-slot>b{font-size:1rem;padding-top:2px}.ag-slot.free{padding:6px 12px;align-items:center}.ag-slot.free>b{font-size:.92rem;padding:0;font-weight:600}.ag-slot .fr{font-size:.8rem;color:var(--ok);font-weight:700}.ag-slot .fr.full{color:var(--bad)}' +
     '.ag-bk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:7px;margin-top:6px;font-size:.92rem}.ag-bk:first-of-type{border-top:0;margin-top:2px;padding-top:0}' +
     '.ag-bk .n{font-weight:700}.ag-bk a{color:var(--brand);font-weight:700;text-decoration:none}.ag-bk .s{color:var(--muted);font-size:.85rem}.ag-bk .sp{flex:1}' +
     '.ag-tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--brand)}.ag-tag.blk{background:#555;color:#fff}.ag-tag.x{background:none;color:var(--muted);border:1px solid var(--line)}' +
@@ -138,7 +138,10 @@
     var d = A.sel, tools = el('div', 'ag-nav');
     tools.appendChild(el('h3', null, long(d)));
     tools.appendChild(b('+ Ajouter un rendez-vous', function () { form(d, 'rdv'); }, 'primary'));
-    tools.appendChild(b('Bloquer un créneau', function () { form(d, 'bloque'); }));
+    // 09/11/2026 (Anthony) : bloquer d'un clic la journée ou une heure
+    var dayClosed = A.data.cfg.closed.indexOf(d) >= 0;
+    tools.appendChild(b(dayClosed ? 'Rouvrir cette journée' : 'Bloquer cette journée', function () { toggleDay(d); }));
+    tools.appendChild(b('Bloquer un créneau…', function () { form(d, 'bloque'); }));
     R.appendChild(tools);
     var slots = D.slots.filter(function (x) { return x.d === d; }), bks = D.bookings.filter(function (x) { return x.d === d; });
     var times = {}; slots.forEach(function (x) { times[x.t] = x; }); bks.forEach(function (x) { if (!times[x.t]) times[x.t] = null; });
@@ -151,7 +154,9 @@
       var sl = times[t], here = bks.filter(function (x) { return x.t === t; }), row = el('div', 'ag-slot' + (here.length ? '' : ' free'));
       row.appendChild(el('b', null, hm(t)));
       var body = el('div');
-      if (sl) body.appendChild(el('div', 'fr' + (sl.left ? '' : ' full'), sl.left ? (resto() ? sl.left + ' couverts libres' : sl.left + ' place' + (sl.left > 1 ? 's' : '') + ' libre' + (sl.left > 1 ? 's' : '')) : 'Complet'));
+      if (sl) { var top = el('div', 'ag-top'); top.appendChild(el('div', 'fr' + (sl.left ? '' : ' full'), sl.left ? (resto() ? sl.left + ' couverts libres' : sl.left + ' place' + (sl.left > 1 ? 's' : '') + ' libre' + (sl.left > 1 ? 's' : '')) : 'Complet'));
+        if (sl.left) { var bh = el('button', 'btn sm ag-blk', 'Bloquer cette heure'); bh.type = 'button'; bh.onclick = function () { blockHour(d, t, sl.left); }; top.appendChild(bh); }
+        body.appendChild(top); }
       here.forEach(function (x) {
         var ln = el('div', 'ag-bk' + (x.status === 'annule' ? ' cancel' : ''));
         ln.innerHTML = (x.status === 'bloque' ? '<span class="ag-tag blk">Bloqué</span><span class="n">' + escH(x.note || 'Créneau bloqué') + '</span>'
@@ -167,6 +172,18 @@
     });
     R.appendChild(list);
     if (!D.cfg.on && D.configured !== false) R.appendChild(el('p', 'hint', 'La réservation en ligne est fermée : les créneaux ci-dessus ne sont pas proposés sur votre site tant que vous ne l\'ouvrez pas.'));
+  }
+  async function toggleDay(d) {
+    var c = A.cfg, i = c.closed.indexOf(d), closed = i >= 0;
+    if (!closed && !confirm('Bloquer toute la journée du ' + long(d) + ' ? Plus aucun créneau ne sera proposé sur votre site ce jour-là (les rendez-vous déjà pris restent).')) return;
+    if (closed) c.closed.splice(i, 1); else c.closed.push(d);
+    var keep = A.sel; await save(closed ? 'Journée rouverte à la réservation' : 'Journée bloquée : plus de réservation en ligne ce jour-là'); A.sel = keep; render();
+  }
+  async function blockHour(d, t, n) {
+    var o = { p_site: site && site.id, p_day: d, p_time: t, p_minutes: A.data.cfg.step, p_places: n, p_kind: 'bloque', p_name: null, p_phone: null, p_service: null, p_note: 'Heure bloquée' };
+    if (DEMO) A.demo.bks.push({ id: 'd' + Date.now(), d: d, t: t, minutes: o.p_minutes, places: n, status: 'bloque', source: 'pro', note: o.p_note });
+    else { var r = await SB.rpc('cs_agenda_add', o); if (r.error) { toast(r.error.message); return; } }
+    toast('Heure bloquée : ' + hm(t) + ' n\'est plus proposée sur votre site'); try { await load(); } catch (e) {} A.sel = d; render();
   }
   async function go(d) { A.day = d; A.sel = d; try { await load(); } catch (e) { toast('Chargement impossible'); return; } render(); }
 

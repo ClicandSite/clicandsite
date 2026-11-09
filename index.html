@@ -748,7 +748,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
     </div>
     <div class="opts">
       <div class="opt"><span class="n2">Fiche Google optimisée<span class="d2">Photos, horaires, catégories, réponses aux avis, et bouton « Réserver » relié à votre site</span></span><span class="p2">149 € une fois</span></div>
-      <div class="opt"><span class="n2">Création de logo et bannière<span class="d2">Logo (2 propositions) et bannière du haut de votre site, fichiers fournis. Offert en Premium et Boutique</span></span><span class="p2">19 € une fois</span></div>
+      <div class="opt"><span class="n2">Création de logo et bannière<span class="d2">Logo (2 propositions) et bannière du haut de votre site, fichiers fournis. Offert en Premium et Boutique</span></span><span class="p2">49 € une fois</span></div>
       <div class="opt"><span class="n2">Adresse mail pro<span class="d2">contact@votre-entreprise.fr, configuration sur votre téléphone incluse</span></span><span class="p2">+ 5 € / mois</span></div>
       <div class="opt"><span class="n2">Site bilingue français / anglais<span class="d2">Bouton FR / EN sur votre site, traduction faite pour vous. Inclus en Premium et Boutique</span></span><span class="p2">+ 10 € / mois</span></div>
     </div>
@@ -806,7 +806,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
         <label><input type="radio" name="o-self" value="0"><span><b>Vous le faites pour moi</b><small>Vous déposez vos infos et vos photos dans votre espace, on prépare le site.</small></span></label>
       </fieldset>
       <fieldset class="f full who opts" id="o-opts"><legend>Options, ajoutées à votre paiement (facultatif)</legend>
-        <label data-o="logo"><input type="checkbox" name="o-opt" value="logo"><span><b>Logo et bannière · 19 €</b><small>Une fois. Logo (2 propositions) et bannière du site, fichiers fournis.</small></span></label>
+        <label data-o="logo"><input type="checkbox" name="o-opt" value="logo"><span><b>Logo et bannière · 49 €</b><small>Une fois. Logo (2 propositions) et bannière du site, fichiers fournis.</small></span></label>
         <label data-o="google"><input type="checkbox" name="o-opt" value="google"><span><b>Fiche Google optimisée · 149 €</b><small>Une fois. Avec bouton Réserver.</small></span></label>
         <label data-o="mail"><input type="checkbox" name="o-opt" value="mail"><span><b>Adresse mail pro · 5 €/mois</b><small>contact@votre-domaine, configurée sur votre téléphone.</small></span></label>
         <label data-o="bilingue"><input type="checkbox" name="o-opt" value="bilingue"><span><b>Site français / anglais · 10 €/mois</b><small>Bouton FR / EN, traduction faite pour vous.</small></span></label>
@@ -951,7 +951,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
   ['o-trade','o-style'].forEach(function(id){ $(id).addEventListener('change',line); });
   // 08/11/2026 : le style Signature est réservé aux formules Premium et Boutique
   // 08/11/2026 : options ajoutées au paiement ; logo et bilingue déjà inclus en Premium et Boutique
-  var PL={Essentiel:[29,190],Pro:[49,290],Premium:[79,490],Boutique:[99,490],AutoImmo:[99,490]}, OP={logo:[0,19],google:[0,149],mail:[5,0],bilingue:[10,0]};
+  var PL={Essentiel:[29,190],Pro:[49,290],Premium:[79,490],Boutique:[99,490],AutoImmo:[99,490]}, OP={logo:[0,49],google:[0,149],mail:[5,0],bilingue:[10,0]};
   function sum(){ var pl=$('o-plan').value, inc=/^(Premium|Boutique)$/.test(pl), p=PL[pl]||[0,0], m=p[0], u=p[1];
     document.querySelectorAll('#o-opts label[data-o]').forEach(function(l){ var o=l.dataset.o, i=l.querySelector('input'), isInc=inc&&(o==='logo'||o==='bilingue');
       i.disabled=isInc; if(isInc) i.checked=false; l.classList.toggle('inc',isInc); var b=l.querySelector('b'); if(!b.dataset.t) b.dataset.t=b.textContent; b.textContent=isInc?b.dataset.t.replace(/ · .*/,'')+' · inclus en '+pl:b.dataset.t;

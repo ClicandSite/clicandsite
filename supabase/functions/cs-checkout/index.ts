@@ -1,6 +1,6 @@
 // 08/11/2026 (Claude, demande d'Anthony) — MyCreativeSite : paiement de la commande d'un site avec ses options.
 // POST {slug} -> {url} : page de paiement Stripe (compte MyCreativeSite) avec, sur une seule facture :
-//   abonnement de la formule + frais de mise en ligne + options choisies à la commande (logo 19 €, fiche Google 149 €,
+//   abonnement de la formule + frais de mise en ligne + options choisies à la commande (logo et bannière 49 €, fiche Google 149 €,
 //   adresse mail pro 5 €/mois, site bilingue 10 €/mois). Logo et bilingue sont déjà inclus en Premium et Boutique.
 // Les prix sont recalculés ici d'après la fiche du site : rien ne vient du navigateur à part l'identifiant du site.
 // Le webhook clicandsite-stripe-webhook relie ensuite le paiement au site (client_reference_id = slug).
@@ -21,7 +21,7 @@ const PLAN: Record<string, { monthly: string; setup: string }> = {
   autoimmo: { monthly: "price_1UZdDdEVjm0uqFCcnQKR8aXu", setup: "price_1UYmdPEVjm0uqFCcNdD6SaXX" },
 };
 const OPTION: Record<string, string> = {
-  logo: "price_1UZYzmEVjm0uqFCceEefBac4",      // 19 € une fois
+  logo: "price_1UZrJqEVjm0uqFCc5FvJc1nJ",      // logo et bannière, 49 € une fois (09/11/2026, avant 19 €)
   google: "price_1UZYzqEVjm0uqFCcjqQ0XeWb",    // 149 € une fois
   mail: "price_1UZYzsEVjm0uqFCc5UG4ygNb",      // 5 € / mois
   bilingue: "price_1UZYzuEVjm0uqFCcO2h9btCA",  // 10 € / mois

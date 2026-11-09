@@ -135,7 +135,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       <button class="btn" id="mailToggle" type="button">…</button>
       <label style="display:flex;gap:6px;align-items:center">Mails par jour <input type="number" id="mailLimit" min="0" max="200" style="width:80px"></label>
       <button class="btn" id="mailTest" type="button">M'envoyer un mail d'essai</button>
-      <span class="meta" id="mailMeta">Depuis contact@mycreativesite.fr, du lundi au vendredi de 9 h à 18 h, étalés sur la journée. Rapport chaque soir par mail.</span>
+      <span class="meta" id="mailMeta">Depuis contact@mycreativesite.fr, du lundi au vendredi de 9 h à 18 h, étalés sur la journée. Montée en douceur pour protéger l'adresse : 5 mails le 1er jour, puis +3 par jour d'envoi, jusqu'à 40. Changer le nombre à la main arrête la montée automatique. Rapport chaque soir par mail.</span>
       <details id="mailPwBox"><summary>Mot de passe de la boîte contact@mycreativesite.fr</summary>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="password" id="mailPw" autocomplete="new-password" placeholder="Mot de passe de la boîte OVH" style="min-width:240px"><button class="btn primary" id="mailPwSave" type="button">Enregistrer</button></div>
         <div class="meta">Il est gardé côté serveur et ne s'affiche jamais. À refaire seulement si tu changes le mot de passe de la boîte.</div>

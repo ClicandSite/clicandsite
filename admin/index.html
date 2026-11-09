@@ -130,6 +130,18 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       <details><summary>Dernières recherches</summary><div class="runs" id="runs"></div></details>
     </div>
 
+    <div class="robot" id="mailBox">
+      <span>Envoi des mails de prospection : <span class="st" id="mailSt">…</span></span>
+      <button class="btn" id="mailToggle" type="button">…</button>
+      <label style="display:flex;gap:6px;align-items:center">Mails par jour <input type="number" id="mailLimit" min="0" max="200" style="width:80px"></label>
+      <button class="btn" id="mailTest" type="button">M'envoyer un mail d'essai</button>
+      <span class="meta" id="mailMeta">Depuis contact@mycreativesite.fr, du lundi au vendredi de 9 h à 18 h, étalés sur la journée. Rapport chaque soir par mail.</span>
+      <details id="mailPwBox"><summary>Mot de passe de la boîte contact@mycreativesite.fr</summary>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="password" id="mailPw" autocomplete="new-password" placeholder="Mot de passe de la boîte OVH" style="min-width:240px"><button class="btn primary" id="mailPwSave" type="button">Enregistrer</button></div>
+        <div class="meta">Il est gardé côté serveur et ne s'affiche jamais. À refaire seulement si tu changes le mot de passe de la boîte.</div>
+      </details>
+    </div>
+
     <div class="filters">
       <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option><option value="boutique">Boutique en ligne</option></select>
       <select id="fSite"><option value="">Tous les sites</option><option value="aucun">Sans site</option><option value="date">Site daté</option><option value="injoignable">Site en panne</option><option value="moderne">Site moderne</option><option value="a_verifier">À vérifier</option></select>
@@ -250,9 +262,31 @@ $('list').addEventListener('click',async e=>{
 
 ['fTrade','fSite','fStatus','fContact','fAge'].forEach(id=>$(id).addEventListener('change',()=>{offset=0;load();}));
 let tq; $('fQ').addEventListener('input',()=>{clearTimeout(tq);tq=setTimeout(()=>{offset=0;load();},350);});
-$('refresh').addEventListener('click',()=>{stats();load();});
+$('refresh').addEventListener('click',()=>{stats();load();mailStatus();});
 $('prev').addEventListener('click',()=>{offset=Math.max(0,offset-PAGE);render();scrollTo(0,0);});
 $('next').addEventListener('click',()=>{offset+=PAGE;render();scrollTo(0,0);});
+
+async function mailStatus(){
+  const {data,error}=await sb.rpc('cs_admin_mail_status'); if(error){$('mailSt').textContent=error.message;return;}
+  const on=data.settings&&data.settings.enabled, t=data.today||{};
+  $('mailSt').textContent=(on?'en marche':'arrêté')+` · ${t.sent||0} envoyés aujourd'hui · ${data.sent_total} au total · ${data.ready} pros prêts`+(data.unsubscribed?` · ${data.unsubscribed} désinscrits`:'');
+  $('mailSt').style.color=on?'var(--ok)':'var(--bad)';
+  $('mailToggle').textContent=on?"Arrêter l'envoi":"Démarrer l'envoi"; $('mailToggle').dataset.on=on?'1':'0';
+  $('mailLimit').value=data.settings?data.settings.daily_limit:20;
+  $('mailPwBox').open=!data.has_password;
+  $('mailPwBox').querySelector('summary').textContent='Mot de passe de la boîte contact@mycreativesite.fr'+(data.has_password?' (enregistré)':' (à saisir)');
+}
+$('mailToggle').addEventListener('click',async()=>{const on=$('mailToggle').dataset.on==='1';if(!on&&!confirm("Démarrer l'envoi automatique des mails de prospection ?"))return;const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:!on,p_daily_limit:null,p_trades:null});if(error)alert(error.message);mailStatus();});
+$('mailLimit').addEventListener('change',async()=>{const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:null,p_daily_limit:+$('mailLimit').value,p_trades:null});if(error)alert(error.message);mailStatus();});
+$('mailPwSave').addEventListener('click',async()=>{const v=$('mailPw').value;if(!v){alert('Saisis le mot de passe');return;}const {error}=await sb.rpc('cs_admin_mail_password',{p_password:v});$('mailPw').value='';if(error){alert(error.message);return;}alert('Mot de passe enregistré. Clique maintenant sur « M\'envoyer un mail d\'essai ».');mailStatus();});
+$('mailTest').addEventListener('click',async()=>{const b=$('mailTest');b.disabled=true;b.textContent='Envoi en cours…';
+  const {data:id,error}=await sb.rpc('cs_admin_mail_test');
+  if(error){alert(error.message);b.disabled=false;b.textContent="M'envoyer un mail d'essai";return;}
+  let res=null;for(let i=0;i<20&&!(res&&!res.pending);i++){await new Promise(r=>setTimeout(r,2000));res=(await sb.rpc('cs_admin_mail_test_result',{p_id:id})).data;}
+  b.disabled=false;b.textContent="M'envoyer un mail d'essai";
+  if(!res||res.pending){alert("Pas de réponse pour l'instant, regarde ta boîte mail dans une minute.");return;}
+  let j={};try{j=JSON.parse(res.content)}catch(_){}
+  alert(j.ok?'Mail d\'essai envoyé à '+j.to+' : regarde ta boîte (et les spams).':'Échec : '+(j.error||res.content));});
 $('robotToggle').addEventListener('click',async()=>{const on=$('robotToggle').dataset.on==='1';const {error}=await sb.rpc('cs_admin_robot',{p_enabled:!on});if(error)alert(error.message);stats();});
 $('robotRun').addEventListener('click',async()=>{const b=$('robotRun');b.disabled=true;b.textContent='Recherche lancée…';const {error}=await sb.rpc('cs_admin_robot',{p_run_now:true});if(error)alert(error.message);setTimeout(()=>{b.disabled=false;b.textContent='Lancer une recherche maintenant';stats();load();},60000);});
 const ST={brouillon:'En préparation',en_ligne:'En ligne',suspendu:'Suspendu'};
@@ -328,7 +362,7 @@ async function boot(){
   if(!session||recovery){$('login').hidden=false;$('app').hidden=true;return;}
   const {data:isAdmin,error}=await sb.rpc('cs_is_admin');
   if(error||!isAdmin){$('login').hidden=true;$('gate').hidden=false;$('gate').innerHTML='Ce compte n\'a pas accès à l\'espace admin. <button class="linkbtn" id="out2" type="button">Se déconnecter</button>';$('out2').onclick=async()=>{await sb.auth.signOut();location.reload();};return;}
-  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders();
+  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus();
 }
 boot();
 </script>

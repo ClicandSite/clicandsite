@@ -1,5 +1,5 @@
 // MyCreativeSite — envoi automatique des mails de prospection (09/11/2026), même principe que le robot EPS.
-// - Envoi par la boîte OVH contact@mycreativesite.fr en SMTP (secret SMTP_PASSWORD ; SMTP_USER/HOST/PORT facultatifs, ssl0.ovh.net:465),
+// - Envoi par la boîte OVH contact@mycreativesite.fr en SMTP (mot de passe saisi dans l'admin → clicandsite.secrets 'smtp_password', ou secret SMTP_PASSWORD ; SMTP_USER/HOST/PORT facultatifs, ssl0.ovh.net:465),
 //   ou à défaut par l'API Gmail (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN). CS_FROM = adresse d'envoi.
 // - Jours ouvrés, 9 h – 18 h (Paris), envois étalés (objectif proportionnel à l'heure, 2 mails max par passage).
 // - Limite par jour et métiers ciblés : table clicandsite.mail_settings (réglable dans l'admin). Robot éteint par défaut.
@@ -138,10 +138,12 @@ async function sendText(tok: string, to: string, subject: string, text: string) 
 }
 
 // ---------- Transport : SMTP (boîte OVH, prioritaire si SMTP_PASSWORD est posé) ou API Gmail ----------
-const useSmtp = () => Boolean(Deno.env.get("SMTP_PASSWORD"));
+let SMTP_PASS = "";
+async function loadSmtpPass() { SMTP_PASS = Deno.env.get("SMTP_PASSWORD") || (await sql`select value from clicandsite.secrets where name='smtp_password'`)[0]?.value || ""; }
+const useSmtp = () => Boolean(SMTP_PASS);
 async function smtpSend(to: string | null, mime: string): Promise<string> {
   const host = Deno.env.get("SMTP_HOST") || "ssl0.ovh.net", port = Number(Deno.env.get("SMTP_PORT") || "465");
-  const user = Deno.env.get("SMTP_USER") || from(), pass = Deno.env.get("SMTP_PASSWORD") || "";
+  const user = Deno.env.get("SMTP_USER") || from(), pass = SMTP_PASS;
   const conn = await Deno.connectTls({ hostname: host, port });
   const enc = new TextEncoder(), dec = new TextDecoder();
   let buf = "";
@@ -226,6 +228,7 @@ async function unsubscribe(id: string, k: string) {
 
 Deno.serve(async (req: Request) => {
   try {
+    await loadSmtpPass();
     const u = new URL(req.url);
     if (u.searchParams.get("u")) {
       if (req.method === "GET" || req.method === "POST") return await unsubscribe(u.searchParams.get("u")!, u.searchParams.get("k") || "");
@@ -234,7 +237,7 @@ Deno.serve(async (req: Request) => {
       let ok = false, er = "";
       try { if (useSmtp()) await smtpSend(null, ""); else await gmailToken(); ok = true; } catch (e) { er = e instanceof Error ? e.message : String(e); }
       const s = (await sql`select enabled, daily_limit, trades from clicandsite.mail_settings where id=1`)[0];
-      return json({ ok, transport: useSmtp() ? "smtp" : "gmail", error: er || undefined, from: from(), settings: s, secrets_present: Object.fromEntries(["SMTP_PASSWORD", "SMTP_USER", "GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
+      return json({ ok, transport: useSmtp() ? "smtp" : "gmail", error: er || undefined, from: from(), settings: s, smtp_password_saved: Boolean(SMTP_PASS), secrets_present: Object.fromEntries(["SMTP_PASSWORD", "SMTP_USER", "GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "CS_FROM"].map((x) => [x, Boolean(Deno.env.get(x))])) }, ok ? 200 : 503);
     }
     if (req.method !== "POST") return json({ error: "POST required" }, 405);
     const key = (await sql`select value from clicandsite.secrets where name='mail_internal'`)[0]?.value;

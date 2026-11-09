@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=16"></script>
+<script src="/assets/cs-edit.js?v=17"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -73,7 +73,12 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .item .tools{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .item .tools .btn{padding:4px 9px;font-size:.8rem}
 .photo{display:flex;gap:10px;align-items:center}
-.photo .th{width:84px;height:60px;border-radius:8px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line)}
+.photo .th{position:relative;width:132px;height:88px;border-radius:8px;background:var(--soft) center/cover no-repeat;flex:none;border:1px solid var(--line);cursor:crosshair}
+.photo .th.off{background:repeating-linear-gradient(135deg,var(--soft) 0 8px,#fff 8px 16px);cursor:default}
+.photo .th .dot{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.45);pointer-events:none}
+.photo .pinfo{display:grid;gap:6px;min-width:0}.photo .pacts{display:flex;flex-wrap:wrap;gap:6px}
+.photo .px{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.photo .phint{font-size:.76rem;color:var(--muted);line-height:1.3}
 .photo .btn{font-size:.82rem;padding:6px 10px}
 .grp{font-weight:700;font-size:.9rem;margin-top:4px}
 /* 08/11/2026 : fiche détaillée des biens et véhicules */
@@ -350,23 +355,45 @@ async function uploadPhoto(file){
   if(error) throw error;
   return SB.storage.from('site-photos').getPublicUrl(path).data.publicUrl;
 }
-function photoField(label, getEl, get, set){
+function photoField(label, getEl, get, set, opt){
+  // 09/11/2026 (Anthony) : cadrage (on touche la photo pour choisir la partie à montrer) et bouton pour retirer la photo
+  opt=opt||{};
   const w=document.createElement('div'); w.className='photo';
-  const th=document.createElement('div'); th.className='th';
-  const info=document.createElement('div'); info.style.display='grid'; info.style.gap='6px';
+  const th=document.createElement('div'); th.className='th'; const dot=document.createElement('i'); dot.className='dot'; th.appendChild(dot);
+  const info=document.createElement('div'); info.className='pinfo';
   const l=document.createElement('label'); l.textContent=label; l.style.margin='0';
+  const acts=document.createElement('div'); acts.className='pacts';
   const b=document.createElement('button'); b.type='button'; b.className='btn'; b.textContent='Changer la photo';
+  const x=document.createElement('button'); x.type='button'; x.className='btn px';
+  const hint=document.createElement('span'); hint.className='phint';
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.hidden=true;
-  const show=()=>{ const u=get()||currentImg(getEl()); th.style.backgroundImage=u?'url("'+u.replace(/"/g,'%22')+'")':''; };
+  const pos=()=>{ const v=opt.pos?opt.pos[0]():''; const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})$/); return m?[+m[1],+m[2]]:null; };
+  const show=()=>{
+    const v=get(), off=v==='none', el=getEl();
+    const u=off?'':(v||currentImg(el));
+    th.style.backgroundImage=u?'url("'+u.replace(/"/g,'%22')+'")':''; th.classList.toggle('off',off);
+    if(el){ const r=el.getBoundingClientRect(); if(r.width&&r.height){ const k=Math.max(.35,Math.min(1.3,r.height/r.width)); th.style.height=Math.round(132*k)+'px'; } }
+    const p=pos()||[50,50]; th.style.backgroundPosition=p[0]+'% '+p[1]+'%'; dot.style.left=p[0]+'%'; dot.style.top=p[1]+'%'; dot.hidden=!opt.pos||off||!u;
+    if(opt.remove==='hide'){ x.hidden=false; x.textContent=off?'Remettre la photo':'✕ Retirer'; }
+    else { x.hidden=!v; x.textContent='Photo d\'origine'; }
+    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?'Touchez la photo pour choisir la partie à montrer.':'');
+  };
+  th.addEventListener('click',e=>{ if(!opt.pos||get()==='none') return; const r=th.getBoundingClientRect();
+    const px=Math.round(Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))), py=Math.round(Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)));
+    opt.pos[1](px+' '+py); show(); refresh(); markDirty(); });
+  x.addEventListener('click',()=>{ const v=get();
+    if(opt.remove==='hide') set(v==='none'?null:'none'); else set(null);
+    if(opt.pos&&v!=='none') opt.pos[1](null);
+    show(); refresh(); markDirty(); toast(get()==='none'?'Photo retirée':'Photo remise'); });
   b.addEventListener('click',()=>inp.click());
   inp.addEventListener('change',async()=>{ const f=inp.files[0]; inp.value=''; if(!f) return;
     if(f.size>15e6){ toast('Photo trop lourde (15 Mo maximum).'); return; }
     b.disabled=true; b.textContent='Envoi…';
-    try{ const u=await uploadPhoto(f); set(u); show(); refresh(); markDirty(); toast('Photo changée'); }
+    try{ const u=await uploadPhoto(f); set(u); if(opt.pos) opt.pos[1](null); show(); refresh(); markDirty(); toast('Photo changée'); }
     catch(e){ toast('Envoi impossible : '+(e.message||e)); }
     finally{ b.disabled=false; b.textContent='Changer la photo'; }
   });
-  info.append(l,b); w.append(th,info,inp); setTimeout(show,50); return w;
+  acts.append(b,x); info.append(l,acts,hint); w.append(th,info,inp); setTimeout(show,60); return w;
 }
 
 function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
@@ -483,7 +510,7 @@ function itemsFiche(d,c){
     r=document.createElement('div'); r.className='row'; r.append(field('Prix',o.p,v=>o.p=v),field('Étiquette sur la photo (facultatif)',o.tag,v=>o.tag=v)); it.appendChild(r);
     r.querySelectorAll('input')[1].placeholder=immo?'Exclusivité, Nouveau, Vendu…':K.tag;
     const mi=field('Infos courtes, séparées par « · »',o.meta,v=>o.meta=v); mi.querySelector('input').placeholder=immo?'Cannes, Croisette · 3 pièces · 78 m² · Parking':K.meta; it.appendChild(mi);
-    it.appendChild(photoField('Photo principale',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u));
+    it.appendChild(photoField('Photo principale',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u,{pos:[()=>o.pos,v=>{ if(v) o.pos=v; else delete o.pos; }],remove:'reset'}));
 
     const fd=document.createElement('details'); fd.className='fiche'; const sm=document.createElement('summary');
     sm.textContent=immo?'Fiche du bien : photos, description, DPE et GES':K.sum; const fb=document.createElement('div'); fb.className='fbody'; fd.append(sm,fb); it.appendChild(fd);
@@ -504,6 +531,7 @@ function itemsFiche(d,c){
 }
 function buildForms(){
   const d=doc(); const P=$('panel'); P.textContent=''; const c=state; c.text=c.text||{}; c.photos=c.photos||{};
+  const PS=k=>[()=>(c.photos.pos||{})[k],v=>{ c.photos.pos=c.photos.pos&&typeof c.photos.pos==='object'?c.photos.pos:{}; if(v) c.photos.pos[k]=v; else delete c.photos.pos[k]; }];
   const T=(k,label,multi)=>{ if(c.text[k]===undefined) return null; return field(label,c.text[k],v=>c.text[k]=v,multi); };
 
   let b=section('Style du site',false,'Change les couleurs et la mise en page. Vos textes et photos restent.');
@@ -516,8 +544,8 @@ function buildForms(){
 
   b=section('Accueil',true);
   [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
-  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u));
-  { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('div[style]').appendChild(h); b.appendChild(f); }
+  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),remove:'reset'}));
+  { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('.pinfo').appendChild(h); b.appendChild(f); }
 
   // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)
   // 09/11/2026 : un garage en Essentiel, Pro ou Premium a la version atelier (les véhicules à vendre sont dans le Pack Auto, Moto & Immo)
@@ -540,7 +568,7 @@ function buildForms(){
 
   if(c.cards&&c.cards.length){ b=section(site.trade==='boutique'?'Rayons':'Prestations');
     listEditor(b,c.cards,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Description',o.d,v=>o.d=v,true),field('Prix',o.p,v=>o.p=v),
-      photoField('Photo',()=>d.querySelectorAll('.cards > .card')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
+      photoField('Photo',()=>d.querySelectorAll('.cards > .card')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u,{pos:[()=>o.pos,v=>{ if(v) o.pos=v; else delete o.pos; }],remove:'hide'})); },
       ()=>({t:'Nouvelle prestation',d:'',p:'',img:null}),'Ajouter une prestation'); }
 
   if(c.prices&&c.prices.length){ const tabs=[...d.querySelectorAll('.tabs button')].map(x=>x.textContent.trim());
@@ -552,7 +580,7 @@ function buildForms(){
   if(c.items&&c.items.length&&ITEM_CFG[site.trade]) itemsFiche(d,c);
   else if(c.items&&c.items.length){ b=section(ITEMS[site.trade]||'Éléments',site.trade==='boutique',site.trade==='boutique'?'Infos séparées par « · ». La première sert de rayon pour le filtre (exemple : Déco · H. 18 cm · Pièce unique). Prix en chiffres (24,90 €) pour que le produit soit achetable ; « Sur devis » le rend visible mais pas achetable.':'Les infos sont séparées par « · » (exemple : 2021 · 42 000 km · Essence).');
     listEditor(b,c.items,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Infos',o.meta,v=>o.meta=v),field('Prix',o.p,v=>o.p=v),
-      photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u)); },
+      photoField('Photo',()=>d.querySelectorAll('.vgrid > .car, .props > .prop')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u,{pos:[()=>o.pos,v=>{ if(v) o.pos=v; else delete o.pos; }],remove:'reset'})); },
       ()=>({t:'Nouveau',meta:'',p:'',img:null}),'Ajouter'); }
 
   if(site.trade==='boutique') shopSection(); else paySection();
@@ -562,7 +590,7 @@ function buildForms(){
       ()=>({l:'Dimanche',v:'Fermé'}),'Ajouter une ligne'); }
 
   if(c.text.team_t!==undefined){ b=section('Présentation');
-    b.append(T('team_t','Titre'),T('team_d','Texte',true)); if(d.querySelector('.team .photo')) b.appendChild(photoField('Photo',()=>d.querySelector('.team .photo'),()=>c.photos.team,u=>c.photos.team=u)); }
+    b.append(T('team_t','Titre'),T('team_d','Texte',true)); if(d.querySelector('.team .photo')) b.appendChild(photoField('Photo',()=>d.querySelector('.team .photo'),()=>c.photos.team,u=>c.photos.team=u,{pos:PS('team'),remove:'hide'})); }
 
   b=section('Coordonnées');
   (c.contacts||[]).forEach(o=>b.appendChild(field(o.l||'Contact',o.v,v=>o.v=v)));
@@ -570,7 +598,7 @@ function buildForms(){
 
   const gal=[...d.querySelectorAll('.gallery > .photo')];
   if(gal.length){ c.photos.gallery=c.photos.gallery||gal.map(()=>null); b=section('Galerie photos');
-    gal.forEach((el,i)=>b.appendChild(photoField('Photo '+(i+1),()=>d.querySelectorAll('.gallery > .photo')[i],()=>c.photos.gallery[i],u=>c.photos.gallery[i]=u))); }
+    gal.forEach((el,i)=>b.appendChild(photoField('Photo '+(i+1),()=>d.querySelectorAll('.gallery > .photo')[i],()=>c.photos.gallery[i],u=>c.photos.gallery[i]=u,{pos:PS('g'+i),remove:'hide'}))); }
 
   if(c.noavis){ b=section('Avis Google'); const u=document.createElement('div'); u.className='upsell'; u.innerHTML='<p><b>Formule Pro : vos avis Google sur votre site.</b> On reprend votre note et 5 avis positifs, avec un bouton « Laisser un avis », et vous demandez un avis à vos clients en un clic. Le paiement en ligne des réservations est aussi inclus.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20formule%20Pro">Passer en Pro</a>'; b.appendChild(u); }
   if(c.google){ const A=window.CS_ADMIN===true, g=c.google;

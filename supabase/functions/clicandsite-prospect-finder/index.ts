@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // MyCreativeSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
 // mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
-//    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment, vétérinaires.
+//    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment, vétérinaires,
+//    auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, loueurs de bateaux, kinés, dentistes.
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
 //    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
@@ -21,9 +22,26 @@ const NAF: Record<string, string> = {
   batiment: "41.20A,43.21A,43.22A,43.22B,43.31Z,43.32A,43.33Z,43.34Z,43.39Z,43.91B,43.99C",
   // 09/11/2026 : cliniques et cabinets vétérinaires
   veterinaire: "75.00Z",
+  // 09/11/2026 : lot 2 (codes larges filtrés par le nom, voir KEEP)
+  autoecole: "85.53Z",
+  coach: "85.51Z,93.13Z",
+  photographe: "74.20Z",
+  toiletteur: "96.09Z",
+  fleuriste: "47.76Z",
+  traiteur: "56.21Z",
+  nautisme: "77.21Z,50.10Z",
+  kine: "86.90E",
+  dentiste: "86.23Z",
 };
+// Codes NAF trop larges : on ne garde que les noms qui correspondent au métier (ou on écarte ceux qui n'en sont pas)
+const KEEP: Record<string, RegExp> = {
+  toiletteur: /toilett|canin|chien|dog|pet|groom|poil|patte|toutou|f[ée]lin/i,
+  nautisme: /bateau|boat|nauti|marin|jet.?ski|yacht|voil|plaisance|sea\b|mer\b|oc[ée]an|croisi|skipper|kayak|paddle|port\b/i,
+  kine: /kin[ée]|physio|r[ée][ée]ducation/i,
+};
+const DROP: Record<string, RegExp> = { fleuriste: /animal|animaux|aquari|zoo|graine|jardinerie|pet\b|croquette/i };
 // Chaînes et réseaux : ils ont déjà un site national, inutile de les démarcher.
-const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix|leroy merlin|castorama|brico|point p\b|bouygues|vinci|eiffage|spie\b|engie|veolia|cegelec|socotec|france toitures|illico travaux|cuisinella|schmidt|mobalpa|lapeyre|tryba|art et fen[eê]tres|grosfillex|sevetys|anicura|evidensia|mon v[ée]to\b|vetocentre|v[ée]toadom|clinique v[ée]t[ée]rinaire des urgences/i;
+const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix|leroy merlin|castorama|brico|point p\b|bouygues|vinci|eiffage|spie\b|engie|veolia|cegelec|socotec|france toitures|illico travaux|cuisinella|schmidt|mobalpa|lapeyre|tryba|art et fen[eê]tres|grosfillex|sevetys|anicura|evidensia|mon v[ée]to\b|vetocentre|v[ée]toadom|clinique v[ée]t[ée]rinaire des urgences|\becf\b|stych|ornikar|en voiture simone|lepermislibre|basic.?fit|fitness park|orange bleue|keep cool|\bon air\b|neoness|magic form|l'appart fitness|cmg sports|monceau fleurs|interflora|rapid.?flore|au nom de la rose|aquarelle|lenotre|potel et chabot|dentego|dentalvia|vertuo|addentis|centres? de sant[ée]/i;
 const LEGAL = /\b(sarl|sas|sasu|eurl|sa|snc|sci|ste|societe|société|ets|etablissements|holding|groupe|ei|eirl|scp|selarl|selas|selasu|selurl|scm|sel)\b/gi;
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 const BAD = /(\.(png|jpe?g|gif|webp|svg|css|js)$)|example\.|sentry|wixpress|godaddy|domain\.com|email\.com|votre|your|nom@|prenom|@2x|noreply|no-reply|ovh\.net$|mediateur|cnil\.fr|dgccrf|economie\.gouv/i;
@@ -51,6 +69,9 @@ async function sirene(dept: string, trade: string, page: number) {
       (dept.startsWith("2") && dept.length === 2 && /[AB]/.test(dept) ? e.code_postal.startsWith("20") : deptOf(e.code_postal) === dept));
     for (const e of ets.slice(0, 3)) {
       const name = cleanName(res, e); if (!name) continue;
+      const full = name + " " + (res.nom_complet || "");
+      if (KEEP[trade] && !KEEP[trade].test(full)) continue;
+      if (DROP[trade] && DROP[trade].test(full)) continue;
       rows.push({
         source: "sirene", source_id: "siret:" + e.siret, siret: e.siret, trade, name,
         address: (e.adresse || "").replace(new RegExp("\\s*" + e.code_postal + ".*$"), "").trim() || null,

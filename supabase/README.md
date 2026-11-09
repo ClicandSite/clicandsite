@@ -56,3 +56,9 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Modèle `modeles/veterinaire.html`, page `site-internet-veterinaire/`, article conseils ; contraintes `trade` élargies (migration `20261109_metier_veterinaire.sql`).
 - Robot : NAF 75.00Z, réseaux (Sevetys, AniCura, Evidensia…) exclus ; `search_pages`, `robot_settings.trades` et `mail_settings.trades` incluent `veterinaire`.
 - Mail : « Pour une clinique vétérinaire, le site comprend la prise de rendez-vous en ligne et vos horaires d'urgence. » Textes conformes à la déontologie (pas de prix d'appel, pas de promesse de soins, pas de comparatif).
+
+### Métiers lot 2 (09/11/2026)
+- 9 modèles : autoecole, coach, photographe, toiletteur, fleuriste, traiteur, nautisme, kine, dentiste (`modeles/*.html`), générés par `scripts/metiers/build.py` à partir du modèle vétérinaire (contenus dans `scripts/metiers/trades.py`, photos Pexels).
+- Kiné et dentiste : pas d'avis clients (section « Informations pratiques »), honoraires « conventionné », devis avant prothèse, aucune promesse de résultat.
+- Migration `20261109_metiers_lot2.sql` : contraintes `trade`, agenda, commande, `search_pages`, métiers du robot et des mails.
+- Robot : NAF par métier ; filtre par nom (KEEP/DROP) pour les codes larges (toilettage 96.09Z, bateaux 77.21Z, kiné 86.90E, fleuristes 47.76Z) ; réseaux exclus.

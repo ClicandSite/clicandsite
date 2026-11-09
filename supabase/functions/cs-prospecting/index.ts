@@ -31,6 +31,15 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   immobilier: { label: "agence immobilière", page: "/site-internet-agence-immobiliere/", pack: true, plus: "vos biens diffusés automatiquement sur Abracadeal" },
   batiment: { label: "artisan du bâtiment", page: "/site-internet-artisan-batiment/", pack: false, plus: "vos réalisations en photos et un formulaire de devis" },
   veterinaire: { label: "clinique vétérinaire", page: "/site-internet-veterinaire/", pack: false, plus: "la prise de rendez-vous en ligne et vos horaires d'urgence" },
+  autoecole: { label: "auto-école", page: "/site-internet-auto-ecole/", pack: false, plus: "la réservation des leçons en ligne et vos formules avec leurs tarifs" },
+  coach: { label: "coach sportif", page: "/site-internet-coach-sportif/", pack: false, plus: "la réservation de séances en ligne et vos formules" },
+  photographe: { label: "photographe", page: "/site-internet-photographe/", pack: false, plus: "vos photos en grand et les demandes de date en ligne" },
+  toiletteur: { label: "salon de toilettage", page: "/site-internet-toiletteur/", pack: false, plus: "la prise de rendez-vous en ligne et vos tarifs selon l'animal" },
+  fleuriste: { label: "fleuriste", page: "/site-internet-fleuriste/", pack: false, plus: "la commande de bouquets en ligne, en retrait ou en livraison" },
+  traiteur: { label: "traiteur", page: "/site-internet-traiteur/", pack: false, plus: "votre carte en photos et les demandes de devis en ligne" },
+  nautisme: { label: "loueur de bateaux", page: "/site-internet-location-bateau/", pack: false, plus: "la réservation de vos bateaux en ligne et vos tarifs par sortie" },
+  kine: { label: "cabinet de kinésithérapie", page: "/site-internet-kinesitherapeute/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
+  dentiste: { label: "cabinet dentaire", page: "/site-internet-dentiste/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
 };
 function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null }): Tpl {
   const t = TRADE[p.trade] || TRADE.restaurant;
@@ -55,7 +64,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "",
     `Je m'appelle Anthony, je dirige MyCreativeSite : nous créons des sites internet pour les professionnels, livrés en 48 h. Vous les modifiez vous-même en un clic depuis votre téléphone (photos, textes, horaires), et nous gardons la main pour toute réparation.`,
     "",
-    `Pour ${/^(clinique|agence)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
+    `Pour ${/^(clinique|agence|auto-école)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
     "",
     price,
     "",

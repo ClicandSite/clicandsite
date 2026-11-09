@@ -41,7 +41,7 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   kine: { label: "cabinet de kinésithérapie", page: "/site-internet-kinesitherapeute/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
   dentiste: { label: "cabinet dentaire", page: "/site-internet-dentiste/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
 };
-function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null }): Tpl {
+function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null; date_creation?: string | Date | null }): Tpl {
   let t = TRADE[p.trade] || TRADE.restaurant;
   // 09/11/2026 (Anthony) : garage qui ne fait que l'entretien → version atelier, formules dès 29 € (le Pack reste pour ceux qui vendent des véhicules)
   if (p.trade === "garage" && (p.segment === "garage" || !p.segment)) t = { ...t, pack: false, plus: "la prise de rendez-vous atelier en ligne (vidange, pneus, freins) et vos forfaits avec leurs tarifs" };
@@ -59,7 +59,9 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     ? (p.site_status === "injoignable"
       ? `En cherchant ${who}${where}, je suis tombé sur votre site internet, mais il ne s'affiche plus.`
       : `En cherchant ${who}${where}, je suis tombé sur votre site internet : il commence à dater, surtout sur téléphone.`)
-    : `En cherchant ${who}${where}, je n'ai pas trouvé de site internet à votre nom.`;
+    : isNew(p.date_creation)
+      ? `Félicitations pour la création de ${who}${where} ! Je n'ai pas encore trouvé de site internet à votre nom.`
+      : `En cherchant ${who}${where}, je n'ai pas trouvé de site internet à votre nom.`;
   const body = [
     "Bonjour,",
     "",
@@ -80,6 +82,9 @@ function template(p: { name: string; trade: string; city: string; site_status: s
   const subject = hasSite ? `${who} : un site internet neuf en 48 h` : `${who} : votre site internet en 48 h`;
   return { key: p.trade + (hasSite ? "-refonte" : "-creation"), subject, body, btn: { label: "Voir des exemples de sites", url: SITE + page } };
 }
+
+// 09/11/2026 (Anthony) : créateurs d'entreprise (moins d'un an) en priorité, avec un mot de félicitations
+function isNew(d: unknown) { if (!d) return false; const t = new Date(d as string).getTime(); return !isNaN(t) && Date.now() - t < 365 * 864e5; }
 
 // ---------- Signature des liens de désinscription ----------
 async function sign(id: string): Promise<string> {
@@ -198,14 +203,14 @@ const frDate = (d: string) => d.split("-").reverse().join("/");
 
 async function pending(trades: string[], limit: number) {
   if (limit <= 0) return [];
-  return await sql`select p.id, lower(trim(p.email)) email, p.name, p.trade, p.city, p.site_status, p.segment
+  return await sql`select p.id, lower(trim(p.email)) email, p.name, p.trade, p.city, p.site_status, p.segment, p.date_creation
     from clicandsite.prospects p
     where p.email is not null and lower(trim(p.email)) ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'
       and p.status in ('nouveau','a_contacter') and coalesce(p.site_status,'aucun') <> 'moderne' and p.trade = any(${trades})
       and not exists (select 1 from clicandsite.opposition o where lower(o.value) = lower(trim(p.email)))
       and not exists (select 1 from clicandsite.mail_recipients r where r.prospect_id = p.id and (r.status in ('envoyé','en cours','désinscrit') or r.attempts >= ${MAX_ATTEMPTS}))
       and not exists (select 1 from clicandsite.mail_recipients r2 where lower(r2.email) = lower(trim(p.email)) and r2.status in ('envoyé','désinscrit'))
-    order by (p.status = 'a_contacter') desc, p.score desc nulls last, p.created_at asc limit ${limit}`;
+    order by (p.status = 'a_contacter') desc, (p.date_creation >= current_date - 365) desc nulls last, p.date_creation desc nulls last, p.score desc nulls last, p.created_at asc limit ${limit}`;
 }
 
 async function report(date: string, to: string, tok: string) {
@@ -256,7 +261,7 @@ Deno.serve(async (req: Request) => {
     const key = (await sql`select value from clicandsite.secrets where name='mail_internal'`)[0]?.value;
     if (!key || req.headers.get("x-cs-key") !== key) return json({ error: "Unauthorized" }, 401);
     const br = await req.json().catch(() => ({}));
-    const sample = { id: "00000000-0000-0000-0000-000000000000", name: br?.name || "Garage du Port", trade: br?.trade || "garage", city: br?.city || "Cannes", site_status: br?.site_status || "aucun", segment: br?.segment || null };
+    const sample = { id: "00000000-0000-0000-0000-000000000000", name: br?.name || "Garage du Port", trade: br?.trade || "garage", city: br?.city || "Cannes", site_status: br?.site_status || "aucun", segment: br?.segment || null, date_creation: br?.date_creation || null };
 
     if (br?.mode === "preview") { const t = template(sample); return json({ subject: t.subject, body: t.body, button: t.btn }); }
     if (br?.mode === "test") {

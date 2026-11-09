@@ -40,6 +40,22 @@ PAGES = [
     faq=[("Je peux changer ma carte moi-même ?","Oui, depuis votre espace client : ajoutez un plat, changez un prix ou le menu du jour, le site est mis à jour aussitôt."),
          ("Le site remplace-t-il les plateformes de réservation ?","Il vous évite leurs commissions pour les clients qui vous trouvent directement. Vous pouvez aussi garder vos outils actuels."),
          ("Et si mon restaurant a déjà un site ?","On reprend vos textes et photos dans un modèle moderne, et on branche votre nom de domaine actuel.")]),
+  dict(slug="site-internet-garage-mecanique", k="atelier", style="audacieux", label="Garage d'entretien et mécanique",
+    title="Création de site internet pour garage mécanique et entretien automobile",
+    meta="Site internet pour garage mécanique : rendez-vous atelier en ligne, vidange, pneus, freins, diagnostic, forfaits et tarifs. Dès 29 €/mois, sans engagement.",
+    h1="Le site internet des garages d'entretien et de réparation",
+    lead="Vidange, pneus, freins, distribution, diagnostic : vos clients voient vos forfaits, prennent rendez-vous en ligne et arrivent à l'atelier en sachant le prix.",
+    why=("Pourquoi un site pour un garage mécanique ?", ["Quand un voyant s'allume ou qu'il faut changer les pneus, l'automobiliste cherche un garage près de chez lui sur son téléphone. Il choisit souvent celui qui affiche ses prix et permet de prendre rendez-vous tout de suite.", "Un site avec vos forfaits, vos tarifs et la prise de rendez-vous atelier en ligne vous apporte ces clients, sans passer par des plateformes qui prennent une commission sur chaque intervention."]),
+    feats=[("Rendez-vous atelier","Prestation, date, immatriculation : la demande arrive dans votre agenda et par mail."),
+           ("Forfaits affichés","Vidange, pneus, freins, climatisation, distribution : des prix clairs avant l'appel."),
+           ("Toutes marques","Mettez en avant ce que vous faites : entretien, diagnostic, carrosserie, contrôle technique."),
+           ("Véhicule de prêt","Indiquez vos services : prêt de véhicule, dépose matinale, paiement en plusieurs fois."),
+           ("Avis Google","Vos avis mis en avant pour rassurer les nouveaux clients."),
+           ("Modifiable depuis le téléphone","Tarifs, horaires et photos changés en quelques secondes.")],
+    faq=[("Combien coûte un site internet pour un garage ?","Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement. La version atelier ne comprend pas de véhicules à vendre."),
+         ("Je vends aussi des véhicules d'occasion","Choisissez alors le Pack Auto, Moto & Immo : stock de véhicules, une page Google par véhicule et annonces illimitées sur Abracadeal."),
+         ("Je peux gérer mes créneaux d'atelier ?","Oui : horaires, jours fermés et nombre de véhicules pris en charge en même temps, depuis votre espace client."),
+         ("Combien de temps pour être en ligne ?","En général 48 heures après réception de vos informations et photos.")]),
   dict(slug="site-internet-garage", k="garage", style="audacieux", pack=True,
     title="Création de site internet pour garage auto et moto",
     meta="Site internet pour garage auto et moto : rendez-vous atelier, forfaits, stock de véhicules d'occasion avec une page par véhicule sur Google, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
@@ -54,7 +70,7 @@ PAGES = [
     faq=[("Je peux ajouter mes véhicules moi-même ?","Oui : dans votre espace client, l'onglet « Mes véhicules » vous fait remplir une vraie fiche (marque, modèle, année, kilométrage, énergie, boîte, puissance, équipements, jusqu'à 30 photos). Le site et Abracadeal se mettent à jour tout seuls."),
          ("Je vends aussi des motos, c'est prévu ?","Oui : la fiche accepte voitures, motos et scooters, et Google les reconnaît comme tels."),
          ("Je n'ai pas d'atelier, je fais uniquement de la vente","Choisissez la version concession : plus d'atelier ni de rendez-vous, tout le site est tourné vers vos véhicules à vendre."),
-         ("Quelle formule pour un garage ?","Le Pack Auto, Moto & Immo, à 99 € par mois et 490 € de mise en ligne : tout ce qu'il faut pour l'atelier, plus les annonces illimitées sur Abracadeal, le CRM et une page Google par véhicule."),
+         ("Quelle formule pour un garage ?","Si vous faites l'entretien et la réparation sans vendre de véhicules, la version atelier est disponible dès 29 € par mois (formules Essentiel, Pro, Premium). Si vous vendez aussi des véhicules, le Pack Auto, Moto & Immo, à 99 € par mois et 490 € de mise en ligne, ajoute les annonces illimitées sur Abracadeal, le CRM et une page Google par véhicule."),
          ("Combien de temps pour être en ligne ?","En général 48 heures après réception de vos informations et photos.")]),
   dict(slug="site-internet-agence-immobiliere", k="immobilier", style="riviera", pack=True,
     title="Création de site internet pour agence immobilière",
@@ -87,7 +103,7 @@ PAGES = [
          ("Combien coûte le Pack Auto, Moto & Immo ?","99 € par mois et 490 € de mise en ligne, une fois. Annonces illimitées sur Abracadeal, CRM et page Google par véhicule compris, sans engagement."),
          ("Faut-il une passerelle ou un logiciel de diffusion ?","Non : la diffusion sur Abracadeal est incluse. Vous mettez à jour votre stock une seule fois, dans votre espace client."),
          ("Mes véhicules apparaîtront-ils sur Google ?","Chaque véhicule a sa propre page avec un titre, une description et des données structurées (marque, modèle, kilométrage, prix) que Google sait lire. Le délai d'apparition dépend de Google, en général quelques jours à quelques semaines.")]),
-  dict(slug="site-internet-concession-moto", k="concession", style="nuit", pack=True,
+  dict(slug="site-internet-concession-moto", label="Concession moto", k="concession", style="nuit", pack=True,
     title="Création de site internet pour concession et garage moto",
     meta="Site internet pour concession moto et scooter : motos d'occasion avec une page Google par modèle, reprise, financement, atelier en option, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Un site pour vendre vos motos et scooters, même pendant que la boutique est fermée",
@@ -143,7 +159,7 @@ PAGES = [
     faq=[("Je paie une commission sur les réservations ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous."),
          ("Le site convient-il à un praticien à domicile ?","Oui : la zone de déplacement remplace l'adresse du cabinet."),
          ("Je peux ajouter un nouveau soin moi-même ?","Oui, depuis votre espace client, avec photo, durée et prix.")]),
-  dict(slug="site-internet-veterinaire", k="veterinaire", style="riviera",
+  dict(slug="site-internet-veterinaire", k="veterinaire", why=('Pourquoi un site pour une clinique vétérinaire ?', ["Les propriétaires d'animaux cherchent d'abord sur leur téléphone : un numéro d'urgence, des horaires, un créneau pour le rappel de vaccin. Sans site clair, ces appels arrivent tous à l'accueil, souvent au mauvais moment.", 'Un site qui affiche la garde, les actes courants et la prise de rendez-vous en ligne libère le téléphone et rassure avant la première visite. Il reste sobre et informatif, comme le veut la déontologie vétérinaire.']), style="riviera",
     title="Création de site internet pour vétérinaire et clinique vétérinaire",
     meta="Site internet pour vétérinaire et clinique vétérinaire : prise de rendez-vous en ligne, actes courants, tarifs indicatifs, urgences et horaires. Dès 29 €/mois, sans commission.",
     h1="Le site internet des vétérinaires et cliniques vétérinaires",
@@ -156,8 +172,9 @@ PAGES = [
            ("Une communication sobre","Des textes factuels, sans promesse ni comparaison, dans le respect des règles de la profession.")],
     faq=[("Le site respecte-t-il les règles de communication des vétérinaires ?","Oui : les textes restent informatifs, sans publicité comparative ni promesse de résultat. Vous validez chaque texte avant la mise en ligne."),
          ("Je peux gérer mes créneaux moi-même ?","Oui, depuis votre espace client : horaires, jours fermés, vétérinaires disponibles et créneaux bloqués."),
-         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous.")]),
-  dict(slug="site-internet-auto-ecole", k="autoecole", style="pop",
+         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous."),
+         ('Combien coûte un site internet pour une clinique vétérinaire ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement. La prise de rendez-vous en ligne est incluse dès la formule Pro.')]),
+  dict(slug="site-internet-auto-ecole", k="autoecole", why=('Pourquoi un site pour une auto-école ?', ["Les élèves et leurs parents comparent les auto-écoles en ligne avant de s'inscrire : prix des forfaits, financement, planning, agence la plus proche. Une auto-école sans site perd ces élèves au profit des plateformes nationales.", 'Avec un site à votre nom, vos formules et vos tarifs sont visibles, les élèves réservent leurs leçons sans appeler et vous gardez la relation directe, sans commission sur chaque heure de conduite.']), style="pop",
     title="Création de site internet pour auto-école",
     meta="Site internet pour auto-école : inscription et réservation des leçons en ligne, formules permis B et conduite accompagnée, tarifs et agences. Dès 29 €/mois.",
     h1="Le site internet des auto-écoles",
@@ -170,8 +187,10 @@ PAGES = [
            ("Agrément visible","Votre numéro d'agrément préfectoral affiché en pied de page.")],
     faq=[("Les élèves peuvent-ils réserver leurs leçons en ligne ?","Oui : ils choisissent un créneau libre, vous gérez vos disponibilités depuis votre espace client."),
          ("Je peux afficher mon taux de réussite ?","Oui : affichez le taux officiel publié pour votre établissement, avec sa source."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre d'élèves.")]),
-  dict(slug="site-internet-coach-sportif", k="coach", style="neon",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre d'élèves."),
+         ('Combien coûte un site internet pour une auto-école ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement et sans commission sur les heures de conduite.'),
+         ('Le site convient-il à une auto-école avec plusieurs agences ?', "Oui : chaque agence a son adresse et ses horaires, et l'élève choisit son agence au moment de réserver.")]),
+  dict(slug="site-internet-coach-sportif", k="coach", why=('Pourquoi un site pour un coach sportif ?', ["Un client qui cherche un coach ou une petite salle veut savoir si c'est pour lui, combien ça coûte et quand il peut commencer. Les réseaux sociaux montrent votre énergie, mais pas vos formules ni votre planning.", 'Un site avec une séance découverte réservable en ligne, vos carnets et vos cours en petit groupe transforme les curieux en clients, même quand vous êtes en séance.']), style="neon",
     title="Création de site internet pour coach sportif et salle de sport",
     meta="Site internet pour coach sportif, préparateur physique et petite salle de sport : réservation de séances, formules, carnets et planning. Dès 29 €/mois, sans commission.",
     h1="Le site internet des coachs sportifs et des petites salles",
@@ -184,8 +203,10 @@ PAGES = [
            ("À domicile","Votre zone de déplacement à la place de l'adresse du studio.")],
     faq=[("Je peux limiter le nombre de places par cours ?","Oui : vous fixez le nombre de places par créneau, le site arrête les réservations quand c'est complet."),
          ("Le site convient-il à un coach sans salle ?","Oui : vous indiquez votre zone d'intervention, à domicile ou en extérieur."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-photographe", k="photographe", style="graphite",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un coach sportif ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Le site convient-il à une petite salle de sport ?', 'Oui : planning des cours, nombre de places par créneau, formules et carnets, présentation des coachs et du lieu.')]),
+  dict(slug="site-internet-photographe", k="photographe", why=('Pourquoi un site pour un photographe ?', ['Les futurs mariés et les entreprises comparent les photographes sur Google avant de demander un devis. Un portfolio sur les réseaux sociaux ne dit ni vos prestations, ni vos prix de départ, ni vos disponibilités.', "Votre site met vos images en grand, présente clairement vos séances et reçoit les demandes de date avec toutes les informations utiles : moins d'allers-retours, plus de réservations."]), style="graphite",
     title="Création de site internet pour photographe",
     meta="Site internet pour photographe : galerie, prestations mariage, portrait et entreprise, demande de date en ligne, tarifs. Dès 29 €/mois, modifiable depuis votre téléphone.",
     h1="Le site internet des photographes",
@@ -198,8 +219,10 @@ PAGES = [
            ("Vous","Votre parcours et votre façon de travailler.")],
     faq=[("Je peux changer mes photos moi-même ?","Oui, depuis votre espace client, en quelques secondes."),
          ("Le site convient-il à un photographe sans studio ?","Oui : vous indiquez votre zone d'intervention."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-toiletteur", k="toiletteur", style="soleil",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un photographe ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Mes photos restent-elles en bonne qualité ?', "Oui : elles sont optimisées pour s'afficher vite sur téléphone tout en restant nettes en grand sur ordinateur.")]),
+  dict(slug="site-internet-toiletteur", k="toiletteur", why=('Pourquoi un site pour un salon de toilettage ?', ['Les propriétaires cherchent un toiletteur près de chez eux et veulent savoir si vous prenez leur animal, à quel prix et quand. Ces questions occupent le téléphone pendant que vous travaillez.', "Un site avec vos prestations par taille d'animal, vos tarifs et la prise de rendez-vous en ligne répond à leur place et remplit votre agenda."]), style="soleil",
     title="Création de site internet pour toiletteur et salon de toilettage",
     meta="Site internet pour salon de toilettage canin et félin : prise de rendez-vous en ligne, prestations par taille d'animal, tarifs et horaires. Dès 29 €/mois.",
     h1="Le site internet des toiletteurs",
@@ -212,8 +235,10 @@ PAGES = [
            ("À domicile","Votre zone de déplacement si vous vous déplacez en camion.")],
     faq=[("Je peux bloquer des créneaux ?","Oui, depuis votre espace client : congés, jours fermés, créneaux réservés."),
          ("Le site convient-il à un toiletteur mobile ?","Oui : la zone de déplacement remplace l'adresse du salon."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-fleuriste", k="fleuriste", style="provence",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un toiletteur ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ("Je fais aussi du toilettage à domicile, c'est possible ?", 'Oui : indiquez votre zone de déplacement, les clients choisissent salon ou domicile au moment de réserver.')]),
+  dict(slug="site-internet-fleuriste", k="fleuriste", why=('Pourquoi un site pour un fleuriste ?', ['Une grande partie des commandes de fleurs se décide vite, souvent la veille. Sans site, ces clients passent par des plateformes qui prennent une commission sur chaque bouquet.', 'Avec votre propre site, vos créations de saison sont visibles, la commande se fait en deux minutes en retrait ou en livraison, et la marge reste chez vous.']), style="provence",
     title="Création de site internet pour fleuriste",
     meta="Site internet pour fleuriste : commande de bouquets en retrait ou livraison, créations de saison, mariages et deuil, horaires. Dès 29 €/mois, sans commission.",
     h1="Le site internet des fleuristes",
@@ -226,8 +251,10 @@ PAGES = [
            ("Sans commission","Contrairement aux plateformes de transmission florale.")],
     faq=[("Je peux mettre à jour la vitrine chaque semaine ?","Oui, depuis votre téléphone : photo, nom, prix."),
          ("Les clients peuvent-ils payer en ligne ?","Avec la formule Boutique, oui ; sinon ils paient au retrait ou à la livraison."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-traiteur", k="traiteur", style="nuit",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un fleuriste ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement ni commission sur les commandes.'),
+         ('Puis-je recevoir des commandes pour le deuil et les mariages ?', 'Oui : des pages dédiées reçoivent les demandes sur devis, avec la date, le lieu et le message à inscrire.')]),
+  dict(slug="site-internet-traiteur", k="traiteur", why=('Pourquoi un site pour un traiteur ?', ["Un client qui organise un mariage ou un cocktail d'entreprise compare plusieurs traiteurs en ligne. Il veut voir vos plats, se faire une idée du prix par personne et savoir si vous êtes libre à sa date.", "Un site avec votre carte en photos et un formulaire de devis complet vous apporte des demandes déjà qualifiées : type d'événement, nombre d'invités, date et lieu."]), style="nuit",
     title="Création de site internet pour traiteur",
     meta="Site internet pour traiteur : demande de devis par événement et nombre d'invités, carte cocktail, buffet et desserts, tarifs indicatifs. Dès 29 €/mois.",
     h1="Le site internet des traiteurs",
@@ -240,8 +267,10 @@ PAGES = [
            ("Avis clients","Vos avis Google mis en avant.")],
     faq=[("Je reçois les demandes comment ?","Par mail et dans votre espace client, avec toutes les informations de l'événement."),
          ("Je peux afficher les allergènes ?","Oui, sur chaque fiche produit."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-location-bateau", k="nautisme", style="marine",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un traiteur ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Puis-je montrer des menus différents selon les événements ?', 'Oui : cocktails, buffets, repas et desserts ont chacun leurs fiches, filtrables par le client.')]),
+  dict(slug="site-internet-location-bateau", k="nautisme", why=('Pourquoi un site pour un loueur de bateaux ?', ['La clientèle est souvent touristique et réserve depuis son téléphone, parfois la veille au soir. Sans site, elle passe par des plateformes qui prennent une commission sur chaque location.', 'Votre site présente votre flotte, vos tarifs et les règles (permis, caution, carburant) et prend les réservations directement, avec une version en anglais en option.']), style="marine",
     title="Création de site internet pour location de bateaux et jet-ski",
     meta="Site internet pour loueur de bateaux et jet-ski : réservation en ligne, flotte avec ou sans permis, sorties avec skipper, tarifs et saison. Dès 29 €/mois.",
     h1="Le site internet des loueurs de bateaux et de jet-ski",
@@ -254,8 +283,10 @@ PAGES = [
            ("En plusieurs langues","Option bilingue pour la clientèle touristique.")],
     faq=[("Je peux gérer plusieurs bateaux en même temps ?","Oui : vous indiquez le nombre de bateaux disponibles par créneau."),
          ("Le site peut-il être en anglais ?","Oui, avec l'option bilingue."),
-         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois, contrairement aux plateformes de location.")]),
-  dict(slug="site-internet-kinesitherapeute", k="kine", style="foret",
+         ("Je paie une commission ?","Non : un abonnement fixe dès 29 € par mois, contrairement aux plateformes de location."),
+         ('Combien coûte un site internet pour un loueur de bateaux ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement ni commission sur les locations.'),
+         ("Je loue aussi des jet-skis et des paddles, c'est possible ?", 'Oui : chaque bateau, jet-ski ou sortie a sa fiche, avec ses équipements, sa capacité et ses tarifs.')]),
+  dict(slug="site-internet-kinesitherapeute", k="kine", why=('Pourquoi un site pour un cabinet de kinésithérapie ?', ['Un patient qui sort de chez son médecin avec une ordonnance cherche un cabinet proche et disponible. Il veut savoir quoi apporter, si vous pratiquez le tiers payant et comment venir.', 'Un site sobre, avec la prise de rendez-vous en ligne et les informations pratiques, allège le secrétariat. Les textes restent informatifs, sans avis ni promesse de résultat, dans le respect du code de déontologie.']), style="foret",
     title="Création de site internet pour kinésithérapeute",
     meta="Site internet pour masseur-kinésithérapeute et cabinet de kinésithérapie : prise de rendez-vous, informations pratiques, honoraires, dans le respect de la déontologie. Dès 29 €/mois.",
     h1="Le site internet des masseurs-kinésithérapeutes",
@@ -268,8 +299,10 @@ PAGES = [
            ("Une présentation sobre","Des textes informatifs, sans avis ni promesse de résultat.")],
     faq=[("Le site respecte-t-il les règles de communication des kinésithérapeutes ?","Oui : les textes restent informatifs, sans procédé publicitaire, témoignage ni promesse de résultat. Vous validez chaque texte avant la mise en ligne."),
          ("Je peux gérer les créneaux de plusieurs praticiens ?","Oui, depuis votre espace client."),
-         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois.")]),
-  dict(slug="site-internet-dentiste", k="dentiste", style="ocean",
+         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un kinésithérapeute ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Le site convient-il à un cabinet de groupe ?', 'Oui : chaque praticien a son nom, ses qualifications et ses créneaux ; le patient choisit au moment de réserver.')]),
+  dict(slug="site-internet-dentiste", k="dentiste", why=('Pourquoi un site pour un cabinet dentaire ?', ["Les patients cherchent un cabinet qui prend de nouveaux patients, un créneau rapide et la conduite à tenir en cas d'urgence. Ces questions saturent souvent le standard.", "Un site sobre, avec la prise de rendez-vous en ligne, les honoraires, l'information sur les devis et les urgences, répond à ces questions. Les textes restent informatifs, sans avis ni photos avant-après, dans le respect du code de déontologie."]), style="ocean",
     title="Création de site internet pour chirurgien-dentiste",
     meta="Site internet pour chirurgien-dentiste et cabinet dentaire : prise de rendez-vous, actes, honoraires, urgences et informations pratiques, dans le respect de la déontologie. Dès 29 €/mois.",
     h1="Le site internet des chirurgiens-dentistes",
@@ -282,7 +315,9 @@ PAGES = [
            ("Une présentation sobre","Des textes informatifs, sans avis ni photos avant-après.")],
     faq=[("Le site respecte-t-il les règles de communication des chirurgiens-dentistes ?","Oui : les textes restent informatifs, sans procédé publicitaire, témoignage ni promesse de résultat. Vous validez chaque texte avant la mise en ligne."),
          ("Je peux gérer les créneaux de plusieurs praticiens ?","Oui, depuis votre espace client."),
-         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois.")]),
+         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois."),
+         ('Combien coûte un site internet pour un chirurgien-dentiste ?', 'Dès 190 € de mise en ligne puis 29 € par mois avec la formule Essentiel, sans engagement.'),
+         ('Le site peut-il afficher les informations sur les urgences ?', "Oui : vos créneaux d'urgence en semaine et la conduite à tenir le dimanche et les jours fériés (le 15 oriente vers le chirurgien-dentiste de garde).")]),
   dict(slug="site-internet-boulangerie", k="boulangerie", style="chaleureux",
     title="Création de site internet pour boulangerie et pâtisserie",
     meta="Site internet pour boulangerie, pâtisserie et commerce de bouche : commande à retirer, vitrine de la semaine, gâteaux sur commande, horaires. Dès 29 €/mois.",
@@ -567,7 +602,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -588,6 +623,12 @@ def guide(p):
     a = next(x for x in ARTICLES if x["slug"] == g)
     return f'<p style="margin-top:18px">À lire : <a href="/conseils/{g}/">{e(a["title"])}</a></p>'
 
+def why(p):
+    w = p.get("why")
+    if not w: return ""
+    paras = "".join(f'<p style="margin:12px 0 0;color:var(--muted)">{e(x)}</p>' for x in w[1])
+    return f'<section style="padding-bottom:0"><div class="wrap" style="max-width:860px"><h2>{e(w[0])}</h2>{paras}</div></section>\n'
+
 def page(p):
     url = f'{SITE}/{p["slug"]}/'
     plans = [PACK] if p.get("pack") else [BOUTIQUE] if p.get("k") == "boutique" else PRICES
@@ -601,7 +642,7 @@ def page(p):
     k = p["k"]
     if k:
         visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec MyCreativeSite" fetchpriority="high"></div>'
-        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else (k + ".html", k)
+        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else (k + ".html", k)
         demo = f'<a class="btn ghost" href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
     else:
         visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite" fetchpriority="high"></div>'
@@ -632,7 +673,7 @@ def page(p):
 <meta property="og:url" content="{url}">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:image" content="{SITE}/img/og.jpg">
+<meta property="og:image" content="{SITE + ("/img/modele-" + p["k"] + "-d.jpg" if p.get("k") else "/img/og.jpg")}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -655,7 +696,7 @@ def page(p):
   </div>
   {visual}
 </div>
-<section><div class="wrap">
+{why(p)}<section><div class="wrap">
   <h2>Ce que votre site fait pour vous</h2>
   <div class="feats">{feats}</div>
 </div></section>
@@ -682,7 +723,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle garage d'entretien": "/site-internet-garage-mecanique/", "Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}

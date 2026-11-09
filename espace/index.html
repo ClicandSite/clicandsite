@@ -79,6 +79,19 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .photo .pinfo{display:grid;gap:6px;min-width:0}.photo .pacts{display:flex;flex-wrap:wrap;gap:6px}
 .photo .px{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .photo .phint{font-size:.76rem;color:var(--muted);line-height:1.3}
+.photo.has-mock{flex-wrap:wrap}
+.mock{flex:1 1 100%;margin-top:4px;padding:12px;border:1px dashed var(--line);border-radius:12px;background:var(--soft)}
+.mock-t{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px}
+.mock-r{display:flex;align-items:flex-end;gap:14px}
+.mcol{display:grid;gap:5px;justify-items:center;font-size:.74rem;color:var(--muted)}
+.mf{position:relative;overflow:hidden;background:#333 center/cover no-repeat;border:3px solid #12162B;border-radius:8px;box-shadow:0 6px 16px -8px rgba(0,0,0,.4)}
+.mf.d{width:200px;height:112px}
+.mf.m{width:62px;height:112px;border-radius:12px;border-width:3px}
+.mf::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.5))}
+.mf i{position:absolute;display:block;background:rgba(255,255,255,.92);border-radius:3px}
+.mf .nav{top:0;left:0;right:0;height:10%;border-radius:0;background:rgba(255,255,255,.95)}
+.mf.d .k{left:9%;top:34%;width:22%;height:3%;opacity:.7}.mf.d .t1{left:9%;top:42%;width:46%;height:8%}.mf.d .t2{left:9%;top:54%;width:34%;height:8%}.mf.d .bt{left:9%;top:70%;width:18%;height:9%;background:#fff;border-radius:4px}
+.mf.m .k{left:10%;top:38%;width:45%;height:2.5%;opacity:.7}.mf.m .t1{left:10%;top:44%;width:78%;height:5%}.mf.m .t2{left:10%;top:52%;width:60%;height:5%}.mf.m .bt{left:10%;top:64%;width:50%;height:6%;background:#fff;border-radius:3px}
 .photo .btn{font-size:.82rem;padding:6px 10px}
 .grp{font-weight:700;font-size:.9rem;margin-top:4px}
 /* 08/11/2026 : fiche détaillée des biens et véhicules */
@@ -368,15 +381,30 @@ function photoField(label, getEl, get, set, opt){
   const hint=document.createElement('span'); hint.className='phint';
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/jpeg,image/png,image/webp'; inp.hidden=true;
   const pos=()=>{ const v=opt.pos?opt.pos[0]():''; const m=typeof v==='string'&&v.match(/^(\d{1,3}) (\d{1,3})$/); return m?[+m[1],+m[2]]:null; };
+  // 10/11/2026 (Anthony) : pour la bannière, dessin de ce que verront les visiteurs, sur ordinateur et sur téléphone
+  let mock=null, mfs=[];
+  if(opt.mock){ mock=document.createElement('div'); mock.className='mock';
+    const t=document.createElement('div'); t.className='mock-t'; t.textContent='Ce que vos visiteurs verront';
+    const row=document.createElement('div'); row.className='mock-r';
+    [['d','Ordinateur'],['m','Téléphone']].forEach(([k,lab])=>{ const c=document.createElement('div'); c.className='mcol';
+      const f=document.createElement('div'); f.className='mf '+k; f.innerHTML='<i class="nav"></i><i class="k"></i><i class="t1"></i><i class="t2"></i><i class="bt"></i>';
+      const n=document.createElement('span'); n.textContent=lab; c.append(f,n); row.appendChild(c); mfs.push(f); });
+    mock.append(t,row); }
+  let ratio=0, lastU='';
   const show=()=>{
     const v=get(), off=v==='none', el=getEl();
     const u=off?'':(v||currentImg(el));
-    th.style.backgroundImage=u?'url("'+u.replace(/"/g,'%22')+'")':''; th.classList.toggle('off',off);
-    if(el){ const r=el.getBoundingClientRect(); if(r.width&&r.height){ const k=Math.max(.35,Math.min(1.3,r.height/r.width)); th.style.height=Math.round(132*k)+'px'; } }
-    const p=pos()||[50,50]; th.style.backgroundPosition=p[0]+'% '+p[1]+'%'; dot.style.left=p[0]+'%'; dot.style.top=p[1]+'%'; dot.hidden=!opt.pos||off||!u;
+    const bg=u?'url("'+u.replace(/"/g,'%22')+'")':'';
+    th.style.backgroundImage=bg; th.classList.toggle('off',off);
+    // la vignette montre la photo entière : on touche exactement ce qui doit rester visible
+    if(u&&u!==lastU){ lastU=u; const im=new Image(); im.onload=()=>{ ratio=im.naturalWidth/im.naturalHeight; show(); }; im.src=u; }
+    if(opt.pos&&ratio){ th.style.height=Math.round(132/Math.max(.6,Math.min(2.4,ratio)))+'px'; th.style.backgroundSize='100% 100%'; th.style.backgroundPosition='center'; }
+    else if(el){ const r=el.getBoundingClientRect(); if(r.width&&r.height){ const k=Math.max(.35,Math.min(1.3,r.height/r.width)); th.style.height=Math.round(132*k)+'px'; } }
+    const p=pos()||[50,50]; if(!(opt.pos&&ratio)) th.style.backgroundPosition=p[0]+'% '+p[1]+'%'; dot.style.left=p[0]+'%'; dot.style.top=p[1]+'%'; dot.hidden=!opt.pos||off||!u;
+    mfs.forEach(f=>{ f.style.backgroundImage=bg; f.style.backgroundPosition=p[0]+'% '+p[1]+'%'; });
     if(opt.remove==='hide'){ x.hidden=false; x.textContent=off?'Remettre la photo':'✕ Retirer'; }
     else { x.hidden=!v; x.textContent='Photo d\'origine'; }
-    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?'Touchez la photo pour choisir la partie à montrer.':'');
+    hint.textContent=off?'Photo retirée du site.':(opt.pos&&u?(opt.mock?'Touchez sur la photo ce qui doit toujours rester visible (un visage, une voiture…). Le dessin en dessous montre le résultat.':'Touchez sur la photo ce qui doit rester visible.'):'');
   };
   th.addEventListener('click',e=>{ if(!opt.pos||get()==='none') return; const r=th.getBoundingClientRect();
     const px=Math.round(Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))), py=Math.round(Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)));
@@ -393,7 +421,7 @@ function photoField(label, getEl, get, set, opt){
     catch(e){ toast('Envoi impossible : '+(e.message||e)); }
     finally{ b.disabled=false; b.textContent='Changer la photo'; }
   });
-  acts.append(b,x); info.append(l,acts,hint); w.append(th,info,inp); setTimeout(show,60); return w;
+  acts.append(b,x); info.append(l,acts,hint); w.append(th,info,inp); if(mock){ w.classList.add('has-mock'); w.appendChild(mock); } setTimeout(show,60); return w;
 }
 
 function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
@@ -544,7 +572,7 @@ function buildForms(){
 
   b=section('Accueil',true);
   [['logo','Nom affiché en haut'],['kicker','Petite phrase au-dessus du titre'],['title','Grand titre'],['subtitle','Texte d\'accueil',true]].forEach(a=>{ const f=T(...a); if(f) b.appendChild(f); });
-  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),remove:'reset'}));
+  if('hero' in c.photos || d.querySelector('.photo.hero')) b.appendChild(photoField('Photo d\'accueil',()=>d.querySelector('.photo.hero'),()=>c.photos.hero,u=>c.photos.hero=u,{pos:PS('hero'),remove:'reset',mock:true}));
   { const f=photoField('Icône du site (logo carré)',()=>null,()=>c.photos.icon,u=>c.photos.icon=u); const h=document.createElement('p'); h.className='hint'; h.style.margin='0'; h.textContent='Elle s\'affiche dans l\'onglet du navigateur et sur l\'écran d\'accueil du téléphone de vos clients. Sans logo, on crée une icône avec l\'initiale de votre nom, aux couleurs de votre site.'; f.querySelector('.pinfo').appendChild(h); b.appendChild(f); }
 
   // 08/11/2026 (Anthony) : format concession (vente uniquement, pas d'atelier)

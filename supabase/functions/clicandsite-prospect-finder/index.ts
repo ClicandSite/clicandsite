@@ -226,9 +226,10 @@ function bodaccRow(r: any) {
   const act = [e?.activite, ...(Array.isArray(ets) ? ets.slice(1).map((x: any) => x?.activite) : [])].filter(Boolean).join(" - ");
   const seg = classify(act); if (!seg) return null;
   const per = jparse(r.listepersonnes)?.personne; const pp = Array.isArray(per) ? per[0] : per;
-  let name = pp?.nomCommercial || e?.enseigne || pp?.denomination || "";
-  if (!name && pp?.nom) name = `${(pp.prenom || "").split(",")[0].trim()} ${pp.nom}`.trim();
-  if (!name) name = r.commercant || ""; name = name.replace(/\s+/g, " ").trim(); if (!name) return null;
+  const one = (v: unknown) => String(Array.isArray(v) ? v[0] ?? "" : v ?? ""); // 09/11 : certains champs BODACC sont des listes
+  let name = one(pp?.nomCommercial) || one(e?.enseigne) || one(pp?.denomination);
+  if (!name && pp?.nom) name = `${one(pp.prenom).split(",")[0].trim()} ${one(pp.nom)}`.trim();
+  if (!name) name = one(r.commercant); name = name.replace(/\s+/g, " ").trim(); if (!name) return null;
   if (name === name.toUpperCase()) name = titleCase(name);
   const ad = e?.adresse || {};
   const siren = ((r.registre || [])[0] || "").replace(/\D/g, ""); if (siren.length !== 9) return null;

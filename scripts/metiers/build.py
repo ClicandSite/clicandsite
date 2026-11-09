@@ -245,6 +245,7 @@ def build(k):
     post = post.replace("n+(n>1?' soins':' soin')", f"n+(n>1?' {w1}':' {w2}')", 1)
     assert w1 in post or w1 == 'soins'
     out = pre + body(k, t) + post
+    if 'cs-date.js' not in out: out = out.rstrip('\n') + '\n<script src="https://mycreativesite.fr/assets/cs-date.js?v=1" defer></script>\n'
     open(f'{REPO}/modeles/{k}.html', 'w').write(out)
     print(k, len(out) // 1024, 'Ko')
 

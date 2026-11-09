@@ -1,0 +1,63 @@
+/* 09/11/2026 (Anthony) : champ date des formulaires de réservation, même taille que les autres cases et année sur 2 chiffres (15/01/27 · 15:00).
+   Le vrai champ date reste dans le formulaire (validation, envoi) ; on affiche par-dessus une case qui ouvre le calendrier du téléphone ou de l'ordinateur. */
+(function () {
+  var CSS = '.csd-w{position:relative;display:block;min-width:0}' +
+    '.csd-w>input.csd-in{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;pointer-events:none!important;margin:0!important}' +
+    '.csd-b{display:flex;align-items:center;gap:8px;width:100%;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-appearance:none;appearance:none}' +
+    '.csd-b .csd-ph{opacity:.55}.csd-b svg{flex:none;margin-left:auto;opacity:.6}';
+  var ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>';
+  var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+  function fmt(el) {
+    var v = el.value || '', m = v.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+    if (!m) return '';
+    return m[3] + '/' + m[2] + '/' + m[1].slice(2) + (m[4] ? ' · ' + m[4] + ':' + m[5] : '');
+  }
+  function ref(el) {
+    // la case de référence : un menu ou un champ texte du même formulaire
+    var f = el.form || el.closest('form') || document;
+    var all = f.querySelectorAll('select, input[type="text"], input[type="tel"], input[type="email"], input:not([type])');
+    for (var i = 0; i < all.length; i++) if (all[i] !== el && all[i].offsetHeight) return all[i];
+    return null;
+  }
+  function copy(from, to, el) {
+    var c = getComputedStyle(from), s = to.style;
+    ['fontFamily', 'fontSize', 'fontWeight', 'color', 'backgroundColor', 'backgroundImage', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+     'borderTopStyle', 'borderRightStyle', 'borderBottomStyle', 'borderLeftStyle', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor',
+     'borderRadius', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'boxShadow', 'letterSpacing', 'lineHeight', 'boxSizing'].forEach(function (k) { s[k] = c[k]; });
+    if (from.tagName === 'SELECT') s.backgroundImage = 'none';
+    s.height = from.offsetHeight + 'px';
+    if (el) { var ce = getComputedStyle(el); s.color = ce.color; }
+  }
+  function show(el, b) {
+    var t = fmt(el);
+    b.innerHTML = (t ? '<span>' + t + '</span>' : '<span class="csd-ph">' + (el.type === 'date' ? 'jj/mm/aa' : 'jj/mm/aa · hh:mm') + '</span>') + ICON;
+  }
+  function wrap(el) {
+    if (el.__csd || el.closest('.cs-ag') || el.closest('.csd-w')) return;
+    var r = ref(el); if (!r) return;
+    el.__csd = 1;
+    var w = document.createElement('span'); w.className = 'csd-w';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'csd-b';
+    var lab = el.id && document.querySelector('label[for="' + el.id + '"]');
+    if (lab) b.setAttribute('aria-label', lab.textContent.trim());
+    el.parentNode.insertBefore(w, el); w.appendChild(b); w.appendChild(el);
+    el.classList.add('csd-in'); el.tabIndex = -1;
+    copy(r, b, el); show(el, b);
+    b.addEventListener('click', function () {
+      try { if (el.showPicker) { el.showPicker(); return; } } catch (e) { /* ignore */ }
+      // anciens navigateurs : on remontre le vrai champ
+      el.classList.remove('csd-in'); b.hidden = true; el.tabIndex = 0; el.focus();
+    });
+    ['input', 'change', 'blur'].forEach(function (ev) { el.addEventListener(ev, function () { show(el, b); }); });
+    el.addEventListener('invalid', function () { b.style.outline = '2px solid #e5484d'; b.style.outlineOffset = '1px'; setTimeout(function () { b.style.outline = ''; }, 2500); });
+    window.addEventListener('resize', function () { copy(r, b, el); });
+    // le site client vide la valeur d'exemple au chargement : on suit le changement
+    var last = el.value; setInterval(function () { if (el.value !== last) { last = el.value; show(el, b); } }, 700);
+  }
+  function run() {
+    if (!document.getElementById('csd-css')) { var st = document.createElement('style'); st.id = 'csd-css'; st.textContent = CSS; document.head.appendChild(st); }
+    document.querySelectorAll('form input[type="datetime-local"], form input[type="date"]').forEach(wrap);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(run, 50); }); else setTimeout(run, 50);
+  window.addEventListener('load', function () { setTimeout(run, 300); });
+})();

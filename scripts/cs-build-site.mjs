@@ -61,8 +61,8 @@ function hoursSpec(rows) {
   }
   return spec;
 }
-const TYPE = { garage: ['AutoRepair', 'AutoDealer'], immobilier: ['RealEstateAgent'], restaurant: ['Restaurant'], beaute: ['BeautySalon'], bienetre: ['HealthAndBeautyBusiness'], boulangerie: ['Bakery'], batiment: ['GeneralContractor'], depannage: ['Plumber', 'Electrician'], boutique: ['Store'], vtc: ['TaxiService'] };
-const METIER = { garage: 'Garage auto et moto', immobilier: 'Agence immobilière', restaurant: 'Restaurant', beaute: 'Coiffure et beauté', bienetre: 'Bien-être et soins', boulangerie: 'Boulangerie pâtisserie', batiment: 'Artisan du bâtiment', depannage: 'Plombier électricien, dépannage', boutique: 'Boutique', vtc: 'Chauffeur VTC' };
+const TYPE = { garage: ['AutoRepair', 'AutoDealer'], immobilier: ['RealEstateAgent'], restaurant: ['Restaurant'], beaute: ['BeautySalon'], bienetre: ['HealthAndBeautyBusiness'], veterinaire: ['VeterinaryCare'], boulangerie: ['Bakery'], batiment: ['GeneralContractor'], depannage: ['Plumber', 'Electrician'], boutique: ['Store'], vtc: ['TaxiService'] };
+const METIER = { garage: 'Garage auto et moto', immobilier: 'Agence immobilière', restaurant: 'Restaurant', beaute: 'Coiffure et beauté', bienetre: 'Bien-être et soins', veterinaire: 'Clinique vétérinaire', boulangerie: 'Boulangerie pâtisserie', batiment: 'Artisan du bâtiment', depannage: 'Plombier électricien, dépannage', boutique: 'Boutique', vtc: 'Chauffeur VTC' };
 
 async function main() {
   const c = await content(), info = await siteInfo();

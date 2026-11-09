@@ -30,6 +30,7 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   garage: { label: "garage", page: "/site-internet-garage/", pack: true, plus: "un agenda de rendez-vous atelier et vos véhicules diffusés sur Abracadeal" },
   immobilier: { label: "agence immobilière", page: "/site-internet-agence-immobiliere/", pack: true, plus: "vos biens diffusés automatiquement sur Abracadeal" },
   batiment: { label: "artisan du bâtiment", page: "/site-internet-artisan-batiment/", pack: false, plus: "vos réalisations en photos et un formulaire de devis" },
+  veterinaire: { label: "clinique vétérinaire", page: "/site-internet-veterinaire/", pack: false, plus: "la prise de rendez-vous en ligne et vos horaires d'urgence" },
 };
 function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null }): Tpl {
   const t = TRADE[p.trade] || TRADE.restaurant;
@@ -54,7 +55,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "",
     `Je m'appelle Anthony, je dirige MyCreativeSite : nous créons des sites internet pour les professionnels, livrés en 48 h. Vous les modifiez vous-même en un clic depuis votre téléphone (photos, textes, horaires), et nous gardons la main pour toute réparation.`,
     "",
-    `Pour un ${t.label}, le site comprend ${t.plus}.`,
+    `Pour ${/^(clinique|agence)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
     "",
     price,
     "",

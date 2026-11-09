@@ -51,3 +51,8 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Désinscription : lien signé (HMAC) dans chaque mail + en-tête List-Unsubscribe → `opposition` + statut « refus ».
 - Secrets à poser : `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` (compte Google de l'adresse d'envoi), `CS_FROM` (défaut contact@mycreativesite.fr). Contrôle : `GET …/cs-prospecting?health=1`. Mail d'essai : POST `{mode:"test", to:"docheanthony@gmail.com"}`.
 - Robot de recherche (`robot_settings.enabled`) rallumé le 09/11 : il était arrêté, d'où seulement ~20 pros avec e-mail.
+
+### Métier vétérinaire (09/11/2026)
+- Modèle `modeles/veterinaire.html`, page `site-internet-veterinaire/`, article conseils ; contraintes `trade` élargies (migration `20261109_metier_veterinaire.sql`).
+- Robot : NAF 75.00Z, réseaux (Sevetys, AniCura, Evidensia…) exclus ; `search_pages`, `robot_settings.trades` et `mail_settings.trades` incluent `veterinaire`.
+- Mail : « Pour une clinique vétérinaire, le site comprend la prise de rendez-vous en ligne et vos horaires d'urgence. » Textes conformes à la déontologie (pas de prix d'appel, pas de promesse de soins, pas de comparatif).

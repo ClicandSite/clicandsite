@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // MyCreativeSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
 // mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
-//    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment.
+//    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment, vétérinaires.
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
 //    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
@@ -19,10 +19,12 @@ const NAF: Record<string, string> = {
   immobilier: "68.31Z",
   // Bâtiment : maisons, électricité, plomberie/chauffage, plâtrerie, menuiserie, carrelage, peinture, finition, couverture, maçonnerie
   batiment: "41.20A,43.21A,43.22A,43.22B,43.31Z,43.32A,43.33Z,43.34Z,43.39Z,43.91B,43.99C",
+  // 09/11/2026 : cliniques et cabinets vétérinaires
+  veterinaire: "75.00Z",
 };
 // Chaînes et réseaux : ils ont déjà un site national, inutile de les démarcher.
-const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix|leroy merlin|castorama|brico|point p\b|bouygues|vinci|eiffage|spie\b|engie|veolia|cegelec|socotec|france toitures|illico travaux|cuisinella|schmidt|mobalpa|lapeyre|tryba|art et fen[eê]tres|grosfillex/i;
-const LEGAL = /\b(sarl|sas|sasu|eurl|sa|snc|sci|ste|societe|société|ets|etablissements|holding|groupe|ei|eirl|scp)\b/gi;
+const CHAINS = /mc ?donald|burger king|kfc|subway|domino|pizza hut|quick|buffalo grill|hippopotamus|courtepaille|flunch|del arte|la boucherie|starbucks|brioche dor|o.?tacos|speedy|norauto|midas|feu vert|point s\b|euromaster|carglass|first stop|vulco|top garage|eurorepar|motrio|renault|peugeot|citro[eë]n|toyota|volkswagen|mercedes|bmw|audi|ford|nissan|kia|hyundai|fiat|dacia|opel|skoda|seat|tesla|aramis|orpi|century 21|lafor[eê]t|era immobilier|guy hoquet|st[ée]phane plaza|nestenn|foncia|citya|square habitat|cr[ée]dit agricole|\biad\b|capifrance|safti|optimhome|\buber\b|\bg7\b|heetch|sodexo|elior|compass group|accor|novotel|ibis|mercure|sushi shop|flam's|courtepaille|leon de bruxelles|big mamma|ninkasi|carrefour|leclerc|intermarche|auchan|casino|monoprix|leroy merlin|castorama|brico|point p\b|bouygues|vinci|eiffage|spie\b|engie|veolia|cegelec|socotec|france toitures|illico travaux|cuisinella|schmidt|mobalpa|lapeyre|tryba|art et fen[eê]tres|grosfillex|sevetys|anicura|evidensia|mon v[ée]to\b|vetocentre|v[ée]toadom|clinique v[ée]t[ée]rinaire des urgences/i;
+const LEGAL = /\b(sarl|sas|sasu|eurl|sa|snc|sci|ste|societe|société|ets|etablissements|holding|groupe|ei|eirl|scp|selarl|selas|selasu|selurl|scm|sel)\b/gi;
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 const BAD = /(\.(png|jpe?g|gif|webp|svg|css|js)$)|example\.|sentry|wixpress|godaddy|domain\.com|email\.com|votre|your|nom@|prenom|@2x|noreply|no-reply|ovh\.net$|mediateur|cnil\.fr|dgccrf|economie\.gouv/i;
 const FREE_HOST = /wixsite\.com|jimdosite|jimdofree|e-monsite|over-blog|site-solocal|solocal|pagesjaunes|business\.site|webnode|godaddysites|weebly|sitew\.|wordpress\.com|blogspot|free\.fr|orange\.fr|wanadoo/i;

@@ -5,7 +5,7 @@
    Le pro voit ses réservations jour par jour, ajoute un rendez-vous pris par téléphone, bloque un créneau ou annule.
    Utilise les fonctions de espace/index.html : site, state, SB, DEMO, toast, escH. Fonctions Supabase : cs_agenda_get / save / add / cancel. */
 (function () {
-  var TRADES = { beaute: 1, bienetre: 1, restaurant: 1, garage: 1 };
+  var TRADES = { beaute: 1, bienetre: 1, veterinaire: 1, restaurant: 1, garage: 1 };
   var JOURS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'], ORDER = [1, 2, 3, 4, 5, 6, 0];
   var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   var A = { day: null, data: null, cfg: null, tab: 'jour', demo: null };
@@ -44,7 +44,7 @@
   function trade() { return site && site.trade; }
   function resto() { return trade() === 'restaurant'; }
   function placesLbl() {
-    return { beaute: 'Coiffeurs ou esthéticiennes disponibles en même temps', bienetre: 'Praticiens disponibles en même temps', restaurant: 'Couverts disponibles par créneau', garage: 'Véhicules pris en charge en même temps (postes atelier)' }[trade()] || 'Places par créneau';
+    return { beaute: 'Coiffeurs ou esthéticiennes disponibles en même temps', bienetre: 'Praticiens disponibles en même temps', veterinaire: 'Vétérinaires disponibles en même temps', restaurant: 'Couverts disponibles par créneau', garage: 'Véhicules pris en charge en même temps (postes atelier)' }[trade()] || 'Places par créneau';
   }
   function unit(n) { return resto() ? n + ' couvert' + (n > 1 ? 's' : '') : n + ' place' + (n > 1 ? 's' : ''); }
   function defaults() {

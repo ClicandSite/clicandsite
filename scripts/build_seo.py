@@ -143,6 +143,20 @@ PAGES = [
     faq=[("Je paie une commission sur les réservations ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous."),
          ("Le site convient-il à un praticien à domicile ?","Oui : la zone de déplacement remplace l'adresse du cabinet."),
          ("Je peux ajouter un nouveau soin moi-même ?","Oui, depuis votre espace client, avec photo, durée et prix.")]),
+  dict(slug="site-internet-veterinaire", k="veterinaire", style="riviera",
+    title="Création de site internet pour vétérinaire et clinique vétérinaire",
+    meta="Site internet pour vétérinaire et clinique vétérinaire : prise de rendez-vous en ligne, actes courants, tarifs indicatifs, urgences et horaires. Dès 29 €/mois, sans commission.",
+    h1="Le site internet des vétérinaires et cliniques vétérinaires",
+    lead="Cabinet ou clinique vétérinaire, chiens, chats ou NAC : les propriétaires prennent rendez-vous en ligne, trouvent vos horaires et votre numéro d'urgence, et découvrent votre équipe.",
+    feats=[("Prise de rendez-vous","Motif, vétérinaire, jour et heure : le créneau est réservé dans votre agenda, sans commission."),
+           ("Urgences et garde","Votre numéro d'urgence et vos horaires de garde, visibles en un coup d'œil sur téléphone."),
+           ("Actes courants","Vaccins, bilans, stérilisation, dentaire, imagerie : des fiches claires, filtrables par animal."),
+           ("Tarifs indicatifs","Consultation, vaccins, identification : des prix informatifs, modifiables à tout moment."),
+           ("L'équipe et la clinique","Vétérinaires, auxiliaires, équipement et accès, pour rassurer avant la première visite."),
+           ("Une communication sobre","Des textes factuels, sans promesse ni comparaison, dans le respect des règles de la profession.")],
+    faq=[("Le site respecte-t-il les règles de communication des vétérinaires ?","Oui : les textes restent informatifs, sans publicité comparative ni promesse de résultat. Vous validez chaque texte avant la mise en ligne."),
+         ("Je peux gérer mes créneaux moi-même ?","Oui, depuis votre espace client : horaires, jours fermés, vétérinaires disponibles et créneaux bloqués."),
+         ("Je paie une commission sur les rendez-vous ?","Non : un abonnement fixe dès 29 € par mois, quel que soit le nombre de rendez-vous.")]),
   dict(slug="site-internet-boulangerie", k="boulangerie", style="chaleureux",
     title="Création de site internet pour boulangerie et pâtisserie",
     meta="Site internet pour boulangerie, pâtisserie et commerce de bouche : commande à retirer, vitrine de la semaine, gâteaux sur commande, horaires. Dès 29 €/mois.",
@@ -427,7 +441,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -439,7 +453,7 @@ def trade_links(cur):
 GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables",
   "garage": "site-internet-garage-les-indispensables", "concession": "concession-auto-moto-vendre-plus-avec-son-site", "immobilier": "site-internet-agence-immobiliere-les-indispensables",
   "batiment": "site-internet-artisan-batiment-les-indispensables", "beaute": "site-internet-coiffeur-institut-beaute-les-indispensables",
-  "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
+  "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "veterinaire": "site-internet-veterinaire-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
   "depannage": "site-internet-plombier-electricien-les-indispensables", "boutique": "creer-boutique-en-ligne-les-indispensables"}
 def guide(p):
     g = GUIDES.get(p.get("k"))
@@ -542,7 +556,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}

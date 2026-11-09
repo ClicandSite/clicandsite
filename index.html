@@ -504,6 +504,82 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   .studio2 .screens .viewport{height:calc(100vh - 160px);min-height:460px;max-height:none}
   .studio2 .screens .phone.live{width:calc((100vh - 170px) * .4621 + 16px)}
 }
+
+/* 09/11/2026 (Anthony) : choix du modèle en 4 étapes (métier, style, formule, infos), sur ordinateur et téléphone */
+.wsteps{list-style:none;margin:0 0 22px;padding:0;display:flex;align-items:center;justify-content:center;gap:0;counter-reset:none}
+.wsteps li{display:flex;align-items:center}
+.wsteps li+li::before{content:"";width:56px;height:2px;background:var(--line);margin:0 10px}
+.wsteps li.done+li::before,.wsteps li.on::before{background:var(--brand)}
+.wsteps button{display:flex;align-items:center;gap:9px;border:0;background:none;padding:4px;cursor:pointer;font:600 .95rem var(--body);color:var(--muted)}
+.wsteps .wn{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);font-size:.85rem;font-weight:700;color:var(--muted)}
+.wsteps li.on button{color:var(--ink)}
+.wsteps li.on .wn{background:var(--brand);border-color:var(--brand);color:#fff}
+.wsteps li.done .wn{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.wtitle{display:none}
+.wtitle h3{font-size:1.25rem;letter-spacing:-.02em}
+.wtitle p{color:var(--muted);font-size:.88rem;margin-top:4px;line-height:1.4}
+.wnav{display:none}
+.studio2.wz .crow{display:none}
+.studio2.wz[data-step="1"] .crow:nth-child(2),.studio2.wz[data-step="2"] .crow:nth-child(3),.studio2.wz[data-step="3"] .crow:nth-child(1){display:grid}
+.studio2.wz .wtitle{display:block}
+.studio2.wz .cfg,.studio2.wz .crow{grid-template-columns:minmax(0,1fr);min-width:0}
+.studio2.wz .clbl{display:none}
+.studio2.wz .wnav{display:flex;gap:10px;margin-top:4px}
+.studio2.wz .wnav .btn{flex:1;padding:12px 14px;font-size:.95rem}
+.studio2.wz .wnav .btn.ghost{flex:0 0 auto}
+.studio2.wz[data-step="1"] #wz-prev{display:none}
+/* cartes métiers */
+.studio2.wz .cfg .mrow{display:grid;grid-template-columns:1fr;gap:8px}
+.studio2.wz .cfg .mrow button{display:grid;grid-template-columns:38px 1fr auto;align-items:center;column-gap:12px;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);font:600 .95rem var(--body);color:var(--ink);text-align:left;white-space:normal}
+.studio2.wz .cfg .mrow button .ic{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--paper);color:var(--ink);opacity:1}
+.studio2.wz .cfg .mrow button .ic svg{width:19px;height:19px}
+.studio2.wz .cfg .mrow button .tx{display:grid;line-height:1.25}
+.studio2.wz .cfg .mrow button .tx small{font-weight:400;font-size:.8rem;color:var(--muted)}
+.studio2.wz .cfg .mrow button:hover{border-color:var(--brand);background:var(--bg)}
+.studio2.wz .cfg .mrow button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--ink);box-shadow:0 0 0 1px var(--brand) inset}
+.studio2.wz .cfg .mrow button[aria-pressed="true"] .ic{background:var(--brand);color:#fff}
+.studio2.wz .cfg .mrow button[aria-pressed="true"]::after,.studio2.wz .cfg .fchips button[aria-pressed="true"]::after{content:"";width:22px;height:22px;border-radius:50%;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat}
+/* cartes formules */
+.studio2.wz .cfg .fchips{display:grid;grid-template-columns:1fr;gap:8px}
+.studio2.wz .cfg .fchips button{position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 44px 12px 14px;border-radius:14px}
+.studio2.wz .cfg .fchips button .fdd{display:block;grid-column:1/-1;font-size:.8rem;color:var(--muted)}
+.studio2.wz .cfg .fchips button[aria-pressed="true"]::after{position:absolute;right:12px;top:50%;margin-top:-11px}
+.studio2.wz .cfg .fchips button:disabled .fdd::after{content:" · style non inclus";color:var(--brand)}
+@media (min-width:921px){
+  .studio2.wz{grid-template-columns:370px minmax(0,1fr)}
+  .studio2.wz .cfg{gap:16px;padding:20px 20px 0}
+  .studio2.wz .wnav{position:sticky;bottom:0;margin:0 -20px;padding:12px 20px 16px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 22%);z-index:2}
+  .studio2.wz .cfg .mrow button{padding:8px 12px;font-size:.93rem}
+  .studio2.wz .cfg .srow{gap:6px}
+  .studio2.wz .cfg .fchips button b,.studio2.wz .cfg .fchips button .fpr{font-size:.98rem}
+}
+@media (max-width:920px){
+  .wsteps{margin:0 0 16px;justify-content:space-between}
+  .wsteps li{flex:1}.wsteps li:first-child{flex:0 0 auto}
+  .wsteps li+li::before{flex:1;width:auto;margin:0 6px}
+  .wsteps .wl{display:none}
+  .wsteps li.on .wl{display:inline;font-size:.88rem}
+  .studio2.wz .cfg{position:static;margin:0;padding:0;border:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;gap:14px}
+  .studio2.wz .wtitle{text-align:center}
+  .studio2.wz .wtitle h3{font-size:1.45rem}
+  .studio2.wz .cfg .mrow,.studio2.wz .cfg .fchips{display:grid!important;overflow:visible;padding:0}
+  .studio2.wz .cfg .mrow button{padding:10px 12px;font-size:.98rem}
+  .studio2.wz .cfg .fchips button{display:grid;padding:12px 44px 12px 14px;border-radius:14px;align-items:baseline}
+  .studio2.wz .cfg .fchips button b{font-size:1rem}.studio2.wz .cfg .fchips button .fpr{font-size:.95rem;color:var(--ink)}
+  .studio2.wz .cfg .fchips button .fpr small{display:inline}
+  .studio2.wz .cfg .srow{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;overflow:visible;padding:0}
+  .studio2.wz .cfg .srow .st{display:grid;grid-auto-flow:row;justify-items:stretch;gap:8px;padding:8px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg)}
+  .studio2.wz .cfg .srow .st .mini{width:100%;height:64px;border-radius:10px}
+  .studio2.wz .cfg .srow .st .mt{display:block;font-size:1rem}.studio2.wz .cfg .srow .st .mb{display:block;right:8px;bottom:9px;width:24px;height:9px;border-radius:5px}
+  .studio2.wz .cfg .srow .st .nm{font-size:.88rem;text-align:left;white-space:normal}
+  .studio2.wz .cfg .srow .st{min-width:0}
+  .studio2.wz .cfg .srow .st[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+  .studio2.wz[data-step="1"] .view,.studio2.wz[data-step="2"] .view{display:none}
+  .studio2.wz[data-step="3"] .view{margin-top:14px}
+  .studio2.wz .wnav{position:fixed;left:0;right:0;bottom:0;z-index:45;margin:0;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .studio2.wz .wnav[hidden]{display:none}
+  .pickbar{display:none!important}
+}
 </style>
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -594,11 +670,18 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
     <div class="head">
       <span class="eyebrow">Les modèles</span>
       <h2>29 métiers, 25 styles. Essayez-les en vrai.</h2>
-      <p>Choisissez votre formule : seuls les métiers et les styles qu'elle comprend s'affichent. Le vrai site apparaît en dessous, exactement comme avec cette formule. Faites-le défiler, cliquez, testez.</p>
+      <p>Votre métier, votre style, votre formule : le vrai site s'affiche au fur et à mesure. Faites-le défiler, cliquez, testez.</p>
     </div>
-    <div class="studio2">
+    <ol class="wsteps" id="wsteps" aria-label="Étapes">
+      <li><button type="button" data-go="1"><span class="wn">1</span><span class="wl">Métier</span></button></li>
+      <li><button type="button" data-go="2"><span class="wn">2</span><span class="wl">Style</span></button></li>
+      <li><button type="button" data-go="3"><span class="wn">3</span><span class="wl">Formule</span></button></li>
+      <li><button type="button" data-go="4"><span class="wn">4</span><span class="wl">Vos infos</span></button></li>
+    </ol>
+    <div class="studio2 wz" data-step="1">
     <div class="cfg">
       <div class="crow">
+        <div class="wtitle"><h3>Choisissez votre formule</h3><p>Seules les formules qui conviennent à votre métier s'affichent.</p></div>
         <div class="clbl"><span class="n">1</span>Votre formule <span class="cur" id="ex-fname">Pro</span></div>
         <div class="fchips scrollrow" role="group" aria-label="Formule">
           <button type="button" data-f="essentiel" aria-pressed="false"><b>Essentiel</b><span class="fpr">29 €<small>/mois</small></span><span class="fdd">Le site, simple et efficace</span></button>
@@ -609,6 +692,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
           </div>
       </div>
       <div class="crow">
+        <div class="wtitle"><h3>Quel est votre métier ?</h3><p>Le site est pensé pour lui : textes, rubriques, réservation.</p></div>
         <div class="clbl"><span class="n">2</span>Votre métier <span class="cur" id="ex-kname"></span></div>
         <div class="tabs mrow scrollrow short" role="group" aria-label="Métier">
           <button type="button" data-k="vtc" aria-pressed="true"><span class="ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8" /> <path d="M7 14h.01" /> <path d="M17 14h.01" /> <rect width="18" height="8" x="3" y="10" rx="2" /> <path d="M5 18v2" /> <path d="M19 18v2" /></svg></span>Chauffeur VTC</button>
@@ -645,6 +729,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
         <button type="button" class="mmore" aria-expanded="false"><span>Voir tous les métiers</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       </div>
       <div class="crow">
+        <div class="wtitle"><h3>Choisissez votre style</h3><p>Couleurs et typographies. Vous pourrez en changer plus tard, sans frais.</p></div>
         <div class="clbl"><span class="n">3</span>Votre style <span class="cur" id="ex-sname">Moderne</span><span class="snav"><button type="button" class="sarr" data-d="-1" aria-label="Styles précédents">‹</button><button type="button" class="sarr" data-d="1" aria-label="Styles suivants">›</button></span></div>
         <div class="chips srow scrollrow" role="group" aria-label="Style">
           <button type="button" class="st" data-s="moderne" aria-pressed="true" style="--tb:#FFFFFF;--ti:#0B0B0C;--ta:#0B0B0C;--th:radial-gradient(120% 80% at 75% 20%,#3b4a63 0%,#151a24 45%,#07090d 100%);--tf:'Sora', system-ui, sans-serif;--tl:#E6E6E9"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Moderne</span></button>
@@ -674,6 +759,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
           <button type="button" class="st" data-s="signatureivoire" aria-pressed="false" style="--tb:#F7F2E9;--ti:#1F1A14;--ta:#A8844A;--th:radial-gradient(90% 70% at 50% 35%,#3a3127,#1f1a14 60%,#0e0b08);--tf:'Playfair Display', Georgia, serif;--tl:#DCCFB8"><span class="mini" aria-hidden="true"><span class="mh"></span><span class="mt">Aa</span><span class="mb"></span></span><span class="nm">Signature Ivoire <small>Premium</small></span></button>
           </div>
       </div>
+      <div class="wnav"><button type="button" class="btn ghost" id="wz-prev">← Précédent</button><button type="button" class="btn" id="wz-next">Continuer →</button></div>
     </div>
     <div class="view">
       <div class="vbar">
@@ -1012,8 +1098,10 @@ function mob(){ return window.matchMedia('(max-width:920px)').matches; }
 function show(){
   if(FK[cur.f].indexOf(cur.k)<0) cur.k=FK[cur.f][0];
   if(!FS(cur.f,cur.s)) cur.s='moderne';
-  document.querySelectorAll('.tabs button').forEach(function(x){ x.hidden=FK[cur.f].indexOf(x.dataset.k)<0; });
-  document.querySelectorAll('.chips button[data-s]').forEach(function(x){ x.hidden=!FS(cur.f,x.dataset.s); });
+  /* 09/11/2026 (Anthony) : parcours en étapes — tous les métiers et tous les styles visibles, la formule s'adapte */
+  document.querySelectorAll('.tabs button').forEach(function(x){ x.hidden=x.dataset.k==='garage'; });
+  document.querySelectorAll('.chips button[data-s]').forEach(function(x){ x.hidden=false; });
+  document.querySelectorAll('.fchips button').forEach(function(x){ var f=x.dataset.f; x.hidden=FK[f].indexOf(cur.k)<0; x.disabled=!FS(f,cur.s); x.title=x.disabled?'Le style '+SN[cur.s]+' n\'est pas inclus dans cette formule':''; });
   var kn=document.getElementById('ex-kname'); if(kn) kn.textContent=NAMES[cur.k];
   var url=FILES[cur.k]+'&f='+cur.f+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
   if(f.getAttribute('src')!==url){f.setAttribute('src',url);}
@@ -1032,7 +1120,7 @@ function show(){
   fit();
 }
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){cur.k=b.dataset.k==='garage'?'concession':b.dataset.k;cur.f=fOf(cur.k);show();});});
-document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s;show();});});
+document.querySelectorAll('.chips button[data-s]').forEach(function(b){b.addEventListener('click',function(){cur.s=b.dataset.s; if(!FS(cur.f,cur.s)) cur.f=FS('pro',cur.s)?'pro':'premium'; show();});});
 document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){ view=b.dataset.v; document.querySelector('.screens').dataset.v=view; document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); show(); });});
 document.querySelectorAll('.fchips button').forEach(function(b){b.addEventListener('click',function(){cur.f=b.dataset.f;show();});});
 document.querySelectorAll('.sarr').forEach(function(b){b.addEventListener('click',function(){var r=document.querySelector('.srow'); r.scrollBy({left:(+b.dataset.d)*Math.max(240,r.clientWidth*.8),behavior:'smooth'});});});
@@ -1173,6 +1261,32 @@ show();
   function mark(){ var n=0; [].forEach.call(r.querySelectorAll('button'),function(x){ if(x.hidden){ x.classList.remove('xtra'); return; } n++; x.classList.toggle('xtra',n>8); }); b.style.visibility=n>8?'':'hidden'; }
   b.addEventListener('click',function(){ var o=r.classList.toggle('short'); b.setAttribute('aria-expanded',String(!o)); b.firstChild.textContent=o?'Voir tous les métiers':'Voir moins'; });
   document.querySelector('.cfg').addEventListener('click',function(){ setTimeout(mark,0); }); mark();
+})();
+
+/* 09/11/2026 (Anthony) : parcours en étapes */
+(function(){
+  var st=document.querySelector('.studio2.wz'); if(!st) return;
+  var SUB={vtc:'Réservation de courses, tarifs',restaurant:'Carte, réservation de tables',atelier:'Rendez-vous atelier, forfaits',concession:'Véhicules en vente, Abracadeal',immobilier:'Biens à vendre et à louer',boutique:'Vente en ligne, panier',batiment:'Réalisations, demande de devis',beaute:'Coiffure, institut, ongles',bienetre:'Massage, ostéopathie, soins',veterinaire:'Rendez-vous, urgences',autoecole:'Formules, réservation des leçons',coach:'Séances, formules',photographe:'Galerie, demandes de date',toiletteur:'Rendez-vous, tarifs par animal',fleuriste:'Bouquets, commande en ligne',traiteur:'Menus, devis',nautisme:'Bateaux, réservation',kine:'Rendez-vous, infos patients',dentiste:'Rendez-vous, infos patients',bijouterie:'Bijoux, montres, atelier',liberal:'Avocat, comptable, consultant',services:'Ménage, aide, garde d’enfants',evenementiel:'Mariages, soirées, DJ',hebergement:'Chambres, réservation directe',tourisme:'Excursions, activités',location:'Véhicules, déménagement',infirmier:'Soins à domicile, permanences',boulangerie:'Produits, commande à retirer',depannage:'Plombier, électricien, serrurier'};
+  document.querySelectorAll('.tabs button[data-k]').forEach(function(b){ if(b.querySelector('.tx')) return; var ic=b.querySelector('.ic'), t=document.createElement('span'); t.className='tx';
+    var txt=''; [].slice.call(b.childNodes).forEach(function(n){ if(n!==ic){ txt+=n.textContent; b.removeChild(n); } });
+    t.innerHTML='<span></span><small></small>'; t.firstChild.textContent=txt.trim(); t.lastChild.textContent=SUB[b.dataset.k]||''; b.appendChild(t); });
+  var steps=document.querySelectorAll('#wsteps li'), prev=document.getElementById('wz-prev'), next=document.getElementById('wz-next'), sec=document.getElementById('modeles');
+  function small(){ return window.matchMedia('(max-width:920px)').matches; }
+  function go(n,scroll){
+    if(n>=4){ document.getElementById('ex-choose').click(); location.hash='#commande'; return; }
+    st.dataset.step=n;
+    steps.forEach(function(li,i){ li.classList.toggle('on',i+1===n); li.classList.toggle('done',i+1<n); });
+    next.textContent=n===3?'Je veux ce modèle →':n===2&&small()?'Voir mon site →':'Continuer →';
+    if(n===3&&small()){ setTimeout(function(){ if(typeof show==='function') show(); },0); }
+    if(scroll){ var y=sec.getBoundingClientRect().top+scrollY-(small()?56:70); if(Math.abs(scrollY-y)>40||small()) window.scrollTo({top:y,behavior:'smooth'}); }
+  }
+  window.wzGo=go;
+  document.querySelectorAll('#wsteps button').forEach(function(b){ b.addEventListener('click',function(){ go(+b.dataset.go,true); }); });
+  prev.addEventListener('click',function(){ go(+st.dataset.step-1,true); });
+  next.addEventListener('click',function(){ go(+st.dataset.step+1,true); });
+  // un métier choisi sur téléphone : on passe tout de suite au style
+  document.querySelectorAll('.tabs button[data-k]').forEach(function(b){ b.addEventListener('click',function(){ if(small()) setTimeout(function(){ go(2,true); },180); }); });
+  go(1,false);
 })();
 </script>
 </body>

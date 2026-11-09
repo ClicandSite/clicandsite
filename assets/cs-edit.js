@@ -88,7 +88,9 @@
     cards: { items: '.cards > .card', f: { t: 'h3', d: 'p', p: '.price' }, img: '.photo', add: true },
     items: { items: '.vgrid > .car, .props > .prop', f: { t: 'h3', p: '.prx' }, meta: '.meta', img: '.photo', add: true },
     hours: { items: '.hrow', f: { l: 'span:nth-child(1)', v: 'span:nth-child(2)' }, add: true },
-    reviews: { items: '#avis .reviews > .rev', f: { s: '.s', d: 'p', who: '.who' }, add: true }
+    reviews: { items: '#avis .reviews > .rev', f: { s: '.s', d: 'p', who: '.who' }, add: true },
+    // 10/11/2026 (Anthony) : VTC, plusieurs véhicules (photo, nom, caractéristiques), jusqu'à 6
+    fleet: { items: '#vehicule .veh', f: { t: 'h2' }, img: '.photo', rows: '.list > div', add: true, max: 6 }
   };
   // Avis Google (07/11/2026, comme sur le site EPS) : avis recopiés par le pro + note et liens vers sa fiche Google
   var DEF_AVIS = 'Ce que disent nos clients sur Google.';
@@ -126,6 +128,7 @@
     Object.keys(def.f).forEach(function (k) { o[k] = txt(q(el, def.f[k])); });
     if (def.meta) o.meta = qa(el, def.meta + ' > span').map(txt).join(' · ');
     if (def.img) o.img = null;
+    if (def.rows) o.rows = qa(el, def.rows).map(function (r) { var sp = qa(r, 'span'); return txt(sp[0]) + ' : ' + txt(sp[1]); }).join('\n');
     var immo = el.classList.contains('prop'), car = el.classList.contains('car');
     if (immo || car) {
       var f = readFiche(el);
@@ -173,6 +176,13 @@
     }
   }
   function writeItem(el, def, o) {
+    if (def.rows && typeof o.rows === 'string') {
+      var lb = q(el, '.list');
+      if (lb) { lb.textContent = ''; o.rows.split('\n').map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 10).forEach(function (line) {
+        var i = line.indexOf(':'), a = i > 0 ? line.slice(0, i).trim() : line, b = i > 0 ? line.slice(i + 1).trim() : '';
+        var row = el.ownerDocument.createElement('div'), s1 = el.ownerDocument.createElement('span'), s2 = el.ownerDocument.createElement('span');
+        s1.textContent = a.slice(0, 40); s2.textContent = b.slice(0, 80); row.append(s1, s2); lb.appendChild(row); }); }
+    }
     Object.keys(def.f).forEach(function (k) { if (o[k] !== undefined) { var tg = q(el, def.f[k]); setTxt((tg && q(tg, 'a[data-cs-page]')) || tg, String(o[k])); } }); // 09/11/2026 : le lien vers la page de l'annonce (site généré) est gardé
     if (def.meta && typeof o.meta === 'string') {
       var box = q(el, def.meta);
@@ -252,7 +262,7 @@
     Object.keys(LISTS).forEach(function (k) {
       var d = LISTS[k], arr = c[k]; if (!Array.isArray(arr)) return;
       var els = qa(doc, d.items); if (!els.length) return;
-      if (d.add) els = fit(els, arr.length, 40); else arr = arr.slice(0, els.length);
+      if (d.add) els = fit(els, arr.length, d.max || 40); else arr = arr.slice(0, els.length);
       arr.forEach(function (o, i) { if (els[i] && o) writeItem(els[i], d, o); });
       if (k === 'hours') els.forEach(function (e, i) { var v = (arr[i] && arr[i].v || '').toLowerCase(); e.classList.toggle('closed', /ferm/.test(v)); });
     });

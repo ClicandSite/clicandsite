@@ -12,7 +12,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=19"></script>
+<script src="/assets/cs-edit.js?v=20"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -473,7 +473,7 @@ function tools(arr, i, rerender){
 function listEditor(body, arr, render, makeNew, addLabel){
   const box=document.createElement('div'); box.style.display='grid'; box.style.gap='10px'; body.appendChild(box);
   const draw=()=>{ box.textContent=''; arr.forEach((o,i)=>{ const it=document.createElement('div'); it.className='item'; render(it,o,i); it.appendChild(tools(arr,i,draw)); box.appendChild(it); });
-    if(makeNew){ const a=document.createElement('button'); a.type='button'; a.className='btn'; a.textContent='+ '+addLabel; a.addEventListener('click',()=>{ arr.push(makeNew()); refresh(); markDirty(); draw(); }); box.appendChild(a); } };
+    if(makeNew){ const a=document.createElement('button'); a.type='button'; a.className='btn'; a.textContent='+ '+addLabel; a.addEventListener('click',()=>{ const n=makeNew(); if(!n) return; arr.push(n); refresh(); markDirty(); draw(); }); box.appendChild(a); } };
   draw();
 }
 
@@ -616,6 +616,13 @@ function buildForms(){
 
   if(c.stats&&c.stats.length){ b=section('Chiffres clés',false,'Les 4 points forts affichés sous l\'accueil.');
     listEditor(b,c.stats,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('En gros',o.v,v=>o.v=v),field('En dessous',o.l,v=>o.l=v)); it.appendChild(r); }); }
+
+  // 10/11/2026 (Anthony) : VTC, plusieurs véhicules
+  if(!c.fleet&&d.querySelector('#vehicule .veh')){ try{ c.fleet=CSEdit.extract(d).fleet; }catch(e){} }
+  if(c.fleet&&c.fleet.length){ b=section('Mes véhicules',false,'Ajoutez jusqu\'à 6 véhicules : photo, modèle et caractéristiques (une par ligne, par exemple « Passagers : jusqu\'à 7 »).');
+    listEditor(b,c.fleet,(it,o,i)=>{ it.append(field('Modèle',o.t,v=>o.t=v),field('Caractéristiques (une par ligne)',o.rows,v=>o.rows=v,true),
+      photoField('Photo du véhicule',()=>d.querySelectorAll('#vehicule .veh')[i]?.querySelector('.photo'),()=>o.img,u=>o.img=u,{pos:[()=>o.pos,v=>{ if(v) o.pos=v; else delete o.pos; }],remove:'reset'})); },
+      ()=>c.fleet.length>=6?(toast('6 véhicules maximum'),null):({t:'Nouveau véhicule',rows:'Passagers : 4\nBagages : 3 valises',img:null}),'Ajouter un véhicule'); }
 
   if(c.cards&&c.cards.length){ b=section(site.trade==='boutique'?'Rayons':'Prestations');
     listEditor(b,c.cards,(it,o,i)=>{ it.append(field('Titre',o.t,v=>o.t=v),field('Description',o.d,v=>o.d=v,true),field('Prix',o.p,v=>o.p=v),

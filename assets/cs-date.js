@@ -2,7 +2,7 @@
    Le vrai champ date reste dans le formulaire (validation, envoi) ; on affiche par-dessus une case qui ouvre le calendrier du téléphone ou de l'ordinateur. */
 (function () {
   var CSS = '.csd-w{position:relative;display:block;min-width:0}' +
-    '.csd-w>input.csd-in{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;pointer-events:none!important;margin:0!important}' +
+    '.csd-w>input.csd-in{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;opacity:0!important;margin:0!important;padding:0!important;border:0!important;z-index:2;cursor:pointer;-webkit-appearance:none;appearance:none;font-size:16px}' +
     '.csd-b{display:flex;align-items:center;gap:8px;width:100%;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-appearance:none;appearance:none}' +
     '.csd-b .csd-ph{opacity:.55}.csd-b svg{flex:none;margin-left:auto;opacity:.6}';
   var ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>';
@@ -41,13 +41,12 @@
     var lab = el.id && document.querySelector('label[for="' + el.id + '"]');
     if (lab) b.setAttribute('aria-label', lab.textContent.trim());
     el.parentNode.insertBefore(w, el); w.appendChild(b); w.appendChild(el);
-    el.classList.add('csd-in'); el.tabIndex = -1;
+    el.classList.add('csd-in'); b.tabIndex = -1; b.setAttribute('aria-hidden', 'true');
     copy(r, b, el); show(el, b);
-    b.addEventListener('click', function () {
-      try { if (el.showPicker) { el.showPicker(); return; } } catch (e) { /* ignore */ }
-      // anciens navigateurs : on remontre le vrai champ
-      el.classList.remove('csd-in'); b.hidden = true; el.tabIndex = 0; el.focus();
-    });
+    // le vrai champ (invisible) est posé sur la case : un toucher ouvre le calendrier du téléphone ; sur ordinateur on l'ouvre aussi au clic
+    el.addEventListener('click', function () { try { if (el.showPicker) el.showPicker(); } catch (e) { /* ignore */ } });
+    el.addEventListener('focus', function () { b.style.outline = '2px solid currentColor'; b.style.outlineOffset = '1px'; });
+    el.addEventListener('blur', function () { b.style.outline = ''; });
     ['input', 'change', 'blur'].forEach(function (ev) { el.addEventListener(ev, function () { show(el, b); }); });
     el.addEventListener('invalid', function () { b.style.outline = '2px solid #e5484d'; b.style.outlineOffset = '1px'; setTimeout(function () { b.style.outline = ''; }, 2500); });
     window.addEventListener('resize', function () { copy(r, b, el); });

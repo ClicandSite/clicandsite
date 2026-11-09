@@ -28,6 +28,7 @@
     '.cf-pop h3{margin:0 0 8px;font-family:var(--display)}.cf-pop p{margin:0 0 16px;color:var(--muted)}' +
     '.cf-tag{position:fixed;left:12px;bottom:12px;z-index:2147482000;background:#16181f;color:#fff;font:700 12px/1 system-ui,sans-serif;padding:8px 12px;border-radius:999px;opacity:.9}' +
     '.embed .cf-tag{display:none}' +
+    '@media (min-width:861px){.stats:has(.stat[hidden]){grid-template-columns:repeat(3,1fr)}}' +
     '@media (max-width:860px){.cf-tag{bottom:84px}}';
   d.head.appendChild(css);
 
@@ -56,6 +57,9 @@
       box.append(a, lv); if (head) head.appendChild(box);
     }
   }
+
+  // 09/11/2026 (Anthony) : en Essentiel, pas de note Google nulle part (y compris le bandeau de chiffres du haut)
+  if (R < 2) qa('.stat').forEach(function (st) { if (/\d[,.]\d\s*\/\s*5|avis|google|note/i.test(st.textContent)) st.hidden = true; });
 
   // Boutons Réserver (paiement en ligne, Pro et plus) ou Ajouter au panier (Boutique)
   var cart = 0, cartB = null;

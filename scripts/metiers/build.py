@@ -1,6 +1,6 @@
 import re, json, html, base64, io, os, sys, subprocess, concurrent.futures as cf
 from PIL import Image
-sys.path.insert(0, '/tmp/nm')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from trades import T
 
 REPO = '/home/claude/mycreativesite'
@@ -47,7 +47,7 @@ def plan(t):
     return base, sty
 
 DATE = {'fleuriste': ('Retrait ou livraison le', 'datetime-local', '2027-01-15T10:30'), 'traiteur': ("Date de l'événement", 'date', '2027-06-12'),
-        'nautisme': ('Date', 'date', '2027-07-15'), 'photographe': ('Date souhaitée', 'date', '2027-06-12')}
+        'nautisme': ('Date', 'date', '2027-07-15'), 'photographe': ('Date souhaitée', 'date', '2027-06-12'), 'bijouterie': ('Rendez-vous le', 'datetime-local', '2027-01-15T15:00')}
 
 def fiche(it):
     d = {'desc': it[4], 'feats': '\n'.join(it[5]), 'photos': []}
@@ -223,7 +223,7 @@ def body(k, t):
     return ''.join(o)
 
 BRAND = {'autoecole': 'Auto-école du Port', 'coach': 'Studio Mouvement', 'photographe': 'Léa Duval Photographie', 'toiletteur': "L'Atelier des Pattes",
-         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades'}
+         'fleuriste': 'Fleurs de Mai', 'traiteur': 'Maison Émile Traiteur', 'nautisme': 'Cap Bleu Location', 'kine': 'Cabinet du Parc', 'dentiste': 'Cabinet dentaire des Arcades', 'bijouterie': 'Maison Arnaud Joaillier'}
 
 def build(k):
     t = T[k]; t['brand'] = BRAND[k]

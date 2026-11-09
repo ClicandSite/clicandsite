@@ -31,6 +31,7 @@
     nautisme: { lbl: ['Bateau', 'Boat'], cta: ['Réserver', 'Book'], d: ['Le bateau', 'The boat'], f: ['Équipements', 'Equipment'], ph: ['Ex. : 4 adultes, samedi à la journée.', 'e.g. 4 adults, Saturday, full day.'] },
     kine: { lbl: ['Prise en charge', 'Care'], cta: ['Prendre rendez-vous', 'Book an appointment'], d: ['Description', 'Description'], f: ['Déroulé', 'How it works'], ph: ['Ex. : ordonnance de 10 séances, disponible en fin de journée.', 'e.g. prescription for 10 sessions, available late afternoon.'] },
     dentiste: { lbl: ['Acte', 'Treatment'], cta: ['Prendre rendez-vous', 'Book an appointment'], d: ['Description', 'Description'], f: ['Déroulé', 'How it works'], ph: ['Ex. : nouveau patient, disponible le matin.', 'e.g. new patient, available in the morning.'] },
+    bijouterie: { lbl: ['Pièce', 'Item'], cta: ['Prendre rendez-vous', 'Book an appointment'], d: ['La pièce', 'The item'], f: ['Détails', 'Details'], ph: ['Ex. : taille de doigt 52, budget autour de 1 000 €.', 'e.g. ring size 52, budget around €1,000.'] },
     autre: { lbl: ['Concerné', 'About'], cta: ['Je suis intéressé', 'I\'m interested'], d: ['Description', 'Description'], f: ['Détails', 'Details'], ph: ['Votre message', 'Your message'] }
   };
   function trade(card) { if (card && card.classList.contains('prop')) return 'immobilier'; var t = document.documentElement.getAttribute('data-trade'); if (t && CFG[t]) return t; return document.getElementById('v-mk') ? 'garage' : 'autre'; }

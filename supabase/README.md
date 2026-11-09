@@ -62,3 +62,8 @@ Projet Supabase dédié : `avcynjwcyygygkjuxsdt` (compte contact@mycreativesite.
 - Kiné et dentiste : pas d'avis clients (section « Informations pratiques »), honoraires « conventionné », devis avant prothèse, aucune promesse de résultat.
 - Migration `20261109_metiers_lot2.sql` : contraintes `trade`, agenda, commande, `search_pages`, métiers du robot et des mails.
 - Robot : NAF par métier ; filtre par nom (KEEP/DROP) pour les codes larges (toilettage 96.09Z, bateaux 77.21Z, kiné 86.90E, fleuristes 47.76Z) ; réseaux exclus.
+
+## Bijouterie-horlogerie et liste de métiers d'Anthony (09/11/2026)
+- Modèle `modeles/bijouterie.html` (scripts/metiers, clé `bijouterie`), page SEO `site-internet-bijouterie/`, article « les indispensables », migration `20261109_metier_bijouterie.sql`.
+- Robot de recherche : nouvelles clés (paysagiste, étanchéité, serrurier, multiservice, dépanneur auto, beauté, tatoueur, bien-être, restauration rapide, salon de thé, boulangerie, boucherie, poissonnerie, épicerie fine, réparation informatique et électroménager, diagnostiqueur, décoration, plongée, vidéo) rattachées à un modèle existant (`MODEL`) ; le métier précis va dans `segment` (`segOf`) et le mail le reprend (`SEG` dans cs-prospecting).
+- Migration `prospection_liste_anthony` : métiers depannage, beaute, bienetre, boulangerie ajoutés aux prospects et aux envois.

@@ -2,7 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 // MyCreativeSite — robot de recherche de pros (06/11/2026, méthode du robot Abracadeal).
 // mode "search" : annuaire officiel des entreprises (recherche-entreprises.api.gouv.fr, gratuit), France entière,
 //    département par département et page par page : VTC / taxis, restaurants, garages, agences immobilières, bâtiment, vétérinaires,
-//    auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, loueurs de bateaux, kinés, dentistes.
+//    auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, loueurs de bateaux, kinés, dentistes, bijouteries,
+//    et (09/11/2026) la liste d'Anthony rattachée aux modèles existants : paysagistes, serruriers, beauté, bien-être, snacks, commerces de bouche…
 // mode "crawl" : 1) devine le site des pros (nom de domaine vérifié) ; 2) lit l'accueil puis les pages contact /
 //    mentions légales (5 pages max) pour relever l'e-mail et le téléphone publiés, et classe le site (daté / moderne / en panne).
 //    (OpenStreetMap / Overpass est saturé ou refuse les serveurs Supabase.)
@@ -32,12 +33,82 @@ const NAF: Record<string, string> = {
   nautisme: "77.21Z,50.10Z",
   kine: "86.90E",
   dentiste: "86.23Z",
+  bijouterie: "47.77Z,95.25Z",
+  // 09/11/2026 : liste d'Anthony — clés de recherche rattachées à un modèle existant (voir MODEL), le métier précis va dans « segment »
+  etancheite: "43.99A",
+  paysagiste: "81.30Z",
+  serrurier: "43.32B",
+  multiservice: "81.10Z",
+  depanneur_auto: "52.21Z",
+  beaute: "96.02A,96.02B",
+  tatoueur: "96.09Z",
+  bienetre: "96.04Z,86.90F",
+  restorapide: "56.10C",
+  salon_the: "56.30Z",
+  boulangerie: "10.71C,10.71D",
+  boucherie: "47.22Z",
+  poissonnerie: "47.23Z",
+  epicerie_fine: "47.29Z",
+  informatique: "95.11Z,95.12Z",
+  electromenager: "95.22Z",
+  diagnostic: "71.20B",
+  decoration: "74.10Z",
+  plongee: "93.29Z,85.51Z",
+  video: "59.11B",
 };
+// Modèle de site (colonne trade) de chaque clé de recherche (par défaut : la clé elle-même)
+const MODEL: Record<string, string> = {
+  etancheite: "batiment", paysagiste: "batiment", diagnostic: "batiment", decoration: "batiment",
+  serrurier: "depannage", multiservice: "depannage", depanneur_auto: "depannage", informatique: "depannage", electromenager: "depannage",
+  tatoueur: "beaute", restorapide: "restaurant", salon_the: "restaurant",
+  boucherie: "boulangerie", poissonnerie: "boulangerie", epicerie_fine: "boulangerie",
+  plongee: "nautisme", video: "photographe",
+};
+// Métier précis (segment) : d'après le code NAF et le nom, pour un mail qui parle du bon métier
+function segOf(key: string, naf: string, name: string): string | null {
+  const n = name.toLowerCase(), c = naf.replace(/\./g, "");
+  switch (key) {
+    case "batiment":
+      if (/solaire|photovolta/.test(n)) return "solaire";
+      if (/piscin/.test(n)) return "pisciniste";
+      if (/fa[cç]ad/.test(n)) return "facadier";
+      if (/clim/.test(n)) return "climaticien";
+      return ({ "4321A": "electricien", "4322A": "plombier", "4322B": "chauffagiste", "4331Z": "platrier", "4332A": "menuisier", "4333Z": "carreleur", "4334Z": "peintre", "4339Z": "renovation", "4391B": "couvreur", "4399C": "macon", "4120A": "renovation" } as Record<string, string>)[c] || null;
+    case "paysagiste": return /jardin/.test(n) && !/paysag/.test(n) ? "jardinier" : "paysagiste";
+    case "beaute":
+      if (/barb/.test(n)) return "barbier";
+      if (/ongl|nail/.test(n)) return "ongles";
+      if (/maquill|make.?up/.test(n)) return "maquilleuse";
+      return c === "9602A" ? "coiffeur" : "institut";
+    case "bienetre": return /\bspa\b|thalasso|hammam/.test(n) ? "spa" : "masseur";
+    case "coach": return /yoga|pilates/.test(n) ? "yoga" : null;
+    case "restorapide": return /pizz/.test(n) ? "pizzeria" : /food.?truck|camion/.test(n) ? "foodtruck" : "snack";
+    case "traiteur": return /\bchef\b/.test(n) ? "chef_domicile" : null;
+    case "boulangerie": return c === "1071D" ? "patisserie" : null;
+    case "toiletteur": return /[ée]ducat|dressage|comportement/.test(n) ? "educateur_canin" : /pet.?sit|garde/.test(n) ? "pet_sitter" : null;
+    case "nautisme": return /jet.?ski/.test(n) ? "jetski" : /skipper/.test(n) ? "skipper" : null;
+    case "garage": return /carross/.test(n) ? "carrosserie" : /lavage|wash|detail|clean/.test(n) ? "lavage" : null;
+    case "decoration": return /home.?stag/.test(n) ? "home_staging" : /architect/.test(n) ? "archi_interieur" : "decorateur";
+    case "plongee": case "video": case "tatoueur": case "salon_the": case "boucherie": case "poissonnerie": case "epicerie_fine": case "etancheite":
+    case "serrurier": case "multiservice": case "depanneur_auto": case "informatique": case "electromenager": case "diagnostic":
+      return key;
+  }
+  return null;
+}
 // Codes NAF trop larges : on ne garde que les noms qui correspondent au métier (ou on écarte ceux qui n'en sont pas)
 const KEEP: Record<string, RegExp> = {
   toiletteur: /toilett|canin|chien|dog|pet|groom|poil|patte|toutou|f[ée]lin/i,
   nautisme: /bateau|boat|nauti|marin|jet.?ski|yacht|voil|plaisance|sea\b|mer\b|oc[ée]an|croisi|skipper|kayak|paddle|port\b/i,
   kine: /kin[ée]|physio|r[ée][ée]ducation/i,
+  tatoueur: /tatou|tattoo|\bink\b|piercing/i,
+  depanneur_auto: /d[ée]pann|remorq|fourri[eè]re|assistance auto/i,
+  salon_the: /salon de th[ée]|tea.?room|tea.?time|th[ée]i[eè]re/i,
+  epicerie_fine: /[ée]picerie fine|fine|d[ée]licat|fromag|cavist|truffe|terroir|traiteur|italia|bio\b|gourmet/i,
+  diagnostic: /diagnos|dpe\b|amiante/i,
+  decoration: /d[ée]co|int[ée]rieur|home.?stag|agencement|design/i,
+  plongee: /plong|diving|subaqua|apn[ée]e/i,
+  video: /vid[ée]o|film|drone|prod|motion/i,
+  bienetre: /mass|ost[ée]o|sophro|naturo|r[ée]flexo|shiatsu|spa\b|hammam|bien.?[êe]tre|relax|ayurv/i,
 };
 const DROP: Record<string, RegExp> = { fleuriste: /animal|animaux|aquari|zoo|graine|jardinerie|pet\b|croquette/i };
 // Chaînes et réseaux : ils ont déjà un site national, inutile de les démarcher.
@@ -72,14 +143,15 @@ async function sirene(dept: string, trade: string, page: number) {
       const full = name + " " + (res.nom_complet || "");
       if (KEEP[trade] && !KEEP[trade].test(full)) continue;
       if (DROP[trade] && DROP[trade].test(full)) continue;
+      const naf = e.activite_principale || res.activite_principale || "";
       rows.push({
-        source: "sirene", source_id: "siret:" + e.siret, siret: e.siret, trade, name,
+        source: "sirene", source_id: "siret:" + e.siret, siret: e.siret, trade: MODEL[trade] || trade, name,
         address: (e.adresse || "").replace(new RegExp("\\s*" + e.code_postal + ".*$"), "").trim() || null,
         postcode: e.code_postal, city: e.libelle_commune ? titleCase(e.libelle_commune) : null,
         lat: e.latitude ? +e.latitude : null, lon: e.longitude ? +e.longitude : null,
         phone: null, email: null, website: null,
         date_creation: res.date_creation || e.date_creation || null,
-        segment: trade === "garage" ? (/^45\.11/.test(e.activite_principale || res.activite_principale || "") ? "concession" : /^45\.40/.test(e.activite_principale || res.activite_principale || "") ? "moto" : "garage") : trade === "immobilier" ? "immobilier" : null,
+        segment: trade === "garage" ? (/^45\.11/.test(naf) ? "concession" : /^45\.40/.test(naf) ? "moto" : segOf(trade, naf, full) || "garage") : trade === "immobilier" ? "immobilier" : segOf(trade, naf, full),
         brand: CHAINS.test(name) || CHAINS.test(res.nom_complet || "") || (res.nombre_etablissements_ouverts || 0) > 5,
       });
     }

@@ -40,12 +40,46 @@ const TRADE: Record<string, { label: string; page: string; pack: boolean; plus: 
   nautisme: { label: "loueur de bateaux", page: "/site-internet-location-bateau/", pack: false, plus: "la réservation de vos bateaux en ligne et vos tarifs par sortie" },
   kine: { label: "cabinet de kinésithérapie", page: "/site-internet-kinesitherapeute/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
   dentiste: { label: "cabinet dentaire", page: "/site-internet-dentiste/", pack: false, plus: "la prise de rendez-vous en ligne et les informations pratiques pour vos patients" },
+  bijouterie: { label: "bijouterie", page: "/site-internet-bijouterie/", pack: false, plus: "votre sélection de bijoux et de montres, les tarifs de votre atelier et la prise de rendez-vous en ligne" },
+  depannage: { label: "artisan dépanneur", page: "/site-internet-plombier-electricien/", pack: false, plus: "un bouton d'appel direct, votre zone d'intervention et un formulaire de demande d'intervention" },
+  beaute: { label: "salon de beauté", page: "/site-internet-coiffeur-institut-beaute/", pack: false, plus: "la prise de rendez-vous en ligne, vos prestations et vos tarifs" },
+  bienetre: { label: "praticien du bien-être", page: "/site-internet-masseur-osteopathe-bien-etre/", pack: false, plus: "la prise de rendez-vous en ligne, vos soins et vos tarifs" },
+  boulangerie: { label: "boulangerie", page: "/site-internet-boulangerie/", pack: false, plus: "vos produits du moment en photos et la commande à retirer en boutique" },
 };
+// 09/11/2026 (liste d'Anthony) : le métier précis (segment) remplace le libellé générique, et parfois la phrase sur le contenu du site
+const SEG: Record<string, { label: string; plus?: string }> = {
+  plombier: { label: "plombier" }, electricien: { label: "électricien" }, chauffagiste: { label: "chauffagiste" }, climaticien: { label: "climaticien" },
+  platrier: { label: "plâtrier" }, menuisier: { label: "menuisier" }, carreleur: { label: "carreleur" }, peintre: { label: "peintre en bâtiment" },
+  renovation: { label: "entreprise de rénovation" }, couvreur: { label: "couvreur" }, macon: { label: "maçon" }, solaire: { label: "installateur de panneaux solaires" },
+  pisciniste: { label: "pisciniste" }, facadier: { label: "façadier" }, etancheite: { label: "entreprise d'étanchéité" },
+  paysagiste: { label: "paysagiste" }, jardinier: { label: "jardinier" }, diagnostic: { label: "diagnostiqueur immobilier", plus: "vos diagnostics, vos tarifs et un formulaire de demande de devis" },
+  decorateur: { label: "décorateur d'intérieur" }, archi_interieur: { label: "architecte d'intérieur" }, home_staging: { label: "home stager" },
+  serrurier: { label: "serrurier" }, multiservice: { label: "dépanneur multiservice" }, depanneur_auto: { label: "dépanneur automobile" },
+  informatique: { label: "réparateur informatique" }, electromenager: { label: "réparateur d'électroménager" },
+  carrosserie: { label: "carrosserie", plus: "la prise de rendez-vous en ligne, vos prestations et un formulaire de devis avec photos" },
+  lavage: { label: "centre de lavage", plus: "vos formules de lavage et de detailing, vos tarifs et la prise de rendez-vous en ligne" },
+  coiffeur: { label: "salon de coiffure" }, barbier: { label: "barbier" }, ongles: { label: "prothésiste ongulaire" }, institut: { label: "institut de beauté" },
+  maquilleuse: { label: "maquilleuse" }, tatoueur: { label: "tatoueur", plus: "vos réalisations en photos, la prise de rendez-vous et vos informations pratiques" },
+  spa: { label: "spa" }, masseur: { label: "praticien du bien-être" }, yoga: { label: "professeur de yoga", plus: "votre planning de cours, vos formules et la réservation en ligne" },
+  snack: { label: "snack", plus: "votre carte en ligne et la commande à emporter" }, pizzeria: { label: "pizzeria", plus: "votre carte en ligne et la commande à emporter" },
+  foodtruck: { label: "food truck", plus: "votre carte, vos emplacements de la semaine et la commande à emporter" }, salon_the: { label: "salon de thé" },
+  chef_domicile: { label: "chef à domicile", plus: "vos menus en photos et les demandes de devis en ligne" },
+  patisserie: { label: "pâtisserie" }, boucherie: { label: "boucherie", plus: "vos produits et vos colis en photos et la commande à retirer en boutique" },
+  poissonnerie: { label: "poissonnerie", plus: "votre arrivage du jour et la commande à retirer en boutique" }, epicerie_fine: { label: "épicerie fine" },
+  educateur_canin: { label: "éducateur canin", plus: "vos séances, vos tarifs et la prise de rendez-vous en ligne" },
+  pet_sitter: { label: "pet sitter", plus: "vos prestations de garde, vos tarifs et les demandes de réservation en ligne" },
+  jetski: { label: "loueur de jet-skis" }, skipper: { label: "skipper", plus: "vos sorties en mer, vos tarifs et la réservation en ligne" },
+  plongee: { label: "club de plongée", plus: "vos baptêmes, formations et sorties, et la réservation en ligne" },
+  video: { label: "vidéaste", plus: "vos vidéos en grand et les demandes de date en ligne" },
+};
+const FEM = /^(clinique|agence|auto-école|concession|bijouterie|boulangerie|carrosserie|entreprise|pizzeria|pâtisserie|boucherie|poissonnerie|épicerie|maquilleuse|prothésiste)/;
 function template(p: { name: string; trade: string; city: string; site_status: string | null; segment: string | null; date_creation?: string | Date | null }): Tpl {
   let t = TRADE[p.trade] || TRADE.restaurant;
   // 09/11/2026 (Anthony) : garage qui ne fait que l'entretien → version atelier, formules dès 29 € (le Pack reste pour ceux qui vendent des véhicules)
-  if (p.trade === "garage" && (p.segment === "garage" || !p.segment)) t = { ...t, pack: false, plus: "la prise de rendez-vous atelier en ligne (vidange, pneus, freins) et vos forfaits avec leurs tarifs" };
+  if (p.trade === "garage" && p.segment !== "concession" && p.segment !== "moto") t = { ...t, pack: false, plus: "la prise de rendez-vous atelier en ligne (vidange, pneus, freins) et vos forfaits avec leurs tarifs" };
   if (p.trade === "garage" && (p.segment === "concession" || p.segment === "moto")) t = { ...t, label: p.segment === "moto" ? "concession moto" : "concession", plus: "vos véhicules en vente, une page par véhicule, diffusés automatiquement sur Abracadeal" };
+  const sg = p.segment ? SEG[p.segment] : undefined;
+  if (sg) t = { ...t, label: sg.label, plus: sg.plus || t.plus };
   let page = t.page;
   if (p.segment === "concession") page = "/site-internet-concession-automobile/";
   if (p.segment === "moto") page = "/site-internet-concession-moto/";
@@ -69,7 +103,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "",
     `Je m'appelle Anthony, je dirige MyCreativeSite : nous créons des sites internet pour les professionnels, livrés en 48 h. Vous les modifiez vous-même en un clic depuis votre téléphone (photos, textes, horaires), et nous gardons la main pour toute réparation.`,
     "",
-    `Pour ${/^(clinique|agence|auto-école|concession)/.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
+    `Pour ${FEM.test(t.label) ? "une" : "un"} ${t.label}, le site comprend ${t.plus}.`,
     "",
     price,
     "",

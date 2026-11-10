@@ -159,7 +159,7 @@
     });
     var P = $('panel'), sec = b.parentNode, help = P.querySelector(':scope > p.hint:last-child'); if (help && sec) P.insertBefore(sec, help);
   }
-  if (typeof window.buildForms === 'function') { var _bf = window.buildForms; window.buildForms = function () { var r = _bf.apply(this, arguments); try { freeSection(); } catch (e) {} return r; }; }
+  if (typeof window.buildForms === 'function') { var _bf = window.buildForms; window.buildForms = function () { var r = _bf.apply(this, arguments); try { freeSection(); } catch (e) {} try { drawSty(); } catch (e) {} return r; }; }
   window.CSInline = { rebuildPanel: rebuildPanel, tag: function () { tag(D()); } };
 
   /* ---------- Listes : on passe par les boutons du menu de gauche (mêmes règles, mêmes maximums) ---------- */
@@ -309,7 +309,8 @@
   function drawToggle() {
     var b = $('ieTg'); if (!b) return;
     b.setAttribute('aria-pressed', ieOn ? 'true' : 'false');
-    b.innerHTML = ieOn ? '<span aria-hidden="true">👁</span> Voir en visiteur' : '<span aria-hidden="true">✏️</span> Modifier en cliquant';
+    b.innerHTML = ieOn ? '<span aria-hidden="true">👁</span><span class="lg"> Voir en visiteur</span>' : '<span aria-hidden="true">✏️</span><span class="lg"> Modifier en cliquant</span>';
+    b.setAttribute('aria-label', ieOn ? 'Voir en visiteur' : 'Modifier en cliquant');
     b.title = ieOn ? 'Voir le site comme vos visiteurs (liens, formulaires et fiches actifs)' : 'Cliquez ensuite sur un texte ou une photo du site pour le modifier';
     var s = document.querySelector('.pv-bar .status');
     if (s) s.textContent = ieOn ? 'Cliquez sur un texte ou une photo pour le modifier' : 'Le site comme le voient vos visiteurs';
@@ -320,17 +321,43 @@
     if (d) { if (!v) { qa(d, '[data-cse]').forEach(function (e) { e.removeAttribute('contenteditable'); }); d.documentElement.classList.remove('cs-ie'); hideUi(d); } else tag(d); }
     drawToggle();
   }
+  /* 10/11/2026 (Anthony) : choisir le style sans que tout défile. Chaque changement de style ramène l'aperçu en haut
+     du site (même écran pour comparer), et des flèches « ‹ Style › » dans la barre de l'aperçu font passer d'un style à l'autre. */
+  function styleBtns() { return qa(document, '#panel .styles button'); }
+  function styleTop() { var d = D(); if (!d || !d.defaultView) return; var go = function () { try { d.defaultView.scrollTo(0, 0); } catch (e) {} }; go(); setTimeout(go, 60); setTimeout(go, 250); setTimeout(go, 600); }
+  function drawSty() {
+    var lab = $('ieStyN'); if (!lab) return;
+    var cur = styleBtns().filter(function (b) { return b.getAttribute('aria-pressed') === 'true'; })[0];
+    lab.textContent = cur ? cur.textContent.replace(/\s*★\s*$/, '') : 'Style';
+  }
+  function stepStyle(dir) {
+    var all = styleBtns(); if (!all.length) return;
+    var ok = all.filter(function (b) { return !/Réservé/.test(b.title || ''); });
+    var i = all.findIndex(function (b) { return b.getAttribute('aria-pressed') === 'true'; });
+    var j = ok.indexOf(all[i]); j = j < 0 ? 0 : (j + dir + ok.length) % ok.length;
+    ok[j].click(); drawSty();
+  }
   function init() {
     var bar = document.querySelector('.pv-bar'); if (!bar || $('ieTg')) return;
     var b = document.createElement('button'); b.type = 'button'; b.id = 'ieTg'; b.className = 'ie-tg';
     var st = bar.querySelector('.status'); bar.insertBefore(b, st ? st.nextSibling : null);
     b.addEventListener('click', function () { setOn(!ieOn); });
+    var sty = document.createElement('div'); sty.className = 'ie-sty'; sty.setAttribute('role', 'group'); sty.setAttribute('aria-label', 'Style du site');
+    sty.innerHTML = '<button type="button" data-d="-1" aria-label="Style précédent">‹</button><span id="ieStyN" title="Style du site">Style</span><button type="button" data-d="1" aria-label="Style suivant">›</button>';
+    sty.addEventListener('click', function (e) { var x = e.target.closest('button[data-d]'); if (x) stepStyle(+x.getAttribute('data-d')); });
+    var seg = bar.querySelector('.seg'); bar.insertBefore(sty, seg ? seg.nextSibling : bar.firstChild);
+    $('panel').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.styles button')) { styleTop(); setTimeout(drawSty, 0); } });
     var css = document.createElement('style');
     css.textContent = '.ie-tg{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:600 .85rem inherit;font-family:inherit;border-radius:999px;padding:7px 12px;cursor:pointer;white-space:nowrap}' +
       '.ie-tg[aria-pressed="false"]{background:#2563EB;border-color:#2563EB;color:#fff}' +
       '.pv-bar .status{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
       '.ie-tg+.pv-x{margin-left:0}' +
-      '@media (max-width:860px){.pv-bar{flex-wrap:wrap}.pv-bar .status{order:3;flex:1 1 100%;font-size:.8rem}.ie-tg{margin-left:0}.ie-tg+.pv-x{margin-left:auto}}';
+      '.ie-sty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--paper);overflow:hidden;flex:none}' +
+      '.ie-sty button{border:0;background:none;font:700 1.15rem/1 inherit;font-family:inherit;padding:6px 11px;cursor:pointer;color:var(--ink)}.ie-sty button:hover{background:var(--soft)}' +
+      '.ie-sty span{font-weight:600;font-size:.85rem;min-width:96px;max-width:150px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}' +
+      '.preview{grid-template-columns:minmax(0,1fr)}.pv-bar{min-width:0}.pv-bar .seg,.ie-tg{flex:none}' +
+      '@media (max-width:1180px){.ie-tg .lg{display:none}.ie-tg{padding:7px 11px}}' +
+      '@media (max-width:860px){.ie-sty span{min-width:0;max-width:120px}.pv-bar{flex-wrap:wrap}.pv-bar .status{order:3;flex:1 1 100%;font-size:.8rem}.ie-tg{margin-left:0}.ie-tg+.pv-x{margin-left:auto}}';
     document.head.appendChild(css);
     drawToggle();
     pv.addEventListener('load', function () { setTimeout(hook, 0); });

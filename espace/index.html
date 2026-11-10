@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0300">
+<meta name="cs-build" content="20261110-0310">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -286,6 +286,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .hact svg{width:40px;height:40px;flex:none;padding:9px;border-radius:10px;background:var(--soft);color:var(--brand);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hact span{display:grid;gap:2px}.hact b{font-size:.95rem}.hact small{font-size:.8rem;color:var(--muted)}
 .mbadv summary{cursor:pointer;font-size:.85rem;color:var(--brand);font-weight:600}.mbbar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin:4px 0}.mbbar i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
+.admbar{background:#FFF4E5!important;border-color:#F5C27A!important}.admbar a{font-weight:700}
 .crmwhy{display:block}.crmwhy summary{cursor:pointer;list-style:none}.crmwhy summary::-webkit-details-marker{display:none}.crmwhy summary::after{content:" +";color:var(--muted)}.crmwhy[open] summary::after{content:" –"}
 .crmwhy ul{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem;color:var(--muted)}.crmwhy li b{color:var(--ink)}
 label.chk{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;font-weight:500;color:var(--ink);margin:0;cursor:pointer}label.chk input{width:auto;margin-top:3px;accent-color:var(--brand)}
@@ -392,6 +393,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <button class="btn primary" id="save" type="button" disabled>Enregistrer</button>
       <button class="btn sm hide-m" id="logout" type="button" hidden>Se déconnecter</button>
     </div>
+    <div class="demo-bar admbar" id="admBar" hidden></div>
     <div class="demo-bar" id="draftBar" hidden><span id="draftTxt"></span><a id="draftView" style="font-weight:700">Voir l'aperçu</a><a id="draftPay" class="btn primary sm" target="_blank" rel="noopener" hidden>Valider et payer</a></div>
     <div class="demo-bar" id="demoBar" hidden>
       <span><b>Démo</b> : essayez librement, rien n'est enregistré.</span>
@@ -1134,6 +1136,8 @@ async function openSite(s){
   { const dm=(s.domain||'').replace(/^https?:\/\//,'').replace(/\/.*$/,''); const real=dm&&!/\.mycreativesite\.fr$/i.test(dm)&&s.status==='en_ligne';
     $('viewSite').hidden=false; $('viewSite').href=real?'https://'+dm:'/apercu/?s='+encodeURIComponent(s.slug); $('viewSite').textContent=real?'Voir mon site':'Voir l\'aperçu de mon site'; }
   $('undo').hidden=DEMO;
+  // 10/11/2026 (Anthony) : l'équipe MyCreativeSite ouvre l'espace d'un client pour réparer ou faire à sa place
+  { const ab=$('admBar'); ab.hidden=!s.as_admin; if(s.as_admin) ab.innerHTML='<span><b>Mode équipe</b> : vous êtes dans l\'espace de <b>'+escH(s.name)+'</b>'+(s.owner_email?' (client : <span style="user-select:all">'+escH(s.owner_email)+'</span>)':'')+'. Ce que vous enregistrez est mis en ligne sur son site.</span>'+(s.owner_email?'<a href="mailto:'+escH(s.owner_email)+'?subject='+encodeURIComponent('Votre site '+s.name)+'">Écrire au client</a>':'')+'<a href="/admin/">Retour à l\'admin</a>'; }
   setStatus('Chargement…');
   const tok=openSite.tok=(openSite.tok||0)+1;
   await loadTemplate(s.trade,(s.content&&s.content.style)||s.style);
@@ -1858,7 +1862,7 @@ async function boot(){
   if(sites.length>1){ const sp=$('sitePick'); sp.hidden=false; $('siteName').hidden=true; sp.textContent=''; sites.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sp.appendChild(o); }); }
   // 10/11/2026 : arrivée depuis son-domaine/admin (?site=identifiant) : on ouvre ce site-là
   const want=params.get('site'), first=(want&&sites.find(s=>s.slug===want))||sites[0];
-  if(sites.length>1) $('sitePick').value=first.id;
+  if(sites.length>1){ $('sitePick').value=first.id; if(window.CS_ADMIN) [...$('sitePick').options].forEach(o=>{ const x=sites.find(z=>z.id===o.value); if(x) o.textContent=x.name+(x.as_admin?' · '+(x.owner_email||''):''); }); }
   fit(); await openSite(first);
 }
 boot();
@@ -1900,7 +1904,9 @@ boot();
       } });
     list.appendChild(document.createElement('hr'));
     const vs=$('viewSite'); if(vs&&!vs.hidden){ const a=document.createElement('a'); a.href=vs.href; a.target='_blank'; a.rel='noopener'; a.innerHTML=svg('view')+'<span>'+vs.textContent+'</span>'; list.appendChild(a); }
-    const h=document.createElement('a'); h.href='mailto:contact@mycreativesite.fr'; h.innerHTML=svg('mail')+'<span>Nous contacter</span>'; list.appendChild(h);
+    const h=document.createElement('a'); const ref=(typeof site!=='undefined'&&site&&!DEMO)?site:null;
+    h.href='mailto:contact@mycreativesite.fr?subject='+encodeURIComponent('Demande d\'aide'+(ref?' · '+ref.name+' ('+ref.slug+')':''))+'&body='+encodeURIComponent('Bonjour,\n\nDécrivez ce que vous voulez faire ou ce qui ne marche pas (une capture d\'écran aide beaucoup) :\n\n\n\n—\nSite : '+(ref?ref.name+' · '+ref.slug+(ref.domain?' · '+ref.domain:''):'')+'\nNotre équipe peut intervenir directement sur votre site si besoin.');
+    h.innerHTML=svg('mail')+'<span>Demander de l\'aide</span>'; list.appendChild(h);
     const lo=$('logout'); if(lo&&!lo.hidden) add(svg('out')+'<span>Se déconnecter</span>',()=>lo.click());
     // en-tête de page
     const cur=vseg.querySelector('button[aria-pressed="true"]'), m=cur?cur.dataset.mode:'edit';

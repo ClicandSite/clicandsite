@@ -107,7 +107,7 @@ html.bnopen,html.bnopen body{overflow:hidden}
 .bntip{font-size:.82rem;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
 .bnzoom{display:grid;gap:4px;font-size:.82rem;font-weight:600}.bnzoom input{width:100%;accent-color:var(--brand)}.bnzoom small{display:flex;justify-content:space-between;font-weight:400;color:var(--muted);font-size:.74rem}.bnzoom i{font-style:normal}
 .bnacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-@media (min-width:861px){.bngrid>.bncol:last-child{position:sticky;top:12px;align-self:start}}
+@media (min-width:861px){.bngrid>.bncol:last-child{position:sticky;top:112px;align-self:start}}
 .bnsub{margin:-4px 0 12px;color:var(--muted);font-size:.88rem}
 .bnprev{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);gap:14px;align-items:start}
 .bnpv{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
@@ -456,7 +456,7 @@ function bannerManager(c,d,onClose){
   const heroEl=()=>d.querySelector('.photo.hero');
   const url=()=>c.photos.hero||currentImg(heroEl());
   const tx=k=>(c.text&&typeof c.text[k]==='string'&&c.text[k])||(d.querySelector({kicker:'.photo.hero .kicker',title:'.photo.hero h1',subtitle:'.photo.hero p'}[k])?.textContent||'').trim();
-  const btnTxt=(d.querySelector('.photo.hero .btn, .hero .btn')?.textContent||'Réserver').trim();
+  const btnTxt=((d.querySelector('.photo.hero .btn, .hero .btn, .photo.hero a')?.textContent||'').trim())||'Nous contacter';
   let nat=null, mode='m';
   const ov=document.createElement('div'); ov.className='bnov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-label','Gérer la bannière');
   ov.innerHTML=`<div class="bnbox">
@@ -489,17 +489,29 @@ function bannerManager(c,d,onClose){
   const draw=()=>{
     const u=url(); const bg=u?'url("'+u.replace(/"/g,'%22')+'")':'';
     img.style.backgroundImage=bg; $$('.bnreset').hidden=!c.photos.hero;
+    ['d','m'].forEach(kk=>{ const e=shots[kk]; e.querySelector('small').textContent=tx('kicker'); e.querySelector('strong').textContent=tx('title'); e.querySelector('p').textContent=tx('subtitle'); e.querySelector('.bnb').textContent=btnTxt; if(!nat){ e.style.backgroundImage=bg; e.style.backgroundSize='cover'; e.style.backgroundPosition='50% 50%'; } });
     if(!nat){ rect.hidden=true; return; } rect.hidden=false;
     img.style.aspectRatio=nat[0]+'/'+nat[1];
     const a=get(mode), k=scale(mode,a[2]), F=BN[mode], rw=Math.min(100,F.w/k/nat[0]*100), rh=Math.min(100,F.h/k/nat[1]*100);
     rect.style.width=rw+'%'; rect.style.height=rh+'%'; rect.style.left=(100-rw)*a[0]/100+'%'; rect.style.top=(100-rh)*a[1]/100+'%';
     rect.className='bnrect '+mode; zoom.value=a[2];
-    ['d','m'].forEach(kk=>{ const e=shots[kk], b=get(kk), sc=scale(kk,b[2]), F2=BN[kk], q=e.clientWidth/F2.w;
-      e.style.backgroundImage=bg; e.style.backgroundSize=Math.round(nat[0]*sc*q)+'px '+Math.round(nat[1]*sc*q)+'px'; e.style.backgroundPosition=b[0]+'% '+b[1]+'%';
-      e.querySelector('small').textContent=tx('kicker'); e.querySelector('strong').textContent=tx('title'); e.querySelector('p').textContent=tx('subtitle'); e.querySelector('.bnb').textContent=btnTxt; });
+    ['d','m'].forEach(kk=>{ const e=shots[kk], b=get(kk), sc=scale(kk,b[2]), F2=BN[kk];
+      // tailles en % du cadre : ne dépend plus de la largeur affichée (0 sous Safari pendant l'ouverture)
+      e.style.backgroundImage=bg; e.style.backgroundSize=(nat[0]*sc/F2.w*100).toFixed(2)+'% '+(nat[1]*sc/F2.h*100).toFixed(2)+'%'; e.style.backgroundPosition=b[0]+'% '+b[1]+'%'; });
     ov.querySelectorAll('.bnseg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===mode?'true':'false'));
   };
-  const load=()=>{ const u=url(); nat=null; if(!u){ draw(); return; } const im=new Image(); im.onload=()=>{ nat=[im.naturalWidth,im.naturalHeight]; draw(); }; im.src=u; };
+  // 10/11/2026 : sous Safari la taille de la photo n'arrivait pas toujours (aperçus noirs, pas de cadre) :
+  // plusieurs moyens de la lire, et à défaut un format standard pour que tout reste utilisable.
+  let ltok=0;
+  const load=()=>{ const u=url(), tok=++ltok; nat=null; if(!u){ draw(); return; }
+    const ok=(w,h)=>{ if(tok!==ltok||nat||!(w>0&&h>0)) return; nat=[w,h]; draw(); };
+    const im=new Image(); im.decoding='async';
+    im.onload=()=>ok(im.naturalWidth,im.naturalHeight);
+    im.onerror=()=>{ if(tok===ltok&&!nat){ nat=[1600,1000]; draw(); } };
+    im.src=u; if(im.complete) ok(im.naturalWidth,im.naturalHeight);
+    if(im.decode) im.decode().then(()=>ok(im.naturalWidth,im.naturalHeight)).catch(()=>{});
+    setTimeout(()=>{ if(tok===ltok&&!nat){ nat=im.naturalWidth?[im.naturalWidth,im.naturalHeight]:[1600,1000]; draw(); } },2500);
+    draw(); };
   const changed=()=>{ draw(); refresh(); markDirty(); };
   // déplacer le cadre
   let st=null;

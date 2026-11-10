@@ -136,6 +136,7 @@ Deno.serve(async (req) => {
     }
     const site = String(b.site || "");
     if (!site || !(await canEdit(u.id, site))) return json({ error: "Accès refusé" }, 403);
+    if (b.action === "help") return json(await help(site, u.email, String(b.message || ""), String(b.page || "")));
     const box = await boxOf(site); if (!box) return json({ error: "Connectez d'abord votre boîte mail." }, 400);
 
     if (b.action === "test") {
@@ -191,4 +192,32 @@ async function run(c: any) {
   const done = Number(st.rest) === 0;
   await sql`update clicandsite.mail_campaigns set sent=${Number(st.sent)}, failed=${Number(st.failed)}, done_at=${done ? new Date() : null} where id=${c.id}`;
   return { id: c.id, total: c.total, sent: Number(st.sent), failed: Number(st.failed), done };
+}
+
+// ---------- 10/11/2026 (Anthony) : « Demander de l'aide » depuis l'espace : le message arrive chez nous avec le site déjà identifié ----------
+async function help(site: string, email: string, message: string, page: string) {
+  const msg = message.trim().slice(0, 5000); if (msg.length < 5) return { error: "Décrivez votre demande." };
+  const recent = Number((await sql`select count(*) n from clicandsite.support_requests where site_id=${site} and created_at > now() - interval '1 hour'`)[0].n);
+  if (recent >= 10) return { error: "Plusieurs demandes déjà envoyées : nous revenons vers vous très vite." };
+  const s = (await sql`select name, slug, domain, plan, status, owner_email, trade from clicandsite.sites where id=${site}`)[0];
+  const r = (await sql`insert into clicandsite.support_requests (site_id, from_email, message, page) values (${site}, ${email}, ${msg}, ${page.slice(0, 200)}) returning id`)[0];
+  const pass = Deno.env.get("SMTP_PASSWORD") || (await sql`select value from clicandsite.secrets where name='smtp_password'`)[0]?.value || "";
+  if (!pass) return { ok: true, mailed: false };
+  const us = (Deno.env.get("CS_FROM") || "contact@mycreativesite.fr").trim();
+  const box: Box = { email: us, host: Deno.env.get("SMTP_HOST") || "ssl0.ovh.net", port: Number(Deno.env.get("SMTP_PORT") || "465"), username: Deno.env.get("SMTP_USER") || us, password: pass };
+  const open = "https://mycreativesite.fr/espace/?site=" + encodeURIComponent(s.slug);
+  const info = [["Site", s.name], ["Identifiant", s.slug], ["Domaine", s.domain || "(pas encore)"], ["Statut", s.status], ["Formule", s.plan || "-"], ["Métier", s.trade], ["Client (compte)", s.owner_email], ["Envoyé par", email], ["Page", page || "-"]];
+  const text = msg + "\n\n---\n" + info.map(([k, v]) => k + " : " + v).join("\n") + "\n\nOuvrir son espace : " + open;
+  const htmlB = '<div style="font:15px/1.6 -apple-system,Segoe UI,Arial,sans-serif;color:#1f2937;max-width:640px"><p style="white-space:pre-wrap">' + esc(msg) + '</p><table style="border-collapse:collapse;font-size:14px;margin-top:16px">' +
+    info.map(([k, v]) => '<tr><td style="padding:3px 12px 3px 0;color:#6b7280">' + esc(k) + '</td><td style="padding:3px 0"><b>' + esc(v) + "</b></td></tr>").join("") +
+    '</table><p style="margin-top:18px"><a href="' + esc(open) + '" style="background:#7C3AED;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:700">Ouvrir son espace</a></p></div>';
+  const q = "csh" + crypto.randomUUID().replace(/-/g, "");
+  const m = [`Date: ${new Date().toUTCString()}`, `Message-ID: <${crypto.randomUUID()}@mycreativesite.fr>`, `From: ${encHeader("Espace client · " + s.name)} <${us}>`, `Reply-To: ${email}`, `To: ${us}`,
+    `Subject: ${encHeader("Demande d'aide · " + s.name + " (" + s.slug + (s.domain ? " · " + s.domain : "") + ")")}`, "MIME-Version: 1.0", `Content-Type: multipart/alternative; boundary="${q}"`, "",
+    "--" + q, "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(text),
+    "--" + q, "Content-Type: text/html; charset=UTF-8", "Content-Transfer-Encoding: base64", "", b64Mime(htmlB), "--" + q + "--", ""].join("\r\n");
+  const t = new Smtp(box);
+  try { await t.open(); await t.send(us, m); await sql`update clicandsite.support_requests set mailed=true where id=${r.id}`; return { ok: true, mailed: true }; }
+  catch (_) { return { ok: true, mailed: false }; }
+  finally { await t.close(); }
 }

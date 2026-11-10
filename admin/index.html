@@ -104,6 +104,8 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
 
     <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis mycreativesite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
+      <b>Demandes d'aide des clients</b>
+      <div id="helpList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
       <div id="sitesList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
       <b style="margin-top:6px">Abonnements Stripe</b>
       <div id="subsList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
@@ -314,7 +316,15 @@ async function loadSubs(){
   const {data,error}=await sb.rpc('cs_admin_subscriptions'); if(error){$('subsList').textContent=error.message;return;}
   $('subsList').innerHTML=(data||[]).map(x=>`<div>${esc(x.company||x.email||x.stripe_customer)} · ${esc(x.email||'')} · ${esc(x.plan||'')} · <b>${esc(BS[x.status]||x.status||'')}</b>${x.current_period_end?' · prochaine échéance '+new Date(x.current_period_end).toLocaleDateString('fr-FR'):''}${x.site_name?' · site : '+esc(x.site_name):' · <span style="color:var(--warn)">aucun site relié : crée-le avec le même e-mail</span>'}</div>`).join('')||'<div>Aucun abonnement pour le moment.</div>';
 }
-async function loadSites(){
+/* 10/11/2026 (Anthony) : demandes d'aide envoyées depuis les espaces clients (site identifié automatiquement) */
+async function loadHelp(done){
+  const {data,error}=await sb.rpc('cs_admin_support',{p_done:done||null}); const L=$('helpList'); if(!L) return;
+  if(error){ L.textContent=error.message; return; }
+  L.innerHTML=(data||[]).length?(data||[]).map(r=>'<div style="padding:8px 0;border-bottom:1px solid #eee'+(r.done_at?';opacity:.5':'')+'"><b>'+esc(r.name||'?')+'</b> · '+esc(r.slug||'')+(r.domain?' · '+esc(r.domain):'')+' · '+esc(new Date(r.created_at).toLocaleString('fr-FR'))+' · '+esc(r.from_email||'')+
+    '<div style="white-space:pre-wrap;margin:4px 0">'+esc(r.message)+'</div>'+(r.slug?'<a href="/espace/?site='+encodeURIComponent(r.slug)+'" target="_blank" rel="noopener" style="font-weight:700">Ouvrir son espace</a> · ':'')+'<a href="mailto:'+esc(r.from_email||'')+'?subject='+encodeURIComponent('Re: votre demande · '+(r.name||''))+'">Répondre</a>'+(r.done_at?' · traité':' · <button class="btn" type="button" data-hdone="'+r.id+'" style="padding:2px 8px">Marquer traité</button>')+'</div>').join(''):'<span class="meta">Aucune demande en cours.</span>';
+  L.querySelectorAll('[data-hdone]').forEach(b=>b.onclick=()=>loadHelp(b.dataset.hdone));
+}
+async function loadSites(){ loadHelp();
   const {data,error}=await sb.rpc('cs_admin_sites'); if(error){$('sitesList').textContent=error.message;return;}
   $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''}${s.plan?' · '+esc(s.plan):''}${s.avis_google==='a_faire'?' · <b style="color:#C2410C">Avis Google à reprendre</b>'+(/^https:\/\//.test(s.google_url||'')?' (<a href="'+esc(s.google_url)+'" target="_blank" rel="noopener">fiche</a>)':''):s.avis_google==='fait'?' · avis Google repris':''}${s.bilingual?' · <b>option bilingue</b>':''}${s.en_on?' · anglais en ligne':''}${s.billing_status?' · paiement : '+esc(BS[s.billing_status]||s.billing_status):''} · <b>${s.status==='brouillon'&&['active','trialing'].includes(s.billing_status)?'<span style="color:#1E8E5A">Payé, prêt à mettre en ligne</span>':(ST[s.status]||s.status)}</b> · <a href="/apercu/?s=${esc(s.slug)}" target="_blank" rel="noopener" title="Lien à envoyer au client pour qu'il voie son site avant de payer">Aperçu client</a> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
   // 10/11/2026 (Anthony) : ouvrir l'espace de n'importe quel client pour réparer ou faire à sa place

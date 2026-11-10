@@ -467,6 +467,30 @@
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
     }).catch(function () { /* le site garde son contenu d'origine */ });
     initLeads(slug);
+    proButton(slug);
+  }
+
+  /* 10/11/2026 (Anthony) : bouton « Modifier mon site » sur le vrai site, seulement pour le pro.
+     Il apparaît sur le navigateur où le pro a ouvert son site depuis son espace (lien « Voir mon site », qui ajoute #cs-pro) ;
+     les visiteurs ne le voient jamais. Il ouvre l'espace directement sur le site, en mode modification. */
+  function proButton(slug) {
+    var key = 'cs-pro-' + slug, ls; try { ls = window.localStorage; } catch (e) { return; }
+    try { if (location.hash === '#cs-pro') { ls.setItem(key, '1'); history.replaceState(null, '', location.pathname + location.search); } } catch (e) {}
+    var on; try { on = ls.getItem(key) === '1'; } catch (e) { on = false; }
+    if (!on) return;
+    var go = function () {
+      if (document.getElementById('cs-pro')) return;
+      var w = document.createElement('div'); w.id = 'cs-pro'; w.className = 'cs-notr';
+      w.style.cssText = 'position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147483000;display:flex;align-items:center;gap:2px;background:#12162B;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.3);font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:3px';
+      var a = document.createElement('a'); a.href = 'https://mycreativesite.fr/espace/?site=' + encodeURIComponent(slug) + '&vue=modifier';
+      a.textContent = '✏️ Modifier mon site'; a.style.cssText = 'color:#fff;text-decoration:none;padding:11px 14px;border-radius:999px;background:#2563EB';
+      var x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Masquer ce bouton sur cet appareil');
+      x.title = 'Masquer ce bouton sur cet appareil (il revient quand vous ouvrez votre site depuis votre espace)';
+      x.style.cssText = 'all:unset;cursor:pointer;color:#fff;opacity:.75;font-size:20px;padding:6px 12px 8px';
+      x.addEventListener('click', function () { try { ls.removeItem(key); } catch (e) {} w.remove(); });
+      w.append(a, x); document.body.appendChild(w);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
   }
 
   /* 07/11/2026 (Claude) : boutique en ligne. Le panier est géré par la page (window.CSShop) ;

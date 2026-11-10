@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=21"></script>
+<script src="/assets/cs-edit.js?v=22"></script>
 <style>
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -748,6 +748,8 @@ function tools(arr, i, rerender){
 }
 function listEditor(body, arr, render, makeNew, addLabel){
   const box=document.createElement('div'); box.style.display='grid'; box.style.gap='10px'; body.appendChild(box);
+  // 10/11/2026 : repère la liste pour la modification directe sur le site (assets/cs-inline.js)
+  { const k=state&&Object.keys(state).find(x=>state[x]===arr), g=state&&Array.isArray(state.prices)?state.prices.indexOf(arr):-1; if(k) box.dataset.list=k; else if(g>=0) box.dataset.list='prices.'+g; }
   const draw=()=>{ box.textContent=''; arr.forEach((o,i)=>{ const it=document.createElement('div'); it.className='item'; render(it,o,i); it.appendChild(tools(arr,i,draw)); box.appendChild(it); });
     if(makeNew){ const a=document.createElement('button'); a.type='button'; a.className='btn'; a.textContent='+ '+addLabel; a.addEventListener('click',()=>{ const n=makeNew(); if(!n) return; arr.push(n); refresh(); markDirty(); draw(); }); box.appendChild(a); } };
   draw();
@@ -1135,7 +1137,7 @@ async function openSite(s){
   site=s; dirty=false; $('save').disabled=true;
   $('siteName').textContent=s.name; /* 09/11/2026 (Anthony) : « Voir mon site » ouvre le vrai domaine du client ; sans domaine réel (avant paiement, ou adresse de démo en .mycreativesite.fr), l'aperçu provisoire */
   { const dm=(s.domain||'').replace(/^https?:\/\//,'').replace(/\/.*$/,''); const real=dm&&!/\.mycreativesite\.fr$/i.test(dm)&&s.status==='en_ligne';
-    $('viewSite').hidden=false; $('viewSite').href=real?'https://'+dm:'/apercu/?s='+encodeURIComponent(s.slug); $('viewSite').textContent=real?'Voir mon site':'Voir l\'aperçu de mon site'; }
+    $('viewSite').hidden=false; $('viewSite').href=real?'https://'+dm+'/#cs-pro':'/apercu/?s='+encodeURIComponent(s.slug); $('viewSite').textContent=real?'Voir mon site':'Voir l\'aperçu de mon site'; }
   $('undo').hidden=DEMO;
   // 10/11/2026 (Anthony) : l'équipe MyCreativeSite ouvre l'espace d'un client pour réparer ou faire à sa place
   { const ab=$('admBar'); ab.hidden=!s.as_admin; if(s.as_admin) ab.innerHTML='<span><b>Mode équipe</b> : vous êtes dans l\'espace de <b>'+escH(s.name)+'</b>'+(s.owner_email?' (client : <span style="user-select:all">'+escH(s.owner_email)+'</span>)':'')+'. Ce que vous enregistrez est mis en ligne sur son site.</span>'+(s.owner_email?'<a href="mailto:'+escH(s.owner_email)+'?subject='+encodeURIComponent('Votre site '+s.name)+'">Écrire au client</a>':'')+'<a href="/admin/">Retour à l\'admin</a>'; }
@@ -1884,6 +1886,7 @@ async function boot(){
 boot();
 </script>
 <script src="/assets/cs-stock.js?v=1"></script>
+<script src="/assets/cs-inline.js?v=1"></script>
 <script src="/assets/cs-agenda.js?v=2">
 </script>
 <script>/* ---------- 10/11/2026 (Anthony, maquette) : menu à gauche sur ordinateur ---------- */

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0210">
+<meta name="cs-build" content="20261110-0230">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -41,7 +41,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .phead{display:none}
 @media (min-width:861px){
   @media (min-width:1500px){.main{grid-template-columns:minmax(420px,520px) minmax(0,1fr)!important}}
-  .app{grid-template-columns:248px minmax(0,1fr);grid-template-rows:auto 1fr}
+  .app{grid-template-columns:248px minmax(0,1fr)!important;grid-template-rows:auto 1fr}
   .app>*:not(.snav){grid-column:2}
   .snav{display:flex;flex-direction:column;grid-row:1/-1;grid-column:1;min-height:0;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:18px 12px 14px}
   .snav .brand{display:flex;align-items:center;gap:9px;font:700 1.15rem "Bricolage Grotesque",sans-serif;color:var(--ink);text-decoration:none;padding:0 8px 18px}
@@ -53,6 +53,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
   .snav-list .sub{padding:6px 12px 6px 44px;font-size:.86rem;color:var(--muted)}
   .snav-list .sub:hover{color:var(--brand)}
   .snav-list .cnt{margin-left:auto;background:var(--brand);color:#fff;border-radius:99px;font-size:.72rem;padding:1px 7px;font-weight:700}
+  .snav-list .sgrp{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 12px 4px}
   .snav-list hr{border:0;border-top:1px solid var(--line);margin:10px 8px}
   .snav-foot{margin-top:auto;display:grid;gap:10px;padding-top:14px}
   .snav-site{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px}
@@ -82,7 +83,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .demo-cta{margin-top:16px;text-align:center;font-size:.9rem;color:var(--muted)}
 
 /* Éditeur */
-.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+.app{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;height:100vh;height:100dvh}
 .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px));background:var(--paper);border-bottom:1px solid var(--line)}
 .top .brand{font:700 1.05rem "Bricolage Grotesque",sans-serif;margin-right:4px}
 
@@ -233,6 +234,7 @@ html.bnopen,html.bnopen body{overflow:hidden}
   .app.show-pv .pv-x{display:inline-flex}
   .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
   .top .hide-m{display:none}
+  .vseg[aria-label="Affichage"]{flex:1 1 100%;min-width:0;max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.vseg[aria-label="Affichage"] button{white-space:nowrap;flex:none}
 }
 
 /* 07/11/2026 (Claude, demande d'Anthony) : « Mes clients » (ex « Mes demandes ») — CRM de la formule Premium (liste simple pour les autres formules). */
@@ -277,6 +279,12 @@ html.bnopen,html.bnopen body{overflow:hidden}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .secsave{display:flex;justify-content:flex-end;padding-top:4px;border-top:1px dashed var(--line);margin-top:2px}.secsave .btn{min-width:150px}
 .item .tools .lsave{margin-right:auto}.btn.lsave:disabled{opacity:1;color:var(--ok);background:none;border-color:transparent}
+.hsec{margin:6px 0 -4px;font-size:1.05rem}
+.hacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.hact{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:14px;cursor:pointer;font:inherit;color:var(--ink)}
+.hact:hover{border-color:var(--brand);background:var(--paper)}
+.hact svg{width:40px;height:40px;flex:none;padding:9px;border-radius:10px;background:var(--soft);color:var(--brand);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hact span{display:grid;gap:2px}.hact b{font-size:.95rem}.hact small{font-size:.8rem;color:var(--muted)}
 .crmwhy{display:block}.crmwhy summary{cursor:pointer;list-style:none}.crmwhy summary::-webkit-details-marker{display:none}.crmwhy summary::after{content:" +";color:var(--muted)}.crmwhy[open] summary::after{content:" –"}
 .crmwhy ul{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem;color:var(--muted)}.crmwhy li b{color:var(--ink)}
 label.chk{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;font-weight:500;color:var(--ink);margin:0;cursor:pointer}label.chk input{width:auto;margin-top:3px;accent-color:var(--brand)}
@@ -375,7 +383,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
-      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="edit" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="agenda" aria-pressed="false" id="agendaTab" hidden>Mon agenda</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="home" aria-pressed="false" id="homeTab" hidden>Accueil</button><button type="button" data-mode="edit" id="editTab" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="agenda" aria-pressed="false" id="agendaTab" hidden>Mon agenda</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -393,6 +401,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <a href="/#commande" style="font-weight:600">Je veux mon site</a>
     </div>
   </div>
+  <div class="crm" id="home" hidden><div class="crm-in" id="homeIn"></div></div>
   <div class="crm" id="crm" hidden><div class="crm-in" id="crmIn"></div></div>
   <div class="crm" id="brief" hidden><div class="crm-in" id="briefIn"></div></div>
   <div class="crm" id="devis" hidden><div class="crm-in" id="devisIn"></div></div>
@@ -1154,6 +1163,13 @@ async function openSite(s){
   if($('draftPay')&&!$('draftPay').__cs){ $('draftPay').__cs=1; $('draftPay').addEventListener('click',async(e)=>{ if(!site||DEMO) return; e.preventDefault(); const pb=$('draftPay'), fb=pb.href, old=pb.textContent; pb.textContent='Ouverture du paiement…';
     try{ const r=await fetch('https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-checkout',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify({slug:site.slug})}); const j=await r.json(); location.href=(r.ok&&j.url)?j.url:fb; }
     catch(x){ location.href=fb; } finally{ setTimeout(()=>{ pb.textContent=old; },3000); } }); }
+  // 10/11/2026 (Anthony) : site en ligne = l'espace sert d'abord à gérer (clients, rendez-vous, véhicules, devis) ; la modification du site reste accessible
+  { const live=DEMO||s.status==='en_ligne'; $('homeTab').hidden=!live; $('editTab').textContent=live?'Modifier mon site':'Mon site';
+    { const vs=document.querySelector('.vseg[aria-label="Affichage"]'), ord=live?['home','crm','agenda','stock','devis','edit','brief']:['edit','brief','stock','agenda','devis','crm','home'];
+      ord.forEach(m=>{ const b=vs.querySelector('button[data-mode="'+m+'"]'); if(b) vs.appendChild(b); }); }
+    if(!live&&mode==='home') await setMode('edit');
+    if(live&&!openSite.homeDone&&mode==='edit'&&!params.get('vue')){ openSite.homeDone=true; await setMode('home'); }
+    else if(mode==='home') await renderHome(); }
   if(mode==='crm'||params.get('vue')==='demandes'){ params.delete('vue'); await setMode('crm'); }
   else if(params.get('vue')==='infos'&&!$('briefTab').hidden){ params.delete('vue'); await setMode('brief'); }
   setStatus(DEMO?'Démo':(s.status==='en_ligne'?'Site en ligne':'Site en préparation'), DEMO?'':'saved');
@@ -1372,6 +1388,49 @@ async function openLead(id){
   el.querySelector('[data-x]').focus();
   if(l.unseen){ l.unseen=false; }
 }
+/* 10/11/2026 (Anthony) : page d'accueil de l'espace pour un site en ligne : la gestion au quotidien d'abord */
+const HI={client:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/>',msg:'<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>',devis:'<path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"/><path d="M10 8h4M10 12h4"/>',
+  stock:'<path d="M5 16h14l-1.5-5.5A2 2 0 0 0 15.6 9H8.4a2 2 0 0 0-1.9 1.5zM5 16v3M19 16v3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',agenda:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v4M10 15h4"/>',
+  presta:'<path d="M4 6h16M4 12h16M4 18h10"/><path d="M19 15v6M16 18h6"/>',banner:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>'};
+const hsvg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+HI[k]+'</svg>';
+async function renderHome(){
+  const R=$('homeIn'); if(!site) return;
+  const nw=+site.leads_new||0, due=+site.leads_due||0;
+  if(!crm.loaded||crm.site!==site.id+':'+site.trade){ R.innerHTML='<div class="empty">Chargement…</div>'; crm.loaded=false; crm.site=site.id+':'+site.trade; crm.filter='actives'; crm.q=''; await loadCrm(); }
+  if(mode!=='home') return;
+  const L=crm.leads||[], keys=new Set(L.map(l=>l.contact_key||l.id)), stockOn=!$('stockTab').hidden, agOn=!$('agendaTab').hidden;
+  const it=prestaSec()?prestaSec().querySelector('summary').textContent.trim():(ITEMS[site.trade]||'Prestations'), itLow=it.charAt(0).toLowerCase()+it.slice(1);
+  const dm=String(site.domain||'').toLowerCase(), real=dm&&!/mycreativesite\.fr$/.test(dm)&&site.status==='en_ligne';
+  const nDue=DEMO?L.filter(isDue).length:due, nNew=DEMO?L.filter(l=>l.status==='nouveau').length:nw;
+  const acts=[['client','Ajouter un client','Un habitué, un client au téléphone'],['msg','Message à tous','Promotion, fermeture annuelle, nouveauté'],['devis',site.trade==='vtc'?'Nouveau devis ou bon':'Nouveau devis','En PDF, à votre nom'],
+    stockOn?['stock',/bien/i.test($('stockTab').textContent)?'Ajouter un bien':'Ajouter un véhicule','Photos, prix, caractéristiques']:null, agOn?['agenda','Mon agenda','Vos rendez-vous et réservations']:null,
+    ['presta',/^Prestations$/i.test(it)?'Ajouter une prestation':'Ajouter dans « '+it+' »','Un service, un prix, une photo'],['banner','Changer la bannière','La grande photo de votre site'],['edit','Modifier mon site','Textes, photos, horaires, coordonnées']].filter(Boolean);
+  const last=L.slice(0,5);
+  R.innerHTML='<div class="crm-head"><div><h2>Bonjour'+(site.name&&!DEMO?' '+escH(site.name):'')+'</h2><p>'+(DEMO?'<b>Démo</b> : ce que voit un pro dont le site est en ligne. ':'')+'Votre site est en ligne. Ici, gérez votre activité au quotidien : vos clients, '+(agOn?'vos rendez-vous, ':'')+(stockOn?'votre stock, ':'')+'vos devis et vos '+escH(itLow)+'.'+(real?' Accès rapide : <b>'+escH(dm)+'/admin</b>':'')+'</p></div></div>'+
+    '<div class="kpis">'+[['crm','Nouvelles demandes',nNew,nNew?'warn':''],['due','À rappeler',nDue,nDue?'warn':''],['crm','Clients',keys.size,''],['crm','Demandes au total',L.length,'']].map(x=>'<button type="button" class="kpi '+x[3]+'" data-go="'+x[0]+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>').join('')+'</div>'+
+    '<h3 class="hsec">Actions rapides</h3><div class="hacts">'+acts.map(a=>'<button type="button" class="hact" data-act="'+a[0]+'">'+hsvg(a[0])+'<span><b>'+escH(a[1])+'</b><small>'+escH(a[2])+'</small></span></button>').join('')+'</div>'+
+    '<h3 class="hsec">Dernières demandes</h3><div class="leads">'+(last.length?last.map(l=>'<button type="button" class="lead'+(l.unseen?' unseen':'')+'" data-lead="'+escH(l.id)+'"><span class="who">'+escH(l.name||'Sans nom')+' <span class="kind">'+escH(KIND[l.kind]||l.kind)+'</span></span><span class="sum">'+escH([l.phone,l.email].filter(Boolean).join(' · '))+'</span><span class="side"><span>'+escH(when(l.created_at))+'</span></span></button>').join('')+'<button type="button" class="linkbtn" data-go="crm" style="justify-self:start">Voir tous mes clients</button>':'<div class="empty">Aucune demande pour le moment. Elles arrivent ici dès qu\'un visiteur remplit un formulaire de votre site.</div>')+'</div>';
+}
+// partie du site où l'on ajoute ses prestations (« Prestations » d'abord ; jamais le stock, qui a son propre espace)
+function prestaSec(){ const secs=[...document.querySelectorAll('#panel>details.sec')].filter(d=>!/Style|Accueil|Chiffres|stock|Biens/i.test(d.querySelector('summary').textContent)&&[...d.querySelectorAll('button.btn')].some(b=>/^\+ /.test(b.textContent)));
+  return secs.find(d=>/^Prestations$/i.test(d.querySelector('summary').textContent.trim()))||secs.find(d=>d.querySelector('summary').textContent.trim()===(ITEMS[site.trade]||''))||secs[0]||null; }
+const waitFor=(fn,ms=3000)=>new Promise(res=>{ const t0=Date.now(); (function k(){ const v=fn(); if(v||Date.now()-t0>ms) return res(v); setTimeout(k,80); })(); });
+$('homeIn').addEventListener('click',async e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.lead){ await setMode('crm'); return openLead(t.dataset.lead); }
+  if(t.dataset.go==='crm') return setMode('crm');
+  if(t.dataset.go==='due'){ await setMode('crm'); if(crm.premium){ crm.filter='due'; renderCrm(); } return; }
+  const a=t.dataset.act; if(!a) return;
+  if(a==='client'){ await setMode('crm'); return addClient(); }
+  if(a==='msg'){ await setMode('crm'); return msgAll(); }
+  if(a==='devis'){ await setMode('devis'); const b=await waitFor(()=>document.querySelector('#devisIn [data-dv="new"]')); if(b) b.click(); return; }
+  if(a==='stock'){ await setMode('stock'); const b=await waitFor(()=>[...document.querySelectorAll('#stockIn button')].find(x=>/^\+ Ajouter/.test(x.textContent.trim()))); if(b) b.click(); return; }
+  if(a==='agenda') return setMode('agenda');
+  await setMode('edit');
+  if(a==='banner'){ const b=document.querySelector('#panel .bncard .btn'); if(b) b.click(); return; }
+  if(a==='presta'){ const want=prestaSec(); if(!want){ toast('Ouvrez la partie de votre site à compléter dans le menu.'); return; }
+    want.open=true; const add=[...want.querySelectorAll('button.btn')].find(b=>/^\+ /.test(b.textContent)); if(add){ add.click(); const items=want.querySelectorAll('.item'); const lastIt=items[items.length-1]; (lastIt||want).scrollIntoView({behavior:'smooth',block:'center'}); const f=lastIt&&lastIt.querySelector('input,textarea'); if(f) setTimeout(()=>f.focus(),400); } return; }
+});
 /* 10/11/2026 (Anthony) : ajouter un client à la main, et envoyer un message à tout le fichier */
 function sheet(title,html){
   const el=document.createElement('div'); el.className='sheet'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label',title);
@@ -1689,8 +1748,9 @@ function printBon(q){
 let mode='edit';
 async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
-  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
+  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('home').hidden=m!=='home'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
   ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=other?'hidden':''; });
+  if(m==='home'){ await renderHome(); return; }
   if(m==='brief'){ await loadBrief(); return; }
   if(m==='devis'){ await loadDevis(); return; }
   if(m==='stock'){ if(window.CSStock) CSStock.open(); return; }
@@ -1748,7 +1808,7 @@ boot();
 </script>
 <script>/* ---------- 10/11/2026 (Anthony, maquette) : menu à gauche sur ordinateur ---------- */
 (function(){
-  const IC={edit:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  const IC={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
     banner:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
     stock:'<path d="M5 16h14l-1.5-5.5A2 2 0 0 0 15.6 9H8.4a2 2 0 0 0-1.9 1.5zM5 16v3M19 16v3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',
     brief:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>',
@@ -1760,13 +1820,16 @@ boot();
     mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     out:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H4"/>'};
   const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>';
-  const SUB={edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Votre fichier clients : demandes, suivi et messages à tous.'};
+  const SUB={home:'Votre activité au quotidien : clients, rendez-vous, devis.',edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Votre fichier clients : demandes, suivi et messages à tous.'};
   const list=$('snavList'), vseg=document.querySelector('.vseg[aria-label="Affichage"]');
   let subs=[];
   function draw(){
     list.textContent='';
     const add=(html,fn,cur)=>{ const b=document.createElement('button'); b.type='button'; b.innerHTML=html; if(cur) b.setAttribute('aria-current','page'); b.addEventListener('click',fn); list.appendChild(b); return b; };
-    vseg.querySelectorAll('button[data-mode]').forEach(vb=>{ if(vb.hidden) return; const m=vb.dataset.mode;
+    const live=!$('homeTab').hidden, ORD=live?['home','crm','agenda','stock','devis','edit','brief']:['edit','brief','stock','agenda','devis','crm'];
+    const vbs=[...vseg.querySelectorAll('button[data-mode]')].sort((a,b)=>ORD.indexOf(a.dataset.mode)-ORD.indexOf(b.dataset.mode));
+    vbs.forEach(vb=>{ if(vb.hidden) return; const m=vb.dataset.mode;
+      if(live&&m==='edit'){ const g=document.createElement('div'); g.className='sgrp'; g.textContent='Mon site internet'; list.appendChild(g); }
       const cnt=vb.querySelector('.cnt'); const label=vb.childNodes[0].textContent.trim();
       add(svg(m)+'<span>'+label+'</span>'+(cnt&&!cnt.hidden&&cnt.textContent?'<span class="cnt">'+cnt.textContent+'</span>':''),()=>vb.click(),vb.getAttribute('aria-pressed')==='true');
       if(m==='edit'&&vb.getAttribute('aria-pressed')==='true'){

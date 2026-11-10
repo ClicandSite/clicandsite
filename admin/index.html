@@ -148,6 +148,18 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       </details>
     </div>
 
+    <!-- 10/11/2026 (Anthony) : écrire / répondre depuis la boîte MyCreativeSite (OVH), plus depuis Gmail -->
+    <div class="robot" id="composeWrap"><details id="composeBox" style="width:100%"><summary><b>Écrire un mail</b> <span class="meta">depuis la boîte MyCreativeSite (copie dans « Envoyés »)</span></summary>
+      <div style="display:grid;gap:8px;margin-top:10px;max-width:640px">
+        <label>De <select id="cFrom"><option value="1">contact@mycreativesite.fr</option></select></label>
+        <input type="email" id="cTo" inputmode="email" autocapitalize="none" placeholder="À : adresse@du-pro.fr">
+        <input id="cSubject" placeholder="Objet">
+        <textarea id="cText" rows="9"></textarea>
+        <input type="hidden" id="cPid">
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="cSend" type="button">Envoyer</button><button class="btn" id="cClear" type="button">Effacer</button></div>
+        <div class="meta" id="cStatus" aria-live="polite"></div>
+      </div></details></div>
+
     <div class="filters">
       <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option><option value="boutique">Boutique en ligne</option></select>
       <select id="fSite"><option value="">Tous les sites</option><option value="aucun">Sans site</option><option value="date">Site daté</option><option value="injoignable">Site en panne</option><option value="moderne">Site moderne</option><option value="a_verifier">À vérifier</option></select>
@@ -248,12 +260,13 @@ $('list').addEventListener('click',async e=>{
     const {data}=await sb.rpc('cs_admin_interactions',{p_id:id});
     more.innerHTML=`<div class="row2"><input class="em" placeholder="Email" value="${esc(r.email||'')}"><input class="ph" placeholder="Téléphone" value="${esc(r.phone||'')}"></div>
       <textarea class="nt" rows="2" placeholder="Note interne">${esc(r.notes||'')}</textarea>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary save" type="button">Enregistrer</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary save" type="button">Enregistrer</button>${r.email?'<button class="btn write" type="button">Écrire</button>':''}
       <select class="kind" style="width:auto"><option value="note">Note</option><option value="appel">Appel</option><option value="mail">Mail envoyé</option><option value="reponse">Réponse reçue</option></select>
       <input class="hx" placeholder="Ajouter à l'historique…" style="flex:1;min-width:160px"><button class="btn addh" type="button">Ajouter</button></div>
       <div class="hist">${(data||[]).map(h=>`<div>${new Date(h.at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${esc(h.kind)} · ${esc(h.content)}</div>`).join('')||'Pas encore d\'historique.'}</div>`;
     more.hidden=false;
   }
+  if(e.target.classList.contains('write')){const r=rows.find(x=>x.id===id);openCompose(more.querySelector('.em').value.trim()||r.email,id,'');return;}
   if(e.target.classList.contains('save')){
     const em=more.querySelector('.em').value.trim(), ph=more.querySelector('.ph').value.trim(), nt=more.querySelector('.nt').value;
     const {error}=await sb.rpc('cs_admin_prospect_update',{p_id:id,p_notes:nt,p_email:em,p_phone:ph});
@@ -321,7 +334,7 @@ async function loadHelp(done){
   const {data,error}=await sb.rpc('cs_admin_support',{p_done:done||null}); const L=$('helpList'); if(!L) return;
   if(error){ L.textContent=error.message; return; }
   L.innerHTML=(data||[]).length?(data||[]).map(r=>'<div style="padding:8px 0;border-bottom:1px solid #eee'+(r.done_at?';opacity:.5':'')+'"><b>'+esc(r.name||'?')+'</b> · '+esc(r.slug||'')+(r.domain?' · '+esc(r.domain):'')+' · '+esc(new Date(r.created_at).toLocaleString('fr-FR'))+' · '+esc(r.from_email||'')+
-    '<div style="white-space:pre-wrap;margin:4px 0">'+esc(r.message)+'</div>'+(r.slug?'<a href="/espace/?site='+encodeURIComponent(r.slug)+'" target="_blank" rel="noopener" style="font-weight:700">Ouvrir son espace</a> · ':'')+'<a href="mailto:'+esc(r.from_email||'')+'?subject='+encodeURIComponent('Re: votre demande · '+(r.name||''))+'">Répondre</a>'+(r.done_at?' · traité':' · <button class="btn" type="button" data-hdone="'+r.id+'" style="padding:2px 8px">Marquer traité</button>')+'</div>').join(''):'<span class="meta">Aucune demande en cours.</span>';
+    '<div style="white-space:pre-wrap;margin:4px 0">'+esc(r.message)+'</div>'+(r.slug?'<a href="/espace/?site='+encodeURIComponent(r.slug)+'" target="_blank" rel="noopener" style="font-weight:700">Ouvrir son espace</a> · ':'')+'<a href="#" data-reply="'+esc(r.from_email||'')+'" data-subj="'+esc('Re: votre demande · '+(r.name||''))+'">Répondre</a>'+(r.done_at?' · traité':' · <button class="btn" type="button" data-hdone="'+r.id+'" style="padding:2px 8px">Marquer traité</button>')+'</div>').join(''):'<span class="meta">Aucune demande en cours.</span>';
   L.querySelectorAll('[data-hdone]').forEach(b=>b.onclick=()=>loadHelp(b.dataset.hdone));
 }
 async function loadSites(){ loadHelp();
@@ -398,9 +411,30 @@ async function boot(){
   if(!session||recovery){$('login').hidden=false;$('app').hidden=true;return;}
   const {data:isAdmin,error}=await sb.rpc('cs_is_admin');
   if(error||!isAdmin){$('login').hidden=true;$('gate').hidden=false;$('gate').innerHTML='Ce compte n\'a pas accès à l\'espace admin. <button class="linkbtn" id="out2" type="button">Se déconnecter</button>';$('out2').onclick=async()=>{await sb.auth.signOut();location.reload();};return;}
-  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus();
+  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus(); loadBoxes();
 }
 boot();
+
+// 10/11/2026 (Anthony) : écrire / répondre depuis la boîte OVH MyCreativeSite (fonction cs-crm-send), copie rangée dans « Envoyés ».
+const C_SIGN='Bonjour,\n\n\n\nBonne journée,\nAnthony\nMyCreativeSite';
+function resetCompose(){$('cTo').value='';$('cSubject').value='';$('cPid').value='';$('cText').value=C_SIGN;$('cStatus').textContent='';}
+async function loadBoxes(){try{const {data}=await sb.functions.invoke('cs-crm-send',{method:'GET'});const b=(data&&data.boxes)||[];if(b.length)$('cFrom').innerHTML=b.map(x=>'<option value="'+x.n+'">'+esc(x.email)+'</option>').join('');}catch(_){}}
+function openCompose(to,pid,subj){$('cTo').value=to||'';$('cPid').value=pid||'';if(subj)$('cSubject').value=subj;$('cStatus').textContent='';const d=$('composeBox');d.open=true;d.scrollIntoView({behavior:'smooth'});setTimeout(()=>$('cSubject').focus(),300);}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-reply]');if(!a)return;e.preventDefault();openCompose(a.dataset.reply,'',a.dataset.subj);});
+$('cClear').addEventListener('click',resetCompose);
+$('cSend').addEventListener('click',async()=>{
+  const to=$('cTo').value.trim(),subject=$('cSubject').value.trim(),text=$('cText').value.trim(),box=Number($('cFrom').value)||1;
+  if(!to||!subject||!text){$('cStatus').textContent='Remplis le destinataire, l’objet et le message.';return;}
+  const from=$('cFrom').selectedOptions[0]?.textContent||'';
+  if(!confirm('Envoyer ce mail à '+to+' depuis '+from+' ?'))return;
+  const b=$('cSend');b.disabled=true;$('cStatus').textContent='Envoi en cours…';
+  try{const {data,error}=await sb.functions.invoke('cs-crm-send',{body:{box,to,subject,text,prospect_id:$('cPid').value||null}});
+    if(error)throw error;if(!data||!data.ok)throw new Error((data&&data.error)||'Échec de l’envoi');
+    $('cStatus').textContent=data.message;$('cSubject').value='';$('cText').value=C_SIGN;}
+  catch(err){$('cStatus').textContent='Erreur : '+(err.message||err);}
+  finally{b.disabled=false;}
+});
+$('cText').value=C_SIGN;
 </script>
 </body>
 </html>

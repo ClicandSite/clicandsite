@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0130">
+<meta name="cs-build" content="20261110-0140">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -40,6 +40,7 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .snav{display:none}
 .phead{display:none}
 @media (min-width:861px){
+  @media (min-width:1500px){.main{grid-template-columns:minmax(420px,520px) minmax(0,1fr)!important}}
   .app{grid-template-columns:248px minmax(0,1fr);grid-template-rows:auto 1fr}
   .app>*:not(.snav){grid-column:2}
   .snav{display:flex;flex-direction:column;grid-row:1/-1;grid-column:1;min-height:0;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:18px 12px 14px}
@@ -61,6 +62,8 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
   .snav-plan{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.8rem;color:var(--muted);display:grid;gap:6px}
   .snav-plan b{font-size:.95rem;color:var(--ink)}.snav-plan a{color:var(--brand);font-weight:600}
   .top{background:#fff;padding:12px 22px}
+  .main{grid-template-columns:minmax(380px,460px) minmax(0,1fr)}
+  .panel{padding:16px 16px 80px}
   .top .brand,.top .site,.top #sitePick,.top .vseg,.top #logout,.top #viewSite{display:none!important}
   .phead{display:flex;align-items:center;gap:12px;min-width:0}
   .phead .pic{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:var(--soft);color:var(--brand)}
@@ -103,7 +106,9 @@ label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:0 
 .styles button[aria-pressed="true"]{border-color:var(--brand);background:var(--soft);color:var(--brand)}
 .item{border:1px solid var(--line);border-radius:11px;padding:11px;display:grid;gap:9px;background:var(--bg)}
 .item .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.item .row3{display:grid;grid-template-columns:1.4fr 1.4fr .9fr;gap:8px}
+.item .row3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,9.5rem);gap:8px}
+.item .row3>:first-child{grid-column:1/-1} /* 10/11/2026 : intitulé sur toute la largeur, détail + prix dessous (champs plus lisibles) */
+.item .row>*,.item .row3>*{min-width:0}
 .item .tools{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .item .tools .btn{padding:4px 9px;font-size:.8rem}
 .photo{display:flex;gap:10px;align-items:center}

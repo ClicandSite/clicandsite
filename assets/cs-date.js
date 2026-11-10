@@ -15,7 +15,8 @@
   function ref(el) {
     // la case de référence : un menu ou un champ texte du même formulaire
     var f = el.form || el.closest('form') || document;
-    var all = f.querySelectorAll('select, input[type="text"], input[type="tel"], input[type="email"], input:not([type])');
+    // 10/11/2026 : on prend d'abord un champ texte (Safari dessine les menus plus petits que les champs)
+    var all = f.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="number"], input:not([type]), select');
     for (var i = 0; i < all.length; i++) if (all[i] !== el && all[i].offsetHeight) return all[i];
     return null;
   }
@@ -84,4 +85,33 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
   window.addEventListener('load', later);
+})();
+
+/* 10/11/2026 (Anthony) : dans un même formulaire, les menus déroulants ont exactement la hauteur des champs texte
+   (sous Safari le menu était plus petit et le code postal paraissait « difforme »). */
+(function () {
+  var CHEV = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")";
+  function eq() {
+    document.querySelectorAll('form').forEach(function (f) {
+      var t = f.querySelector('input[type="text"], input[type="tel"], input[type="email"], input[type="number"], input:not([type])');
+      if (!t || !t.offsetHeight) return;
+      f.querySelectorAll('select').forEach(function (s) {
+        if (!s.offsetHeight) return;
+        var c = getComputedStyle(s);
+        if ((c.webkitAppearance || c.appearance) !== 'none' && c.appearance !== 'none') {
+          s.style.webkitAppearance = 'none'; s.style.appearance = 'none';
+          if (!c.backgroundImage || c.backgroundImage === 'none') { s.style.backgroundImage = CHEV; s.style.backgroundRepeat = 'no-repeat'; s.style.backgroundPosition = 'right 12px center'; s.style.backgroundSize = '12px'; }
+          s.style.paddingRight = Math.max(parseFloat(c.paddingRight) || 0, 32) + 'px';
+        }
+        s.style.boxSizing = 'border-box'; s.style.height = t.offsetHeight + 'px';
+        var tc = getComputedStyle(t); s.style.paddingTop = '0'; s.style.paddingBottom = '0'; s.style.lineHeight = 'normal';
+        if (!s.style.fontSize) s.style.fontSize = tc.fontSize;
+      });
+      f.querySelectorAll('.csd-b').forEach(function (b) { b.style.boxSizing = 'border-box'; b.style.height = t.offsetHeight + 'px'; });
+    });
+  }
+  var k = null; function later() { clearTimeout(k); k = setTimeout(eq, 150); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', later); else later();
+  window.addEventListener('load', function () { later(); setTimeout(eq, 900); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(later); window.addEventListener('resize', later); document.addEventListener('cs:applied', later);
+  try { new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ['data-style', 'data-l', 'data-p'] }); } catch (e) {}
 })();

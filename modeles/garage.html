@@ -55,7 +55,7 @@
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;transition:background .3s,color .3s}
-.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+.wrap{max-width:1600px;margin:0 auto;padding-left:max(16px, 4vw, env(safe-area-inset-left,0px));padding-right:max(16px, 4vw, env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);font-weight:var(--hw);letter-spacing:var(--ls);text-transform:var(--tt);line-height:1.08;margin:0;text-wrap:balance}
 h2{font-size:clamp(1.8rem,5vw,2.8rem)}
 :root[data-l="luxe"] h2{font-size:clamp(2.1rem,5.5vw,3.2rem)}
@@ -327,7 +327,7 @@ footer .wrap{padding-block:24px;display:flex;flex-wrap:wrap;justify-content:spac
 
 /* 4 · CHALEUREUX : photo encadrée comme dans un magazine, titre en dessous, services en zigzag */
 :root[data-l="chaleureux"] .photo.hero.pimg{background:var(--bg);height:auto;min-height:0;color:var(--ink);overflow:visible}
-:root[data-l="chaleureux"] .photo.hero.pimg::before{content:"";display:block;width:calc(100% - 2 * max(16px, env(safe-area-inset-left,0px)));max-width:1088px;margin:16px auto 0;height:min(58vh,520px);border-radius:var(--r);background:var(--img) center/cover}
+:root[data-l="chaleureux"] .photo.hero.pimg::before{content:"";display:block;width:calc(100% - 2 * max(16px, env(safe-area-inset-left,0px)));max-width:calc(1600px - 8vw);margin:16px auto 0;height:min(58vh,520px);border-radius:var(--r);background:var(--img) center/cover}
 :root[data-l="chaleureux"] .hero .wrap{height:auto;padding-block:30px 0}
 :root[data-l="chaleureux"] .hero p{color:var(--muted)}
 :root[data-l="chaleureux"] .hero h1{max-width:18ch}

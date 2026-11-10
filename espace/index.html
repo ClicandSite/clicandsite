@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0140">
+<meta name="cs-build" content="20261110-0150">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -274,6 +274,10 @@ html.bnopen,html.bnopen body{overflow:hidden}
 .empty{background:var(--paper);border:1px dashed var(--line);border-radius:var(--r);padding:28px 18px;text-align:center;color:var(--muted)}
 .sheet{position:fixed;inset:0;z-index:30;background:rgba(10,12,25,.45);display:flex;justify-content:flex-end}
 .sheet .in{width:min(560px,100%);height:100%;overflow:auto;background:var(--bg);border-left:1px solid var(--line);padding:18px max(16px,env(safe-area-inset-right,0px)) calc(30px + env(safe-area-inset-bottom,0px)) 18px;display:grid;gap:14px;align-content:start}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.crmwhy{display:block}.crmwhy summary{cursor:pointer;list-style:none}.crmwhy summary::-webkit-details-marker{display:none}.crmwhy summary::after{content:" +";color:var(--muted)}.crmwhy[open] summary::after{content:" –"}
+.crmwhy ul{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem;color:var(--muted)}.crmwhy li b{color:var(--ink)}
+label.chk{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;font-weight:500;color:var(--ink);margin:0;cursor:pointer}label.chk input{width:auto;margin-top:3px;accent-color:var(--brand)}
 .sheet .hd{display:flex;justify-content:space-between;gap:10px;align-items:start}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;display:grid;gap:8px}
 .card h3{font-size:1rem}
@@ -1167,7 +1171,7 @@ $('sitePick').addEventListener('change',async e=>{ if(dirty&&!confirm('Des modif
 $('demoTrade').addEventListener('change',e=>{ const t=e.target.value; history.replaceState(null,'','?demo='+t); openSite({id:'demo',name:'Site d\'exemple',trade:t,style:'moderne',content:{},status:'brouillon'}); });
 
 /* ---------- Mes demandes (CRM Premium) ---------- */
-const KIND={contact:'Message',reservation:'Réservation','rendez-vous':'Rendez-vous',devis:'Devis',commande:'Commande',rappel:'Rappel demandé',estimation:'Estimation',reprise:'Reprise'};
+const KIND={contact:'Message',reservation:'Réservation','rendez-vous':'Rendez-vous',devis:'Devis',commande:'Commande',rappel:'Rappel demandé',estimation:'Estimation',reprise:'Reprise',manuel:'Client ajouté'};
 const STAT={nouveau:'Nouvelle',en_cours:'En cours',gagne:'Gagnée',perdu:'Perdue',archive:'Archivée'};
 const NK={note:'Note',appel:'Appel',email:'E-mail',rdv:'Rendez-vous',statut:'',relance:''};
 let crm={leads:[],premium:false,filter:'actives',q:'',by:'demande',loaded:false,notes:{}};
@@ -1251,8 +1255,13 @@ function renderCrm(){
   if(!crm.loaded){ R.innerHTML='<div class="empty">Chargement…</div>'; return; }
   const L=crm.leads, P=crm.premium, mon=Date.now()-30*864e5;
   const k={nouveau:L.filter(l=>l.status==='nouveau').length, due:L.filter(isDue).length, en_cours:L.filter(l=>l.status==='en_cours').length, gagne:L.filter(l=>l.status==='gagne'&&new Date(l.created_at)>mon).length};
-  let h='<div class="crm-head"><div><h2>Demandes de vos clients</h2><p>'+(P?'Chaque réservation, devis ou message envoyé depuis votre site arrive ici. Suivez où en est chaque client et notez quand le relancer.':'Les réservations, devis et messages envoyés depuis votre site arrivent ici.')+(DEMO?' <b>Démo</b> : clients fictifs, rien n\'est enregistré.':'')+'</p></div>'+
-    (P&&L.length?'<button class="btn sm" type="button" id="crmCsv">Exporter (tableur)</button>':'')+'</div>';
+  let h='<div class="crm-head"><div><h2>Mes clients</h2><p>'+(P?'Chaque réservation, devis ou message envoyé depuis votre site arrive ici. Suivez où en est chaque client et notez quand le relancer.':'Les réservations, devis et messages envoyés depuis votre site arrivent ici.')+(DEMO?' <b>Démo</b> : clients fictifs, rien n\'est enregistré.':'')+'</p></div>'+
+    '<div class="qbtns"><button class="btn primary sm" type="button" id="crmAdd">+ Ajouter un client</button><button class="btn sm" type="button" id="crmMsg">Message à tous</button>'+(P&&L.length?'<button class="btn sm" type="button" id="crmCsv">Exporter (tableur)</button>':'')+'</div></div>'+
+    '<details class="card crmwhy"'+(L.length?'':' open')+'><summary><b>À quoi sert « Mes clients » ?</b></summary><ul>'+
+      '<li><b>Tout au même endroit :</b> chaque réservation, devis ou message envoyé depuis votre site arrive ici automatiquement. Vous pouvez aussi ajouter vous-même vos clients habituels (bouton « Ajouter un client »).</li>'+
+      '<li><b>Ne plus oublier personne :</b> notez vos appels, la date à laquelle rappeler un client, et où en est chaque demande (formule Premium).</li>'+
+      '<li><b>Faire revenir vos clients :</b> avec « Message à tous », prévenez tout votre fichier en une fois : une promotion, une nouveauté, vos dates de fermeture annuelle ou de congés, une réouverture, un changement d\'horaires.</li>'+
+      '<li><b>Rester en règle :</b> un client peut demander à ne plus recevoir vos messages (« Ne reçoit plus mes messages » sur sa fiche), à être retiré du suivi (archivé) ou supprimé définitivement.</li></ul></details>';
   if(P) h+='<div class="kpis">'+[['nouveau','Nouvelles',k.nouveau,''],['due','À relancer aujourd\'hui',k.due,k.due?'warn':''],['en_cours','En cours',k.en_cours,''],['gagne','Gagnées sur 30 jours',k.gagne,'']].map(x=>'<button type="button" class="kpi '+x[3]+'" data-kf="'+x[0]+'" aria-pressed="'+(crm.filter===x[0])+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>').join('')+'</div>';
   else h+='<div class="upsell"><p><b>Formule Premium : votre fichier clients.</b> Statut de chaque demande, historique par client, notes d\'appel, date de relance et export vers un tableur.</p><a class="btn primary sm" href="mailto:contact@mycreativesite.fr?subject=Passer%20en%20Premium">Passer en Premium</a></div>';
   h+='<div class="ctools">'+(P?'<div class="chips" role="group" aria-label="Filtrer">'+[['actives','À traiter'],['due','À relancer'],['gagne','Gagnées'],['perdu','Perdues'],['archive','Archivées'],['tout','Toutes']].map(x=>'<button type="button" data-f="'+x[0]+'" aria-pressed="'+(crm.filter===x[0])+'">'+x[1]+'</button>').join('')+'</div>':'')+
@@ -1295,7 +1304,10 @@ async function openLead(id){
     (same.length?'<div class="card"><h3>Autres demandes de ce client</h3>'+same.map(x=>'<button type="button" class="linkbtn" data-other="'+escH(x.id)+'">'+escH(KIND[x.kind]||x.kind)+' · '+escH(when(x.created_at))+(P?' · '+STAT[x.status]:'')+'</button>').join('')+'</div>':'')+
     (planRank()>=2&&!(site.trade==='boutique'&&l.kind==='commande')?'<div class="card" style="gap:8px"><h3>Paiement</h3>'+(l.paid_at?'<span>Payé par carte'+(l.amount_cents?' : <b>'+(l.amount_cents/100).toFixed(2).replace('.',',')+' €</b>':'')+'.</span>':
       '<span class="hint" style="margin:0">Envoyez un lien de paiement par carte (valable 23 h). L\'argent arrive sur votre compte.</span><div class="qbtns"><input id="plAmt" inputmode="decimal" placeholder="Montant (€)" style="max-width:130px"'+(l.amount_cents?' value="'+(l.amount_cents/100).toFixed(2).replace('.',',')+'"':'')+'><input id="plLbl" placeholder="Ex. : Transfert Nice → Monaco" style="max-width:240px"><button class="btn primary sm" type="button" data-plk>Créer le lien</button></div><div id="plOut" hidden class="qbtns"></div>')+'</div>':'')+
-    '<div class="card" style="gap:8px"><h3>Faire un document</h3><div class="qbtns"><button class="btn sm" type="button" data-mkq="devis">Faire un devis</button>'+(site.trade==='vtc'?'<button class="btn sm" type="button" data-mkq="bon">Faire un bon de commande</button>':'')+(state&&state.google&&CSEdit.gUrl(state.google.review)?'<button class="btn sm" type="button" data-avis>Demander un avis Google</button>':'')+'</div></div>'+'<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer cette demande</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
+    '<div class="card" style="gap:8px"><h3>Faire un document</h3><div class="qbtns"><button class="btn sm" type="button" data-mkq="devis">Faire un devis</button>'+(site.trade==='vtc'?'<button class="btn sm" type="button" data-mkq="bon">Faire un bon de commande</button>':'')+(state&&state.google&&CSEdit.gUrl(state.google.review)?'<button class="btn sm" type="button" data-avis>Demander un avis Google</button>':'')+'</div></div>'+'<div class="card" style="gap:10px"><h3>Coordonnées du client</h3><div class="item row" style="border:0;padding:0;background:none"><div><label for="ceN">Nom</label><input id="ceN" value="'+escH(l.name||'')+'"></div><div><label for="ceP">Téléphone</label><input id="ceP" type="tel" value="'+escH(l.phone||'')+'"></div></div><div><label for="ceE">E-mail</label><input id="ceE" type="email" value="'+escH(l.email||'')+'"></div>'+
+      '<label class="chk"><input type="checkbox" id="ceO"'+(l.optout?'':' checked')+'> Reçoit mes messages (promotions, fermetures, nouveautés)</label><div><button class="btn sm" type="button" data-ce>Enregistrer les coordonnées</button></div></div>'+
+    '<div class="qbtns">'+(l.status==='archive'?'<button class="btn sm" type="button" data-arch="0">Remettre dans le suivi</button>':'<button class="btn sm" type="button" data-arch="1">Retirer du suivi (archiver)</button>')+'</div>'+
+    '<div><button class="linkbtn" type="button" data-del style="color:var(--bad)">Supprimer ce client et son historique</button><div id="ldDel" hidden class="card" style="margin-top:8px"><span>Supprimer définitivement cette demande et son historique ? À faire par exemple si le client vous le demande.</span><div class="qbtns"><button class="btn sm" type="button" data-delno>Non</button><button class="btn sm" type="button" data-delyes style="color:var(--bad)">Oui, supprimer</button></div></div></div></div>';
   document.body.appendChild(el);
   const close=()=>{ el.remove(); document.removeEventListener('keydown',onKey); renderCrm(); };
   const onKey=e=>{ if(e.key==='Escape') close(); };
@@ -1341,15 +1353,85 @@ async function openLead(id){
       if(DEMO){ (crm.notes[l.id]=crm.notes[l.id]||[]).unshift({at:new Date().toISOString(),kind:kd,content:txt}); if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(crm.notes[l.id]); }
       else { const {error}=await SB.rpc('cs_lead_add_note',{p_id:l.id,p_kind:kd,p_text:txt}); if(error){ toast(error.message); t.disabled=false; return; } if(l.status==='nouveau'){ l.status='en_cours'; el.querySelector('#ldSt').value='en_cours'; } drawHist(await leadHistory(l.id)); }
       l.notes=(l.notes||0)+1; ta.value=''; t.disabled=false; return; }
+    if(t.hasAttribute('data-ce')){ const a={p_id:l.id,p_name:el.querySelector('#ceN').value,p_phone:el.querySelector('#ceP').value,p_email:el.querySelector('#ceE').value,p_optout:!el.querySelector('#ceO').checked};
+      if(!DEMO){ t.disabled=true; const {error}=await SB.rpc('cs_lead_edit',a); t.disabled=false; if(error){ toast(error.message); return; } }
+      l.name=a.p_name.trim()||null; l.phone=a.p_phone.trim()||null; l.email=a.p_email.trim().toLowerCase()||null; l.optout=a.p_optout; el.querySelector('h2').textContent=l.name||'Sans nom'; toast('Coordonnées enregistrées'); return; }
+    if(t.dataset.arch!==undefined){ const on=t.dataset.arch==='1';
+      if(!DEMO){ const {error}=await SB.rpc('cs_lead_archive',{p_id:l.id,p_on:on}); if(error){ toast(error.message); return; } }
+      l.status=on?'archive':'en_cours'; toast(on?'Client retiré du suivi (dans « Archivées »)':'Client remis dans le suivi'); return close(); }
     if(t.hasAttribute('data-del')){ el.querySelector('#ldDel').hidden=false; return; }
     if(t.hasAttribute('data-delno')){ el.querySelector('#ldDel').hidden=true; return; }
     if(t.hasAttribute('data-delyes')){ if(!DEMO){ const {error}=await SB.rpc('cs_lead_delete',{p_id:l.id}); if(error){ toast(error.message); return; } }
-      crm.leads=crm.leads.filter(x=>x.id!==l.id); toast('Demande supprimée'); return close(); }
+      crm.leads=crm.leads.filter(x=>x.id!==l.id); toast('Client supprimé'); return close(); }
   });
   const sel=el.querySelector('#ldSt'); if(sel) sel.addEventListener('change',async()=>{ const old=l.status; if(!(await upd({p_status:sel.value}))) sel.value=old; else toast('Statut : '+STAT[l.status]); });
   const fu=el.querySelector('#ldFu'); if(fu) fu.addEventListener('change',async()=>{ const v=fu.value?new Date(fu.value+'T09:00').toISOString():null; if(await upd({p_set_follow:true,p_follow_up:v})) toast(v?'Relance notée : '+dayLabel(v):'Relance retirée'); });
   el.querySelector('[data-x]').focus();
   if(l.unseen){ l.unseen=false; }
+}
+/* 10/11/2026 (Anthony) : ajouter un client à la main, et envoyer un message à tout le fichier */
+function sheet(title,html){
+  const el=document.createElement('div'); el.className='sheet'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label',title);
+  el.innerHTML='<div class="in"><div class="hd"><h2>'+escH(title)+'</h2><button class="btn sm" type="button" data-x>Fermer</button></div>'+html+'</div>';
+  document.body.appendChild(el);
+  const close=()=>{ el.remove(); document.removeEventListener('keydown',k); };
+  const k=e=>{ if(e.key==='Escape') close(); }; document.addEventListener('keydown',k);
+  el.addEventListener('click',e=>{ if(e.target===el||e.target.closest('[data-x]')) close(); });
+  return [el,close];
+}
+function addClient(){
+  const [el,close]=sheet('Ajouter un client','<div class="card" style="gap:10px"><p class="hint" style="margin:0">Un client qui vous appelle, un habitué, un client d\'avant votre site : ajoutez-le pour le retrouver ici et pouvoir le prévenir de vos nouveautés.</p>'+
+    '<div><label for="acN">Nom</label><input id="acN" autocomplete="off" placeholder="Ex. : Marie Dupont"></div><div class="item row" style="border:0;padding:0;background:none"><div><label for="acP">Téléphone</label><input id="acP" type="tel" autocomplete="off"></div><div><label for="acE">E-mail</label><input id="acE" type="email" autocomplete="off"></div></div>'+
+    '<div><label for="acM">Note (facultatif)</label><textarea id="acM" placeholder="Ex. : client fidèle, préfère être appelé le matin"></textarea></div>'+
+    '<label class="chk"><input type="checkbox" id="acO" checked> Le client est d\'accord pour recevoir mes messages (promotions, fermetures, nouveautés)</label>'+
+    '<div class="qbtns"><button class="btn primary" type="button" id="acGo">Ajouter le client</button><button class="btn" type="button" id="acMore">Ajouter et en ajouter un autre</button></div></div>');
+  const go=async more=>{ const v=id=>el.querySelector(id).value.trim(), a={p_site:site.id,p_name:v('#acN'),p_phone:v('#acP'),p_email:v('#acE'),p_message:v('#acM'),p_optout:!el.querySelector('#acO').checked};
+    if(!a.p_name&&!a.p_phone&&!a.p_email){ toast('Indiquez au moins un nom, un téléphone ou un e-mail'); return; }
+    let id='man'+Date.now();
+    if(!DEMO){ const {data,error}=await SB.rpc('cs_lead_create',a); if(error){ toast(error.message); return; } id=data.id; }
+    crm.leads.unshift({id,created_at:new Date().toISOString(),kind:'manuel',name:a.p_name||null,phone:a.p_phone||null,email:a.p_email.toLowerCase()||null,message:a.p_message||null,fields:[],contact_key:(a.p_email.toLowerCase()||a.p_phone.replace(/\D/g,'')||null),status:'en_cours',optout:a.p_optout,notes:1});
+    toast(DEMO?'Démo : client ajouté (non enregistré)':'Client ajouté'); renderCrm();
+    if(more){ ['#acN','#acP','#acE','#acM'].forEach(x=>el.querySelector(x).value=''); el.querySelector('#acN').focus(); } else close(); };
+  el.querySelector('#acGo').addEventListener('click',()=>go(false)); el.querySelector('#acMore').addEventListener('click',()=>go(true));
+  setTimeout(()=>el.querySelector('#acN').focus(),50);
+}
+function msgAll(){
+  const name=(state&&state.text&&state.text.logo)||site.name||'';
+  const T={promo:['Promotion','Une offre pour vous','Bonjour,\n\nPour vous remercier de votre fidélité, profitez de -10 % sur [votre prestation] jusqu\'au [date].\n\nRéservez dès maintenant sur notre site ou par téléphone.'],
+    conges:['Fermeture annuelle','Fermeture annuelle','Bonjour,\n\nNous vous informons que nous serons fermés du [date] au [date] inclus. Nous serons heureux de vous retrouver dès le [date].\n\nPensez à réserver avant notre départ.'],
+    nouv:['Nouveauté','Du nouveau chez nous','Bonjour,\n\nNous avons le plaisir de vous présenter [notre nouveauté].\n\nN\'hésitez pas à nous contacter pour en savoir plus.'],
+    horaires:['Horaires','Changement d\'horaires','Bonjour,\n\nÀ partir du [date], nos horaires changent : [nouveaux horaires].\n\nMerci de votre confiance.'],
+    reouv:['Réouverture','Nous sommes de retour','Bonjour,\n\nBonne nouvelle : nous rouvrons le [date] ! Vous pouvez dès maintenant réserver.\n\nÀ très bientôt.'],
+    libre:['Message libre','','Bonjour,\n\n']};
+  const [el,close]=sheet('Message à tous mes clients',
+    '<div class="card" style="gap:10px"><p class="hint" style="margin:0">Prévenez tous vos clients en une fois. Le message part de <b>votre</b> boîte mail ou de <b>votre</b> téléphone : vos clients reconnaissent l\'expéditeur et peuvent vous répondre directement.</p>'+
+    '<div><label>Modèle</label><div class="chips" id="maT">'+Object.keys(T).map((k,i)=>'<button type="button" data-t="'+k+'" aria-pressed="'+(i===0)+'">'+T[k][0]+'</button>').join('')+'</div></div>'+
+    '<div><label for="maS">Objet (e-mail)</label><input id="maS"></div><div><label for="maB">Message</label><textarea id="maB" rows="9"></textarea><span class="hint" style="margin:0">Remplacez les [crochets]. La signature et la mention « Répondez STOP » sont ajoutées automatiquement.</span></div>'+
+    '<label class="chk"><input type="checkbox" id="maA"> Inclure aussi les clients archivés</label></div>'+
+    '<div class="card" style="gap:10px" id="maOut"></div>');
+  const sub=el.querySelector('#maS'), body=el.querySelector('#maB'), out=el.querySelector('#maOut'), arch=el.querySelector('#maA');
+  const setT=k=>{ sub.value=T[k][1]; body.value=T[k][2]; el.querySelectorAll('#maT button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===k))); };
+  const full=()=>body.value.trim()+'\n\n'+name+'\n\nPour ne plus recevoir nos messages, répondez STOP.';
+  const list=()=>{ const seen=new Set(), em=[], ph=[]; crm.leads.forEach(l=>{ if(l.optout) return; if(l.status==='archive'&&!arch.checked) return;
+      const k=l.contact_key||l.id; if(seen.has(k)) return; seen.add(k); if(l.email) em.push(l.email); else if(l.phone) ph.push(l.phone); });
+    // téléphone pour tous ceux qui en ont un (y compris ceux qui ont aussi un e-mail), sans doublon
+    const seenP=new Set(), allPh=[]; crm.leads.forEach(l=>{ if(l.optout||!l.phone||(l.status==='archive'&&!arch.checked)) return; const d=l.phone.replace(/\D/g,''); if(seenP.has(d)) return; seenP.add(d); allPh.push(l.phone); });
+    return {em:[...new Set(em.map(x=>x.toLowerCase()))],ph:allPh}; };
+  const draw=()=>{ const {em,ph}=list(); const nOpt=crm.leads.filter(l=>l.optout).length;
+    let h='<h3>Envoyer</h3><p class="hint" style="margin:0"><b>'+em.length+'</b> client'+(em.length>1?'s':'')+' avec e-mail · <b>'+ph.length+'</b> avec téléphone'+(nOpt?' · '+nOpt+' ne reçoi'+(nOpt>1?'vent':'t')+' plus vos messages':'')+'.</p>';
+    if(!em.length&&!ph.length){ h+='<p class="hint" style="margin:0">Aucun client à prévenir pour le moment. Ajoutez vos clients avec « Ajouter un client ».</p>'; out.innerHTML=h; return; }
+    if(em.length){ const groups=[]; for(let i=0;i<em.length;i+=40) groups.push(em.slice(i,i+40));
+      h+='<div class="qbtns">'+groups.map((g,i)=>'<a class="btn primary sm" href="mailto:?bcc='+encodeURIComponent(g.join(','))+'&subject='+encodeURIComponent(sub.value)+'&body='+encodeURIComponent(full())+'">Envoyer par e-mail'+(groups.length>1?' ('+(i+1)+'/'+groups.length+')':'')+'</a>').join('')+'<button class="btn sm" type="button" data-cp="em">Copier les adresses</button></div>'+
+        '<span class="hint" style="margin:0">Votre messagerie s\'ouvre avec vos clients en copie cachée (ils ne voient pas les adresses des autres).'+(groups.length>1?' Envoyez chaque groupe l\'un après l\'autre.':'')+'</span>'; }
+    if(ph.length){ const ios=/iPhone|iPad/.test(navigator.userAgent), mob=/Android|iPhone|iPad/.test(navigator.userAgent), nums=ph.map(p=>p.replace(/[^\d+]/g,''));
+      h+='<div class="qbtns">'+(mob?'<a class="btn sm" href="sms:'+(ios?'/open?addresses='+nums.join(',')+'&':nums.join(',')+'?')+'body='+encodeURIComponent(full())+'">Envoyer par SMS</a>':'')+'<button class="btn sm" type="button" data-cp="ph">Copier les numéros</button><button class="btn sm" type="button" data-cp="msg">Copier le message</button></div>'+
+        (mob?'':'<span class="hint" style="margin:0">Pour les SMS, ouvrez cette page sur votre téléphone, ou copiez les numéros et le message.</span>'); }
+    out.innerHTML=h; };
+  el.addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.t){ setT(b.dataset.t); draw(); return; }
+    if(b.dataset.cp){ const {em,ph}=list(); const v=b.dataset.cp==='em'?em.join(', '):b.dataset.cp==='ph'?ph.join(', '):full(); try{ await navigator.clipboard.writeText(v); toast('Copié'); }catch(_){ toast(v.slice(0,200)); } } });
+  [sub,body].forEach(x=>x.addEventListener('input',draw)); arch.addEventListener('change',draw);
+  setT('promo'); draw();
 }
 $('crmIn').addEventListener('click',e=>{
   const t=e.target.closest('button'); if(!t) return;
@@ -1358,6 +1440,8 @@ $('crmIn').addEventListener('click',e=>{
   if(t.dataset.kf){ crm.filter=crm.filter===t.dataset.kf?'actives':t.dataset.kf; return renderCrm(); }
   if(t.dataset.by){ crm.by=t.dataset.by; return renderCrm(); }
   if(t.id==='crmCsv') return csv();
+  if(t.id==='crmAdd') return addClient();
+  if(t.id==='crmMsg') return msgAll();
 });
 $('crmIn').addEventListener('input',e=>{ if(e.target.id==='crmQ'){ crm.q=e.target.value; const pos=e.target.selectionStart; renderCrm(); const i=$('crmQ'); i.focus(); try{ i.setSelectionRange(pos,pos); }catch(_){} } });
 
@@ -1670,7 +1754,7 @@ boot();
     mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     out:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H4"/>'};
   const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>';
-  const SUB={edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Les demandes reçues depuis votre site.'};
+  const SUB={edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Votre fichier clients : demandes, suivi et messages à tous.'};
   const list=$('snavList'), vseg=document.querySelector('.vseg[aria-label="Affichage"]');
   let subs=[];
   function draw(){

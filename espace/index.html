@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0150">
+<meta name="cs-build" content="20261110-0200">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -275,6 +275,8 @@ html.bnopen,html.bnopen body{overflow:hidden}
 .sheet{position:fixed;inset:0;z-index:30;background:rgba(10,12,25,.45);display:flex;justify-content:flex-end}
 .sheet .in{width:min(560px,100%);height:100%;overflow:auto;background:var(--bg);border-left:1px solid var(--line);padding:18px max(16px,env(safe-area-inset-right,0px)) calc(30px + env(safe-area-inset-bottom,0px)) 18px;display:grid;gap:14px;align-content:start}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.secsave{display:flex;justify-content:flex-end;padding-top:4px;border-top:1px dashed var(--line);margin-top:2px}.secsave .btn{min-width:150px}
+.item .tools .lsave{margin-right:auto}.btn.lsave:disabled{opacity:1;color:var(--ok);background:none;border-color:transparent}
 .crmwhy{display:block}.crmwhy summary{cursor:pointer;list-style:none}.crmwhy summary::-webkit-details-marker{display:none}.crmwhy summary::after{content:" +";color:var(--muted)}.crmwhy[open] summary::after{content:" –"}
 .crmwhy ul{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem;color:var(--muted)}.crmwhy li b{color:var(--ink)}
 label.chk{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;font-weight:500;color:var(--ink);margin:0;cursor:pointer}label.chk input{width:auto;margin-top:3px;accent-color:var(--brand)}
@@ -1792,6 +1794,20 @@ boot();
   new MutationObserver(later).observe($('panel'),{childList:true});
   ['viewSite','logout','siteName','sitePick'].forEach(id=>{ const e=$(id); if(e) new MutationObserver(later).observe(e,{attributes:true,childList:true,characterData:true,subtree:true}); });
   later();
+})();
+
+/* ---------- 10/11/2026 (Anthony) : un bouton « Enregistrer » à côté de chaque modification (chaque partie et chaque élément) ---------- */
+(function(){
+  const sv=$('save'), P=$('panel');
+  const mk=cls=>{ const b=document.createElement('button'); b.type='button'; b.className='btn '+cls; b.addEventListener('click',()=>{ if(DEMO){ toast('Démo : rien n\'est enregistré. Sur votre espace, ce bouton enregistre votre site.'); return; } if(!sv.disabled) sv.click(); }); return b; };
+  const sync=()=>{ const need=!sv.disabled; P.querySelectorAll('.lsave').forEach(b=>{ b.disabled=!DEMO&&!need; b.classList.toggle('primary',need||DEMO); b.textContent=need||DEMO?'Enregistrer':'✓ Enregistré'; }); };
+  const add=()=>{
+    P.querySelectorAll('details.sec>.body').forEach(bd=>{ if(bd.querySelector(':scope>.secsave')) return; const w=document.createElement('div'); w.className='secsave'; w.appendChild(mk('lsave')); bd.appendChild(w); });
+    P.querySelectorAll('.item>.tools').forEach(t=>{ if(t.querySelector('.lsave')) return; t.insertBefore(mk('lsave'),t.firstChild); });
+    sync(); };
+  let k=0; new MutationObserver(()=>{ clearTimeout(k); k=setTimeout(add,30); }).observe(P,{childList:true,subtree:true});
+  new MutationObserver(sync).observe(sv,{attributes:true,attributeFilter:['disabled']});
+  add();
 })();
 </script>
 </body>

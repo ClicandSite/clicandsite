@@ -21,12 +21,15 @@
   /* ---------- Lire / écrire une donnée d'après son chemin ---------- */
   // « text|title », « cards|2|t », « prices|0|3|p »
   function getV(path) {
+    if (path.indexOf('tx|') === 0) { var k0 = path.slice(3), t0 = (state && state.tx) || {}; return typeof t0[k0] === 'string' ? t0[k0] : k0; }
     var a = path.split('|'), c = state; if (!c) return '';
     if (a[0] === 'text') return (c.text || {})[a[1]] || '';
     if (a[0] === 'prices') { var g = (c.prices || [])[+a[1]], o = g && g[+a[2]]; return o ? o[a[3]] || '' : ''; }
     var arr = c[a[0]], it = arr && arr[+a[1]]; return it ? it[a[2]] || '' : '';
   }
   function setV(path, v) {
+    if (path.indexOf('tx|') === 0) { if (!state) return; var k1 = path.slice(3); state.tx = state.tx && typeof state.tx === 'object' ? state.tx : {};
+      if (!v || v === k1) delete state.tx[k1]; else state.tx[k1] = v; return; }
     var a = path.split('|'), c = state; if (!c) return;
     if (a[0] === 'text') { c.text = c.text || {}; c.text[a[1]] = v; return; }
     if (a[0] === 'prices') { var g = (c.prices || [])[+a[1]], o = g && g[+a[2]]; if (o) o[a[3]] = v; return; }
@@ -39,6 +42,7 @@
     'html.cs-ie [data-cse]:focus{outline:2px solid #2563EB;outline-offset:3px;background-color:rgba(37,99,235,.08)}' +
     'html.cs-ie [data-cse]:empty::before{content:"Écrire ici";opacity:.45}' +
     'html.cs-ie [data-csp]{cursor:pointer}' +
+    'html.cs-ie .cs-ie-cur{outline:2px solid rgba(37,99,235,.55);outline-offset:4px;border-radius:4px}' +
     'html.cs-ie [data-csp]:hover{box-shadow:inset 0 0 0 3px rgba(37,99,235,.8)}' +
     '.cs-ie-ui{position:fixed;z-index:2147483000;display:none;font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:0;text-transform:none}' +
     '.cs-ie-ui.on{display:flex}' +
@@ -58,7 +62,7 @@
     var bar = d.getElementById('cs-ie-bar');
     if (!bar) { bar = d.createElement('div'); bar.id = 'cs-ie-bar'; bar.className = 'cs-ie-ui cs-ie-bar cs-notr';
       bar.innerHTML = '<button type="button" data-a="up" title="Monter">↑</button><button type="button" data-a="down" title="Descendre">↓</button>' +
-        '<button type="button" data-a="fiche">Fiche détaillée</button><button type="button" data-a="add">+ Ajouter</button><button type="button" data-a="del" class="del" title="Supprimer">🗑</button>';
+        '<button type="button" data-a="fiche">Fiche détaillée</button><button type="button" data-a="add">+ Ajouter</button><button type="button" data-a="del" class="del" title="Supprimer cette ligne">🗑 Supprimer</button>';
       d.body.appendChild(bar); }
     return { pb: pb, bar: bar };
   }
@@ -96,13 +100,16 @@
         ['t', 'd', 'p'].forEach(function (f) { txt(r.querySelector('.' + f), 'prices|' + g + '|' + i + '|' + f); });
       });
     });
+    // tous les autres petits textes (titres de rubriques, encadrés, libellés, boutons, menu…)
+    if (CSEdit.freeLeaves) CSEdit.freeLeaves(d).forEach(function (el) { if (el.hasAttribute('data-cse') || el.closest('[data-cse]')) return;
+      txt(el, 'tx|' + (el.getAttribute('data-cso') || CSEdit.norm(el.textContent))); });
     var c2 = c.photos || {};
     var he = d.querySelector('.photo.hero'); if (he) he.setAttribute('data-csp', 'hero');
     var te = d.querySelector('.team .photo'); if (te && 'team' in c2) te.setAttribute('data-csp', 'team|0');
     if (Array.isArray(c2.gallery)) qa(d, '.gallery > .photo').forEach(function (e, i) { e.setAttribute('data-csp', 'gallery|' + i); });
   }
 
-  function hideUi(d) { d = d || D(); if (!d) return; qa(d, '.cs-ie-ui').forEach(function (e) { e.classList.remove('on'); }); curItem = null; }
+  function hideUi(d) { d = d || D(); if (!d) return; qa(d, '.cs-ie-ui').forEach(function (e) { e.classList.remove('on'); }); qa(d, '.cs-ie-cur').forEach(function (e) { e.classList.remove('cs-ie-cur'); }); curItem = null; }
 
   /* ---------- Textes ---------- */
   function commit(el, keep) {
@@ -115,6 +122,7 @@
   function startEdit(el) {
     if (editing === el) return;
     editing = el; editOld = getV(el.getAttribute('data-cse'));
+    var pth = el.getAttribute('data-cse'); if (pth.indexOf('tx|') === 0) el.setAttribute('data-cso', pth.slice(3)); // garde le texte d'origine pour la suite
     el.spellcheck = true;
   }
   function endEdit(el, cancel) {
@@ -138,6 +146,20 @@
     qa(P, 'details.fiche').forEach(function (x, i) { if (fopen[i]) x.open = true; });
     P.scrollTop = st; window.scrollTo(0, ws);
   }
+  // Menu de gauche : rubrique « Autres textes modifiés » (petits textes changés directement sur le site), avec retour au texte d'origine
+  function freeSection() {
+    var tx = state && state.tx; if (!tx || typeof tx !== 'object') return;
+    var keys = Object.keys(tx).filter(function (k) { return typeof tx[k] === 'string'; }); if (!keys.length) return;
+    var b = section('Autres textes modifiés', false, 'Les petits textes que vous avez changés en cliquant sur le site. Videz un texte ou touchez « Texte d\'origine » pour le remettre.');
+    keys.forEach(function (k) {
+      var f = field('À la place de « ' + (k.length > 60 ? k.slice(0, 60) + '…' : k) + ' »', tx[k], function (v) { if (v.trim()) tx[k] = v; else delete tx[k]; });
+      var r = document.createElement('button'); r.type = 'button'; r.className = 'btn sm'; r.style.marginTop = '6px'; r.textContent = 'Texte d\'origine';
+      r.addEventListener('click', function () { delete tx[k]; refresh(); markDirty(); rebuildPanel(); toast('Texte d\'origine remis'); });
+      f.appendChild(r); b.appendChild(f);
+    });
+    var P = $('panel'), sec = b.parentNode, help = P.querySelector(':scope > p.hint:last-child'); if (help && sec) P.insertBefore(sec, help);
+  }
+  if (typeof window.buildForms === 'function') { var _bf = window.buildForms; window.buildForms = function () { var r = _bf.apply(this, arguments); try { freeSection(); } catch (e) {} return r; }; }
   window.CSInline = { rebuildPanel: rebuildPanel, tag: function () { tag(D()); } };
 
   /* ---------- Listes : on passe par les boutons du menu de gauche (mêmes règles, mêmes maximums) ---------- */
@@ -159,7 +181,7 @@
     hideUi();
     if (a === 'up') clickTool(it, /Monter/);
     else if (a === 'down') clickTool(it, /Descendre/);
-    else if (a === 'del') { if (confirm('Supprimer cet élément du site ?')) { if (clickTool(it, /^Supprimer/)) toast('Élément supprimé'); } }
+    else if (a === 'del') { if (confirm('Supprimer cette ligne du site ?')) { if (clickTool(it, /^Supprimer/)) toast('Élément supprimé'); } }
     else if (a === 'fiche') { var x = showPanelItem(list, i); var f = x && x.querySelector('details.fiche'); if (f) f.open = true; }
     else if (a === 'add') {
       var b = [].slice.call(box.children).filter(function (x) { return x.tagName === 'BUTTON' && /^\+ /.test(x.textContent.trim()); })[0];
@@ -220,7 +242,7 @@
     u.bar.querySelector('[data-a="del"]').hidden = !hasDel;
     u.bar.querySelector('[data-a="fiche"]').hidden = !(list === 'items' && item.hasAttribute('data-fiche') && typeof ITEM_CFG !== 'undefined' && ITEM_CFG[site.trade]);
     if (!box) { u.bar.classList.remove('on'); return; }
-    u.bar.setAttribute('data-for', csi); curItem = item;
+    u.bar.setAttribute('data-for', csi); qa(d, '.cs-ie-cur').forEach(function (e) { e.classList.remove('cs-ie-cur'); }); curItem = item; item.classList.add('cs-ie-cur');
     place(u.bar, item, d, 'tr');
   }
   function showPb(pe, d) {
@@ -235,6 +257,7 @@
     var w = d.defaultView;
     d.addEventListener('cs:applied', function () { tag(d); });
     var touch = function () { return !!(w.matchMedia && w.matchMedia('(hover:none)').matches); };
+    var swT = null;
     var onUi = function (t) { return t && t.closest && t.closest('.cs-ie-ui'); };
     w.addEventListener('click', function (e) {
       if (!ieOn || !d.documentElement.classList.contains('cs-ie')) return;
@@ -265,12 +288,19 @@
       e.preventDefault(); var s = ((e.clipboardData || w.clipboardData).getData('text/plain') || '').replace(/\s+/g, ' ');
       try { d.execCommand('insertText', false, s); } catch (x) {} });
     d.addEventListener('mouseover', function (e) {
-      if (!ieOn || touch()) return; var t = e.target; if (!t || !t.closest || onUi(t)) return;
+      if (!ieOn || touch()) return; var t = e.target; if (!t || !t.closest) return;
+      // 10/11/2026 (Anthony) : la barre ne saute plus sur la ligne voisine quand on monte la souris vers elle :
+      // elle attend que la souris reste un instant sur une autre ligne avant de changer.
+      if (onUi(t)) { clearTimeout(swT); return; }
       var u = ui(d), pe = t.closest('[data-csp]');
       if (pe && !t.closest('[data-cse]') && !(pe.classList.contains('hero') && t !== pe && t.closest('a,button'))) showPb(pe, d); else u.pb.classList.remove('on');
-      var it = t.closest('[data-csi]'); if (it) { if (it !== curItem) showBar(it, d); } else { u.bar.classList.remove('on'); curItem = null; }
+      var it = t.closest('[data-csi]');
+      if (it === curItem && u.bar.classList.contains('on')) { clearTimeout(swT); return; }
+      clearTimeout(swT);
+      if (it && !u.bar.classList.contains('on')) showBar(it, d);
+      else swT = setTimeout(function () { if (it) showBar(it, d); else hideUi(d); }, 450);
     });
-    d.addEventListener('mouseleave', function () { hideUi(d); });
+    d.addEventListener('mouseleave', function () { clearTimeout(swT); swT = setTimeout(function () { hideUi(d); }, 450); });
     d.addEventListener('scroll', function () { var u = ui(d); u.pb.classList.remove('on'); if (curItem) place(u.bar, curItem, d, 'tr'); }, { passive: true, capture: true });
     tag(d);
   }

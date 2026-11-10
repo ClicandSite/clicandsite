@@ -191,6 +191,33 @@
     if (def.img) { var pe = q(el, def.img) || (el.classList.contains('photo') ? el : null); if (o.img) setImg(pe, o.img); else if (pe) { pe.style.display = ''; pe.style.removeProperty('--img'); } setPos(pe, o.pos); }
     if (el.classList.contains('prop') || el.classList.contains('car')) writeFiche(el, o);
   }
+  /* 10/11/2026 (Anthony) : tous les autres petits textes du site sont modifiables (titres de rubriques, encadrés,
+     libellés, boutons, menu…). content.tx = { "texte d'origine": "nouveau texte" }. On ne touche qu'aux éléments
+     qui ne contiennent que du texte, hors des zones déjà gérées (textes principaux, listes, tarifs, avis). */
+  var FREE_SKIP = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, OPTION: 1, SELECT: 1, TEXTAREA: 1, INPUT: 1, IFRAME: 1, svg: 1, SVG: 1, TITLE: 1 };
+  function norm(t) { return String(t || '').replace(/\s+/g, ' ').trim(); }
+  function freeLeaves(doc) {
+    if (!doc || !doc.body) return [];
+    var ex = Object.keys(LISTS).map(function (k) { return LISTS[k].items; }).concat(['.prices', '#avis .reviews', '.cs-gg', '.cs-lang', '.cs-notr', '.cs-ie-ui', '#cs-pro', '[data-cs-empty]', '.mcs', '.picker', '#count', '#vcount', '[aria-live]', '[role=status]']).join(',');
+    var tsel = Object.keys(TEXT).map(function (k) { return TEXT[k]; }).join(',');
+    return qa(doc.body, '*').filter(function (el) {
+      if (FREE_SKIP[el.tagName] || el.closest('svg')) return false;
+      for (var i = 0; i < el.children.length; i++) if (el.children[i].tagName !== 'BR') return false;
+      var t = el.getAttribute('data-cso') || norm(el.textContent);
+      if (!t || t.length > 300 || /MyCreativeSite/i.test(t) || !/[A-Za-zÀ-ÿ]/.test(t)) return false;
+      try { if (el.matches(tsel) || el.closest(ex)) return false; } catch (e) { return false; }
+      return true;
+    });
+  }
+  function freeApply(doc, tx) {
+    tx = tx && typeof tx === 'object' ? tx : {};
+    freeLeaves(doc).forEach(function (el) {
+      var o = el.getAttribute('data-cso') || norm(el.textContent), v = tx[o];
+      if (typeof v === 'string' && v !== o) { if (norm(el.textContent) !== v) el.textContent = v.slice(0, 600); el.setAttribute('data-cso', o); }
+      else if (el.hasAttribute('data-cso')) { el.textContent = o; el.removeAttribute('data-cso'); }
+    });
+  }
+
   // Ajuste le nombre d'éléments d'une liste (copie du dernier / suppression)
   function fit(nodes, n, max) {
     n = Math.max(0, Math.min(n, max || 40));
@@ -284,6 +311,7 @@
     if (c.style && doc.documentElement) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
     concession(doc, c.concession === true);
     atelier(doc, c.atelier === true && c.concession !== true);
+    freeApply(doc, c.tx);
     credit(doc);
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
   }
@@ -447,7 +475,7 @@
     else { a.style.cssText += ';position:fixed;top:12px;right:12px;z-index:2147482000;background:#fff;color:#16181f'; doc.body.appendChild(a); }
   }
 
-  window.CSEdit = { extract: extract, apply: apply, credit: credit, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
+  window.CSEdit = { freeLeaves: freeLeaves, norm: norm, extract: extract, apply: apply, credit: credit, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;

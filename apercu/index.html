@@ -10,8 +10,8 @@
 <title>Aperçu de votre site · MyCreativeSite</title>
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap">
-<script src="/assets/cs-edit.js?v=23"></script>
-<style>
+<script src="/assets/cs-edit.js?v=24"></script>
+<style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 07/11/2026 (Claude, demande d'Anthony) : aperçu provisoire du site d'un client, avant paiement.
    Le nom de domaine n'est réservé qu'après le paiement. Adresse : /apercu/?s=<identifiant du site> */
 :root{--bg:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
@@ -78,7 +78,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       .catch(function(){ location.href=fb; }).then(function(){ setTimeout(function(){ pay.textContent=old; },3000); }); });
     if(new URLSearchParams(location.search).get('paiement')==='ok'&&!paid&&!live){ info.innerHTML='<b></b> · merci, votre paiement est en cours de validation : votre site part en ligne sous 24 h.'; info.querySelector('b').textContent=s.name; pay.hidden=true; }
     var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
-    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=44#'+encodeURIComponent(s.style||'moderne');
+    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=45#'+encodeURIComponent(s.style||'moderne');
     var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';
     f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, c); if(lang==='en'&&en) CSEdit.translate(f.contentDocument, en); }catch(e){} };
     // 07/11/2026 : version anglaise (Premium, Boutique, option bilingue)

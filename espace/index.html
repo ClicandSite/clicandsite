@@ -15,8 +15,8 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=23"></script>
-<style>
+<script src="/assets/cs-edit.js?v=24"></script>
+<style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
 :root{--bg:#FFFFFF;--paper:#FAF8FF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--soft:#E8EBFF;--ok:#1E8E5A;--bad:#C0392B;--warn:#9A6200;--r:14px}
@@ -471,7 +471,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=44#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=45#'+styleName;
   });
 }
 
@@ -1832,6 +1832,8 @@ async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
   const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('home').hidden=m!=='home'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
   ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=other?'hidden':''; });
+  // 10/11/2026 : sur téléphone, l'onglet choisi est toujours entièrement visible dans la barre d'onglets
+  { const bar=document.querySelector('.vseg[aria-label="Affichage"]'), b=bar&&bar.querySelector('button[aria-pressed="true"]'); if(b&&bar.scrollWidth>bar.clientWidth){ const l=b.getBoundingClientRect().left-bar.getBoundingClientRect().left+bar.scrollLeft; bar.scrollTo({left:Math.max(0,l-(bar.clientWidth-b.offsetWidth)/2),behavior:'smooth'}); } }
   if(m==='home'){ await renderHome(); return; }
   if(m==='brief'){ await loadBrief(); return; }
   if(m==='devis'){ await loadDevis(); return; }

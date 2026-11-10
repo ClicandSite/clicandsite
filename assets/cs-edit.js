@@ -37,7 +37,7 @@
     var doc = el.ownerDocument, w = doc.defaultView;
     if (!doc.getElementById('cs-pos-css')) { var st = doc.createElement('style'); st.id = 'cs-pos-css'; st.textContent = '.cs-pb::before{background-position:var(--cs-pos)!important}.cs-pa::after{background-position:var(--cs-pos)!important}.cs-pz.cs-pb::before,.cs-pz.cs-pa::after{background-size:var(--cs-size)!important;background-repeat:no-repeat!important}'; (doc.head || doc.documentElement).appendChild(st); }
     el.style.backgroundPosition = ''; el.style.backgroundSize = ''; el.style.backgroundRepeat = ''; el.classList.remove('cs-pb', 'cs-pa', 'cs-pz');
-    var P = el.__csPos || [], mob = w.matchMedia('(max-width:860px)').matches, p = (mob && P[1]) || P[0];
+    var P = el.__csPos || [], mob = !!(w.matchMedia && w.matchMedia('(max-width:860px)').matches), p = (mob && P[1]) || P[0];
     var cs = w.getComputedStyle(el), sz = cs.backgroundSize.split(',').pop().trim(), band = /^100% (\d+)px$/.exec(sz);
     if (!p && !band) return;
     p = p || [50, 50, 100];

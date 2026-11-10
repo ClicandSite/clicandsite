@@ -133,15 +133,21 @@ async function main() {
   setHead(doc, { title, desc, url: ORIGIN + '/', img: heroImg, type: 'website', jsonld: [org, pages.length ? { '@context': 'https://schema.org', '@type': 'ItemList', name: isImmo ? 'Biens à vendre et à louer' : 'Véhicules en stock', itemListElement: pages.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: ORIGIN + p.url, name: clean(p.o.t) })) } : null] });
   // Script du site : demandes « Mes clients » et mise à jour en direct du contenu
   const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=21'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live); if (!q('script[src*="cs-date.js"]')) { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  // 10/11/2026 (Anthony) : lien discret « Espace pro » en bas du site (le pro modifie son site depuis son-domaine/admin)
+  const fw = q('footer .wrap');
+  if (fw && !q('a[data-cs-admin]', fw)) { const ap = doc.createElement('a'); ap.href = '/admin/'; ap.rel = 'nofollow'; ap.setAttribute('data-cs-admin', ''); ap.textContent = 'Espace pro'; ap.style.cssText = 'opacity:.55;font-size:.8em;color:inherit;text-decoration:none;margin-left:12px'; fw.appendChild(ap); }
   const home = dom.serialize();
 
   // ---- Pages des annonces
   const files = [['index.html', home]];
   for (const p of pages) files.push([p.url.slice(1) + 'index.html', itemPage(tpl, csEdit, c, p, { name, city, A, phone, email, trade, isImmo, org, domain })]);
   files.push(['404.html', `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=/"><title>${esc(name)}</title></head><body><a href="/">${esc(name)}</a></body></html>`]);
-  files.push(['robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`]);
+  files.push(['robots.txt', `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /espace/\n\nSitemap: ${ORIGIN}/sitemap.xml\n`]);
   files.push(['sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${ORIGIN}/</loc><lastmod>${today}</lastmod><priority>1.0</priority></url>\n${pages.map((p) => `  <url><loc>${ORIGIN}${p.url}</loc><lastmod>${today}</lastmod><priority>0.8</priority></url>`).join('\n')}\n</urlset>\n`]);
   files.push(['CNAME', domain + '\n']);
+  // 10/11/2026 (Anthony) : son-domaine/admin (et /espace) mène directement à l'espace client du pro
+  const toEspace = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=${SITE}/espace/?site=${encodeURIComponent(slug)}"><title>Espace pro · ${esc(name)}</title><script>location.replace(${JSON.stringify(SITE + '/espace/?site=' + encodeURIComponent(slug))});</script></head><body><a href="${SITE}/espace/?site=${encodeURIComponent(slug)}">Ouvrir mon espace pro</a></body></html>`;
+  files.push(['admin/index.html', toEspace]); files.push(['espace/index.html', toEspace]);
   files.push(['.nojekyll', '']);
   // Les anciennes pages d'annonces (vendues, retirées) sont supprimées
   for (const d of ['vehicules', 'biens']) await fs.rm(path.join(out, d), { recursive: true, force: true });

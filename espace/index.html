@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0200">
+<meta name="cs-build" content="20261110-0210">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -366,6 +366,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
     <div class="snav-foot">
       <div class="snav-site"><span class="av" id="snavAv">M</span><div><b id="snavName"></b><span id="snavPlan"></span></div><select id="snavPick" hidden aria-label="Choisir le site"></select></div>
       <div class="snav-plan" id="snavPlanBox"></div>
+      <div class="snav-plan" id="snavQuick" hidden></div>
     </div>
   </aside>
   <div class="tophead">
@@ -1735,7 +1736,10 @@ async function boot(){
   if(!sites.length){ $('login').hidden=true; $('nosite').hidden=false; return; }
   $('login').hidden=true; $('nosite').hidden=true; $('app').hidden=false; $('logout').hidden=false;
   if(sites.length>1){ const sp=$('sitePick'); sp.hidden=false; $('siteName').hidden=true; sp.textContent=''; sites.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sp.appendChild(o); }); }
-  fit(); await openSite(sites[0]);
+  // 10/11/2026 : arrivée depuis son-domaine/admin (?site=identifiant) : on ouvre ce site-là
+  const want=params.get('site'), first=(want&&sites.find(s=>s.slug===want))||sites[0];
+  if(sites.length>1) $('sitePick').value=first.id;
+  fit(); await openSite(first);
 }
 boot();
 </script>
@@ -1785,6 +1789,8 @@ boot();
     const pl=DEMO?'':String((site&&site.plan)||'').toLowerCase();
     $('snavPlan').textContent=DEMO?'Site de démonstration':(PL[pl]?'Formule '+PL[pl]:'Mon site');
     $('snavPlanBox').innerHTML=DEMO?'<b>Démo</b><span>Rien n\'est enregistré.</span><a href="/#commande">Je veux mon site</a>':'<span>Formule actuelle</span><b>'+(PL[pl]||'—')+'</b>'+(pl&&pl!=='premium'&&pl!=='boutique'?'<a href="mailto:contact@mycreativesite.fr?subject=Changer%20de%20formule">Passer à la formule supérieure</a>':'');
+    { const qk=$('snavQuick'), dm=String((site&&site.domain)||'').toLowerCase(), real=dm&&!/mycreativesite\.fr$/.test(dm)&&!DEMO&&site.status==='en_ligne';
+      qk.hidden=!real; if(real) qk.innerHTML='<span>Accès rapide à cet espace</span><b style="font-size:.85rem;user-select:all">'+escH(dm)+'/admin</b><span>Lien « Espace pro » en bas de votre site.</span>'; }
     const sp=$('sitePick'), np=$('snavPick');
     np.hidden=sp.hidden; if(!sp.hidden){ np.innerHTML=sp.innerHTML; np.value=sp.value; }
   }

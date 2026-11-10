@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta name="cs-build" content="20261110-0230">
+<meta name="cs-build" content="20261110-0300">
 <script>/* 10/11/2026 : si le navigateur affiche une ancienne version de l'espace, on recharge la nouvelle (une fois) */
 (function(){try{var me=document.querySelector('meta[name=cs-build]').content;fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="cs-build" content="([^"]+)"/);if(m&&m[1]!==me&&sessionStorage.getItem('csb')!==m[1]){sessionStorage.setItem('csb',m[1]);var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta charset="utf-8">
@@ -285,6 +285,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .hact:hover{border-color:var(--brand);background:var(--paper)}
 .hact svg{width:40px;height:40px;flex:none;padding:9px;border-radius:10px;background:var(--soft);color:var(--brand);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .hact span{display:grid;gap:2px}.hact b{font-size:.95rem}.hact small{font-size:.8rem;color:var(--muted)}
+.mbadv summary{cursor:pointer;font-size:.85rem;color:var(--brand);font-weight:600}.mbbar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin:4px 0}.mbbar i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
 .crmwhy{display:block}.crmwhy summary{cursor:pointer;list-style:none}.crmwhy summary::-webkit-details-marker{display:none}.crmwhy summary::after{content:" +";color:var(--muted)}.crmwhy[open] summary::after{content:" –"}
 .crmwhy ul{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:.9rem;color:var(--muted)}.crmwhy li b{color:var(--ink)}
 label.chk{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;font-weight:500;color:var(--ink);margin:0;cursor:pointer}label.chk input{width:auto;margin-top:3px;accent-color:var(--brand)}
@@ -1466,11 +1467,11 @@ function msgAll(){
     reouv:['Réouverture','Nous sommes de retour','Bonjour,\n\nBonne nouvelle : nous rouvrons le [date] ! Vous pouvez dès maintenant réserver.\n\nÀ très bientôt.'],
     libre:['Message libre','','Bonjour,\n\n']};
   const [el,close]=sheet('Message à tous mes clients',
-    '<div class="card" style="gap:10px"><p class="hint" style="margin:0">Prévenez tous vos clients en une fois. Le message part de <b>votre</b> boîte mail ou de <b>votre</b> téléphone : vos clients reconnaissent l\'expéditeur et peuvent vous répondre directement.</p>'+
+    '<div class="card" style="gap:10px"><p class="hint" style="margin:0">Prévenez tous vos clients en une fois. Le message part de <b>votre</b> adresse e-mail (ou de votre téléphone pour les SMS) : vos clients reconnaissent l\'expéditeur et peuvent vous répondre directement.</p>'+
     '<div><label>Modèle</label><div class="chips" id="maT">'+Object.keys(T).map((k,i)=>'<button type="button" data-t="'+k+'" aria-pressed="'+(i===0)+'">'+T[k][0]+'</button>').join('')+'</div></div>'+
     '<div><label for="maS">Objet (e-mail)</label><input id="maS"></div><div><label for="maB">Message</label><textarea id="maB" rows="9"></textarea><span class="hint" style="margin:0">Remplacez les [crochets]. La signature et la mention « Répondez STOP » sont ajoutées automatiquement.</span></div>'+
     '<label class="chk"><input type="checkbox" id="maA"> Inclure aussi les clients archivés</label></div>'+
-    '<div class="card" style="gap:10px" id="maOut"></div>');
+    '<div class="card" style="gap:10px" id="maBox"></div><div class="card" style="gap:10px" id="maOut"></div>');
   const sub=el.querySelector('#maS'), body=el.querySelector('#maB'), out=el.querySelector('#maOut'), arch=el.querySelector('#maA');
   const setT=k=>{ sub.value=T[k][1]; body.value=T[k][2]; el.querySelectorAll('#maT button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===k))); };
   const full=()=>body.value.trim()+'\n\n'+name+'\n\nPour ne plus recevoir nos messages, répondez STOP.';
@@ -1480,7 +1481,7 @@ function msgAll(){
     const seenP=new Set(), allPh=[]; crm.leads.forEach(l=>{ if(l.optout||!l.phone||(l.status==='archive'&&!arch.checked)) return; const d=l.phone.replace(/\D/g,''); if(seenP.has(d)) return; seenP.add(d); allPh.push(l.phone); });
     return {em:[...new Set(em.map(x=>x.toLowerCase()))],ph:allPh}; };
   const draw=()=>{ const {em,ph}=list(); const nOpt=crm.leads.filter(l=>l.optout).length;
-    let h='<h3>Envoyer</h3><p class="hint" style="margin:0"><b>'+em.length+'</b> client'+(em.length>1?'s':'')+' avec e-mail · <b>'+ph.length+'</b> avec téléphone'+(nOpt?' · '+nOpt+' ne reçoi'+(nOpt>1?'vent':'t')+' plus vos messages':'')+'.</p>';
+    let h='<h3>Ou depuis votre messagerie habituelle</h3><p class="hint" style="margin:0"><b>'+em.length+'</b> client'+(em.length>1?'s':'')+' avec e-mail · <b>'+ph.length+'</b> avec téléphone'+(nOpt?' · '+nOpt+' ne reçoi'+(nOpt>1?'vent':'t')+' plus vos messages':'')+'.</p>';
     if(!em.length&&!ph.length){ h+='<p class="hint" style="margin:0">Aucun client à prévenir pour le moment. Ajoutez vos clients avec « Ajouter un client ».</p>'; out.innerHTML=h; return; }
     if(em.length){ const groups=[]; for(let i=0;i<em.length;i+=40) groups.push(em.slice(i,i+40));
       h+='<div class="qbtns">'+groups.map((g,i)=>'<a class="btn primary sm" href="mailto:?bcc='+encodeURIComponent(g.join(','))+'&subject='+encodeURIComponent(sub.value)+'&body='+encodeURIComponent(full())+'">Envoyer par e-mail'+(groups.length>1?' ('+(i+1)+'/'+groups.length+')':'')+'</a>').join('')+'<button class="btn sm" type="button" data-cp="em">Copier les adresses</button></div>'+
@@ -1494,6 +1495,65 @@ function msgAll(){
     if(b.dataset.cp){ const {em,ph}=list(); const v=b.dataset.cp==='em'?em.join(', '):b.dataset.cp==='ph'?ph.join(', '):full(); try{ await navigator.clipboard.writeText(v); toast('Copié'); }catch(_){ toast(v.slice(0,200)); } } });
   [sub,body].forEach(x=>x.addEventListener('input',draw)); arch.addEventListener('change',draw);
   setT('promo'); draw();
+  mailBox(el.querySelector('#maBox'),()=>({subject:sub.value.trim(),body:body.value.trim(),archived:arch.checked,count:list().em.length}));
+}
+/* 10/11/2026 (Anthony) : le pro connecte SA boîte mail une fois ; « Message à tous » part ensuite directement depuis l'espace (fonction cs-mail) */
+const MAILP=[[/^(gmail|googlemail)\.com$/,'smtp.gmail.com',465,'Gmail : créez un « mot de passe d\'application » (16 lettres) sur <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> (la validation en 2 étapes doit être activée), puis collez-le ici.'],
+  [/^(orange|wanadoo)\.fr$/,'smtp.orange.fr',465,'Orange : le mot de passe de votre messagerie Orange.'],[/^free\.fr$/,'smtp.free.fr',465,'Free : le mot de passe de votre messagerie Free.'],
+  [/^(sfr|neuf)\.fr$/,'smtp.sfr.fr',465,'SFR : le mot de passe de votre messagerie SFR.'],[/^laposte\.net$/,'smtp.laposte.net',465,'La Poste : le mot de passe de votre messagerie.'],
+  [/^bbox\.fr$/,'smtp.bbox.fr',587,'Bouygues : le mot de passe de votre messagerie Bbox.'],[/^gmx\.(fr|com|net)$/,'mail.gmx.net',465,'GMX : activez l\'accès POP3/IMAP dans vos réglages GMX, puis votre mot de passe.'],
+  [/^yahoo\./,'smtp.mail.yahoo.com',465,'Yahoo : créez un « mot de passe d\'application » dans la sécurité de votre compte Yahoo.'],
+  [/^(icloud|me|mac)\.com$/,'smtp.mail.me.com',587,'iCloud : créez un « mot de passe pour app » sur appleid.apple.com (Connexion et sécurité).'],
+  [/^(outlook|hotmail|live|msn)\./,'',0,'Les adresses Outlook / Hotmail ne permettent plus l\'envoi depuis une autre application : utilisez « Envoyer par e-mail » plus bas, ou une autre adresse.']];
+function mailPreset(em){ const d=String(em||'').split('@')[1]||''; const p=MAILP.find(x=>x[0].test(d)); return p?{host:p[1],port:p[2],help:p[3]}:{host:d?'ssl0.ovh.net':'',port:465,help:'Adresse à votre nom de domaine : indiquez le serveur d\'envoi (SMTP) de votre hébergeur. OVH : ssl0.ovh.net · IONOS : smtp.ionos.fr · Google Workspace : smtp.gmail.com · o2switch / autres : mail.votre-domaine.fr'}; }
+async function mailCall(body){ const {data:{session}}=await SB.auth.getSession(); const r=await fetch('https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-mail',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',Authorization:'Bearer '+(session&&session.access_token||'')},body:JSON.stringify(body)}); return r.json().catch(()=>({error:'Erreur '+r.status})); }
+async function mailBox(B,msg){
+  let cfg=null, editing=false;
+  const load=async()=>{ if(DEMO){ cfg=cfg||{email:null}; return; } const {data,error}=await SB.rpc('cs_site_mail_get',{p_site:site.id}); cfg=error?{email:null,err:error.message}:data; };
+  const draw=()=>{
+    const ok=cfg&&cfg.email&&cfg.verified_at;
+    if(!cfg||!cfg.email||editing){ const pr=mailPreset(cfg&&cfg.email);
+      B.innerHTML='<h3>Envoyer depuis mon espace</h3><p class="hint" style="margin:0">Connectez une fois votre boîte mail : vos messages partent de <b>votre adresse</b>, directement d\'ici, un mail par client (personne ne voit les adresses des autres), avec un lien pour se désinscrire.</p>'+
+        '<div><label for="mbE">Mon adresse e-mail</label><input id="mbE" type="email" autocomplete="off" value="'+escH(cfg&&cfg.email||'')+'" placeholder="contact@mon-entreprise.fr"></div>'+
+        '<p class="hint" id="mbH" style="margin:0">'+(cfg&&cfg.email?pr.help:'Indiquez votre adresse : on règle le reste.')+'</p>'+
+        '<div><label for="mbP">Mot de passe de cette boîte mail'+(cfg&&cfg.has_password?' (laisser vide pour garder l\'actuel)':'')+'</label><input id="mbP" type="password" autocomplete="new-password"></div>'+
+        '<details class="mbadv"'+(cfg&&cfg.email&&!MAILP.some(x=>x[0].test((cfg.email.split('@')[1]||'')))?' open':'')+'><summary>Réglages avancés</summary><div class="item row" style="border:0;padding:0;background:none;margin-top:8px"><div><label for="mbS">Serveur d\'envoi (SMTP)</label><input id="mbS" value="'+escH(cfg&&cfg.host||pr.host)+'"></div><div><label for="mbPo">Port</label><select id="mbPo"><option value="465">465 (SSL)</option><option value="587">587 (STARTTLS)</option></select></div></div><div style="margin-top:8px"><label for="mbU">Identifiant (si différent de l\'adresse)</label><input id="mbU" value="'+escH(cfg&&cfg.user&&cfg.user!==cfg.email?cfg.user:'')+'"></div></details>'+
+        '<p class="hint" style="margin:0">Votre mot de passe est gardé de façon sécurisée et ne sert qu\'à envoyer vos messages. Il n\'est jamais affiché.</p>'+
+        '<div class="qbtns"><button class="btn primary" type="button" id="mbGo">Connecter et envoyer un mail d\'essai</button>'+(cfg&&cfg.email&&!editing?'':(cfg&&cfg.email?'<button class="btn" type="button" id="mbCancel">Annuler</button>':''))+'</div><div id="mbMsg" class="hint" style="margin:0"></div>';
+      const E=B.querySelector('#mbE'), H=B.querySelector('#mbH'), S=B.querySelector('#mbS'), Po=B.querySelector('#mbPo');
+      Po.value=String(cfg&&cfg.port||pr.port||465);
+      E.addEventListener('input',()=>{ const q=mailPreset(E.value); H.innerHTML=E.value.includes('@')?q.help:'Indiquez votre adresse : on règle le reste.'; if(q.host!==undefined){ S.value=q.host; Po.value=String(q.port||465); } if(!q.host&&E.value.includes('@')&&!/outlook|hotmail|live|msn/.test(E.value)) B.querySelector('.mbadv').open=true; });
+      const c=B.querySelector('#mbCancel'); if(c) c.addEventListener('click',()=>{ editing=false; draw(); });
+      B.querySelector('#mbGo').addEventListener('click',async ev=>{ const t=ev.target, m=B.querySelector('#mbMsg');
+        if(DEMO){ toast('Démo : sur votre espace, votre boîte est connectée ici et un mail d\'essai vous est envoyé.'); return; }
+        const em=E.value.trim(); if(!/@/.test(em)){ E.focus(); return; } if(!S.value.trim()){ B.querySelector('.mbadv').open=true; S.focus(); toast('Indiquez le serveur d\'envoi'); return; }
+        t.disabled=true; m.textContent='Connexion à votre boîte…';
+        const {error}=await SB.rpc('cs_site_mail_save',{p_site:site.id,p_email:em,p_host:S.value.trim(),p_port:+Po.value,p_user:B.querySelector('#mbU').value.trim()||em,p_password:B.querySelector('#mbP').value});
+        if(error){ t.disabled=false; m.textContent=error.message; return; }
+        const j=await mailCall({action:'test',site:site.id}); t.disabled=false;
+        if(j.ok){ editing=false; await load(); draw(); toast('Boîte connectée : un mail d\'essai vient de partir vers '+em); }
+        else { await load(); m.innerHTML='<b style="color:var(--bad)">La connexion n\'a pas marché.</b> '+escH(j.error||'Réessayez.'); } });
+      return; }
+    const m=msg();
+    B.innerHTML='<h3>Envoyer depuis mon espace</h3>'+
+      (ok?'<p style="margin:0">Envoi depuis <b>'+escH(cfg.email)+'</b> <span style="color:var(--ok);font-weight:600">· connectée</span> <button class="linkbtn" type="button" id="mbEdit">Modifier</button></p>':'<p style="margin:0"><b>'+escH(cfg.email)+'</b> <span style="color:var(--bad);font-weight:600">· à vérifier</span> '+(cfg.last_error?'<span class="hint">'+escH(cfg.last_error)+'</span> ':'')+'<button class="linkbtn" type="button" id="mbEdit">Corriger</button> <button class="linkbtn" type="button" id="mbTest">Refaire l\'essai</button></p>')+
+      (cfg.last&&cfg.last.at?'<p class="hint" style="margin:0">Dernier envoi : « '+escH(cfg.last.subject)+' », '+cfg.last.sent+' / '+cfg.last.total+' envoyés '+escH(when(cfg.last.at))+(cfg.last.failed?' ('+cfg.last.failed+' adresse'+(cfg.last.failed>1?'s':'')+' en erreur)':'')+'.</p>':'')+
+      '<div class="qbtns"><button class="btn primary" type="button" id="mbSend"'+(ok&&m.count?'':' disabled')+'>Envoyer à '+m.count+' client'+(m.count>1?'s':'')+'</button></div>'+
+      '<div id="mbProg" hidden><div class="mbbar"><i></i></div><span class="hint" style="margin:0"></span></div><p class="hint" style="margin:0">'+(cfg.sent_24h?cfg.sent_24h+' mails envoyés ces dernières 24 h · ':'')+'jusqu\'à '+(cfg.limit||300)+' par jour.</p>';
+    B.querySelector('#mbEdit').addEventListener('click',()=>{ editing=true; draw(); });
+    const tb=B.querySelector('#mbTest'); if(tb) tb.addEventListener('click',async()=>{ tb.disabled=true; const j=await mailCall({action:'test',site:site.id}); await load(); draw(); toast(j.ok?'Boîte connectée':'Échec : '+(j.error||'')); });
+    B.querySelector('#mbSend').addEventListener('click',async ev=>{ const t=ev.target, mm=msg();
+      if(/\[[^\]]+\]/.test(mm.body+mm.subject)&&!confirm('Il reste des [crochets] à remplacer dans votre message. Envoyer quand même ?')) return;
+      if(!confirm('Envoyer « '+mm.subject+' » à '+mm.count+' client'+(mm.count>1?'s':'')+' depuis '+cfg.email+' ?')) return;
+      t.disabled=true; const P=B.querySelector('#mbProg'), bar=P.querySelector('i'), lab=P.querySelector('span'); P.hidden=false; lab.textContent='Préparation…';
+      let j=await mailCall({action:'start',site:site.id,subject:mm.subject,body:mm.body,archived:mm.archived});
+      while(j&&!j.error&&!j.done){ bar.style.width=Math.round(j.sent/j.total*100)+'%'; lab.textContent=j.sent+' / '+j.total+' envoyés… gardez cette page ouverte'; j=await mailCall({action:'continue',campaign:j.id}); }
+      if(j&&j.error){ lab.textContent=j.error; t.disabled=false; toast('Envoi interrompu : '+j.error); await load(); return; }
+      bar.style.width='100%'; lab.textContent='Terminé : '+j.sent+' / '+j.total+' envoyés'+(j.failed?' ('+j.failed+' adresse'+(j.failed>1?'s':'')+' refusée'+(j.failed>1?'s':'')+')':'')+'.'; toast('Message envoyé à '+j.sent+' client'+(j.sent>1?'s':'')); await load(); setTimeout(draw,2500); });
+  };
+  B.innerHTML='<div class="hint">Chargement…</div>'; await load(); draw();
+  B.closest('.sheet').addEventListener('input',e=>{ if(!editing&&cfg&&cfg.email&&/maB|maS/.test(e.target.id)){ const b=B.querySelector('#mbSend'); if(b){ const m=msg(); b.textContent='Envoyer à '+m.count+' client'+(m.count>1?'s':''); } } });
+  B.closest('.sheet').querySelector('#maA').addEventListener('change',()=>{ if(!editing&&cfg&&cfg.email) draw(); });
 }
 $('crmIn').addEventListener('click',e=>{
   const t=e.target.closest('button'); if(!t) return;

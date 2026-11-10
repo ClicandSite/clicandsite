@@ -471,7 +471,7 @@ function loadTemplate(trade, styleName){
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=41#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=44#'+styleName;
   });
 }
 
@@ -1035,7 +1035,7 @@ function qrSection(){
 const TR_FN='https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-translate';
 let pvEN=false, baseDict=null;
 function canEN(){ return DEMO||!!(site&&site.bilingual); }
-function loadBase(){ return baseDict||(baseDict=fetch('/assets/cs-en.json?v=1').then(r=>r.ok?r.json():{}).catch(()=>({}))); }
+function loadBase(){ return baseDict||(baseDict=fetch('/assets/cs-en.json?v=2').then(r=>r.ok?r.json():{}).catch(()=>({}))); }
 async function gtxOne(q){ const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=en&dt=t&q='+encodeURIComponent(q)); if(!r.ok) throw new Error('service de traduction indisponible ('+r.status+')'); const j=await r.json(); return (j[0]||[]).map(x=>x[0]||'').join(''); }
 async function gtxBatch(arr){
   const out={}, packs=[]; let pack=[], len=0;

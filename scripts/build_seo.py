@@ -764,7 +764,23 @@ def why(p):
     paras = "".join(f'<p style="margin:12px 0 0;color:var(--muted)">{e(x)}</p>' for x in w[1])
     return f'<section style="padding-bottom:0"><div class="wrap" style="max-width:860px"><h2>{e(w[0])}</h2>{paras}</div></section>\n'
 
+PROSE_CSS = ".prose{padding-bottom:0}.prose .wrap{max-width:860px}.prose p{margin:12px 0 0;color:var(--muted)}.prose b{color:var(--ink)}"
+
+def body(p):
+    """Sections de texte enrichies (scripts/seo_contenu.py)."""
+    out = ""
+    for h, paras in p.get("body", []):
+        out += f'<section class="prose"><div class="wrap"><h2>{e(h)}</h2>' + "".join(f"<p>{x}</p>" for x in paras) + '</div></section>\n'
+    return out
+
+def faq_html(p):
+    if p.get("body"):  # pages enrichies : questions en H3, réponses visibles
+        return "".join(f'<div class="feat"><h3>{e(q)}</h3><p>{e(a)}</p></div>' for q,a in p["faq"])
+    return "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
+
 def page(p):
+    from seo_contenu import SEO
+    p = {**p, **SEO.get(p["slug"], {})}
     url = f'{SITE}/{p["slug"]}/'
     plans = [PACK] if p.get("pack") else [BOUTIQUE] if p.get("k") == "boutique" else PRICES
     faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in p["faq"]]}
@@ -790,7 +806,7 @@ def page(p):
     elif p.get("k") == "boutique":
         prices = (f'<div class="pc hi"><em>La formule de votre métier</em><span>{BOUTIQUE[0]}</span><b>{BOUTIQUE[1]} €</b><span>par mois · + {BOUTIQUE[2]} € de mise en ligne</span>'
                   '<span>Tout Premium, catalogue, panier et paiement par carte, retrait ou livraison</span></div>')
-    faq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
+    faq = faq_html(p)
     def _cl(c):
         sl = CITY_SLUG.get(c)
         return f'<a href="/{sl}/">{e(c)}</a>' if sl and sl != p["slug"] else e(c)
@@ -800,10 +816,10 @@ def page(p):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(p["title"])} · MyCreativeSite</title>
+<title>{e(p.get("seo_title") or p["title"])} · MyCreativeSite</title>
 <meta name="description" content="{e(p["meta"])}">
 <link rel="canonical" href="{url}">
-<meta property="og:title" content="{e(p["title"])} · MyCreativeSite">
+<meta property="og:title" content="{e(p.get("seo_title") or p["title"])} · MyCreativeSite">
 <meta property="og:description" content="{e(p["meta"])}">
 <meta property="og:url" content="{url}">
 <meta property="og:type" content="website">
@@ -817,7 +833,7 @@ def page(p):
 <script type="application/ld+json">{json.dumps(svc_ld, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(faq_ld, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(crumbs_ld, ensure_ascii=False)}</script>
-<style>{CSS}</style>
+<style>{CSS}{PROSE_CSS if p.get("body") else ""}</style>
 </head>
 <body>
 <header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
@@ -831,7 +847,7 @@ def page(p):
   </div>
   {visual}
 </div>
-{why(p)}<section><div class="wrap">
+{why(p)}{body(p)}<section><div class="wrap">
   <h2>Ce que votre site fait pour vous</h2>
   <div class="feats">{feats}</div>
 </div></section>

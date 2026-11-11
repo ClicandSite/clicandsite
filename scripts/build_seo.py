@@ -686,7 +686,8 @@ CSS = """.logo-mark{width:34px;height:34px;flex:none;display:block}
 :root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 
 :root{--bg:#FFFFFF;--paper:#FAF8FF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--brand-ink:#FFFFFF;--soft:#E8EBFF}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
+/* 11/11/2026 (Anthony) : pages métier toujours en clair comme l'accueil, même si le téléphone est en mode sombre */
+:root{color-scheme:light;--brand-soft:#F2EAFF;--pop:#FFB020;--device:#12162B}
 :root[data-theme="dark"]{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -703,9 +704,40 @@ p{margin:0} a{color:inherit}
 .btn.sm{padding:9px 14px;font-size:.92rem}
 .crumbs{font-size:.85rem;color:var(--muted);padding-block:18px 0}
 .crumbs a{color:var(--muted)}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:28px 56px}
-.hero .lead{color:var(--muted);font-size:1.12rem;margin:18px 0 26px;max-width:56ch}
+/* 11/11/2026 : entête et bannière alignées sur l'accueil (bouton compte + « Je veux mon site », modèle sur ordinateur et téléphone à droite) */
+.nav{display:flex;align-items:center;gap:10px}
+.nav .acc{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.95rem;color:var(--ink);text-decoration:none;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+.nav .acc:hover{border-color:var(--brand)}
+.nav .acc svg{width:18px;height:18px}
+.eyebrow{display:block;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.hero{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center;padding-block:26px 48px}
+.hero h1{font-size:clamp(1.75rem,3.6vw,2.7rem);font-weight:800;line-height:1.08;margin-top:12px}
+.hero .lead{color:var(--muted);font-size:1rem;margin:16px 0 24px;max-width:50ch}
 .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.args{display:grid;grid-template-columns:repeat(3,1fr);margin-top:28px;max-width:540px}
+.args>div{display:grid;gap:4px;align-content:start;padding:0 14px;border-left:1px solid var(--line)}
+.args>div:first-child{padding-left:0;border-left:0}
+.args .ai{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--brand-soft);color:var(--brand);margin-bottom:6px}
+.args .ai svg{width:21px;height:21px}
+.args b{font-size:.9rem;line-height:1.25}
+.args span:not(.ai){font-size:.82rem;color:var(--muted);line-height:1.35}
+.devices{position:relative;padding-bottom:28px;min-width:0}
+.devices .laptop{width:80%}
+.devices .base{margin:0 0 0 -3%;width:86%;height:12px;background:linear-gradient(#2A3050,#12162B);border-radius:0 0 12px 12px}
+.laptop{background:var(--device);border-radius:14px 14px 4px 4px;padding:10px 10px 0;box-shadow:0 30px 60px -20px rgba(18,22,43,.35)}
+.laptop .bar{display:flex;gap:5px;padding:0 2px 8px}
+.laptop .bar i{width:7px;height:7px;border-radius:50%;background:#3A4060}
+.screen{aspect-ratio:16/10;overflow:hidden;border-radius:4px 4px 0 0;background:#000}
+.screen img,.pscreen img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.phone{position:absolute;right:0;bottom:0;width:24%;min-width:92px;background:var(--device);border-radius:22px;padding:7px;box-shadow:0 24px 40px -14px rgba(18,22,43,.45)}
+.pscreen{aspect-ratio:9/19.5;overflow:hidden;border-radius:16px;background:#000}
+.hs-cap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 0;font-weight:600;font-size:.95rem}
+.hs-dot{width:9px;height:9px;border-radius:50%;background:var(--grad)}
+.hs-cap a{margin-left:auto;font-weight:600;font-size:.88rem;color:var(--brand);text-decoration:none}
+.hs-cap a:hover{text-decoration:underline}
+@media (max-width:860px){.nav .acc span{display:none}.nav .acc{padding:8px}.nav .btn.sm{white-space:nowrap}.hero{gap:30px;padding-block:18px 36px}.hero .lead{font-size:.95rem;margin:12px 0 20px}}
+@media (max-width:520px){.args>div{padding:0 10px}.args b{font-size:.84rem}.args span:not(.ai){font-size:.76rem}}
+@media (max-width:480px){.nav .btn.sm{padding:8px 10px;font-size:.82rem}.nav{gap:6px}.logo span{font-size:1rem}.logo{gap:6px}.logo .logo-mark{width:28px;height:28px}}
 .shot{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(18,22,43,.45);background:var(--paper)}
 .shot img{display:block;width:100%;height:auto}
 section{padding-block:48px}
@@ -737,6 +769,15 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.feats,.prices,.prices.one{grid-template-columns:1fr}}
 """
 LOGO = '<img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt="">'
+ICON_ACC = '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 16.6c1.1-2.9 3.4-4.3 6.2-4.3s5.1 1.4 6.2 4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
+HEADER = (f'<div class="wrap"><a class="logo" href="/" aria-label="MyCreativeSite, accueil">{LOGO}<span>My<i>creativesite</i></span></a>'
+          f'<nav class="nav"><a class="acc" href="/espace/" aria-label="Espace client : se connecter">{ICON_ACC}<span>Espace client</span></a>'
+          '<a class="btn sm" href="/#commande">Je veux mon site</a></nav></div>')
+ARGS = ('<div class="args">'
+  '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-3 7.6-7 9-4-1.4-7-4.8-7-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><b>Sans engagement</b><span>Vous arrêtez quand vous voulez.</span></div>'
+  '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>'
+  '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d\'abord pour le téléphone.</span></div>'
+  '</div>')
 NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
@@ -778,6 +819,15 @@ def faq_html(p):
         return "".join(f'<div class="feat"><h3>{e(q)}</h3><p>{e(a)}</p></div>' for q,a in p["faq"])
     return "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in p["faq"])
 
+def devices(k, name, link):
+    """Modèle affiché comme sur l'accueil : écran d'ordinateur + téléphone, légende et lien."""
+    low = e(name.lower())
+    return (f'<div><div class="devices" aria-label="Aperçu du modèle sur ordinateur et téléphone">'
+            f'<div class="laptop"><div class="bar"><i></i><i></i><i></i></div><div class="screen"><img src="/img/modele-{k}-d.jpg?v=4" width="960" height="600" fetchpriority="high" alt="Modèle de site pour {low} sur ordinateur"></div></div>'
+            f'<div class="base"></div>'
+            f'<div class="phone"><div class="pscreen"><img src="/img/modele-{k}-m.jpg?v=4" alt="Modèle de site pour {low} sur téléphone"></div></div></div>'
+            f'<p class="hs-cap"><span class="hs-dot"></span><span>{e(name)}</span>{link}</p></div>')
+
 def page(p):
     from seo_contenu import SEO
     p = {**p, **SEO.get(p["slug"], {})}
@@ -792,12 +842,13 @@ def page(p):
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
     if k:
-        visual = f'<div class="shot"><img src="/img/modele-{k}-d.jpg" width="960" height="600" alt="Exemple de site internet {NAMES[k].lower()} réalisé avec MyCreativeSite" fetchpriority="high"></div>'
         mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else (k + ".html", k)
-        demo = f'<a class="btn ghost" href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a><a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
+        demo = f'<a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
+        visual = devices(k, NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:
-        visual = '<div class="shot"><img src="/img/og.jpg" width="1200" height="630" alt="Exemples de sites internet réalisés par MyCreativeSite" fetchpriority="high"></div>'
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
+        visual = devices("vtc", "Chauffeur VTC, un des 29 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
+    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 29 métiers")
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)
     if p.get("pack"):
@@ -815,6 +866,7 @@ def page(p):
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(p.get("seo_title") or p["title"])} · MyCreativeSite</title>
 <meta name="description" content="{e(p["meta"])}">
@@ -836,14 +888,16 @@ def page(p):
 <style>{CSS}{PROSE_CSS if p.get("body") else ""}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
+<header class="top">{HEADER}</header>
 <main>
 <div class="wrap crumbs"><a href="/">Accueil</a> › {e(p["title"])}</div>
 <div class="wrap hero">
   <div>
+    <span class="eyebrow">{eyebrow}</span>
     <h1>{e(p["h1"])}</h1>
     <p class="lead">{e(p["lead"])}</p>
     <div class="ctas"><a class="btn" href="/#commande">Je veux mon site</a>{demo}</div>
+    {ARGS}
   </div>
   {visual}
 </div>
@@ -896,6 +950,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(title)} · MyCreativeSite</title>
 <meta name="description" content="{e(desc)}">
@@ -915,7 +970,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <style>{CSS}{ARTICLE_CSS}</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/">{LOGO}<span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
+<header class="top">{HEADER}</header>
 <main>{body}</main>
 <footer><div class="wrap"><span style="display:inline-flex;align-items:center;gap:8px"><img src="/img/m-badge.webp" alt="" width="20" height="20" style="width:20px;height:20px">© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
 </body>

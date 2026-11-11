@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Site internet ou page Facebook : de quoi un pro a-t-il vraiment besoin ? · MyCreativeSite</title>
 <meta name="description" content="Une page Facebook ou Instagram suffit-elle pour un artisan ou un commerçant ? Les différences avec un vrai site internet, et pourquoi les deux se complètent.">
@@ -23,7 +24,8 @@
 :root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
 
 :root{--bg:#FFFFFF;--paper:#FAF8FF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--brand-ink:#FFFFFF;--soft:#E8EBFF}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}}
+/* 11/11/2026 (Anthony) : pages métier toujours en clair comme l'accueil, même si le téléphone est en mode sombre */
+:root{color-scheme:light;--brand-soft:#F2EAFF;--pop:#FFB020;--device:#12162B}
 :root[data-theme="dark"]{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--brand-ink:#0D1020;--soft:#1E2550;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -40,9 +42,40 @@ p{margin:0} a{color:inherit}
 .btn.sm{padding:9px 14px;font-size:.92rem}
 .crumbs{font-size:.85rem;color:var(--muted);padding-block:18px 0}
 .crumbs a{color:var(--muted)}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:28px 56px}
-.hero .lead{color:var(--muted);font-size:1.12rem;margin:18px 0 26px;max-width:56ch}
+/* 11/11/2026 : entête et bannière alignées sur l'accueil (bouton compte + « Je veux mon site », modèle sur ordinateur et téléphone à droite) */
+.nav{display:flex;align-items:center;gap:10px}
+.nav .acc{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.95rem;color:var(--ink);text-decoration:none;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+.nav .acc:hover{border-color:var(--brand)}
+.nav .acc svg{width:18px;height:18px}
+.eyebrow{display:block;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.hero{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center;padding-block:26px 48px}
+.hero h1{font-size:clamp(1.75rem,3.6vw,2.7rem);font-weight:800;line-height:1.08;margin-top:12px}
+.hero .lead{color:var(--muted);font-size:1rem;margin:16px 0 24px;max-width:50ch}
 .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.args{display:grid;grid-template-columns:repeat(3,1fr);margin-top:28px;max-width:540px}
+.args>div{display:grid;gap:4px;align-content:start;padding:0 14px;border-left:1px solid var(--line)}
+.args>div:first-child{padding-left:0;border-left:0}
+.args .ai{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--brand-soft);color:var(--brand);margin-bottom:6px}
+.args .ai svg{width:21px;height:21px}
+.args b{font-size:.9rem;line-height:1.25}
+.args span:not(.ai){font-size:.82rem;color:var(--muted);line-height:1.35}
+.devices{position:relative;padding-bottom:28px;min-width:0}
+.devices .laptop{width:80%}
+.devices .base{margin:0 0 0 -3%;width:86%;height:12px;background:linear-gradient(#2A3050,#12162B);border-radius:0 0 12px 12px}
+.laptop{background:var(--device);border-radius:14px 14px 4px 4px;padding:10px 10px 0;box-shadow:0 30px 60px -20px rgba(18,22,43,.35)}
+.laptop .bar{display:flex;gap:5px;padding:0 2px 8px}
+.laptop .bar i{width:7px;height:7px;border-radius:50%;background:#3A4060}
+.screen{aspect-ratio:16/10;overflow:hidden;border-radius:4px 4px 0 0;background:#000}
+.screen img,.pscreen img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.phone{position:absolute;right:0;bottom:0;width:24%;min-width:92px;background:var(--device);border-radius:22px;padding:7px;box-shadow:0 24px 40px -14px rgba(18,22,43,.45)}
+.pscreen{aspect-ratio:9/19.5;overflow:hidden;border-radius:16px;background:#000}
+.hs-cap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 0;font-weight:600;font-size:.95rem}
+.hs-dot{width:9px;height:9px;border-radius:50%;background:var(--grad)}
+.hs-cap a{margin-left:auto;font-weight:600;font-size:.88rem;color:var(--brand);text-decoration:none}
+.hs-cap a:hover{text-decoration:underline}
+@media (max-width:860px){.nav .acc span{display:none}.nav .acc{padding:8px}.nav .btn.sm{white-space:nowrap}.hero{gap:30px;padding-block:18px 36px}.hero .lead{font-size:.95rem;margin:12px 0 20px}}
+@media (max-width:520px){.args>div{padding:0 10px}.args b{font-size:.84rem}.args span:not(.ai){font-size:.76rem}}
+@media (max-width:480px){.nav .btn.sm{padding:8px 10px;font-size:.82rem}.nav{gap:6px}.logo span{font-size:1rem}.logo{gap:6px}.logo .logo-mark{width:28px;height:28px}}
 .shot{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(18,22,43,.45);background:var(--paper)}
 .shot img{display:block;width:100%;height:auto}
 section{padding-block:48px}
@@ -88,7 +121,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="/"><img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt=""><span>My<i>creativesite</i></span></a><span style="display:flex;gap:10px;align-items:center"><a href="/espace/" style="font-weight:600;font-size:.92rem;text-decoration:none">Espace client</a><a class="btn sm" href="/#commande">Je veux mon site</a></span></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="/" aria-label="MyCreativeSite, accueil"><img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt=""><span>My<i>creativesite</i></span></a><nav class="nav"><a class="acc" href="/espace/" aria-label="Espace client : se connecter"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 16.6c1.1-2.9 3.4-4.3 6.2-4.3s5.1 1.4 6.2 4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>Espace client</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></nav></div></header>
 <main><div class="wrap crumbs"><a href="/">Accueil</a> › <a href="/conseils/">Conseils</a></div>
 <article class="wrap art"><h1>Site internet ou page Facebook : de quoi un pro a-t-il vraiment besoin ?</h1><p class="date">Publié le 06/11/2026 · MyCreativeSite</p>
 <p>Beaucoup de professionnels démarrent avec une page Facebook ou un compte Instagram, gratuits et faciles à ouvrir. C'est une très bonne idée pour garder le contact avec ses clients. Mais est-ce suffisant pour être trouvé et choisi ?</p><h2>Ce que les réseaux sociaux font bien</h2><ul><li>Montrer votre actualité : un nouveau plat, un chantier terminé, une promotion.</li><li>Échanger avec vos clients habituels et recevoir des messages.</li><li>Créer une communauté autour de votre activité.</li></ul><h2>Ce qu&#x27;ils font mal</h2><ul><li><b>Être trouvé sur Google</b> : quand quelqu'un cherche « plombier à Lyon » ou « restaurant près de chez moi », ce sont surtout des sites et des fiches Google qui apparaissent.</li><li><b>Donner les infos essentielles</b> en un coup d'œil : tarifs, horaires, zone d'intervention, carte, prises de rendez-vous. Sur un réseau social, elles se perdent dans le fil.</li><li><b>Rassurer</b> : un client qui hésite entre deux pros choisit souvent celui qui a un site sérieux, avec ses coordonnées et ses mentions légales.</li><li><b>Vous appartenir</b> : votre page dépend des règles et de l'algorithme de la plateforme. Votre site et votre nom de domaine sont à vous.</li></ul><h2>La bonne combinaison</h2><p>Le plus efficace est d'avoir les deux : un site internet qui sert de vitrine officielle (ce que vous faites, vos prix, comment vous joindre ou réserver), et des réseaux sociaux qui renvoient vers ce site. Ajoutez une fiche Google Business Profile, gratuite, et vous couvrez l'essentiel de la façon dont les clients vous cherchent.</p><h2>Et si je n&#x27;ai pas le temps ?</h2><p>C'est précisément pour cela que nous proposons des sites clés en main : le site est fait pour vous, et vous le mettez à jour depuis votre téléphone en quelques secondes, comme vous publieriez un post.</p><div class="box"><b>Découvrir les modèles par métier</b><a class="btn" href="/#modeles">Voir</a></div>

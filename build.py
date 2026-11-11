@@ -219,7 +219,7 @@ def gyg(q):
 def viator(q):
     u = ("https://www.viator.com/fr-FR/searchResults/all?text=" if LANG == "fr" else "https://www.viator.com/searchResults/all?text=") + quote_plus(q)
     if AFFILIATION["viator_pid"]:
-        u += f"&pid={AFFILIATION['viator_pid']}&mcid={AFFILIATION['viator_mcid']}&medium=link"
+        u += f"&pid={AFFILIATION['viator_pid']}&mcid={AFFILIATION['viator_mcid']}&medium=link&campaign=clicandsite-{LANG}"
     return u
 
 REGION_BY_SLUG = {r["slug"]: r for r in REGIONS}

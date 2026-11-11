@@ -114,7 +114,7 @@ CSS_V = _hl.md5(open(os.path.join(HERE, "assets", "style.css"), "rb").read()).he
 
 AFFILIATION = {
     "getyourguide_partner_id": "XMYSXGR",   # à renseigner après acceptation (partner.getyourguide.com)
-    "viator_pid": "",                # à renseigner après acceptation (partnerresources.viator.com)
+    "viator_pid": "P00331213",              # à renseigner après acceptation (partnerresources.viator.com)
     "viator_mcid": "42383",
 }
 EPS_URL = "https://elite-prestige-services.fr/"

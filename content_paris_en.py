@@ -13,13 +13,14 @@ REGION = {
     ],
     "h1": "Visiting Paris", "de": "Paris", "autres": "More places in Paris", "couleur": "encre",
     "locality": "Paris", "address_region": "Île-de-France",
-    "departements": ["75", "78"],
+    "departements": ["75", "77", "78"],
 }
 
 GROUPES = [
     ("monuments", "Monuments and views"),
     ("musees", "Museums and palaces"),
     ("quartiers", "Neighbourhoods and walks"),
+    ('sorties', 'Days out and seasonal'),
 ]
 
 VEDETTES = ["tour-eiffel", "louvre", "notre-dame", "montmartre", "musee-d-orsay", "versailles"]
@@ -456,6 +457,112 @@ DESTINATIONS = [
            ("Do I need to book Versailles?", "Yes, a time slot is compulsory for every visitor, including those who get in free."),
            ("How do I get to Versailles from Paris?", "The easiest way is RER C to Versailles Château Rive Gauche, ten minutes' walk from the palace."),
        ]),
+
+    _d(slug="disneyland-paris", path="disneyland-paris", groupe="sorties", nom="Disneyland Paris", dept="77", cachet="Seine-et-Marne", couleur="azur", locality="Marne-la-Vallée",
+       h1="Disneyland Paris: visiting both parks", **{"in": "at Disneyland Paris", "to": "to Disneyland Paris", "tips_for": "Disneyland Paris"},
+       description="Visiting Disneyland Paris: Disneyland Park, Disney Adventure World and World of Frozen, dated tickets, getting there on RER A, and tips.",
+       accroche="Two parks, a dining village and, since March 2026, World of Frozen. Disneyland Paris is a direct RER ride from central Paris.",
+       intro=[
+           "Disneyland Paris has two parks in Marne-la-Vallée, east of Paris: Disneyland Park, with its castle and the great classics, and Disney Adventure World, the former Walt Disney Studios Park, renamed and transformed on 29 March 2026. Disney Village, with restaurants and shops, lies between them.",
+           "The big new arrival is World of Frozen, with the village of Arendelle on a large lake, next to Avengers Campus and the Pixar lands. Tickets are dated: buy them in advance, especially during school holidays.",
+       ],
+       a_voir=[
+           ("Disneyland Park", "Sleeping Beauty Castle, Main Street, Pirates of the Caribbean, Big Thunder Mountain and the afternoon parade."),
+           ("Disney Adventure World", "The second park, completely redesigned around a lake, with Disney, Pixar and Marvel lands and a night-time show."),
+           ("World of Frozen", "The village of Arendelle, a boat ride through the film's story and character meetings. It is the busiest area: go early."),
+           ("Avengers Campus", "The Marvel land, with thrill rides for older children and adults."),
+           ("Disney Village", "Restaurants, shops and a cinema, free to enter, between the station and the parks."),
+       ],
+       y_aller=[
+           ("By RER A", "To the Marne-la-Vallée - Chessy terminus, right outside the park entrance. Allow about 40 minutes from central Paris."),
+           ("By TGV", "Marne-la-Vallée - Chessy TGV station, in the same place, has direct trains from many French cities."),
+           ("By car or with a driver", "Via the A4 motorway. Park parking is paid; a private transfer saves changes with children."),
+       ],
+       fiche=[("Time needed", "1 to 2 days"), ("Booking", "Dated tickets, in advance"), ("Access", "RER A, Marne-la-Vallée - Chessy"), ("Good for", "Families, Disney and Marvel fans")],
+       conseils=[
+           "Arrive before opening and head first for the busiest rides, such as the Frozen attraction.",
+           "Download the official app: it shows live waiting times.",
+           "On weekdays outside school holidays, queues are much shorter than at weekends.",
+       ],
+       activites=[
+           ("Disneyland Paris tickets", "Dated tickets for one or both parks.", "Disneyland Paris ticket"),
+           ("Disneyland Paris with transport", "Ticket plus shuttle from central Paris.", "Disneyland Paris transfer"),
+       ],
+       faq=[
+           ("How do you get to Disneyland Paris from Paris?", "Take RER A to the Marne-la-Vallée - Chessy terminus, right outside the parks, in about 40 minutes from the centre."),
+           ("What is Disney Adventure World?", "It is the new name of the former Walt Disney Studios Park since 29 March 2026, now home to World of Frozen."),
+           ("Should I book Disneyland tickets in advance?", "Yes, tickets are dated and some days sell out during the holidays, so buy them before you go."),
+       ]),
+
+    _d(slug="catacombes", path="catacombs", groupe="monuments", nom="Catacombs", couleur="encre", h1="Visiting the Paris Catacombs",
+       **{"in": "in the Catacombs", "to": "to the Catacombs", "tips_for": "visiting the Catacombs"},
+       description="Visiting the renovated Paris Catacombs: compulsory booking, closing day, 131 steps, how long it takes, getting to Denfert-Rochereau and tips.",
+       accroche="Twenty metres below Paris, the bones of millions of Parisians line the galleries. Renovated in 2026, the Catacombs can only be visited with a booking.",
+       intro=[
+           "At the end of the 18th century, Paris emptied its overflowing cemeteries and moved the bones into old underground quarries. The ossuary, open to the public since the early 19th century, has become one of the most striking visits in the city.",
+           "After several months of renovation, the Catacombs reopened on 8 April 2026 with new lighting and an updated visit. Booking a time slot online is compulsory: you cannot get in without a reserved ticket.",
+       ],
+       a_voir=[
+           ("The ossuary", "Kilometres of skulls and bones stacked with care, sometimes in patterns, along galleries marked with inscriptions."),
+           ("The old quarries", "Before the ossuary, the route passes through the limestone quarries that supplied some of the stone of Paris."),
+           ("The renovated route", "New lighting, models and an audio guide that explain the history of the city's underground."),
+       ],
+       y_aller=[
+           ("By metro and RER", "Denfert-Rochereau station (lines 4 and 6, RER B), right by the entrance on Avenue du Colonel-Henri-Rol-Tanguy."),
+           ("The exit", "You come out elsewhere, on Rue Rémy-Dumoncel, a few minutes' walk away: bear it in mind if you are meeting someone."),
+       ],
+       fiche=[("Visit length", "About 1 hour"), ("Closed", "Mondays"), ("Booking", "Yes, compulsory"), ("Good to know", "131 steps down, 112 up")],
+       conseils=[
+           "Bring a jacket: it is about 14 °C underground all year round.",
+           "Wear closed shoes; the ground is uneven and sometimes damp.",
+           "The visit is not recommended for claustrophobic visitors or people with reduced mobility, and is not ideal for young children.",
+       ],
+       activites=[
+           ("Catacombs tickets and guided tours", "Reserved entry and guided visits.", "Paris Catacombs"),
+           ("Hidden and underground Paris", "Guided tours of secret Paris and its curiosities.", "Paris underground tour"),
+       ],
+       faq=[
+           ("Do I need to book the Paris Catacombs?", "Yes, booking a time slot online is compulsory, and slots go fast, especially at weekends and during holidays."),
+           ("What day are the Catacombs closed?", "Mondays, plus 1 January, 1 May and 25 December."),
+           ("How many steps are there in the Catacombs?", "131 steps down at the start and 112 back up at the exit, with no lift."),
+       ]),
+
+    _d(slug="noel-a-paris", path="christmas-in-paris", groupe="sorties", nom="Christmas in Paris", couleur="ocre", h1="Christmas in Paris: lights, markets and ice rinks",
+       **{"in": "at Christmas in Paris", "to": "to the Christmas sights", "tips_for": "Christmas in Paris"},
+       description="Christmas 2026 in Paris: Champs-Élysées lights switch-on date, the return of its Christmas market, the Grand Palais ice rink, department store windows and cruises.",
+       accroche="The Champs-Élysées lights go on on 22 November 2026, and its Christmas market returns after ten years. Here is where to find the magic of Christmas in Paris.",
+       intro=[
+           "From late November to early January, Paris dresses up for the holidays: illuminated avenues, animated department store windows, chalet markets and ice rinks. It is a great time to visit, as long as you wrap up warm.",
+           "In 2026, the Champs-Élysées lights are switched on on Sunday 22 November and shine every evening until early January. The same day, the Champs-Élysées Christmas market makes its comeback, running until 4 January 2027.",
+       ],
+       a_voir=[
+           ("The Champs-Élysées lights", "Hundreds of illuminated trees from Concorde to the Arc de Triomphe. The best view is from the top of the Arc de Triomphe."),
+           ("The Champs-Élysées Christmas market", "Back after ten years, its chalets line the avenue between Place de la Concorde and the Rond-Point, from 22 November 2026 to 4 January 2027."),
+           ("Department store windows", "On Boulevard Haussmann, the animated windows of Galeries Lafayette and Printemps, and the giant tree under the Galeries Lafayette dome."),
+           ("The Grand Palais ice rink", "In December, a huge ice rink fills the glass-roofed nave of the Grand Palais. Book your slot ahead."),
+           ("La Défense Christmas market", "One of the largest in the region, open from 12 November to 31 December 2026."),
+           ("A Seine cruise", "To see the monuments lit up while staying warm in a glazed boat."),
+       ],
+       y_aller=[
+           ("Champs-Élysées", "Metro Concorde (lines 1, 8, 12), Champs-Élysées - Clemenceau (lines 1 and 13) or Charles de Gaulle - Étoile."),
+           ("Department stores", "Metro Chaussée d'Antin - La Fayette (lines 7 and 9) or Havre - Caumartin, RER A at Auber."),
+       ],
+       fiche=[("Lights", "From 22 November 2026"), ("Champs-Élysées market", "22 Nov 2026 - 4 Jan 2027"), ("Best time", "Weekdays, at nightfall"), ("Good for", "Everyone, great for families")],
+       conseils=[
+           "Go on a weekday rather than at the weekend: markets and windows are packed on Saturdays.",
+           "Night falls around 5pm in December: visit museums in the afternoon and the lights afterwards.",
+           "Book ice rinks, dinner cruises and New Year's Eve restaurants in advance.",
+       ],
+       activites=[
+           ("Christmas lights tour", "Bus, walking or boat tours to see Paris lit up.", "Paris Christmas lights tour"),
+           ("Christmas dinner cruise on the Seine", "Festive menus on board, with views of the illuminated monuments.", "Paris Christmas cruise"),
+       ],
+       faq=[
+           ("When are the Champs-Élysées Christmas lights switched on in 2026?", "On Sunday 22 November 2026, in the early evening. They stay on every evening until early January."),
+           ("Is there a Christmas market on the Champs-Élysées in 2026?", "Yes, it returns after ten years, from 22 November 2026 to 4 January 2027, between Concorde and the Rond-Point."),
+           ("Where can you ice skate in Paris at Christmas?", "Under the glass roof of the Grand Palais in December, as well as on several rinks around the city and at La Défense."),
+       ]),
+
 ]
 for _x in DESTINATIONS:
     if "in_" in _x:
@@ -505,6 +612,9 @@ TITRES = {
     "le-marais": "Things to Do in the Marais, Paris",
     "quartier-latin": "Latin Quarter and Luxembourg Gardens Guide",
     "versailles": "Visiting Versailles from Paris: Booking, Tips",
+    'disneyland-paris': 'Disneyland Paris: Tickets, Getting There, Tips',
+    'catacombes': 'Paris Catacombs: Booking and Visiting Tips',
+    'noel-a-paris': 'Christmas in Paris 2026: Lights, Markets, Rinks',
 }
 TITRE_REGION = "Paris Travel Guide: The Best Places to Visit"
 TITRE_ITI = "Paris in 3 Days: An Itinerary by Metro"
@@ -514,4 +624,7 @@ ALIAS = {
     "montmartre": ["Montmartre", "Sacré-Cœur"], "musee-d-orsay": ["Musée d'Orsay", "Orsay"], "arc-de-triomphe": ["Arc de Triomphe"],
     "opera-garnier": ["Palais Garnier"], "croisiere-sur-la-seine": ["cruise"], "le-marais": ["Marais"],
     "quartier-latin": ["Latin Quarter", "Luxembourg Gardens"], "versailles": ["Versailles"],
+    'disneyland-paris': ['Disneyland Paris', 'Disneyland'],
+    'catacombes': ['Catacombs'],
+    'noel-a-paris': ['Christmas in Paris'],
 }

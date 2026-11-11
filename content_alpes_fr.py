@@ -18,7 +18,7 @@ REGION = {
         "Les Alpes françaises concentrent les plus grands domaines skiables du monde, entre la Savoie et la Haute-Savoie. Chaque station a sa personnalité : haute altitude et neige garantie à Val Thorens, luxe et pistes impeccables à Courchevel, ambiance de village à Megève, haute montagne et alpinisme à Chamonix.",
         "Beaucoup de stations se rejoignent sans voiture : en train jusqu'à Moûtiers, Sallanches ou Saint-Gervais, puis en car ou en navette. Chaque guide indique quand la station ouvre, comment y aller et quoi faire quand on ne skie pas. Les dates d'ouverture restent toujours soumises à l'enneigement.",
     ],
-    "departements": ["73", "74"],
+    "departements": ["38", "73", "74"],
 }
 
 GROUPES = [
@@ -171,6 +171,143 @@ DESTINATIONS = [
            ("Megève est-elle adaptée aux débutants ?", "Oui, le domaine compte beaucoup de pistes bleues et vertes, souvent abritées par la forêt."),
            ("Quelle est la gare la plus proche de Megève ?", "La gare de Sallanches - Combloux - Megève, à une trentaine de minutes du village en car ou en taxi."),
        ]),
+
+    _d(slug="val-d-isere", groupe="stations", nom="Val d'Isère", dept="73", cachet="Savoie", couleur="encre", h1="Val d'Isère : ski dans le domaine Tignes-Val d'Isère",
+       description="Skier à Val d'Isère : dates d'ouverture 2026-2027, la Face de Bellevarde, le domaine relié à Tignes, accès en train par Bourg-Saint-Maurice et conseils.",
+       accroche="Un vrai village de montagne au fond de la Tarentaise, un domaine immense relié à Tignes et la piste olympique de Bellevarde. Val d'Isère ouvre fin novembre.",
+       intro=[
+           "Val d'Isère s'est développée autour de son vieux village et de son église, au pied du col de l'Iseran, fermé l'hiver. Avec Tignes, elle forme l'un des plus grands domaines skiables reliés de France, réputé pour sa neige d'altitude et son hors-piste.",
+           "Pour la saison 2026-2027, Val d'Isère annonce une ouverture le 28 novembre 2026, selon l'enneigement, avec une saison qui se prolonge jusqu'au printemps.",
+       ],
+       a_voir=[
+           ("La Face de Bellevarde", "La piste de la descente olympique de 1992, raide et exigeante, qui finit au cœur de la station. Réservée aux très bons skieurs."),
+           ("Le vieux village", "L'église et les maisons de pierre du centre historique, à deux pas des remontées."),
+           ("Le secteur du Fornet et du Pissaillas", "Le fond de la vallée, avec un glacier et une ambiance plus sauvage."),
+           ("La liaison avec Tignes", "Avec le forfait du domaine, on rejoint Tignes à skis pour une journée complète sur les deux stations."),
+       ],
+       y_aller=[
+           ("En train", "Train jusqu'à Bourg-Saint-Maurice, puis car ou navette jusqu'à Val d'Isère, au fond de la vallée."),
+           ("En avion", "Les aéroports les plus proches sont Chambéry, Genève et Lyon, avec navettes et transferts privés."),
+           ("En voiture", "Par la vallée de la Tarentaise et Bourg-Saint-Maurice. Équipements spéciaux obligatoires en hiver."),
+       ],
+       fiche=[("Ouverture 2026-2027", "28 novembre 2026"), ("Domaine", "Tignes - Val d'Isère"), ("Pour qui", "Bons skieurs, amateurs de hors-piste"), ("Accès", "Train jusqu'à Bourg-Saint-Maurice")],
+       conseils=[
+           "Le hors-piste est l'une des grandes richesses de Val d'Isère : partez toujours avec un guide ou un moniteur.",
+           "En début de saison, les secteurs d'altitude ouvrent en premier : vérifiez les pistes ouvertes avant de partir.",
+           "Réservez tôt pour Noël et février : la station est très demandée par une clientèle internationale.",
+       ],
+       activites=[
+           ("Activités à Val d'Isère", "Cours de ski, hors-piste avec guide, raquettes et motoneige.", "Val d'Isère"),
+           ("Tignes et Val d'Isère", "Sorties guidées sur le domaine relié.", "Tignes Val d'Isère ski"),
+       ],
+       faq=[
+           ("Quand ouvre Val d'Isère en 2026 ?", "La station annonce une ouverture le 28 novembre 2026, sous réserve d'enneigement."),
+           ("Val d'Isère est-elle reliée à Tignes ?", "Oui, les deux stations forment un seul domaine relié, accessible avec le même forfait."),
+           ("Comment aller à Val d'Isère en train ?", "Jusqu'à Bourg-Saint-Maurice, puis en car ou en navette jusqu'à la station."),
+       ]),
+
+    _d(slug="tignes", groupe="stations", nom="Tignes", dept="73", cachet="Savoie", couleur="azur", h1="Tignes : ski sur glacier et neige garantie",
+       description="Skier à Tignes : ouverture dès le 21 novembre 2026, le glacier de la Grande Motte, les villages de la station, le lac et l'accès en train par Bourg-Saint-Maurice.",
+       accroche="Grâce à son glacier, Tignes est l'une des premières stations de France à ouvrir : dès le 21 novembre 2026. Une valeur sûre pour skier en début de saison.",
+       intro=[
+           "Tignes regroupe plusieurs villages autour d'un lac d'altitude : Tignes Le Lac, Val Claret, Le Lavachet, Tignes 1800 et Les Brévières, plus bas dans la forêt. Au-dessus, le glacier de la Grande Motte permet de skier sur une neige fiable dès l'automne.",
+           "Pour 2026-2027, Tignes annonce une ouverture progressive dès le 21 novembre 2026, avec la liaison vers Val d'Isère à partir du 28 novembre, et une saison jusqu'au 2 mai 2027, selon l'enneigement.",
+       ],
+       a_voir=[
+           ("Le glacier de la Grande Motte", "Un funiculaire souterrain monte de Val Claret vers le glacier, avec une vue spectaculaire sur la Vanoise."),
+           ("Le lac de Tignes", "Gelé en hiver, il accueille balades et activités sur la glace au cœur de la station."),
+           ("Les villages de la station", "Le Lac et Val Claret pour être au pied des pistes, Les Brévières pour l'ambiance de village."),
+           ("La liaison avec Val d'Isère", "Le domaine relié offre des journées de ski sans jamais repasser par la même piste."),
+       ],
+       y_aller=[
+           ("En train", "Train jusqu'à Bourg-Saint-Maurice, puis car ou navette jusqu'aux villages de Tignes."),
+           ("En avion", "Aéroports de Chambéry, Genève et Lyon, avec navettes et transferts privés en saison."),
+           ("En voiture", "Par Bourg-Saint-Maurice et la route du barrage de Tignes. Équipements spéciaux obligatoires."),
+       ],
+       fiche=[("Ouverture 2026-2027", "21 novembre 2026"), ("Fermeture", "2 mai 2027"), ("Domaine", "Tignes - Val d'Isère"), ("Atout", "Glacier de la Grande Motte")],
+       conseils=[
+           "Pour skier en novembre ou en avril, Tignes est l'un des meilleurs choix grâce à son glacier.",
+           "À cette altitude, le temps change vite : prévoyez masque, couches chaudes et crème solaire.",
+           "Choisissez votre village selon vos envies : Val Claret pour le ski, Les Brévières pour le calme.",
+       ],
+       activites=[
+           ("Activités à Tignes", "Cours de ski, plongée sous glace, motoneige et raquettes.", "Tignes"),
+           ("Ski entre Tignes et Val d'Isère", "Sorties guidées sur le domaine relié.", "Tignes ski"),
+       ],
+       faq=[
+           ("Quand ouvre Tignes en 2026 ?", "Dès le 21 novembre 2026, avec une ouverture progressive du domaine et la liaison vers Val d'Isère à partir du 28 novembre."),
+           ("Peut-on skier sur le glacier à Tignes ?", "Oui, le glacier de la Grande Motte permet de skier sur une neige d'altitude, accessible par un funiculaire depuis Val Claret."),
+           ("Comment aller à Tignes sans voiture ?", "En train jusqu'à Bourg-Saint-Maurice, puis en car ou en navette jusqu'à la station."),
+       ]),
+
+    _d(slug="meribel", groupe="stations", nom="Méribel", dept="73", cachet="Savoie", couleur="pin", h1="Méribel : au cœur des 3 Vallées",
+       description="Skier à Méribel : la station au centre des 3 Vallées, ses chalets en bois et pierre, l'ouverture 2026-2027 et l'accès en train par Moûtiers.",
+       accroche="Placée au centre des 3 Vallées, Méribel permet de rejoindre Courchevel comme Val Thorens dans la journée, au départ d'un village tout en chalets.",
+       intro=[
+           "Méribel a été fondée à la fin des années 1930 avec une règle encore respectée : des chalets en bois et en pierre, dans le style savoyard. Le résultat est l'une des stations les plus harmonieuses des Alpes, dans une vallée boisée.",
+           "Sa position centrale en fait la meilleure base pour explorer les 3 Vallées. Pour la saison 2026-2027, Méribel prévoit une ouverture le 5 décembre 2026, selon l'enneigement.",
+       ],
+       a_voir=[
+           ("Le domaine des 3 Vallées", "Depuis Méribel, on rejoint Courchevel d'un côté et Les Menuires et Val Thorens de l'autre."),
+           ("Le Roc de Fer", "La piste des championnats du monde de ski alpin de 2023, organisés avec Courchevel."),
+           ("Le Parc olympique", "Patinoire et centre aquatique, héritage des Jeux olympiques d'Albertville en 1992."),
+           ("Méribel-Mottaret", "Le village le plus haut de la station, skis aux pieds, au départ des remontées vers Val Thorens."),
+       ],
+       y_aller=[
+           ("En train", "Train jusqu'à Moûtiers - Salins - Brides-les-Bains, puis car régional jusqu'à Méribel."),
+           ("En avion", "Aéroports de Chambéry, Genève et Lyon, avec navettes et transferts privés en saison."),
+           ("Sur place", "Navettes gratuites entre Méribel, Mottaret et les villages de la vallée."),
+       ],
+       fiche=[("Ouverture 2026-2027", "5 décembre 2026"), ("Domaine", "Les 3 Vallées"), ("Pour qui", "Tous niveaux, familles"), ("Accès", "Train jusqu'à Moûtiers")],
+       conseils=[
+           "Logez à Mottaret si vous voulez skier au maximum, au centre de Méribel pour l'ambiance de village.",
+           "Vérifiez que votre forfait couvre les 3 Vallées si vous voulez aller jusqu'à Val Thorens ou Courchevel.",
+           "Les fins de journée sont très fréquentées sur les pistes du retour : partez un peu plus tôt.",
+       ],
+       activites=[
+           ("Activités à Méribel", "Cours de ski, parapente, raquettes et chiens de traîneau.", "Méribel"),
+           ("Excursions dans les 3 Vallées", "Sorties guidées entre Courchevel, Méribel et Val Thorens.", "Méribel 3 Vallées"),
+       ],
+       faq=[
+           ("Quand ouvre Méribel en 2026 ?", "La station prévoit une ouverture le 5 décembre 2026, sous réserve d'enneigement."),
+           ("Méribel fait-elle partie des 3 Vallées ?", "Oui, elle est au centre du domaine, entre Courchevel et Les Menuires - Val Thorens."),
+           ("Comment aller à Méribel en train ?", "Jusqu'à la gare de Moûtiers, puis en car régional jusqu'à la station."),
+       ]),
+
+    _d(slug="alpe-d-huez", groupe="stations", nom="Alpe d'Huez", dept="38", cachet="Isère", couleur="ocre", h1="Alpe d'Huez : ski au soleil et piste de Sarenne",
+       description="Skier à l'Alpe d'Huez : dates d'ouverture 2026-2027, le Pic Blanc à 3 330 m, la piste de Sarenne, les villages reliés et l'accès depuis Grenoble.",
+       accroche="L'île au soleil des Alpes : un domaine ensoleillé, le Pic Blanc à 3 330 mètres et la Sarenne, l'une des plus longues pistes noires du monde.",
+       intro=[
+           "Au cœur de l'Isère, l'Alpe d'Huez est réputée pour son ensoleillement et son grand domaine, relié aux villages d'Auris-en-Oisans, Oz, Vaujany, Villard-Reculas et Huez. Elle est aussi célèbre pour ses virages du Tour de France.",
+           "Pour la saison 2026-2027, la station annonce une ouverture le 5 décembre 2026 et une fermeture le 25 avril 2027, selon l'enneigement.",
+       ],
+       a_voir=[
+           ("Le Pic Blanc", "À 3 330 mètres, le sommet du domaine offre un panorama immense ; par temps clair, on voit une grande partie des Alpes, jusqu'au mont Blanc."),
+           ("La Sarenne", "Une piste noire de 16 kilomètres, du Pic Blanc jusqu'aux gorges de Sarenne, l'une des plus longues du monde. Elle s'adoucit après le premier tronçon."),
+           ("La piste du Tunnel", "Une descente qui traverse la montagne de part en part, pour skieurs confirmés."),
+           ("Les villages reliés", "Auris, Oz, Vaujany et Villard-Reculas, plus calmes et souvent plus abordables, sur le même domaine."),
+       ],
+       y_aller=[
+           ("Depuis Grenoble", "Environ 1 h 30 de route ou de car depuis Grenoble, desservie par le train."),
+           ("En avion", "Aéroports de Grenoble-Isère et de Lyon, avec navettes en saison."),
+           ("En voiture", "Par Bourg-d'Oisans puis la célèbre montée aux 21 virages. Équipements spéciaux obligatoires."),
+       ],
+       fiche=[("Ouverture 2026-2027", "5 décembre 2026"), ("Fermeture", "25 avril 2027"), ("Altitude max.", "3 330 m (Pic Blanc)"), ("Accès", "1 h 30 depuis Grenoble")],
+       conseils=[
+           "Montez au Pic Blanc tôt le matin : la neige est meilleure et la file plus courte. Un créneau peut être réservé pour la télécabine.",
+           "Ne vous engagez dans la Sarenne qu'avec un bon niveau : le haut est raide, le bas très long.",
+           "Pour un séjour plus calme, logez dans l'un des villages reliés.",
+       ],
+       activites=[
+           ("Activités à l'Alpe d'Huez", "Cours de ski, parapente, motoneige et raquettes.", "Alpe d'Huez"),
+           ("Sorties en montagne en Oisans", "Excursions guidées autour de l'Alpe d'Huez.", "Alpe d'Huez Oisans"),
+       ],
+       faq=[
+           ("Quand ouvre l'Alpe d'Huez en 2026 ?", "La station annonce une ouverture le 5 décembre 2026 et une fermeture le 25 avril 2027, sous réserve d'enneigement."),
+           ("Quelle est la longueur de la piste de Sarenne ?", "Environ 16 kilomètres, du Pic Blanc à 3 330 mètres jusqu'aux gorges de Sarenne."),
+           ("Comment aller à l'Alpe d'Huez ?", "Depuis Grenoble, en car ou en voiture en environ 1 h 30, par Bourg-d'Oisans."),
+       ]),
+
 ]
 
 TITRES = {
@@ -178,12 +315,36 @@ TITRES = {
     "val-thorens": "Val Thorens : ouverture 2026, accès, conseils",
     "courchevel": "Courchevel : ski, villages, ouverture 2026",
     "megeve": "Megève : ski, village, ouverture 2026-2027",
+    'val-d-isere': "Val d'Isère : ouverture 2026, Bellevarde, accès",
+    'tignes': 'Tignes : ouverture 21 novembre 2026, glacier, accès',
+    'meribel': 'Méribel : ski dans les 3 Vallées, ouverture 2026',
+    'alpe-d-huez': "Alpe d'Huez : ouverture 2026, Sarenne, Pic Blanc",
 }
 TITRE_REGION = "Ski dans les Alpes : stations et ouvertures 2026"
 
-LIEU_VOIR = {"chamonix": "à Chamonix", "val-thorens": "à Val Thorens", "courchevel": "à Courchevel", "megeve": "à Megève"}
-LIEU_ALLER = {"chamonix": "à Chamonix", "val-thorens": "à Val Thorens", "courchevel": "à Courchevel", "megeve": "à Megève"}
+LIEU_VOIR = {"chamonix": "à Chamonix", "val-thorens": "à Val Thorens", "courchevel": "à Courchevel", "megeve": "à Megève",
+    'val-d-isere': "à Val d'Isère",
+    'tignes': 'à Tignes',
+    'meribel': 'à Méribel',
+    'alpe-d-huez': "à l'Alpe d'Huez",
+}
+LIEU_ALLER = {"chamonix": "à Chamonix", "val-thorens": "à Val Thorens", "courchevel": "à Courchevel", "megeve": "à Megève",
+    'val-d-isere': "à Val d'Isère",
+    'tignes': 'à Tignes',
+    'meribel': 'à Méribel',
+    'alpe-d-huez': "à l'Alpe d'Huez",
+}
 
-GEO = {"chamonix": (45.9237, 6.8694), "val-thorens": (45.2980, 6.5800), "courchevel": (45.4154, 6.6347), "megeve": (45.8567, 6.6175)}
+GEO = {"chamonix": (45.9237, 6.8694), "val-thorens": (45.2980, 6.5800), "courchevel": (45.4154, 6.6347), "megeve": (45.8567, 6.6175),
+    'val-d-isere': (45.4485, 6.9806),
+    'tignes': (45.4683, 6.9056),
+    'meribel': (45.3967, 6.5656),
+    'alpe-d-huez': (45.0909, 6.0703),
+}
 
-ALIAS = {"chamonix": ["Chamonix"], "val-thorens": ["Val Thorens"], "courchevel": ["Courchevel"], "megeve": ["Megève"]}
+ALIAS = {"chamonix": ["Chamonix"], "val-thorens": ["Val Thorens"], "courchevel": ["Courchevel"], "megeve": ["Megève"],
+    'val-d-isere': ["Val d'Isère"],
+    'tignes': ['Tignes'],
+    'meribel': ['Méribel'],
+    'alpe-d-huez': ["Alpe d'Huez"],
+}

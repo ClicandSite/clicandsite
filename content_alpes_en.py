@@ -16,7 +16,7 @@ REGION = {
         "The French Alps hold some of the largest ski areas in the world, across Savoie and Haute-Savoie. Each resort has its own character: high altitude and reliable snow in Val Thorens, luxury and perfect pistes in Courchevel, village charm in Megève, high mountains and mountaineering in Chamonix.",
         "Many resorts can be reached without a car: by train to Moûtiers, Sallanches or Saint-Gervais, then by bus or shuttle. Each guide tells you when the resort opens, how to get there and what to do when you are not skiing. Opening dates always depend on snow.",
     ],
-    "departements": ["73", "74"],
+    "departements": ["38", "73", "74"],
 }
 
 GROUPES = [
@@ -173,6 +173,147 @@ DESTINATIONS = [
            ("Is Megève good for beginners?", "Yes, the area has many blue and green runs, often sheltered by forest."),
            ("What is the nearest train station to Megève?", "Sallanches - Combloux - Megève station, about thirty minutes from the village by bus or taxi."),
        ]),
+
+    _d(slug="val-d-isere", path="val-d-isere", groupe="stations", nom="Val d'Isère", dept="73", cachet="Savoie", couleur="encre", h1="Val d'Isère: skiing the Tignes-Val d'Isère area",
+       **{"in": "in Val d'Isère", "to": "to Val d'Isère", "tips_for": "skiing in Val d'Isère"},
+       description="Skiing in Val d'Isère: 2026-2027 opening dates, the Face de Bellevarde, the ski area linked with Tignes, getting there by train via Bourg-Saint-Maurice, and tips.",
+       accroche="A real mountain village at the head of the Tarentaise, a huge ski area linked with Tignes and the Olympic Bellevarde run. Val d'Isère opens in late November.",
+       intro=[
+           "Val d'Isère grew up around its old village and church, below the Col de l'Iseran, which is closed in winter. Together with Tignes it forms one of the largest linked ski areas in France, known for high-altitude snow and off-piste skiing.",
+           "For the 2026-2027 season, Val d'Isère announces an opening on 28 November 2026, depending on snow, with a season running into spring.",
+       ],
+       a_voir=[
+           ("Face de Bellevarde", "The 1992 Olympic downhill run, steep and demanding, finishing in the heart of the resort. For very strong skiers."),
+           ("The old village", "The church and stone houses of the historic centre, a short walk from the lifts."),
+           ("Le Fornet and Pissaillas", "The head of the valley, with a glacier and a wilder feel."),
+           ("The link with Tignes", "With an area pass you can ski over to Tignes for a full day across both resorts."),
+       ],
+       y_aller=[
+           ("By train", "Train to Bourg-Saint-Maurice, then a bus or shuttle up to Val d'Isère at the head of the valley."),
+           ("By plane", "The nearest airports are Chambéry, Geneva and Lyon, with shuttles and private transfers."),
+           ("By car", "Through the Tarentaise valley and Bourg-Saint-Maurice. Winter equipment is compulsory."),
+       ],
+       fiche=[("2026-2027 opening", "28 November 2026"), ("Ski area", "Tignes - Val d'Isère"), ("Good for", "Strong skiers, off-piste fans"), ("Access", "Train to Bourg-Saint-Maurice")],
+       conseils=[
+           "Off-piste is one of Val d'Isère's great assets: always go with a guide or instructor.",
+           "Early in the season the high sectors open first: check which runs are open before you go.",
+           "Book early for Christmas and February: the resort is in high demand with an international crowd.",
+       ],
+       activites=[
+           ("Things to do in Val d'Isère", "Ski lessons, guided off-piste, snowshoeing and snowmobiling.", "Val d'Isere"),
+           ("Tignes and Val d'Isère", "Guided days across the linked area.", "Tignes Val d'Isere ski"),
+       ],
+       faq=[
+           ("When does Val d'Isère open in 2026?", "The resort announces an opening on 28 November 2026, depending on snow."),
+           ("Is Val d'Isère linked to Tignes?", "Yes, the two resorts form a single linked area, covered by the same pass."),
+           ("How do you get to Val d'Isère by train?", "To Bourg-Saint-Maurice, then by bus or shuttle to the resort."),
+       ]),
+
+    _d(slug="tignes", path="tignes", groupe="stations", nom="Tignes", dept="73", cachet="Savoie", couleur="azur", h1="Tignes: glacier skiing and reliable snow",
+       **{"in": "in Tignes", "to": "to Tignes", "tips_for": "skiing in Tignes"},
+       description="Skiing in Tignes: opening from 21 November 2026, the Grande Motte glacier, the resort villages, the lake and getting there by train via Bourg-Saint-Maurice.",
+       accroche="Thanks to its glacier, Tignes is one of the first resorts in France to open: from 21 November 2026. A safe bet for early-season skiing.",
+       intro=[
+           "Tignes is made up of several villages around a high-altitude lake: Tignes Le Lac, Val Claret, Le Lavachet, Tignes 1800 and Les Brévières, lower down in the forest. Above them, the Grande Motte glacier offers reliable snow from autumn.",
+           "For 2026-2027, Tignes announces a progressive opening from 21 November 2026, with the link to Val d'Isère from 28 November and a season running until 2 May 2027, depending on snow.",
+       ],
+       a_voir=[
+           ("The Grande Motte glacier", "An underground funicular climbs from Val Claret towards the glacier, with spectacular views of the Vanoise."),
+           ("Lake Tignes", "Frozen in winter, it hosts walks and ice activities in the middle of the resort."),
+           ("The resort villages", "Le Lac and Val Claret to be right on the slopes, Les Brévières for a village feel."),
+           ("The link with Val d'Isère", "The linked area offers days of skiing without repeating a run."),
+       ],
+       y_aller=[
+           ("By train", "Train to Bourg-Saint-Maurice, then a bus or shuttle to the Tignes villages."),
+           ("By plane", "Chambéry, Geneva and Lyon airports, with shuttles and private transfers in season."),
+           ("By car", "Via Bourg-Saint-Maurice and the Tignes dam road. Winter equipment is compulsory."),
+       ],
+       fiche=[("2026-2027 opening", "21 November 2026"), ("Closing", "2 May 2027"), ("Ski area", "Tignes - Val d'Isère"), ("Highlight", "Grande Motte glacier")],
+       conseils=[
+           "For skiing in November or April, Tignes is one of the best choices thanks to its glacier.",
+           "At this altitude the weather changes fast: bring goggles, warm layers and sunscreen.",
+           "Pick your village to suit you: Val Claret for skiing, Les Brévières for peace and quiet.",
+       ],
+       activites=[
+           ("Things to do in Tignes", "Ski lessons, ice diving, snowmobiling and snowshoeing.", "Tignes"),
+           ("Skiing Tignes and Val d'Isère", "Guided days across the linked area.", "Tignes ski"),
+       ],
+       faq=[
+           ("When does Tignes open in 2026?", "From 21 November 2026, with a progressive opening and the link to Val d'Isère from 28 November."),
+           ("Can you ski on the glacier in Tignes?", "Yes, the Grande Motte glacier offers high-altitude snow, reached by funicular from Val Claret."),
+           ("How do you get to Tignes without a car?", "By train to Bourg-Saint-Maurice, then by bus or shuttle to the resort."),
+       ]),
+
+    _d(slug="meribel", path="meribel", groupe="stations", nom="Méribel", dept="73", cachet="Savoie", couleur="pin", h1="Méribel: at the heart of the 3 Valleys",
+       **{"in": "in Méribel", "to": "to Méribel", "tips_for": "skiing in Méribel"},
+       description="Skiing in Méribel: the resort at the centre of the 3 Valleys, its wood-and-stone chalets, the 2026-2027 opening and getting there by train via Moûtiers.",
+       accroche="At the centre of the 3 Valleys, Méribel lets you reach Courchevel or Val Thorens in a day, from a village built entirely of chalets.",
+       intro=[
+           "Méribel was founded in the late 1930s with a rule still followed today: chalets in wood and stone, in the Savoyard style. The result is one of the most harmonious resorts in the Alps, in a wooded valley.",
+           "Its central position makes it the best base for exploring the 3 Valleys. For the 2026-2027 season, Méribel plans to open on 5 December 2026, depending on snow.",
+       ],
+       a_voir=[
+           ("The 3 Valleys", "From Méribel you can reach Courchevel on one side and Les Menuires and Val Thorens on the other."),
+           ("Roc de Fer", "The run used for the 2023 Alpine World Ski Championships, held with Courchevel."),
+           ("The Olympic Park", "An ice rink and aquatic centre, a legacy of the 1992 Albertville Olympics."),
+           ("Méribel-Mottaret", "The resort's highest village, ski-in ski-out, with lifts heading towards Val Thorens."),
+       ],
+       y_aller=[
+           ("By train", "Train to Moûtiers - Salins - Brides-les-Bains, then a regional bus to Méribel."),
+           ("By plane", "Chambéry, Geneva and Lyon airports, with shuttles and private transfers in season."),
+           ("Getting around", "Free shuttles run between Méribel, Mottaret and the valley villages."),
+       ],
+       fiche=[("2026-2027 opening", "5 December 2026"), ("Ski area", "The 3 Valleys"), ("Good for", "All levels, families"), ("Access", "Train to Moûtiers")],
+       conseils=[
+           "Stay in Mottaret to maximise ski time, or in Méribel centre for village atmosphere.",
+           "Check that your pass covers the 3 Valleys if you want to reach Val Thorens or Courchevel.",
+           "The home runs get busy at the end of the day: set off a little earlier.",
+       ],
+       activites=[
+           ("Things to do in Méribel", "Ski lessons, paragliding, snowshoeing and dog sledding.", "Meribel"),
+           ("3 Valleys outings", "Guided days between Courchevel, Méribel and Val Thorens.", "Meribel 3 Valleys"),
+       ],
+       faq=[
+           ("When does Méribel open in 2026?", "The resort plans to open on 5 December 2026, depending on snow."),
+           ("Is Méribel part of the 3 Valleys?", "Yes, it sits at the centre of the area, between Courchevel and Les Menuires - Val Thorens."),
+           ("How do you get to Méribel by train?", "To Moûtiers station, then by regional bus to the resort."),
+       ]),
+
+    _d(slug="alpe-d-huez", path="alpe-d-huez", groupe="stations", nom="Alpe d'Huez", dept="38", cachet="Isère", couleur="ocre", h1="Alpe d'Huez: sunny skiing and the Sarenne run",
+       **{"in": "in Alpe d'Huez", "to": "to Alpe d'Huez", "tips_for": "skiing in Alpe d'Huez"},
+       description="Skiing in Alpe d'Huez: 2026-2027 opening dates, Pic Blanc at 3,330 m, the Sarenne run, the linked villages and getting there from Grenoble.",
+       accroche="The Alps' island in the sun: a sunny ski area, Pic Blanc at 3,330 metres and La Sarenne, one of the longest black runs in the world.",
+       intro=[
+           "In the heart of Isère, Alpe d'Huez is known for its sunshine and its big ski area, linked to the villages of Auris-en-Oisans, Oz, Vaujany, Villard-Reculas and Huez. It is also famous for its Tour de France hairpins.",
+           "For the 2026-2027 season the resort announces an opening on 5 December 2026 and a closing on 25 April 2027, depending on snow.",
+       ],
+       a_voir=[
+           ("Pic Blanc", "At 3,330 metres, the top of the area offers a vast panorama; on a clear day you can see much of the Alps, as far as Mont Blanc."),
+           ("La Sarenne", "A 16-kilometre black run from Pic Blanc down to the Sarenne gorge, one of the longest in the world. It eases off after the first section."),
+           ("The Tunnel run", "A descent that goes right through the mountain, for confident skiers."),
+           ("The linked villages", "Auris, Oz, Vaujany and Villard-Reculas, quieter and often more affordable, on the same ski area."),
+       ],
+       y_aller=[
+           ("From Grenoble", "About 1 hour 30 minutes by road or bus from Grenoble, which has a train station."),
+           ("By plane", "Grenoble-Isère and Lyon airports, with shuttles in season."),
+           ("By car", "Via Bourg-d'Oisans and the famous 21-hairpin climb. Winter equipment is compulsory."),
+       ],
+       fiche=[("2026-2027 opening", "5 December 2026"), ("Closing", "25 April 2027"), ("Top altitude", "3,330 m (Pic Blanc)"), ("Access", "1 h 30 from Grenoble")],
+       conseils=[
+           "Go up Pic Blanc early in the morning: the snow is better and the queue shorter. You can book a slot for the gondola.",
+           "Only take on La Sarenne if you are a strong skier: the top is steep and the bottom very long.",
+           "For a quieter stay, base yourself in one of the linked villages.",
+       ],
+       activites=[
+           ("Things to do in Alpe d'Huez", "Ski lessons, paragliding, snowmobiling and snowshoeing.", "Alpe d'Huez"),
+           ("Mountain outings in the Oisans", "Guided trips around Alpe d'Huez.", "Alpe d'Huez Oisans"),
+       ],
+       faq=[
+           ("When does Alpe d'Huez open in 2026?", "The resort announces an opening on 5 December 2026 and a closing on 25 April 2027, depending on snow."),
+           ("How long is the Sarenne run?", "About 16 kilometres, from Pic Blanc at 3,330 metres down to the Sarenne gorge."),
+           ("How do you get to Alpe d'Huez?", "From Grenoble, by bus or car in about 1 hour 30 minutes, via Bourg-d'Oisans."),
+       ]),
+
 ]
 
 TITRES = {
@@ -180,7 +321,16 @@ TITRES = {
     "val-thorens": "Val Thorens: 2026 Opening, Getting There, Tips",
     "courchevel": "Courchevel: Skiing, Villages, 2026 Opening",
     "megeve": "Megève: Skiing, Village, 2026-2027 Opening",
+    'val-d-isere': "Val d'Isère: 2026 Opening, Bellevarde, Getting There",
+    'tignes': 'Tignes: Opens 21 November 2026, Glacier, Access',
+    'meribel': 'Méribel: Skiing the 3 Valleys, 2026 Opening',
+    'alpe-d-huez': "Alpe d'Huez: 2026 Opening, Sarenne, Pic Blanc",
 }
 TITRE_REGION = "French Alps Ski Resorts: Guides and 2026 Openings"
 
-ALIAS = {"chamonix": ["Chamonix"], "val-thorens": ["Val Thorens"], "courchevel": ["Courchevel"], "megeve": ["Megève"]}
+ALIAS = {"chamonix": ["Chamonix"], "val-thorens": ["Val Thorens"], "courchevel": ["Courchevel"], "megeve": ["Megève"],
+    'val-d-isere': ["Val d'Isère"],
+    'tignes': ['Tignes'],
+    'meribel': ['Méribel'],
+    'alpe-d-huez': ["Alpe d'Huez"],
+}

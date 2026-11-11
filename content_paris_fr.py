@@ -15,13 +15,14 @@ REGION = {
     ],
     "h1": "Visiter Paris", "de": "de Paris", "autres": "Autres sites à Paris", "couleur": "encre",
     "locality": "Paris", "address_region": "Île-de-France",
-    "departements": ["75", "78"],
+    "departements": ["75", "77", "78"],
 }
 
 GROUPES = [
     ("monuments", "Monuments et panoramas"),
     ("musees", "Musées et châteaux"),
     ("quartiers", "Quartiers et balades"),
+    ('sorties', 'Sorties et saison'),
 ]
 
 VEDETTES = ["tour-eiffel", "louvre", "notre-dame", "montmartre", "musee-d-orsay", "versailles"]
@@ -446,6 +447,110 @@ DESTINATIONS = [
            ("Faut-il réserver pour visiter Versailles ?", "Oui, la réservation d'un créneau horaire est obligatoire pour tous les visiteurs, y compris ceux qui entrent gratuitement."),
            ("Comment aller à Versailles depuis Paris ?", "Le plus simple est le RER C jusqu'à Versailles Château Rive Gauche, à dix minutes à pied du château."),
        ]),
+
+    _d(slug="disneyland-paris", groupe="sorties", nom="Disneyland Paris", dept="77", cachet="Seine-et-Marne", couleur="azur", locality="Marne-la-Vallée",
+       h1="Disneyland Paris : visiter les deux parcs",
+       description="Visiter Disneyland Paris : le parc Disneyland, Disney Adventure World et le Monde de La Reine des Neiges, billets datés, accès en RER A et conseils.",
+       accroche="Deux parcs, un village de restaurants et, depuis mars 2026, le monde de La Reine des Neiges. Disneyland Paris se rejoint en RER depuis le centre de Paris.",
+       intro=[
+           "Disneyland Paris réunit deux parcs à Marne-la-Vallée, à l'est de Paris : le parc Disneyland, avec son château et ses grands classiques, et Disney Adventure World, l'ancien parc Walt Disney Studios, rebaptisé et transformé le 29 mars 2026. Entre les deux, Disney Village regroupe restaurants et boutiques.",
+           "La grande nouveauté est le Monde de La Reine des Neiges, avec le village d'Arendelle au bord d'un grand lac, à côté d'Avengers Campus et des mondes Pixar. Les billets sont datés : achetez-les à l'avance, surtout pendant les vacances scolaires.",
+       ],
+       a_voir=[
+           ("Le parc Disneyland", "Le château de la Belle au bois dormant, Main Street, Pirates des Caraïbes, Big Thunder Mountain et la parade de l'après-midi."),
+           ("Disney Adventure World", "Le deuxième parc, entièrement repensé autour d'un lac, avec des univers Disney, Pixar et Marvel et un spectacle nocturne."),
+           ("Le Monde de La Reine des Neiges", "Le village d'Arendelle, une attraction en bateau sur l'histoire du film et des rencontres avec les personnages. C'est la zone la plus demandée : allez-y tôt."),
+           ("Avengers Campus", "L'univers Marvel, avec des attractions à sensations pour les plus grands."),
+           ("Disney Village", "Restaurants, boutiques et cinéma en accès libre, entre la gare et les parcs."),
+       ],
+       y_aller=[
+           ("En RER A", "Direction Marne-la-Vallée - Chessy, terminus juste devant l'entrée des parcs. Comptez environ 40 minutes depuis le centre de Paris."),
+           ("En TGV", "La gare TGV Marne-la-Vallée - Chessy, au même endroit, est desservie depuis de nombreuses villes de France."),
+           ("En voiture ou en chauffeur", "Par l'autoroute A4. Le parking des parcs est payant ; un transfert avec chauffeur évite les correspondances avec des enfants."),
+       ],
+       fiche=[("Durée conseillée", "1 à 2 jours"), ("À réserver", "Billets datés, à l'avance"), ("Accès", "RER A, gare Marne-la-Vallée - Chessy"), ("Pour qui", "Familles, fans de Disney et de Marvel")],
+       conseils=[
+           "Arrivez avant l'ouverture et commencez par les attractions les plus demandées, comme celle de La Reine des Neiges.",
+           "Téléchargez l'application officielle : elle affiche les temps d'attente en direct.",
+           "En semaine hors vacances scolaires, l'attente est bien plus courte que le week-end.",
+       ],
+       activites=[
+           ("Billets Disneyland Paris", "Billets datés pour un ou deux parcs.", "Disneyland Paris billet"),
+           ("Disneyland Paris avec transport", "Billet et navette au départ du centre de Paris.", "Disneyland Paris transfert"),
+       ],
+       faq=[
+           ("Comment aller à Disneyland Paris depuis Paris ?", "En RER A jusqu'au terminus Marne-la-Vallée - Chessy, juste devant l'entrée des parcs, en environ 40 minutes depuis le centre."),
+           ("Qu'est-ce que Disney Adventure World ?", "C'est le nouveau nom de l'ancien parc Walt Disney Studios depuis le 29 mars 2026, avec notamment le Monde de La Reine des Neiges."),
+           ("Faut-il réserver ses billets Disneyland à l'avance ?", "Oui, les billets sont datés et certains jours affichent complet pendant les vacances : mieux vaut les acheter avant de partir."),
+       ]),
+
+    _d(slug="catacombes", groupe="monuments", nom="Catacombes", couleur="encre", h1="Visiter les Catacombes de Paris",
+       description="Visiter les Catacombes de Paris rénovées : réservation obligatoire, jour de fermeture, 131 marches, durée de la visite, accès à Denfert-Rochereau et conseils.",
+       accroche="Vingt mètres sous Paris, les ossements de millions de Parisiens rangés le long des galeries. Rénovées en 2026, les Catacombes ne se visitent que sur réservation.",
+       intro=[
+           "À la fin du XVIIIe siècle, Paris vide ses cimetières saturés et transfère les ossements dans d'anciennes carrières souterraines. L'ossuaire, ouvert au public depuis le début du XIXe siècle, est devenu l'une des visites les plus étonnantes de la ville.",
+           "Après plusieurs mois de rénovation, les Catacombes ont rouvert le 8 avril 2026 avec un nouvel éclairage et une visite modernisée. La réservation d'un créneau en ligne est obligatoire : il n'est pas possible d'entrer sans billet réservé.",
+       ],
+       a_voir=[
+           ("L'ossuaire", "Des kilomètres de crânes et de tibias empilés avec soin, parfois en motifs, le long de galeries ponctuées d'inscriptions."),
+           ("Les anciennes carrières", "Avant l'ossuaire, la visite traverse les carrières de calcaire d'où a été extraite une partie de la pierre de Paris."),
+           ("Le parcours rénové", "Nouvel éclairage, maquettes et audioguide, pour comprendre l'histoire du sous-sol parisien."),
+       ],
+       y_aller=[
+           ("En métro et en RER", "Station Denfert-Rochereau (lignes 4 et 6, RER B), juste devant l'entrée, avenue du Colonel-Henri-Rol-Tanguy."),
+           ("La sortie", "On ressort ailleurs, rue Rémy-Dumoncel, à quelques minutes à pied : prévoyez-le si vous avez rendez-vous."),
+       ],
+       fiche=[("Durée de la visite", "Environ 1 heure"), ("Fermé", "Le lundi"), ("À réserver", "Oui, obligatoire"), ("À savoir", "131 marches à descendre, 112 à monter")],
+       conseils=[
+           "Prenez une veste : il fait environ 14 °C toute l'année sous terre.",
+           "Portez des chaussures fermées, le sol est irrégulier et parfois humide.",
+           "La visite est déconseillée aux personnes claustrophobes ou à mobilité réduite, et peu adaptée aux jeunes enfants.",
+       ],
+       activites=[
+           ("Billets et visites guidées des Catacombes", "Entrée réservée et visites avec guide.", "Catacombes de Paris"),
+           ("Paris souterrain et insolite", "Visites guidées du Paris caché et des curiosités.", "Paris souterrain visite"),
+       ],
+       faq=[
+           ("Faut-il réserver pour visiter les Catacombes ?", "Oui, la réservation d'un créneau en ligne est obligatoire, et les places partent vite, surtout le week-end et pendant les vacances."),
+           ("Quel jour les Catacombes sont-elles fermées ?", "Le lundi, ainsi que le 1er janvier, le 1er mai et le 25 décembre."),
+           ("Combien de marches y a-t-il aux Catacombes ?", "131 marches à descendre au début et 112 à remonter à la sortie, sans ascenseur."),
+       ]),
+
+    _d(slug="noel-a-paris", groupe="sorties", nom="Noël à Paris", couleur="ocre", h1="Noël à Paris : illuminations, marchés et patinoires",
+       description="Noël 2026 à Paris : date des illuminations des Champs-Élysées, retour du marché de Noël, patinoire du Grand Palais, vitrines des grands magasins et croisières.",
+       accroche="Les Champs-Élysées s'illuminent le 22 novembre 2026, et leur marché de Noël revient après dix ans d'absence. Voici où voir la magie de Noël à Paris.",
+       intro=[
+           "De fin novembre à début janvier, Paris se met en fête : avenues illuminées, vitrines animées des grands magasins, marchés en chalets et patinoires. C'est une très bonne période pour visiter la ville, à condition de bien se couvrir.",
+           "En 2026, les illuminations des Champs-Élysées s'allument le dimanche 22 novembre et brillent chaque soir jusqu'à début janvier. Le même jour, le marché de Noël des Champs-Élysées fait son retour, jusqu'au 4 janvier 2027.",
+       ],
+       a_voir=[
+           ("Les illuminations des Champs-Élysées", "Des centaines d'arbres illuminés de la Concorde à l'Arc de Triomphe. Le spectacle est le plus beau depuis le haut de l'Arc de Triomphe."),
+           ("Le marché de Noël des Champs-Élysées", "De retour après dix ans, ses chalets s'installent entre la place de la Concorde et le rond-point des Champs-Élysées, du 22 novembre 2026 au 4 janvier 2027."),
+           ("Les vitrines des grands magasins", "Boulevard Haussmann, les vitrines animées des Galeries Lafayette et du Printemps, et le grand sapin sous la coupole des Galeries Lafayette."),
+           ("La patinoire du Grand Palais", "En décembre, une immense patinoire s'installe sous la verrière du Grand Palais. Réservez votre créneau à l'avance."),
+           ("Le marché de Noël de La Défense", "L'un des plus grands de la région, ouvert du 12 novembre au 31 décembre 2026."),
+           ("Une croisière sur la Seine", "Pour voir les monuments illuminés au chaud, depuis un bateau vitré."),
+       ],
+       y_aller=[
+           ("Champs-Élysées", "Métro Concorde (lignes 1, 8, 12), Champs-Élysées - Clemenceau (lignes 1 et 13) ou Charles de Gaulle - Étoile."),
+           ("Grands magasins", "Métro Chaussée d'Antin - La Fayette (lignes 7 et 9) ou Havre - Caumartin, RER A à Auber."),
+       ],
+       fiche=[("Illuminations", "Dès le 22 novembre 2026"), ("Marché des Champs-Élysées", "22 novembre 2026 - 4 janvier 2027"), ("Meilleur moment", "En semaine, à la tombée de la nuit"), ("Pour qui", "Tout le monde, idéal en famille")],
+       conseils=[
+           "Venez en semaine plutôt que le week-end : les marchés et les vitrines sont pris d'assaut le samedi.",
+           "La nuit tombe vers 17 h en décembre : prévoyez vos visites de musées l'après-midi et les illuminations ensuite.",
+           "Réservez à l'avance les patinoires, les dîners croisières et les restaurants pour le réveillon.",
+       ],
+       activites=[
+           ("Tour des illuminations de Noël", "Visites en bus, à pied ou en bateau pour voir Paris illuminé.", "Paris illuminations de Noël"),
+           ("Dîner croisière de Noël sur la Seine", "Menus de fête à bord, avec vue sur les monuments éclairés.", "Paris croisière Noël"),
+       ],
+       faq=[
+           ("Quand s'allument les illuminations des Champs-Élysées en 2026 ?", "Le dimanche 22 novembre 2026, en début de soirée. Elles restent allumées chaque soir jusqu'à début janvier."),
+           ("Y a-t-il un marché de Noël sur les Champs-Élysées en 2026 ?", "Oui, il revient après dix ans d'absence, du 22 novembre 2026 au 4 janvier 2027, entre la Concorde et le rond-point des Champs-Élysées."),
+           ("Où faire du patin à glace à Paris à Noël ?", "Sous la verrière du Grand Palais en décembre, ainsi que sur plusieurs patinoires installées dans la ville et à La Défense."),
+       ]),
+
 ]
 
 ITINERAIRE = {
@@ -492,21 +597,35 @@ TITRES = {
     "le-marais": "Visiter le Marais : place des Vosges, musées",
     "quartier-latin": "Quartier latin et jardin du Luxembourg",
     "versailles": "Visiter Versailles depuis Paris : réservation",
+    'disneyland-paris': 'Disneyland Paris : billets, accès en RER, conseils',
+    'catacombes': 'Catacombes de Paris : réservation, visite, conseils',
+    'noel-a-paris': 'Noël à Paris 2026 : illuminations, marchés, patinoires',
 }
 TITRE_REGION = "Visiter Paris : les plus beaux sites et conseils"
 TITRE_ITI = "Paris en 3 jours : itinéraire en métro"
 
 LIEU_VOIR = {"tour-eiffel": "à la tour Eiffel", "louvre": "au Louvre", "notre-dame": "à Notre-Dame", "sainte-chapelle": "à la Sainte-Chapelle",
              "montmartre": "à Montmartre", "musee-d-orsay": "au musée d'Orsay", "arc-de-triomphe": "à l'Arc de Triomphe", "opera-garnier": "à l'Opéra Garnier",
-             "croisiere-sur-la-seine": "sur la Seine", "le-marais": "dans le Marais", "quartier-latin": "dans le Quartier latin", "versailles": "à Versailles"}
+             "croisiere-sur-la-seine": "sur la Seine", "le-marais": "dans le Marais", "quartier-latin": "dans le Quartier latin", "versailles": "à Versailles",
+    'disneyland-paris': 'à Disneyland Paris',
+    'catacombes': 'aux Catacombes',
+    'noel-a-paris': 'à Paris à Noël',
+}
 LIEU_ALLER = {"tour-eiffel": "à la tour Eiffel", "louvre": "au Louvre", "notre-dame": "à Notre-Dame", "sainte-chapelle": "à la Sainte-Chapelle",
               "montmartre": "à Montmartre", "musee-d-orsay": "au musée d'Orsay", "arc-de-triomphe": "à l'Arc de Triomphe", "opera-garnier": "à l'Opéra Garnier",
-              "croisiere-sur-la-seine": "aux embarcadères", "le-marais": "dans le Marais", "quartier-latin": "dans le Quartier latin", "versailles": "à Versailles"}
+              "croisiere-sur-la-seine": "aux embarcadères", "le-marais": "dans le Marais", "quartier-latin": "dans le Quartier latin", "versailles": "à Versailles",
+    'disneyland-paris': 'à Disneyland Paris',
+    'catacombes': 'aux Catacombes',
+    'noel-a-paris': 'aux illuminations',
+}
 
 GEO = {
     "tour-eiffel": (48.8584, 2.2945), "louvre": (48.8606, 2.3376), "notre-dame": (48.8530, 2.3499), "sainte-chapelle": (48.8554, 2.3450),
     "montmartre": (48.8867, 2.3431), "musee-d-orsay": (48.8600, 2.3266), "arc-de-triomphe": (48.8738, 2.2950), "opera-garnier": (48.8720, 2.3316),
     "croisiere-sur-la-seine": (48.8622, 2.3006), "le-marais": (48.8556, 2.3655), "quartier-latin": (48.8462, 2.3371), "versailles": (48.8049, 2.1204),
+    'disneyland-paris': (48.8722, 2.7758),
+    'catacombes': (48.8339, 2.3324),
+    'noel-a-paris': (48.8698, 2.3076),
 }
 
 ALIAS = {
@@ -514,4 +633,7 @@ ALIAS = {
     "montmartre": ["Montmartre", "Sacré-Cœur"], "musee-d-orsay": ["musée d'Orsay", "Orsay"], "arc-de-triomphe": ["Arc de Triomphe"],
     "opera-garnier": ["Palais Garnier", "Opéra Garnier"], "croisiere-sur-la-seine": ["croisière"], "le-marais": ["Marais"],
     "quartier-latin": ["Quartier latin", "jardin du Luxembourg", "Luxembourg"], "versailles": ["Versailles"],
+    'disneyland-paris': ['Disneyland Paris', 'Disneyland'],
+    'catacombes': ['Catacombes'],
+    'noel-a-paris': ['Noël à Paris'],
 }

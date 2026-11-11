@@ -5,6 +5,9 @@ import html, json, os, shutil, datetime
 from urllib.parse import quote_plus
 import content as _c
 import content_more as _m
+import seo as _seo
+import og as _og
+import re
 for _d in _c.DESTINATIONS:
     _d["groupe"] = _m.GROUPES_INITIAUX[_d["slug"]]
 
@@ -24,6 +27,11 @@ PROCHAINES_REGIONS = _typo(_c.PROCHAINES_REGIONS)
 DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS)
 GROUPES = _typo(_m.GROUPES)
 ITI = _typo(_m.ITINERAIRE)
+SEO_T = _typo(_seo.TITRES)
+LIEU_VOIR = _typo(_seo.LIEU_VOIR)
+LIEU_ALLER = _typo(_seo.LIEU_ALLER)
+A_PROPOS = _typo(_seo.A_PROPOS)
+BRAND = " | Clic&Site"
 VEDETTES = ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]
 
 SITE = "https://clicandsite.fr"
@@ -59,7 +67,7 @@ def stamp(dept, cachet, small=False):
             f'<span class="stamp__num">{e(dept)}</span></div>'
             f'<div class="postmark{" postmark--sm" if small else ""}" aria-hidden="true"><span>{e(cachet)}</span></div>')
 
-def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0):
+def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="assets/og/accueil.jpg"):
     root = "../" * depth
     canonical = SITE + "/" + path
     ld = ""
@@ -90,6 +98,10 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0):
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{e(canonical)}">
 <meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="{SITE}/{og_image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#13324b">
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="{root}assets/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -112,7 +124,7 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0):
     <p class="foot__brand">Clic<span class="brand__amp">&amp;</span>Site</p>
     <p>Des guides clairs pour visiter les plus beaux sites de France.</p>
     <p class="foot__aff">Certains liens de ce site sont affiliés : si vous réservez une activité après avoir cliqué, Clic&amp;Site perçoit une commission, sans aucun surcoût pour vous.</p>
-    <p><a href="{root}mentions-legales/">Mentions légales</a><span class="foot__sep"></span>Site réalisé par <a href="https://mycreativesite.fr/" rel="noopener">MyCreativeSite</a></p>
+    <p><a href="{root}a-propos/">À propos</a><span class="foot__sep"></span><a href="{root}mentions-legales/">Mentions légales</a><span class="foot__sep"></span>Site réalisé par <a href="https://mycreativesite.fr/" rel="noopener">MyCreativeSite</a></p>
   </div>
 </footer>
 </body>
@@ -161,7 +173,10 @@ def build_home():
   <p class="more"><a href="{r['slug']}/">Voir les {len(dests)} guides de la Côte d’Azur</a><span class="foot__sep foot__sep--dark"></span><a href="{r['slug']}/{ITI['slug']}/">{e(ITI['titre'])}</a></p>
 </section>
 """
-    ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR"}]
+    _og.make(os.path.join(OUT, "assets", "og", "accueil.jpg"), "Les plus beaux sites de France", "Où aller, comment y aller, quoi réserver", "FR", "encre")
+    ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR"},
+          {"@context": "https://schema.org", "@type": "Organization", "name": "Clic&Site", "url": SITE + "/", "logo": SITE + "/assets/logo.png",
+           "parentOrganization": {"@type": "Organization", "name": "iDream Lab"}}]
     write("", page("", "Clic&Site : les plus beaux sites de France, guides pratiques", "Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par la Côte d'Azur.", body, jsonld=ld))
 
 def build_region(r):
@@ -185,16 +200,46 @@ def build_region(r):
 """
     ld = [{"@context": "https://schema.org", "@type": "TouristDestination", "name": r["nom"], "description": r["description"],
            "includesAttraction": [{"@type": "TouristAttraction", "name": d["nom"], "url": f"{SITE}/{r['slug']}/{d['slug']}/"} for d in dests]}]
-    write(r["slug"], page(r["slug"] + "/", r["titre_seo"], r["description"], body,
-                          crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/")], jsonld=ld, depth=1))
+    _og.make(os.path.join(OUT, "assets", "og", r["slug"] + ".jpg"), "Visiter la " + r["nom"], f"{len(dests)} guides pratiques", " ".join(r["departements"]), "azur")
+    write(r["slug"], page(r["slug"] + "/", _typo(_seo.TITRE_REGION) + BRAND, r["description"], body,
+                          crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/")], jsonld=ld, depth=1, og_image=f"assets/og/{r['slug']}.jpg"))
+
+ALIAS = []
+for _slug, _names in _seo.ALIAS.items():
+    for _n in _names:
+        ALIAS.append((_typo(_n), _slug))
+ALIAS.sort(key=lambda x: -len(x[0]))
+
+def autolink(text_html, current, used, root, by):
+    """Lie la première mention d'un autre guide (une seule fois par page)."""
+    store = []
+    for name, slug in ALIAS:
+        if slug == current or slug in used:
+            continue
+        pat = re.compile(r"(?<![\w\-’])" + re.escape(e(name)) + r"(?![\w\-])")
+        m = pat.search(text_html)
+        if not m:
+            continue
+        d = by[slug]
+        store.append(f'<a href="{root}{d["region"]}/{slug}/">{m.group(0)}</a>')
+        text_html = text_html[:m.start()] + f"\x00{len(store)-1}\x00" + text_html[m.end():]
+        used.add(slug)
+    return re.sub(r"\x00(\d+)\x00", lambda m: store[int(m.group(1))], text_html)
 
 def build_dest(d):
     r = REGION_BY_SLUG[d["region"]]
     root = "../../"
-    intro = "".join(f"<p>{e(p)}</p>" for p in d["intro"])
-    voir = "".join(f"<h3>{e(t)}</h3><p>{e(x)}</p>" for t, x in d["a_voir"])
-    aller = "".join(f"<h3>{e(t)}</h3><p>{e(x)}</p>" for t, x in d["y_aller"])
-    conseils = "".join(f"<li>{e(c)}</li>" for c in d["conseils"])
+    by = {x["slug"]: x for x in DESTINATIONS}
+    used = set()
+    L = lambda t: autolink(e(t), d["slug"], used, root, by)
+    intro = "".join(f"<p>{L(p)}</p>" for p in d["intro"])
+    voir = "".join(f"<h3>{e(t)}</h3><p>{L(x)}</p>" for t, x in d["a_voir"])
+    aller = "".join(f"<h3>{e(t)}</h3><p>{L(x)}</p>" for t, x in d["y_aller"])
+    conseils = "".join(f"<li>{L(c)}</li>" for c in d["conseils"])
+    lv = LIEU_VOIR.get(d["slug"], "à " + d["nom"])
+    la = LIEU_ALLER.get(d["slug"], "à " + d["nom"])
+    h1 = d.get("h1") or "Visiter " + d["nom"]
+    pour = h1[0].lower() + h1[1:]
     fiche = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in d["fiche"])
     acts = "".join(f"""<li class="act">
   <h3 class="act__t">{e(t)}</h3><p>{e(x)}</p>
@@ -214,17 +259,17 @@ def build_dest(d):
 <header class="post post--{d['couleur']}">
   <div class="wrap post__in">
     {stamp(d['dept'], d['cachet'])}
-    <h1 class="post__title">{e(d.get('h1') or 'Visiter ' + d['nom'])}</h1>
+    <h1 class="post__title">{e(h1)}</h1>
     <p class="post__lead">{e(d['accroche'])}</p>
   </div>
 </header>
 <div class="wrap layout">
   <article class="prose">
     {intro}
-    <h2>À voir</h2>{voir}
-    <h2>Comment y aller</h2>{aller}
-    <h2>Nos conseils</h2><ul>{conseils}</ul>
-    <h2>Réserver une activité</h2>
+    <h2>Que voir {e(lv)}</h2>{voir}
+    <h2>Comment aller {e(la)}</h2>{aller}
+    <h2>Nos conseils pour {e(pour)}</h2><ul>{conseils}</ul>
+    <h2>Activités à réserver {e(lv)}</h2>
     <ul class="acts">{acts}</ul>
     <p class="aff-note">Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.</p>
     <h2>Questions fréquentes</h2>
@@ -244,14 +289,19 @@ def build_dest(d):
     ld = [
         {"@context": "https://schema.org", "@type": "TouristAttraction", "name": d["nom"], "description": d["description"],
          "url": f"{SITE}/{r['slug']}/{d['slug']}/", "isAccessibleForFree": False,
+         "image": f"{SITE}/assets/og/{d['slug']}.jpg",
+         "geo": {"@type": "GeoCoordinates", "latitude": _seo.GEO[d["slug"]][0], "longitude": _seo.GEO[d["slug"]][1]},
+         "address": {"@type": "PostalAddress", "addressLocality": d["nom"], "addressRegion": r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in d["faq"]]},
     ]
     del ld[0]["isAccessibleForFree"]
     path = f"{r['slug']}/{d['slug']}/"
-    write(path.rstrip("/"), page(path, d["titre_seo"], d["description"], body,
-                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (d["nom"], path)], jsonld=ld, depth=2))
+    _og.make(os.path.join(OUT, "assets", "og", d["slug"] + ".jpg"), h1, "Guide pratique de la " + r["nom"], d["dept"], d["couleur"])
+    write(path.rstrip("/"), page(path, SEO_T[d["slug"]] + BRAND, d["description"], body,
+                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (d["nom"], path)], jsonld=ld, depth=2,
+                                 og_image=f"assets/og/{d['slug']}.jpg"))
 
 def build_iti(r):
     by = {d["slug"]: d for d in DESTINATIONS}
@@ -287,8 +337,19 @@ def build_iti(r):
     path = f"{r['slug']}/{ITI['slug']}/"
     ld = [{"@context": "https://schema.org", "@type": "Article", "headline": ITI["titre"], "description": ITI["description"], "inLanguage": "fr-FR",
            "author": {"@type": "Organization", "name": "Clic&Site"}, "dateModified": TODAY}]
-    write(path.rstrip("/"), page(path, ITI["titre_seo"], ITI["description"], body,
-                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2))
+    _og.make(os.path.join(OUT, "assets", "og", "3-jours.jpg"), ITI["titre"], "Itinéraire sans voiture", "3 j", "encre")
+    write(path.rstrip("/"), page(path, _typo(_seo.TITRE_ITI) + BRAND, ITI["description"], body,
+                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2, og_image="assets/og/3-jours.jpg"))
+
+def build_about():
+    paras = "".join(f"<p>{e(p)}</p>" for p in A_PROPOS)
+    body = f"""
+<section class="hero wrap"><h1 class="hero__title hero__title--sm">À propos de Clic&amp;Site</h1></section>
+<section class="wrap prose">{paras}<p>Une remarque, une erreur à signaler ? Écrivez-nous : <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
+"""
+    ld = [{"@context": "https://schema.org", "@type": "AboutPage", "name": "À propos de Clic&Site", "url": SITE + "/a-propos/"}]
+    write("a-propos", page("a-propos/", "À propos" + BRAND, "Qui écrit Clic&Site, comment le guide est financé et pourquoi il ne donne ni prix ni horaires.", body,
+                           crumbs=[("Accueil", ""), ("À propos", "a-propos/")], jsonld=ld, depth=1))
 
 def build_legal():
     body = f"""
@@ -314,7 +375,7 @@ def build_legal():
                                    crumbs=[("Accueil", ""), ("Mentions légales", "mentions-legales/")], depth=1))
 
 def build_misc():
-    urls = [""] + [r["slug"] + "/" for r in REGIONS] + [f"{d['region']}/{d['slug']}/" for d in DESTINATIONS] + [f"{REGIONS[0]['slug']}/{ITI['slug']}/", "mentions-legales/"]
+    urls = [""] + [r["slug"] + "/" for r in REGIONS] + [f"{d['region']}/{d['slug']}/" for d in DESTINATIONS] + [f"{REGIONS[0]['slug']}/{ITI['slug']}/", "a-propos/", "mentions-legales/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
@@ -339,6 +400,7 @@ def main():
     for d in DESTINATIONS:
         build_dest(d)
     build_iti(REGIONS[0])
+    build_about()
     build_legal()
     build_misc()
     print("OK", sum(len(f) for _, _, f in os.walk(OUT)), "fichiers")

@@ -113,7 +113,7 @@ TODAY = datetime.date.today().isoformat()
 CSS_V = _hl.md5(open(os.path.join(HERE, "assets", "style.css"), "rb").read()).hexdigest()[:8]
 
 AFFILIATION = {
-    "getyourguide_partner_id": "",   # à renseigner après acceptation (partner.getyourguide.com)
+    "getyourguide_partner_id": "XMYSXGR",   # à renseigner après acceptation (partner.getyourguide.com)
     "viator_pid": "",                # à renseigner après acceptation (partnerresources.viator.com)
     "viator_mcid": "42383",
 }
@@ -213,7 +213,7 @@ def hero_img(slug, root, alt):
 def gyg(q):
     u = ("https://www.getyourguide.fr/s/?q=" if LANG == "fr" else "https://www.getyourguide.com/s/?q=") + quote_plus(q)
     if AFFILIATION["getyourguide_partner_id"]:
-        u += "&partner_id=" + AFFILIATION["getyourguide_partner_id"] + "&cmp=clicandsite"
+        u += "&partner_id=" + AFFILIATION["getyourguide_partner_id"] + "&cmp=clicandsite-" + LANG + "&utm_medium=online_publisher"
     return u
 
 def viator(q):

@@ -120,6 +120,7 @@ AFFILIATION = {
     "viator_mcid": "42383",
 }
 EPS_URL = "https://elite-prestige-services.fr/"
+EPS_BOOK = {"fr": "https://www.elite-prestige-services.fr/#reservation", "en": "https://www.elite-prestige-services.fr/?lang=en#reservation"}
 CONTACT = "contact@clicandsite.fr"
 
 T = {
@@ -138,7 +139,7 @@ T = {
             region_h1="Visiter la {nom}", region_alt="Le Cap-Ferrat et la côte vus du ciel", iti_d="Un itinéraire complet, faisable sans voiture.",
             og_region="{n} guides pratiques", visit="Visiter ", view_of="Vue de ",
             see_h2="Que voir {lv}", go_h2="Comment aller {la}", tips_h2="Nos conseils pour {pour}", acts_h2="Activités à réserver {lv}",
-            btn_gyg="Voir les prix sur GetYourGuide", btn_viator="Comparer sur Viator", book_lead="Réservation en ligne en quelques minutes, annulation gratuite sur la plupart des activités et avis de voyageurs pour bien choisir.", hero_cta="Voir les activités à réserver",
+            btn_gyg="Voir les prix sur GetYourGuide", btn_viator="Comparer sur Viator", book_lead="Réservation en ligne en quelques minutes, annulation gratuite sur la plupart des activités et avis de voyageurs pour bien choisir.", hero_cta="Voir les activités à réserver", eps_t="Transfert Côte d'Azur avec chauffeur privé", eps_p="Aéroport de Nice, gare, hôtel ou port : un chauffeur vous conduit à {nom} en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.", eps_btn="Réserver mon transfert", eps_p_ile="Aéroport de Nice, gare ou hôtel : un chauffeur vous dépose à l'embarcadère pour {nom}, en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.",
             aff_note="Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.",
             faq="Questions fréquentes", brief="En bref", others="Autres sites de la {nom}",
             ride_t="Y aller avec un chauffeur privé",
@@ -170,7 +171,7 @@ T = {
             region_h1="Visiting the {nom}", region_alt="Aerial view of Cap Ferrat and the coast", iti_d="A complete itinerary you can do without a car.",
             og_region="{n} practical guides", visit="Visit ", view_of="View of ",
             see_h2="Things to do {lv}", go_h2="How to get {la}", tips_h2="Tips for {pour}", acts_h2="Tours and activities {lv}",
-            btn_gyg="Check prices on GetYourGuide", btn_viator="Compare on Viator", book_lead="Book online in minutes, with free cancellation on most activities and traveller reviews to help you choose.", hero_cta="See tours and tickets",
+            btn_gyg="Check prices on GetYourGuide", btn_viator="Compare on Viator", book_lead="Book online in minutes, with free cancellation on most activities and traveller reviews to help you choose.", hero_cta="See tours and tickets", eps_t="French Riviera private transfer", eps_p="Nice airport, station, hotel or port: a private driver takes you to {nom} in a premium van or saloon, with a fixed price per vehicle shown before you book.", eps_btn="Book my transfer", eps_p_ile="Nice airport, station or hotel: a private driver drops you at the ferry pier for the {nom}, in a premium van or saloon, with a fixed price per vehicle shown before you book.",
             aff_note="Affiliate links: if you book, Clic&amp;Site earns a commission at no extra cost to you. Prices and availability are set by the booking platform.",
             faq="Frequently asked questions", brief="At a glance", others="More places on the {nom}",
             ride_t="Go there with a private driver",
@@ -465,6 +466,12 @@ def build_dest(d):
   <h3 class="act__t">{e(t)}</h3><p class="act__d">{e(x)}</p>
   <p class="act__btns"><a class="bk bk--gyg" href="{e(gyg(anchored(q, d)))}" rel="sponsored nofollow noopener" target="_blank"><svg class="bk__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 7v10" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/></svg>{T['btn_gyg']}</a><a class="bk bk--via" href="{e(viator(anchored(q, d)))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
 </li>""" for t, x, q in d["activites"])
+    if d["region"] == "cote-d-azur":
+        eps_href = EPS_BOOK[LANG]
+        acts += f"""<li class="act act--eps">
+  <h3 class="act__t">{e(_typo(T['eps_t']))}</h3><p class="act__d">{e(_typo((T['eps_p_ile'] if d['slug'] in ('iles-de-lerins', 'porquerolles') else T['eps_p']).format(nom=d['nom'])))}</p>
+  <p class="act__btns"><a class="bk bk--eps" href="{e(eps_href)}" rel="noopener" target="_blank"><svg class="bk__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16l1.5-5.5A2 2 0 0 1 8.4 9h7.2a2 2 0 0 1 1.9 1.5L19 16M4 16h16v3H4zM7 19v1.5M17 19v1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{T['eps_btn']}</a></p>
+</li>"""
     faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in d["faq"])
     pool = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]
     autres = ([x for x in pool if x["groupe"] == d["groupe"]] + [x for x in pool if x["groupe"] != d["groupe"]])[:4]

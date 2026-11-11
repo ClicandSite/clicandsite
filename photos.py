@@ -1,0 +1,28 @@
+# Photos des guides (11/11/2026). Unsplash : licence Unsplash (usage libre, crédit de courtoisie).
+# Wikimedia Commons : CC BY-SA, crédit obligatoire, affichées depuis upload.wikimedia.org.
+U = "unsplash"
+W = "wikimedia"
+PHOTOS = {
+    "monaco": (U, "1581819896533-f8ab6767ce7e", "Victor He", "https://unsplash.com/photos/bVXvntN75zY"),
+    "eze": (U, "1761435996397-e84959074676", "Anatoly Volochay", "https://unsplash.com/photos/knEpH2USM8I"),
+    "saint-paul-de-vence": (U, "1560706834-afe1ba5d6737", "V2F", "https://unsplash.com/photos/axD--Oq9uus"),
+    "saint-tropez": (U, "1662895450073-0cc13cfc562f", "Marian Baciu", "https://unsplash.com/photos/unH9PqaNOOk"),
+    "nice": (U, "1643914729809-4aa59fdc4c17", "Constantin", "https://unsplash.com/photos/QRXxMSin654"),
+    "cannes": (U, "1659642081573-ac1a040d2e50", "Jannis Lucas", "https://unsplash.com/photos/QB6iIVc388g"),
+    "antibes": (U, "1599986518926-e1b54d26b5cb", "Jane Ackerley", "https://unsplash.com/photos/WiN6Az_8cGQ"),
+    "villefranche-sur-mer": (U, "1709495543597-7d2752be8853", "Christian Harb", "https://unsplash.com/photos/C96CoYrOLak"),
+    "saint-jean-cap-ferrat": (U, "1701362611184-41ca0368311c", "Antoine Contenseau", "https://unsplash.com/photos/5uKbBBkoQco"),
+    "menton": (U, "1697068966589-654d4231212d", "Slim Mars", "https://unsplash.com/photos/qB-A1zheEI8"),
+    "grasse": (U, "1682946229475-99bc47d3634a", "Everyday Paris", "https://unsplash.com/photos/SU3MVvHM_Rw"),
+    "gourdon": (U, "1719813917903-67e3fdbc7a39", "Artem R", "https://unsplash.com/photos/s6DT4756k9M"),
+    "mougins": (U, "1661588853998-50e295f78732", "Jonathan Ansel Moy de Vitry", "https://unsplash.com/photos/-xXwe3-Ttww"),
+    "roquebrune-cap-martin": (U, "1695658295831-926789e5692c", "Antoine Contenseau", "https://unsplash.com/photos/0JKLnGtMoGE"),
+    "gorges-du-verdon": (U, "1726216831313-766f021650c0", "Pix Tresa", "https://unsplash.com/photos/n5Avwj_bylA"),
+    "accueil": (U, "1590081649469-2c7a8a3a670e", "Ivan Ragozin", "https://unsplash.com/photos/3brc9n7avKc"),
+    "iles-de-lerins": (W, "e/ea/Ile_Ste_Honorat.jpg", "Jeje42", "https://commons.wikimedia.org/wiki/File:Ile_Ste_Honorat.jpg", "CC BY-SA 3.0"),
+    "porquerolles": (W, "f/fb/Beach-Notre-Dame-Porquerolles.jpg", "PQR", "https://commons.wikimedia.org/wiki/File:Beach-Notre-Dame-Porquerolles.jpg", "CC BY-SA 3.0"),
+    "massif-de-l-esterel": (W, "4/4b/Calanque_du_Petit_Canereit-Massif_de_l%27Esterel.jpg", "Tobi 87", "https://commons.wikimedia.org/wiki/File:Calanque_du_Petit_Canereit-Massif_de_l%27Esterel.jpg", "CC BY-SA 3.0"),
+    "biot": (W, "5/58/Biot_%28Vieux_village%29.JPG", "G CHP", "https://commons.wikimedia.org/wiki/File:Biot_(Vieux_village).JPG", "CC BY-SA 3.0"),
+}
+REGION_PHOTO = "saint-jean-cap-ferrat"
+LICENCES = {"CC BY-SA 3.0": "https://creativecommons.org/licenses/by-sa/3.0/deed.fr"}

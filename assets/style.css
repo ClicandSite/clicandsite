@@ -16,7 +16,7 @@
   --blanc:#fff;
   --serif:"Young Serif",Georgia,serif;
   --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --w:1120px;
+  --w:1400px;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -24,7 +24,7 @@ body{margin:0;background:var(--ciel);color:var(--texte);font:400 1.0625rem/1.6 v
 a{color:var(--azur)}
 a:focus-visible,summary:focus-visible,.btn:focus-visible{outline:3px solid var(--ocre);outline-offset:2px}
 img{max-width:100%}
-.wrap{max-width:var(--w);margin:0 auto;padding:0 1.25rem}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 clamp(1.25rem,3vw,2.5rem)}
 .skip{position:absolute;left:-999px;top:0;background:var(--encre);color:#fff;padding:.5rem 1rem;z-index:9}
 .skip:focus{left:0}
 
@@ -73,10 +73,10 @@ img{max-width:100%}
 .next{color:var(--doux);margin:1rem 0 0}
 
 /* Cartes postales des destinations */
-.cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem}
+.cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.5rem}
 .card a{display:block;height:100%;text-decoration:none;color:inherit;background:var(--blanc);border:1px solid var(--trait);border-radius:4px;overflow:hidden}
-.card__face{position:relative;height:150px;padding:1rem 1.1rem;display:flex;align-items:flex-end;color:#fff}
-.card__name{font:400 1.75rem/1.05 var(--serif);max-width:9ch}
+.card__face{position:relative;height:220px;padding:1rem 1.2rem;display:flex;align-items:flex-end;color:#fff;overflow:hidden}
+.card__name{position:relative;font:400 1.85rem/1.05 var(--serif);max-width:10ch;text-shadow:0 1px 12px rgba(0,0,0,.35)}
 .card__txt{margin:0;padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:var(--doux)}
 .card a:hover .card__name{text-decoration:underline;text-underline-offset:4px}
 .card--azur .card__face,.post--azur{background-color:var(--azur)}
@@ -86,18 +86,18 @@ img{max-width:100%}
 .card__face{background-image:repeating-linear-gradient(170deg,rgba(255,255,255,.07) 0 2px,transparent 2px 18px)}
 
 /* En-tête de destination : la carte postale en grand */
-.post{color:#fff;margin-top:1rem;background-image:repeating-linear-gradient(170deg,rgba(255,255,255,.07) 0 2px,transparent 2px 26px)}
-.post__in{position:relative;padding-top:4rem;padding-bottom:3rem;min-height:300px}
+.post{color:#fff}
+
 .post__title{font:400 clamp(2.4rem,6.5vw,4.6rem)/1.02 var(--serif);margin:0;max-width:13ch;letter-spacing:-.015em}
 .post__lead{font-size:1.2rem;max-width:52ch;margin:1.1rem 0 0;color:rgba(255,255,255,.92)}
 .post .stamp{top:1.75rem;right:1.25rem}
 .post .postmark{top:3.1rem;right:6.6rem}
 
 /* Mise en page article + fiche */
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:3rem;align-items:start;padding-top:2.5rem}
-.prose{max-width:68ch}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:4rem;align-items:start;padding-top:3rem}
+.prose{max-width:72ch}
 .wrap.prose{max-width:var(--w)}
-.wrap.prose > *{max-width:68ch}
+.wrap.prose > *{max-width:72ch}
 .prose h2{font:400 1.75rem/1.2 var(--serif);color:var(--encre);margin:2.5rem 0 .75rem}
 .prose h3{font-size:1.1rem;font-weight:700;color:var(--encre);margin:1.6rem 0 .25rem}
 .prose p{margin:.5rem 0 1rem}
@@ -153,7 +153,7 @@ img{max-width:100%}
   body{font-size:1rem}
   .top__nav{gap:.9rem;font-size:.9rem}
   .hero{padding-top:2.25rem}
-  .post__in{padding-top:9.5rem}
+  .post__in{padding-top:8rem}
   .post .postmark{top:2.2rem}
   .postmark{right:5.8rem}
 }
@@ -172,3 +172,23 @@ img{max-width:100%}
 
 .mcs{display:inline-flex;align-items:center;gap:.35rem;vertical-align:middle}
 .mcs img{display:block;border-radius:4px}
+
+/* Photos (11/11/2026) */
+.card__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.card__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,22,36,0) 35%,rgba(8,22,36,.72) 100%)}
+.card a:hover .card__img,.region-card:hover .card__img{transform:scale(1.04)}
+.card .stamp,.region-card .stamp{z-index:1}
+.region-card__face{overflow:hidden;min-height:340px}
+.region-card__name,.region-card__count{position:relative;text-shadow:0 1px 14px rgba(0,0,0,.35)}
+.post{position:relative;margin-top:0;min-height:clamp(440px,64vh,680px);display:flex;align-items:flex-end;overflow:hidden;background-color:var(--encre)}
+.crumbs + main .post,.crumbs ~ main .post{margin-top:1rem}
+.post__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.post__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,22,36,.25) 0%,rgba(8,22,36,0) 30%,rgba(8,22,36,.78) 100%)}
+.post__in{position:relative;width:100%;padding-top:6rem;padding-bottom:3.25rem;min-height:0}
+.post__title,.post__lead{text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.post__title--home{max-width:15ch;font-size:clamp(2.6rem,6.5vw,5rem)}
+.post--home{min-height:clamp(480px,72vh,760px)}
+.credit{position:absolute;right:clamp(1rem,2vw,1.5rem);bottom:.6rem;margin:0;font-size:.72rem;color:rgba(255,255,255,.8)}
+.credit a{color:inherit}
+@media (prefers-reduced-motion:reduce){.card__img{transition:none}}
+@media (max-width:560px){.credit{left:1.25rem;right:auto}.post__in{padding-bottom:3.5rem}}

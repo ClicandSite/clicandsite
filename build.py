@@ -6,6 +6,7 @@ from urllib.parse import quote_plus
 import content as _c
 import content_more as _m
 import seo as _seo
+import photos as _ph
 import og as _og
 import re
 for _d in _c.DESTINATIONS:
@@ -47,6 +48,27 @@ EPS_URL = "https://elite-prestige-services.fr/"
 CONTACT = "contact@clicandsite.fr"
 
 e = lambda s: html.escape(str(s), quote=True)
+
+def photo(slug, root):
+    v = _ph.PHOTOS[slug]
+    if v[0] == "unsplash":
+        base = f"{root}assets/photos/{slug}"
+        big, mid, small = base + ".jpg", base + "-960.jpg", base + "-640.jpg"
+        absolute = f"{SITE}/assets/photos/{slug}.jpg"
+        credit = f'Photo : <a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a> / Unsplash'
+    else:
+        path = v[1]; fname = path.split("/")[-1]
+        th = lambda w: f"https://upload.wikimedia.org/wikipedia/commons/thumb/{path}/{w}px-{fname}"
+        big, mid, small = th(1920), th(960), th(960)
+        absolute = big
+        lic = v[4]
+        credit = f'Photo : <a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a>, <a href="{_ph.LICENCES[lic]}" rel="noopener license" target="_blank">{lic}</a>, Wikimedia Commons'
+    return {"big": big, "mid": mid, "small": small, "abs": absolute, "credit": credit}
+
+def hero_img(slug, root, alt):
+    ph = photo(slug, root)
+    return (f'<img class="post__img" src="{ph["big"]}" srcset="{ph["mid"]} 960w, {ph["big"]} 1920w" sizes="100vw" alt="{e(alt)}" fetchpriority="high">'
+            f'<div class="post__shade" aria-hidden="true"></div>'), ph
 
 def gyg(q):
     u = "https://www.getyourguide.fr/s/?q=" + quote_plus(q)
@@ -138,9 +160,10 @@ def write(path, content):
         f.write(content)
 
 def card(d, root):
+    ph = photo(d["slug"], root)
     return f"""<li class="card card--{d['couleur']}">
   <a href="{root}{d['region']}/{d['slug']}/">
-    <div class="card__face">{stamp(d['dept'], d['cachet'], small=True)}<span class="card__name">{e(d['nom'])}</span></div>
+    <div class="card__face"><img class="card__img" src="{ph['small']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>{stamp(d['dept'], d['cachet'], small=True)}<span class="card__name">{e(d['nom'])}</span></div>
     <p class="card__txt">{e(d['accroche'])}</p>
   </a>
 </li>"""
@@ -151,14 +174,19 @@ def build_home():
     by = {d["slug"]: d for d in dests}
     vedettes = [by[x] for x in VEDETTES]
     body = f"""
-<section class="hero wrap">
-  <h1 class="hero__title">Où aller, comment y aller, quoi réserver.</h1>
-  <p class="hero__lead">Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par la Côte d’Azur.</p>
-</section>
+<header class="post post--home">
+  {hero_img("accueil", "", "La rade de Villefranche-sur-Mer vue du ciel")[0]}
+  <div class="wrap post__in">
+    <h1 class="post__title post__title--home">Où aller, comment y aller, quoi réserver.</h1>
+    <p class="post__lead">Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par la Côte d’Azur.</p>
+  </div>
+  <p class="credit">{photo("accueil", "")["credit"]}</p>
+</header>
 <section class="wrap" id="regions" aria-labelledby="regions-t">
   <h2 id="regions-t" class="sec-title">Les régions</h2>
   <a class="region-card" href="{r['slug']}/">
     <div class="region-card__face">
+      <img class="card__img" src="{photo(_ph.REGION_PHOTO, '')['mid']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>
       {stamp(' '.join(r['departements']), 'Riviera')}
       <span class="region-card__name">{e(r['nom'])}</span>
       <span class="region-card__count">{len(dests)} guides</span>
@@ -188,10 +216,14 @@ def build_region(r):
         if gd:
             groups += f'<section class="wrap" aria-labelledby="g-{gk}"><h2 id="g-{gk}" class="sec-title">{e(gn)}</h2><ul class="cards">{"".join(card(d, "../") for d in gd)}</ul></section>'
     body = f"""
-<section class="hero wrap">
-  <h1 class="hero__title">Visiter la {e(r['nom'])}</h1>
-  <p class="hero__lead">{e(r['accroche'])}</p>
-</section>
+<header class="post">
+  {hero_img(_ph.REGION_PHOTO, "../", "Le Cap-Ferrat et la côte vus du ciel")[0]}
+  <div class="wrap post__in">
+    <h1 class="post__title">Visiter la {e(r['nom'])}</h1>
+    <p class="post__lead">{e(r['accroche'])}</p>
+  </div>
+  <p class="credit">{photo(_ph.REGION_PHOTO, "../")["credit"]}</p>
+</header>
 <section class="wrap prose">{intro}</section>
 <section class="wrap">
   <a class="iti-link" href="{ITI['slug']}/"><span class="iti-link__t">{e(ITI['titre'])}</span><span class="iti-link__d">Un itinéraire complet, faisable sans voiture.</span></a>
@@ -240,6 +272,7 @@ def build_dest(d):
     la = LIEU_ALLER.get(d["slug"], "à " + d["nom"])
     h1 = d.get("h1") or "Visiter " + d["nom"]
     pour = h1[0].lower() + h1[1:]
+    hero = hero_img(d["slug"], root, "Vue de " + d["nom"])
     fiche = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in d["fiche"])
     acts = "".join(f"""<li class="act">
   <h3 class="act__t">{e(t)}</h3><p>{e(x)}</p>
@@ -257,11 +290,13 @@ def build_dest(d):
 </aside>"""
     body = f"""
 <header class="post post--{d['couleur']}">
+  {hero[0]}
   <div class="wrap post__in">
     {stamp(d['dept'], d['cachet'])}
     <h1 class="post__title">{e(h1)}</h1>
     <p class="post__lead">{e(d['accroche'])}</p>
   </div>
+  <p class="credit">{hero[1]["credit"]}</p>
 </header>
 <div class="wrap layout">
   <article class="prose">
@@ -289,7 +324,7 @@ def build_dest(d):
     ld = [
         {"@context": "https://schema.org", "@type": "TouristAttraction", "name": d["nom"], "description": d["description"],
          "url": f"{SITE}/{r['slug']}/{d['slug']}/", "isAccessibleForFree": False,
-         "image": f"{SITE}/assets/og/{d['slug']}.jpg",
+         "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['slug']}.jpg"],
          "geo": {"@type": "GeoCoordinates", "latitude": _seo.GEO[d["slug"]][0], "longitude": _seo.GEO[d["slug"]][1]},
          "address": {"@type": "PostalAddress", "addressLocality": d["nom"], "addressRegion": r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
@@ -352,6 +387,9 @@ def build_about():
                            crumbs=[("Accueil", ""), ("À propos", "a-propos/")], jsonld=ld, depth=1))
 
 def build_legal():
+    by = {d["slug"]: d["nom"] for d in DESTINATIONS}
+    by["accueil"] = "Villefranche-sur-Mer (accueil)"
+    credits = "".join(f'<li>{e(by.get(k, k))} : {photo(k, "../")["credit"].replace("Photo : ", "")}</li>' for k in _ph.PHOTOS)
     body = f"""
 <section class="hero wrap"><h1 class="hero__title hero__title--sm">Mentions légales</h1></section>
 <section class="wrap prose">
@@ -363,6 +401,9 @@ def build_legal():
 <h2>Liens affiliés</h2>
 <p>Clic&amp;Site est un guide éditorial. Certains liens vers des plateformes de réservation (GetYourGuide, Viator et d’autres) sont des liens affiliés : lorsqu’un visiteur réserve après avoir cliqué, la plateforme verse une commission à Clic&amp;Site. Le prix payé par le visiteur est le même. Clic&amp;Site ne vend aucune prestation touristique : les réservations, paiements et annulations relèvent exclusivement de la plateforme choisie et du prestataire.</p>
 <p>Elite Prestige Services, présenté comme partenaire pour les transferts avec chauffeur sur la Côte d’Azur, est une entreprise liée à l’éditeur.</p>
+<h2>Crédits photos</h2>
+<p>Photos issues d’Unsplash (licence Unsplash) et de Wikimedia Commons (licences Creative Commons indiquées). Merci à leurs auteurs.</p>
+<ul>{credits}</ul>
 <h2>Données personnelles et cookies</h2>
 <p>Ce site ne dépose aucun cookie de mesure d’audience ni de publicité, et ne collecte aucune donnée personnelle. Les plateformes de réservation vers lesquelles pointent les liens appliquent leur propre politique de confidentialité.</p>
 <h2>Exactitude des informations</h2>

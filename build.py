@@ -212,6 +212,19 @@ def hero_img(slug, root, alt):
     return (f'<img class="post__img" src="{ph["big"]}" srcset="{ph["mid"]} 960w, {ph["big"]} 1920w" sizes="100vw" alt="{e(alt)}" fetchpriority="high">'
             f'<div class="post__shade" aria-hidden="true"></div>'), ph
 
+import unicodedata as _ud
+def _norm(x):
+    return _ud.normalize("NFKD", x).encode("ascii", "ignore").decode().lower()
+
+def anchored(q, d):
+    """Ajoute le lieu à la recherche partenaire si elle ne le contient pas (sinon GetYourGuide/Viator renvoient des activités du monde entier)."""
+    anchor = d.get("search_loc") or ("Paris" if d["region"] == "paris" and d["slug"] != "versailles" else d["nom"])
+    words = [w for w in re.split(r"[^a-z]+", _norm(anchor)) if len(w) >= 3]
+    q = q.replace("’", "'")
+    if any(w in _norm(q) for w in words):
+        return q
+    return f"{anchor.replace('’', chr(39))} {q}"
+
 def gyg(q):
     u = ("https://www.getyourguide.fr/s/?q=" if LANG == "fr" else "https://www.getyourguide.com/s/?q=") + quote_plus(q)
     if AFFILIATION["getyourguide_partner_id"]:
@@ -450,7 +463,7 @@ def build_dest(d):
     fiche = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in d["fiche"])
     acts = "".join(f"""<li class="act">
   <h3 class="act__t">{e(t)}</h3><p class="act__d">{e(x)}</p>
-  <p class="act__btns"><a class="bk bk--gyg" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank"><svg class="bk__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 7v10" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/></svg>{T['btn_gyg']}</a><a class="bk bk--via" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
+  <p class="act__btns"><a class="bk bk--gyg" href="{e(gyg(anchored(q, d)))}" rel="sponsored nofollow noopener" target="_blank"><svg class="bk__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 7v10" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/></svg>{T['btn_gyg']}</a><a class="bk bk--via" href="{e(viator(anchored(q, d)))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
 </li>""" for t, x, q in d["activites"])
     faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in d["faq"])
     pool = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]

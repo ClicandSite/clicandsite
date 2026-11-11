@@ -30,6 +30,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
 .btn.sm{padding:6px 10px;font-size:.85rem}
 .btn:disabled{opacity:.5;cursor:default}
+.lo-ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}#logout .lo-ic{margin-right:6px}@media (max-width:860px){#logout .lo-ic{margin:0}}
 .linkbtn{background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0;text-align:left}
 .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid #dadce0;font-weight:600}.gbtn:hover{background:#f8f9fa}
 .gor{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:.82rem}.gor::before,.gor::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -236,6 +237,8 @@ html.bnopen,html.bnopen body{overflow:hidden}
   .app.show-pv .pv-x{display:inline-flex}
   .main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
   .top .hide-m{display:none}
+  /* 11/11/2026 (Anthony) : bouton de déconnexion visible aussi sur téléphone (icône) */
+  .top #logout{padding:8px;order:1;margin-left:auto}.top .vseg[aria-label="Affichage"],.top .sp,.top .status,.top #save{order:2}.top #logout .lo-t{display:none}
   .vseg[aria-label="Affichage"]{flex:1 1 100%;min-width:0;max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.vseg[aria-label="Affichage"] button{white-space:nowrap;flex:none}
 }
 
@@ -396,7 +399,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
       <button class="btn sm hide-m" id="undo" type="button" hidden>Annuler la dernière modification</button>
       <button class="btn primary" id="save" type="button" disabled>Enregistrer</button>
-      <button class="btn sm hide-m" id="logout" type="button" hidden>Se déconnecter</button>
+      <button class="btn sm" id="logout" type="button" hidden aria-label="Se déconnecter" title="Se déconnecter"><svg class="lo-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H4"/></svg><span class="lo-t">Se déconnecter</span></button>
     </div>
     <div class="demo-bar admbar" id="admBar" hidden></div>
     <div class="demo-bar" id="draftBar" hidden><span id="draftTxt"></span><a id="draftView" style="font-weight:700">Voir l'aperçu</a><a id="draftPay" class="btn primary sm" target="_blank" rel="noopener" hidden>Valider et payer</a></div>
@@ -1960,7 +1963,7 @@ boot();
     h.addEventListener('click',e=>{ e.preventDefault(); helpSheet(); });
     h.href='mailto:contact@mycreativesite.fr?subject='+encodeURIComponent('Demande d\'aide'+(ref?' · '+ref.name+' ('+ref.slug+')':''))+'&body='+encodeURIComponent('Bonjour,\n\nDécrivez ce que vous voulez faire ou ce qui ne marche pas (une capture d\'écran aide beaucoup) :\n\n\n\n—\nSite : '+(ref?ref.name+' · '+ref.slug+(ref.domain?' · '+ref.domain:''):'')+'\nNotre équipe peut intervenir directement sur votre site si besoin.');
     h.innerHTML=svg('mail')+'<span>Demander de l\'aide</span>'; list.appendChild(h);
-    const lo=$('logout'); if(lo&&!lo.hidden) add(svg('out')+'<span>Se déconnecter</span>',()=>lo.click());
+    const lo=$('logout'); if(lo&&!lo.hidden) add(svg('out')+'<span>Se déconnecter</span>',()=>logout());
     // en-tête de page
     const cur=vseg.querySelector('button[aria-pressed="true"]'), m=cur?cur.dataset.mode:'edit';
     $('pIcon').innerHTML=svg(IC[m]?m:'edit'); $('pTitle').textContent=cur?cur.childNodes[0].textContent.trim():'Mon site'; $('pSub').textContent=SUB[m]||'';

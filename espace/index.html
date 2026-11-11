@@ -1869,6 +1869,29 @@ fetch('https://avcynjwcyygygkjuxsdt.supabase.co/auth/v1/settings',{headers:{apik
 $('gBtn').addEventListener('click',async()=>{ $('gBtn').disabled=true; const u=new URL(location.href); u.hash=''; ['code','error','error_description'].forEach(k=>u.searchParams.delete(k));
   const {error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:u.toString(),queryParams:{prompt:'select_account'}}}); if(error){ lmsg(error.message); $('gBtn').disabled=false; } });
 async function logout(){ await SB.auth.signOut(); location.href=location.pathname; }
+// 11/11/2026 (Anthony) : déconnexion automatique après 30 min sans activité (souris, clavier, toucher), avec avertissement 2 min avant.
+// Dernière activité partagée entre les onglets (localStorage) ; jamais en mode démo.
+(function(){
+  const IDLE=30*60*1000, WARN=2*60*1000, KEY='cs-espace-last-activity';
+  const now=()=>Date.now(), get=()=>{ try{ return +localStorage.getItem(KEY)||now(); }catch(_){ return last; } };
+  let last=now(), box=null, busy=false;
+  const touch=()=>{ last=now(); try{ localStorage.setItem(KEY,String(last)); }catch(_){} if(box){ box.remove(); box=null; } };
+  let t=0; ['pointerdown','keydown','scroll','touchstart','mousemove'].forEach(ev=>addEventListener(ev,()=>{ if(now()-t>15000){ t=now(); touch(); } },{passive:true,capture:true}));
+  touch();
+  setInterval(async()=>{
+    if(DEMO||busy||$('app').hidden) return;
+    const {data:{session}}=await SB.auth.getSession(); if(!session) return;
+    const idle=now()-Math.max(last,get());
+    if(idle>=IDLE){ busy=true; dirty=false; try{ localStorage.removeItem(KEY); }catch(_){} await SB.auth.signOut(); location.href=location.pathname+'?deconnecte=1'; return; }
+    if(idle>=IDLE-WARN && !box){
+      box=document.createElement('div'); box.setAttribute('role','alertdialog');
+      box.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;background:#12162B;color:#fff;padding:14px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;gap:12px;align-items:center;font-size:.92rem;max-width:92vw';
+      box.innerHTML='<span>Sans activité, vous serez déconnecté dans 2 minutes'+(dirty?' (pensez à enregistrer vos modifications)':'')+'.</span>';
+      const b=document.createElement('button'); b.type='button'; b.textContent='Rester connecté'; b.style.cssText='background:#7C3AED;color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;white-space:nowrap'; b.onclick=touch; box.appendChild(b); document.body.appendChild(box);
+    }
+  },20000);
+  if(params.get('deconnecte')==='1') setTimeout(()=>lmsg('Vous avez été déconnecté après 30 minutes sans activité.',true),0);
+})();
 $('logout').addEventListener('click',logout); $('out2').addEventListener('click',logout);
 
 if(params.get('inscription')==='1'){ setTimeout(()=>{ if(!signup) $('lMode').click(); const em=params.get('email'); if(em) $('lEmail').value=em; $('lTitle').textContent='Créez votre mot de passe pour remplir votre site.'; },0); }

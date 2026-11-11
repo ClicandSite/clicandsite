@@ -226,14 +226,24 @@ import unicodedata as _ud
 def _norm(x):
     return _ud.normalize("NFKD", x).encode("ascii", "ignore").decode().lower()
 
+SEARCH_CITY = {
+    # Ville utilisée pour toutes les recherches GetYourGuide/Viator (sinon résultats hors sujet, ex. « îles » -> île Maurice)
+    "iles-de-lerins": "Cannes", "porquerolles": "Hyères", "massif-de-l-esterel": "Saint-Raphaël", "gorges-du-verdon": "Moustiers-Sainte-Marie",
+    "gourdon": "Grasse", "biot": "Antibes", "saint-jean-cap-ferrat": "Saint-Jean-Cap-Ferrat", "villefranche-sur-mer": "Villefranche-sur-Mer",
+    "roquebrune-cap-martin": "Menton", "eze": "Èze", "versailles": "Versailles", "disneyland-paris": "Disneyland Paris",
+    "val-thorens": "Val Thorens", "courchevel": "Courchevel", "meribel": "Méribel", "val-d-isere": "Val d'Isère", "tignes": "Tignes",
+    "alpe-d-huez": "Alpe d'Huez", "chamonix": "Chamonix", "megeve": "Megève",
+}
+
 def anchored(q, d):
-    """Ajoute le lieu à la recherche partenaire si elle ne le contient pas (sinon GetYourGuide/Viator renvoient des activités du monde entier)."""
-    anchor = d.get("search_loc") or ("Paris" if d["region"] == "paris" and d["slug"] != "versailles" else d["nom"])
-    words = [w for w in re.split(r"[^a-z]+", _norm(anchor)) if len(w) >= 3]
+    """Met toujours la ville en tête de la recherche partenaire (GetYourGuide/Viator)."""
+    city = d.get("search_loc") or SEARCH_CITY.get(d["slug"]) or ("Paris" if d["region"] == "paris" else d["nom"])
+    city = city.replace("’", "'")
     q = q.replace("’", "'")
-    if any(w in _norm(q) for w in words):
+    nq, nc = _norm(q), _norm(city)
+    if nc in nq:          # la ville figure déjà (ex. « Château de Versailles », « Cap d'Antibes ») : on ne touche à rien
         return q
-    return f"{anchor.replace('’', chr(39))} {q}"
+    return f"{city} {q}".strip()
 
 def gyg(q):
     u = ("https://www.getyourguide.fr/s/?q=" if LANG == "fr" else "https://www.getyourguide.com/s/?q=") + quote_plus(q)

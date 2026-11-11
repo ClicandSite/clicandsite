@@ -11,6 +11,8 @@ REGION = {
         "Paris is the most visited city in the world, and it shows: most major sights now ask you to book a time slot, even when entry is free. The good news is that almost everything is less than half an hour apart by metro, and the great monuments line the Seine.",
         "Remember three closing days: the Louvre is closed on Tuesdays, Orsay and Versailles on Mondays. From November to March the queues are shorter, several monuments are free on the first Sunday of the month and late museum openings let you end the day indoors. Each guide below tells you what to book, how to get there and when to go.",
     ],
+    "h1": "Visiting Paris", "de": "Paris", "autres": "More places in Paris", "couleur": "encre",
+    "locality": "Paris", "address_region": "Île-de-France",
     "departements": ["75", "78"],
 }
 
@@ -418,7 +420,7 @@ DESTINATIONS = [
            ("How do I get to the Luxembourg Gardens?", "Take RER B to Luxembourg station, right by the main entrance."),
        ]),
 
-    _d(slug="versailles", path="versailles", groupe="musees", nom="Versailles", dept="78", cachet="Yvelines", couleur="ocre", h1="Visiting the Palace of Versailles",
+    _d(slug="versailles", locality="Versailles", path="versailles", groupe="musees", nom="Versailles", dept="78", cachet="Yvelines", couleur="ocre", h1="Visiting the Palace of Versailles",
        in_="at Versailles", to="to Versailles", tips_for="visiting Versailles",
        description="Visiting the Palace of Versailles from Paris: compulsory booking, closing day, the Passport ticket, the gardens, Trianon and how to get there by RER.",
        accroche="The Hall of Mirrors, the King's apartments, Le Nôtre's gardens and Marie-Antoinette's estate: a full day out, forty minutes from Paris.",

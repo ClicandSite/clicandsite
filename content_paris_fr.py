@@ -13,6 +13,8 @@ REGION = {
         "Paris est la ville la plus visitée au monde, et cela se sent : la plupart des grands sites demandent aujourd'hui de réserver un créneau horaire, même quand l'entrée est gratuite. Bonne nouvelle, presque tout se rejoint en métro en moins d'une demi-heure, et les grands monuments sont regroupés le long de la Seine.",
         "Retenez trois jours de fermeture : le Louvre ferme le mardi, Orsay et Versailles le lundi. De novembre à mars, les files raccourcissent, plusieurs monuments sont gratuits le premier dimanche du mois et les nocturnes des musées permettent de finir la journée au chaud. Chaque guide ci-dessous vous dit quoi réserver, comment y aller et à quel moment.",
     ],
+    "h1": "Visiter Paris", "de": "de Paris", "autres": "Autres sites à Paris", "couleur": "encre",
+    "locality": "Paris", "address_region": "Île-de-France",
     "departements": ["75", "78"],
 }
 
@@ -409,7 +411,7 @@ DESTINATIONS = [
            ("Comment aller au jardin du Luxembourg ?", "Par le RER B, gare Luxembourg, juste devant l'entrée principale."),
        ]),
 
-    _d(slug="versailles", groupe="musees", nom="Versailles", dept="78", cachet="Yvelines", couleur="ocre", h1="Visiter le château de Versailles",
+    _d(slug="versailles", locality="Versailles", groupe="musees", nom="Versailles", dept="78", cachet="Yvelines", couleur="ocre", h1="Visiter le château de Versailles",
        description="Visiter le château de Versailles depuis Paris : réservation obligatoire, jour de fermeture, billet Passeport, jardins, Trianon et comment y aller en RER.",
        accroche="La galerie des Glaces, les appartements du Roi, les jardins de Le Nôtre et le domaine de Marie-Antoinette : une journée entière, à quarante minutes de Paris.",
        intro=[

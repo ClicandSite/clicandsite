@@ -12,8 +12,16 @@ import content_en as _en
 import seo as _seo
 import photos as _ph
 import og as _og
-import content_paris_fr as _pf
-import content_paris_en as _pe
+import importlib
+# Régions ajoutées sous forme de modules content_<region>_fr.py / content_<region>_en.py
+EXTRA_REGIONS = ["paris", "alpes"]
+_XF = [importlib.import_module(f"content_{x.replace('-', '_')}_fr") for x in EXTRA_REGIONS]
+_XE = [importlib.import_module(f"content_{x.replace('-', '_')}_en") for x in EXTRA_REGIONS]
+def _merge(mods, attr):
+    out = {}
+    for m in mods:
+        out.update(getattr(m, attr, {}) or {})
+    return out
 
 LANG = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("CS_LANG", "fr")).lower()
 assert LANG in ("fr", "en")
@@ -41,11 +49,12 @@ def _typo(x, lang=None):
 
 # ---------- Adresses des pages dans les deux langues (pour hreflang et le sélecteur de langue) ----------
 SITES = {"fr": "https://clicandsite.fr", "en": "https://clicandsite.com"}
-FR_DEST = _c.DESTINATIONS + _m.PLUS + _pf.DESTINATIONS
-EN_DEST = _en.DESTINATIONS + _pe.DESTINATIONS
-REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS + [_pf.REGION]}, "en": {r["slug"]: r["path"] for r in _en.REGIONS + [_pe.REGION]}}
+FR_DEST = _c.DESTINATIONS + _m.PLUS + sum([m.DESTINATIONS for m in _XF], [])
+EN_DEST = _en.DESTINATIONS + sum([m.DESTINATIONS for m in _XE], [])
+REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS + [m.REGION for m in _XF]}, "en": {r["slug"]: r["path"] for r in _en.REGIONS + [m.REGION for m in _XE]}}
 DEST_PATH = {"fr": {d["slug"]: d["slug"] for d in FR_DEST}, "en": {d["slug"]: d["path"] for d in EN_DEST}}
-ITI_PATH = {"fr": {"cote-d-azur": _m.ITINERAIRE["slug"], "paris": _pf.ITINERAIRE["slug"]}, "en": {"cote-d-azur": _en.ITINERAIRE["slug"], "paris": _pe.ITINERAIRE["slug"]}}
+ITI_PATH = {"fr": dict({"cote-d-azur": _m.ITINERAIRE["slug"]}, **{m.REGION["slug"]: m.ITINERAIRE["slug"] for m in _XF if getattr(m, "ITINERAIRE", None)}),
+            "en": dict({"cote-d-azur": _en.ITINERAIRE["slug"]}, **{m.REGION["slug"]: m.ITINERAIRE["slug"] for m in _XE if getattr(m, "ITINERAIRE", None)})}
 STATIC = {"about": {"fr": "a-propos/", "en": "about/"}, "legal": {"fr": "mentions-legales/", "en": "legal-notice/"}}
 
 def url_of(key, lang):
@@ -66,44 +75,37 @@ RIVIERA_EXTRA = {
     "fr": {"timbre": "Riviera", "photo": _ph.REGION_PHOTO, "photo_alt": "Le Cap-Ferrat et la côte vus du ciel", "h1": "Visiter la Côte d'Azur", "de": "de la Côte d'Azur", "autres": "Autres sites de la Côte d'Azur", "couleur": "azur"},
     "en": {"timbre": "Riviera", "photo": _ph.REGION_PHOTO, "photo_alt": "Aerial view of Cap Ferrat and the coast", "h1": "Visiting the French Riviera", "de": "French Riviera", "autres": "More places on the French Riviera", "couleur": "azur"},
 }
-PARIS_EXTRA = {
-    "fr": {"h1": "Visiter Paris", "de": "de Paris", "autres": "Autres sites à Paris", "couleur": "encre"},
-    "en": {"h1": "Visiting Paris", "de": "Paris", "autres": "More places in Paris", "couleur": "encre"},
+RIVIERA_ITI_TIPS = {
+    "fr": ["Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.", "Évitez la voiture en juillet-août, le train est plus rapide sur la côte.", "Gardez une tenue correcte pour la cathédrale de Monaco et le casino."],
+    "en": ["Stay in Nice: the station has direct regional trains to Villefranche, Monaco, Antibes and Cannes.", "Avoid driving in July and August; the coastal train is faster.", "Dress modestly for Monaco Cathedral and the casino."],
 }
 if LANG == "fr":
-    REGIONS = _typo([dict(_c.REGIONS[0], **RIVIERA_EXTRA["fr"]), dict(_pf.REGION, **PARIS_EXTRA["fr"])])
-    PROCHAINES_REGIONS = _typo([x for x in _c.PROCHAINES_REGIONS if x != "Paris"])
-    DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS + _pf.DESTINATIONS)
-    GROUPES = {"cote-d-azur": _typo(_m.GROUPES), "paris": _typo(_pf.GROUPES)}
-    ITIS = {"cote-d-azur": _typo(dict(_m.ITINERAIRE, conseils=["Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.", "Évitez la voiture en juillet-août, le train est plus rapide sur la côte.", "Gardez une tenue correcte pour la cathédrale de Monaco et le casino."])),
-            "paris": _typo(_pf.ITINERAIRE)}
-    SEO_T = _typo(dict(_seo.TITRES, **_pf.TITRES))
-    TITRE_REGION = _typo({"cote-d-azur": _seo.TITRE_REGION, "paris": _pf.TITRE_REGION})
-    TITRE_ITI = _typo({"cote-d-azur": _seo.TITRE_ITI, "paris": _pf.TITRE_ITI})
-    A_PROPOS = _typo(_seo.A_PROPOS[:-1] + ["Nous avons commencé par la Côte d'Azur, que nous connaissons le mieux, puis Paris, qui se visite toute l'année. Les autres régions arriveront une par une."])
-    ALIAS_SRC = dict(_seo.ALIAS, **_pf.ALIAS)
-    VEDETTES = {"cote-d-azur": ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"], "paris": _pf.VEDETTES}
+    _base, _seoT, _treg, _titi, _about, _alias, _grp, _iti, _prochaines, _mods = _c, _seo.TITRES, _seo.TITRE_REGION, _seo.TITRE_ITI, _seo.A_PROPOS, _seo.ALIAS, _m.GROUPES, _m.ITINERAIRE, _c.PROCHAINES_REGIONS, _XF
+    _about_last = "Nous avons commencé par la Côte d'Azur, que nous connaissons le mieux, puis Paris et les Alpes. Les autres régions arrivent une par une."
+    DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS + sum([m.DESTINATIONS for m in _XF], []))
 else:
-    REGIONS = _typo([dict(_en.REGIONS[0], **RIVIERA_EXTRA["en"]), dict(_pe.REGION, **PARIS_EXTRA["en"])])
-    PROCHAINES_REGIONS = _typo([x for x in _en.PROCHAINES_REGIONS if x != "Paris"])
-    DESTINATIONS = _typo(_en.DESTINATIONS + _pe.DESTINATIONS)
-    GROUPES = {"cote-d-azur": _typo(_en.GROUPES), "paris": _typo(_pe.GROUPES)}
-    ITIS = {"cote-d-azur": _typo(dict(_en.ITINERAIRE, conseils=["Stay in Nice: the station has direct regional trains to Villefranche, Monaco, Antibes and Cannes.", "Avoid driving in July and August; the coastal train is faster.", "Dress modestly for Monaco Cathedral and the casino."])),
-            "paris": _typo(_pe.ITINERAIRE)}
-    SEO_T = _typo(dict(_en.TITRES, **_pe.TITRES))
-    TITRE_REGION = _typo({"cote-d-azur": _en.TITRE_REGION, "paris": _pe.TITRE_REGION})
-    TITRE_ITI = _typo({"cote-d-azur": _en.TITRE_ITI, "paris": _pe.TITRE_ITI})
-    A_PROPOS = _typo(_en.ABOUT[:-1] + ["We started with the French Riviera, which we know best, then Paris, which is worth visiting all year round. Other regions will follow one by one."])
-    ALIAS_SRC = dict(_en.ALIAS, **_pe.ALIAS)
-    VEDETTES = {"cote-d-azur": ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"], "paris": _pe.VEDETTES}
+    _base, _seoT, _treg, _titi, _about, _alias, _grp, _iti, _prochaines, _mods = _en, _en.TITRES, _en.TITRE_REGION, _en.TITRE_ITI, _en.ABOUT, _en.ALIAS, _en.GROUPES, _en.ITINERAIRE, _en.PROCHAINES_REGIONS, _XE
+    _about_last = "We started with the French Riviera, which we know best, then Paris and the Alps. Other regions are on their way, one by one."
+    DESTINATIONS = _typo(_en.DESTINATIONS + sum([m.DESTINATIONS for m in _XE], []))
+_names = {m.REGION["nom"] for m in _mods} | {"Paris", "Alpes", "the Alps", "Alps"}
+REGIONS = _typo([dict(_base.REGIONS[0], **RIVIERA_EXTRA[LANG])] + [m.REGION for m in _mods])
+PROCHAINES_REGIONS = _typo([x for x in _prochaines if x not in _names])
+GROUPES = dict({"cote-d-azur": _typo(_grp)}, **{m.REGION["slug"]: _typo(m.GROUPES) for m in _mods})
+ITIS = dict({"cote-d-azur": _typo(dict(_iti, conseils=RIVIERA_ITI_TIPS[LANG]))}, **{m.REGION["slug"]: _typo(m.ITINERAIRE) for m in _mods if getattr(m, "ITINERAIRE", None)})
+SEO_T = _typo(dict(_seoT, **_merge(_mods, "TITRES")))
+TITRE_REGION = _typo(dict({"cote-d-azur": _treg}, **{m.REGION["slug"]: m.TITRE_REGION for m in _mods}))
+TITRE_ITI = _typo(dict({"cote-d-azur": _titi}, **{m.REGION["slug"]: m.TITRE_ITI for m in _mods if getattr(m, "TITRE_ITI", None)}))
+A_PROPOS = _typo(_about[:-1] + [_about_last])
+ALIAS_SRC = dict(_alias, **_merge(_mods, "ALIAS"))
+VEDETTES = dict({"cote-d-azur": ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]}, **{m.REGION["slug"]: m.VEDETTES for m in _mods})
 for _d in DESTINATIONS:
     _d.setdefault("path", _d["slug"])
 for _r in REGIONS:
     _r.setdefault("path", _r["slug"])
-LIEU_VOIR = _typo(dict(_seo.LIEU_VOIR, **_pf.LIEU_VOIR))
-LIEU_ALLER = _typo(dict(_seo.LIEU_ALLER, **_pf.LIEU_ALLER))
-GEO = dict(_seo.GEO, **_pf.GEO)
-HOME_ORDER = ["paris", "cote-d-azur"]
+LIEU_VOIR = _typo(dict(_seo.LIEU_VOIR, **_merge(_XF, "LIEU_VOIR")))
+LIEU_ALLER = _typo(dict(_seo.LIEU_ALLER, **_merge(_XF, "LIEU_ALLER")))
+GEO = dict(_seo.GEO, **_merge(_XF, "GEO"))
+HOME_ORDER = ["alpes", "paris", "cote-d-azur"]
 BRAND = " | Clic&Site"
 
 SITE = SITES[LANG]
@@ -343,11 +345,12 @@ def build_home():
     musts = ""
     for r in order:
         n = len([d for d in DESTINATIONS if d["region"] == r["slug"]])
-        it = ITIS[r["slug"]]
+        it = ITIS.get(r["slug"])
+        it_link = f'<span class="foot__sep foot__sep--dark"></span><a href="{r["path"]}/{it["slug"]}/">{e(it["titre"])}</a>' if it else ""
         musts += f"""<section class="wrap" aria-labelledby="inc-{r['slug']}">
   <h2 id="inc-{r['slug']}" class="sec-title">{e(T['must_see'].format(de=r['de']))}</h2>
   <ul class="cards">{''.join(card(by[x], '') for x in VEDETTES[r['slug']])}</ul>
-  <p class="more"><a href="{r['path']}/">{e(T['see_all'].format(n=n, de=r['de']))}</a><span class="foot__sep foot__sep--dark"></span><a href="{r['path']}/{it['slug']}/">{e(it['titre'])}</a></p>
+  <p class="more"><a href="{r['path']}/">{e(T['see_all'].format(n=n, de=r['de']))}</a>{it_link}</p>
 </section>
 """
     body = f"""
@@ -375,7 +378,7 @@ def build_region(r):
     dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
     intro = "".join(f"<p>{e(p)}</p>" for p in r["intro"])
     groups = ""
-    ITI = ITIS[r["slug"]]
+    ITI = ITIS.get(r["slug"])
     for gk, gn in GROUPES[r["slug"]]:
         gd = [d for d in dests if d["groupe"] == gk]
         if gd:
@@ -390,9 +393,9 @@ def build_region(r):
   <p class="credit">{photo(r['photo'], "../")["credit"]}</p>
 </header>
 <section class="wrap prose">{intro}</section>
-<section class="wrap">
+{f"""<section class="wrap">
   <a class="iti-link" href="{ITI['slug']}/"><span class="iti-link__t">{e(ITI['titre'])}</span><span class="iti-link__d">{T['iti_d']}</span></a>
-</section>
+</section>""" if ITI else ""}
 {groups}
 """
     ld = [{"@context": "https://schema.org", "@type": "TouristDestination", "name": r["nom"], "description": r["description"],
@@ -497,7 +500,7 @@ def build_dest(d):
          "url": f"{SITE}/{durl(d)}",
          "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['path']}.jpg"],
          "geo": {"@type": "GeoCoordinates", "latitude": GEO[d["slug"]][0], "longitude": GEO[d["slug"]][1]},
-         "address": {"@type": "PostalAddress", "addressLocality": ("Paris" if d["region"] == "paris" and d["slug"] != "versailles" else d["nom"]), "addressRegion": ("Île-de-France" if d["region"] == "paris" else r["nom"]), "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
+         "address": {"@type": "PostalAddress", "addressLocality": d.get("locality") or r.get("locality") or d["nom"], "addressRegion": r.get("address_region") or r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in d["faq"]]},
@@ -617,7 +620,7 @@ def build_legal():
     write(path.rstrip("/"), page("legal", title, desc, body, crumbs=[(T["home"], ""), (T["legal"], path)], depth=1))
 
 def build_misc():
-    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{r['path']}/{ITIS[r['slug']]['slug']}/" for r in REGIONS] + [STATIC["about"][LANG], STATIC["legal"][LANG]]
+    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{r['path']}/{ITIS[r['slug']]['slug']}/" for r in REGIONS if r["slug"] in ITIS] + [STATIC["about"][LANG], STATIC["legal"][LANG]]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
@@ -643,7 +646,8 @@ def main():
     for d in DESTINATIONS:
         build_dest(d)
     for r in REGIONS:
-        build_iti(r)
+        if r["slug"] in ITIS:
+            build_iti(r)
     build_about()
     build_legal()
     build_misc()

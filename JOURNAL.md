@@ -4,3 +4,4 @@
 - 11/11/2026 : pages métier et conseils alignées sur l'accueil : toujours en clair (plus de mode sombre automatique), entête avec bouton compte + « Je veux mon site », bannière avec petit sur-titre, titre et texte plus petits, 3 arguments, modèle sur ordinateur + téléphone à droite (en dessous sur mobile).
 - 11/11/2026 : accueil, le paragraphe de liens « Création de site internet pour… » quitte le milieu de la page (sous les modèles) pour le pied de page, en petit. Liens conservés pour le référencement.
 - 11/11/2026 : pages métier et conseils, boutons et liens plus fins (bouton principal plus bas, encadré « Voir le modèle » compact, « À lire aussi » en petites étiquettes).
+- 11/11/2026 : immobilier, « estimation gratuite en ligne » reformulé en « demande d'estimation en ligne » (le site n'affiche pas de prix automatique : la demande arrive dans Mes clients, type Estimation, et l'agent rappelle).

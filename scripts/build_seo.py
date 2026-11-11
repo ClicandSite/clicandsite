@@ -76,7 +76,7 @@ PAGES = [
     title="Création de site internet pour agence immobilière",
     meta="Site internet pour agence immobilière indépendante : biens à vendre et à louer avec DPE et GES, une page Google par bien, estimation gratuite, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Un site d'agence immobilière qui génère des mandats et des visites",
-    lead="Vos biens bien présentés, une estimation en ligne qui capte les vendeurs, une page Google par bien et vos annonces diffusées sur Abracadeal sans passerelle payante.",
+    lead="Vos biens bien présentés, une demande d'estimation en ligne qui capte les vendeurs, une page Google par bien et vos annonces diffusées sur Abracadeal sans passerelle payante.",
     feats=[("Recherche de biens","Achat ou location, ville, budget, nombre de pièces : filtres en direct."),
            ("Fiches complètes et conformes","Surface, pièces, chambres, étage, DPE et GES avec leurs valeurs, dépenses d'énergie, copropriété et honoraires : les mentions obligatoires s'écrivent toutes seules."),
            ("Une page Google par bien","Pack Auto, Moto & Immo : chaque bien a sa propre page (« Appartement 3 pièces 78 m² – Fréjus – 450 000 € »), lisible par Google et partageable."),

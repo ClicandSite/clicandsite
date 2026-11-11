@@ -128,7 +128,7 @@ T = {
             about="À propos", legal="Mentions légales", made_by="Site réalisé par", photo="Photo : ",
             home_title="Où aller, comment y aller, quoi réserver.",
             home_lead="Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par Paris et la Côte d’Azur.",
-            home_alt="La rade de Villefranche-sur-Mer vue du ciel", regions="Les régions", guides="guides", soon="Bientôt : ",
+            home_alt="Le pont Alexandre III à la tombée de la nuit, à Paris", regions="Les régions", guides="guides", soon="Bientôt : ",
             must_see="Les incontournables {de}", see_all="Voir les {n} guides {de}",
             home_seo="Clic&Site : les plus beaux sites de France, guides pratiques",
             home_desc="Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par Paris et la Côte d'Azur.",
@@ -152,7 +152,7 @@ T = {
             about_h1="À propos de Clic&amp;Site", about_mail="Une remarque, une erreur à signaler ? Écrivez-nous : ",
             about_seo="À propos", about_desc="Qui écrit Clic&Site, comment le guide est financé et pourquoi il ne donne ni prix ni horaires.",
             nf_title="Page introuvable", nf_h1="Cette page n’existe pas.", nf_p='<a href="/">Revenir à l’accueil</a> pour choisir une région.',
-            accueil_credit="Villefranche-sur-Mer (accueil)"),
+            accueil_credit="Pont Alexandre III, Paris (accueil)"),
  "en": dict(html_lang="en", locale="en_GB", skip="Skip to content", nav="Regions", all_regions="All regions",
             crumbs="Breadcrumb", home="Home", switch="Français", switch_lang="fr",
             tagline="Clear, practical guides to the most beautiful places in France.",
@@ -160,7 +160,7 @@ T = {
             about="About", legal="Legal notice", made_by="Website by", photo="Photo: ",
             home_title="Where to go, how to get there, what to book.",
             home_lead="Short, practical guides to the most beautiful places in France, so you spend your time there rather than planning. We start with Paris and the French Riviera.",
-            home_alt="Aerial view of the bay of Villefranche-sur-Mer", regions="Regions", guides="guides", soon="Coming soon: ",
+            home_alt="The Pont Alexandre III at dusk, Paris", regions="Regions", guides="guides", soon="Coming soon: ",
             must_see="{de} highlights", see_all="See all {n} {de} guides",
             home_seo="Clic&Site: practical guides to the best places in France",
             home_desc="What to see, how to get there and what to book: short, practical guides to the most beautiful places in France, starting with Paris and the French Riviera.",
@@ -184,7 +184,7 @@ T = {
             about_h1="About Clic&amp;Site", about_mail="Spotted a mistake or have a suggestion? Email us: ",
             about_seo="About", about_desc="Who writes Clic&Site, how the guide is funded and why it gives no prices or timetables.",
             nf_title="Page not found", nf_h1="This page does not exist.", nf_p='<a href="/">Go back to the home page</a> to choose a region.',
-            accueil_credit="Villefranche-sur-Mer (home page)"),
+            accueil_credit="Pont Alexandre III, Paris (home page)"),
 }[LANG]
 
 e = lambda s: html.escape(str(s), quote=True)
@@ -286,7 +286,7 @@ def page(key, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="as
 <a class="skip" href="#contenu">{T['skip']}</a>
 <header class="top">
   <div class="wrap top__in">
-    <a class="brand" href="{root}">Clic<span class="brand__amp">&amp;</span>Site</a>
+    <a class="brand" href="{root}"><img class="brand__logo" src="{root}assets/logo-clair.svg" width="167" height="40" alt="Clic&amp;Site"></a>
     <nav class="top__nav" aria-label="{T['nav']}">{regions_nav}<a href="{root}#regions">{T['all_regions']}</a>{switch}</nav>
   </div>
 </header>

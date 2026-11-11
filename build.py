@@ -55,7 +55,10 @@ REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS + [m.REGION for m
 DEST_PATH = {"fr": {d["slug"]: d["slug"] for d in FR_DEST}, "en": {d["slug"]: d["path"] for d in EN_DEST}}
 ITI_PATH = {"fr": dict({"cote-d-azur": _m.ITINERAIRE["slug"]}, **{m.REGION["slug"]: m.ITINERAIRE["slug"] for m in _XF if getattr(m, "ITINERAIRE", None)}),
             "en": dict({"cote-d-azur": _en.ITINERAIRE["slug"]}, **{m.REGION["slug"]: m.ITINERAIRE["slug"] for m in _XE if getattr(m, "ITINERAIRE", None)})}
-STATIC = {"about": {"fr": "a-propos/", "en": "about/"}, "legal": {"fr": "mentions-legales/", "en": "legal-notice/"}}
+STATIC = {"about": {"fr": "a-propos/", "en": "about/"}, "legal": {"fr": "mentions-legales/", "en": "legal-notice/"}, "ideas": {"fr": "idees/", "en": "ideas/"}}
+import content_selections_fr as _sf
+import content_selections_en as _se
+SEL_PATH = {"fr": {x["slug"]: x["slug"] for x in _sf.SELECTIONS}, "en": {x["slug"]: x["path"] for x in _se.SELECTIONS}}
 
 def url_of(key, lang):
     kind, _, ident = key.partition(":")
@@ -68,6 +71,8 @@ def url_of(key, lang):
         return f"{REGION_PATH[lang][reg]}/{DEST_PATH[lang][ident]}/"
     if kind == "iti":
         return f"{REGION_PATH[lang][ident]}/{ITI_PATH[lang][ident]}/"
+    if kind == "sel":
+        return f"{STATIC['ideas'][lang]}{SEL_PATH[lang][ident]}/"
     return STATIC[kind][lang]
 
 # ---------- Contenu de la langue construite ----------
@@ -106,6 +111,10 @@ LIEU_VOIR = _typo(dict(_seo.LIEU_VOIR, **_merge(_XF, "LIEU_VOIR")))
 LIEU_ALLER = _typo(dict(_seo.LIEU_ALLER, **_merge(_XF, "LIEU_ALLER")))
 GEO = dict(_seo.GEO, **_merge(_XF, "GEO"))
 HOME_ORDER = ["alpes", "paris", "cote-d-azur"]
+SELS = _typo((_sf if LANG == "fr" else _se).SELECTIONS)
+IDX = _typo((_sf if LANG == "fr" else _se).INDEX)
+for _x in SELS:
+    _x.setdefault("path", _x["slug"])
 BRAND = " | Clic&Site"
 
 SITE = SITES[LANG]
@@ -139,7 +148,7 @@ T = {
             region_h1="Visiter la {nom}", region_alt="Le Cap-Ferrat et la côte vus du ciel", iti_d="Un itinéraire complet, faisable sans voiture.",
             og_region="{n} guides pratiques", visit="Visiter ", view_of="Vue de ",
             see_h2="Que voir {lv}", go_h2="Comment aller {la}", tips_h2="Nos conseils pour {pour}", acts_h2="Activités à réserver {lv}",
-            btn_gyg="Voir les prix sur GetYourGuide", btn_viator="Comparer sur Viator", book_lead="Réservation en ligne en quelques minutes, annulation gratuite sur la plupart des activités et avis de voyageurs pour bien choisir.", hero_cta="Voir les activités à réserver", eps_t="Transfert Côte d'Azur avec chauffeur privé", eps_p="Aéroport de Nice, gare, hôtel ou port : un chauffeur vous conduit à {nom} en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.", eps_btn="Réserver mon transfert", eps_p_ile="Aéroport de Nice, gare ou hôtel : un chauffeur vous dépose à l'embarcadère pour {nom}, en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.",
+            btn_gyg="Voir les prix sur GetYourGuide", btn_viator="Comparer sur Viator", book_lead="Réservation en ligne en quelques minutes, annulation gratuite sur la plupart des activités et avis de voyageurs pour bien choisir.", hero_cta="Voir les activités à réserver", ideas_nav="Idées", ideas_h2="Idées pour cet hiver", agenda_h2="L’agenda à retenir", see_guide="Voir le guide", ideas_more="Toutes nos idées", eps_t="Transfert Côte d'Azur avec chauffeur privé", eps_p="Aéroport de Nice, gare, hôtel ou port : un chauffeur vous conduit à {nom} en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.", eps_btn="Réserver mon transfert", eps_p_ile="Aéroport de Nice, gare ou hôtel : un chauffeur vous dépose à l'embarcadère pour {nom}, en van ou berline haut de gamme, prix fixe par véhicule affiché avant la réservation.",
             aff_note="Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.",
             faq="Questions fréquentes", brief="En bref", others="Autres sites de la {nom}",
             ride_t="Y aller avec un chauffeur privé",
@@ -171,7 +180,7 @@ T = {
             region_h1="Visiting the {nom}", region_alt="Aerial view of Cap Ferrat and the coast", iti_d="A complete itinerary you can do without a car.",
             og_region="{n} practical guides", visit="Visit ", view_of="View of ",
             see_h2="Things to do {lv}", go_h2="How to get {la}", tips_h2="Tips for {pour}", acts_h2="Tours and activities {lv}",
-            btn_gyg="Check prices on GetYourGuide", btn_viator="Compare on Viator", book_lead="Book online in minutes, with free cancellation on most activities and traveller reviews to help you choose.", hero_cta="See tours and tickets", eps_t="French Riviera private transfer", eps_p="Nice airport, station, hotel or port: a private driver takes you to {nom} in a premium van or saloon, with a fixed price per vehicle shown before you book.", eps_btn="Book my transfer", eps_p_ile="Nice airport, station or hotel: a private driver drops you at the ferry pier for the {nom}, in a premium van or saloon, with a fixed price per vehicle shown before you book.",
+            btn_gyg="Check prices on GetYourGuide", btn_viator="Compare on Viator", book_lead="Book online in minutes, with free cancellation on most activities and traveller reviews to help you choose.", hero_cta="See tours and tickets", ideas_nav="Ideas", ideas_h2="Ideas for this winter", agenda_h2="Dates for your diary", see_guide="See the guide", ideas_more="All our ideas", eps_t="French Riviera private transfer", eps_p="Nice airport, station, hotel or port: a private driver takes you to {nom} in a premium van or saloon, with a fixed price per vehicle shown before you book.", eps_btn="Book my transfer", eps_p_ile="Nice airport, station or hotel: a private driver drops you at the ferry pier for the {nom}, in a premium van or saloon, with a fixed price per vehicle shown before you book.",
             aff_note="Affiliate links: if you book, Clic&amp;Site earns a commission at no extra cost to you. Prices and availability are set by the booking platform.",
             faq="Frequently asked questions", brief="At a glance", others="More places on the {nom}",
             ride_t="Go there with a private driver",
@@ -278,7 +287,7 @@ def page(key, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="as
     if hero and crumb_html:
         body = body.replace("</header>", "</header>\n" + crumb_html, 1); crumb_html = ""
     logo = "logo-clair.svg" if hero else "logo-fonce.svg"
-    regions_nav = "".join(f'<a href="{root}{r["path"]}/">{e(r["nom"])}</a>' for r in REGIONS)
+    regions_nav = "".join(f'<a href="{root}{r["path"]}/">{e(r["nom"])}</a>' for r in REGIONS) + f'<a href="{root}{STATIC["ideas"][LANG]}">{T["ideas_nav"]}</a>'
     return f"""<!doctype html>
 <html lang="{T['html_lang']}">
 <head>
@@ -332,6 +341,80 @@ def write(path, content):
     with open(full, "w", encoding="utf-8") as f:
         f.write(content)
 
+def sel_url(x):
+    return f"{STATIC['ideas'][LANG]}{x['path']}/"
+
+def sel_card(x, root):
+    ph = photo(x["photo"], root)
+    return f"""<li class="card card--encre card--idea">
+  <a href="{root}{sel_url(x)}">
+    <div class="card__face"><img class="card__img" src="{ph['small']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div><span class="card__name">{e(x.get('court', x['h1']))}</span></div>
+    <p class="card__txt">{e(x['accroche'])}</p>
+  </a>
+</li>"""
+
+def build_selection(x):
+    root = "../../"
+    by = {d["slug"]: d for d in DESTINATIONS}
+    def dlink(sl, label):
+        return f'<a href="{root}{durl(by[sl])}">{e(label)}</a>' if sl and sl in by else e(label)
+    agenda = "".join(f'<li class="ag"><span class="ag__d">{e(dt)}</span><div class="ag__b"><strong>{dlink(sl, t)}</strong><p>{e(tx)}</p></div></li>' for dt, t, tx, sl in x["agenda"])
+    secs = ""
+    for h2, intro, items in x["sections"]:
+        cards = "".join(card(dict(by[sl], accroche=tx), root) for sl, tx in items if sl in by)
+        secs += f'<section class="wrap" aria-label="{e(h2)}"><h2 class="sec-title">{e(h2)}</h2><p class="sec-lead">{e(intro)}</p><ul class="cards">{cards}</ul></section>'
+    acts = "".join(f"""<li class="act">
+  <h3 class="act__t">{e(t)}</h3><p class="act__d">{e(tx)}</p>
+  <p class="act__btns"><a class="bk bk--gyg" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_gyg']}</a><a class="bk bk--via" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
+</li>""" for t, tx, q in x["activites"])
+    faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in x["faq"])
+    hero = hero_img(x["photo"], root, x["h1"])
+    body = f"""
+<header class="post post--encre">
+  {hero[0]}
+  <div class="wrap post__in">
+    <h1 class="post__title">{e(x['h1'])}</h1>
+    <p class="post__lead">{e(x['accroche'])}</p>
+  </div>
+  <p class="credit">{hero[1]["credit"]}</p>
+</header>
+<div class="wrap prose prose--wide">
+  <p>{e(x['intro'])}</p>
+  <h2>{T['agenda_h2']}</h2>
+  <ol class="agenda">{agenda}</ol>
+</div>
+{secs}
+<div class="wrap prose prose--wide">
+  <section class="book" id="reserver" aria-labelledby="reserver-t">
+    <h2 id="reserver-t" class="book__t">{e(T['acts_h2'].format(lv='')).strip()}</h2>
+    <p class="book__lead">{e(_typo(T['book_lead']))}</p>
+    <ul class="acts">{acts}</ul>
+    <p class="aff-note">{T['aff_note']}</p>
+  </section>
+  <h2>{T['faq']}</h2>
+  <div class="faq">{faq}</div>
+</div>
+"""
+    path = sel_url(x)
+    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": x["h1"], "description": x["description"], "inLanguage": "fr-FR" if LANG == "fr" else "en",
+           "author": {"@type": "Organization", "name": "Clic&Site"}, "dateModified": TODAY, "image": photo(x["photo"], "")["abs"]},
+          {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+              {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in x["faq"]]}]
+    ogf = f"idee-{x['slug']}.jpg"
+    _og.make(os.path.join(OUT, "assets", "og", ogf), x["h1"], IDX["h1"], "FR", "encre")
+    write(path.rstrip("/"), page("sel:" + x["slug"], x["titre"] + BRAND, x["description"], body,
+                                 crumbs=[(T["home"], ""), (T["ideas_nav"], STATIC["ideas"][LANG]), (x["h1"], path)], jsonld=ld, depth=2, og_image=f"assets/og/{ogf}"))
+
+def build_ideas():
+    path = STATIC["ideas"][LANG]
+    body = f"""
+<section class="hero wrap"><h1 class="hero__title hero__title--sm">{e(IDX['h1'])}</h1><p class="hero__lead">{e(IDX['accroche'])}</p></section>
+<section class="wrap"><ul class="cards">{''.join(sel_card(x, '../') for x in SELS)}</ul></section>
+"""
+    write(path.rstrip("/"), page("ideas", IDX["titre"] + BRAND, IDX["description"], body, crumbs=[(T["home"], ""), (T["ideas_nav"], path)], depth=1))
+    for x in SELS:
+        build_selection(x)
+
 def card(d, root):
     ph = photo(d["slug"], root)
     return f"""<li class="card card--{d['couleur']}">
@@ -380,6 +463,10 @@ def build_home():
   <h2 id="regions-t" class="sec-title">{T['regions']}</h2>
   <div class="regions">{''.join(region_card(r, '') for r in order)}</div>
   <p class="next">{T['soon']}{e(', '.join(PROCHAINES_REGIONS))}.</p>
+</section>
+<section class="wrap" aria-labelledby="ideas-t">
+  <h2 id="ideas-t" class="sec-title">{T['ideas_h2']}</h2>
+  <ul class="cards">{''.join(sel_card(x, '') for x in SELS)}</ul>
 </section>
 {musts}"""
     _og.make(os.path.join(OUT, "assets", "og", "accueil.jpg"), T["og_home"][0], T["og_home"][1], "FR", "encre")
@@ -644,7 +731,7 @@ def build_legal():
     write(path.rstrip("/"), page("legal", title, desc, body, crumbs=[(T["home"], ""), (T["legal"], path)], depth=1))
 
 def build_misc():
-    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{r['path']}/{ITIS[r['slug']]['slug']}/" for r in REGIONS if r["slug"] in ITIS] + [STATIC["about"][LANG], STATIC["legal"][LANG]]
+    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{r['path']}/{ITIS[r['slug']]['slug']}/" for r in REGIONS if r["slug"] in ITIS] + [STATIC["ideas"][LANG]] + [sel_url(x) for x in SELS] + [STATIC["about"][LANG], STATIC["legal"][LANG]]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
@@ -672,6 +759,7 @@ def main():
     for r in REGIONS:
         if r["slug"] in ITIS:
             build_iti(r)
+    build_ideas()
     build_about()
     build_legal()
     build_misc()

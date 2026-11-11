@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<script>/* 07/11/2026 : pas de zoom (pincer ou double-tap) dans l'espace client et l'aperçu, comme une appli */document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});</script>
+
+<meta name="robots" content="noindex, nofollow">
+<title>Aperçu de votre site · MyCreativeSite</title>
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap">
+<script src="/assets/cs-edit.js?v=24"></script>
+<style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
+/* 07/11/2026 (Claude, demande d'Anthony) : aperçu provisoire du site d'un client, avant paiement.
+   Le nom de domaine n'est réservé qu'après le paiement. Adresse : /apercu/?s=<identifiant du site> */
+:root{--bg:#FFFFFF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+:root[data-theme="dark"]{--bg:#0D1020;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;grid-template-rows:auto 1fr}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);padding-top:max(10px,env(safe-area-inset-top,0px))}
+.brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;text-decoration:none;color:inherit}
+.brand img{width:26px;height:26px}
+.brand span span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info{flex:1;min-width:220px;color:var(--muted);font-size:.92rem}
+.info b{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;padding:10px 16px;font-weight:700;text-decoration:none;background:var(--grad);color:#fff;white-space:nowrap}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;color:var(--ink);font:600 .85rem inherit;font-family:inherit;padding:8px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.stage{min-height:0;display:flex;justify-content:center;background:color-mix(in srgb,var(--line) 40%,var(--bg))}
+.stage iframe{border:0;width:100%;height:100%;background:#fff}
+.stage.m{padding:16px}
+.stage.m iframe{width:390px;max-width:100%;border-radius:24px;box-shadow:0 20px 50px -20px rgba(0,0,0,.4)}
+.msg{max-width:520px;margin:12vh auto 0;padding:0 16px;text-align:center;color:var(--muted)}
+@media (max-width:700px){.seg{display:none}}
+
+html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
+@media (max-width:860px){input,select,textarea{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="brand" href="/" aria-label="MyCreativeSite"><img src="/img/logo-m.png" alt=""><span>My<span>creativesite</span></span></a>
+  <div class="info" id="info">Chargement de votre aperçu…</div>
+  <div class="seg" role="group" aria-label="Affichage"><button type="button" data-v="d" aria-pressed="true">Ordinateur</button><button type="button" data-v="m" aria-pressed="false">Téléphone</button></div>
+  <div class="seg" role="group" aria-label="Langue" id="langSeg" hidden><button type="button" data-l="fr" aria-pressed="true">FR</button><button type="button" data-l="en" aria-pressed="false">EN</button></div>
+  <a class="btn" id="pay" hidden>Valider et payer</a>
+  <a class="btn ghost" id="closeX" href="/espace/" aria-label="Fermer l'aperçu"><span aria-hidden="true" style="margin-right:6px">✕</span>Fermer</a>
+</div>
+<div class="stage" id="stage"></div>
+<script>
+(function(){
+  function noZoom(f){ try{ var d=f.contentDocument; if(!d||d.__nz) return; d.__nz=1; d.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false}); d.addEventListener('touchmove',function(e){ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false}); d.documentElement.style.touchAction='pan-x pan-y'; }catch(e){} }
+  var API='https://avcynjwcyygygkjuxsdt.supabase.co', KEY='sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO';
+  var PAY={essentiel:'https://buy.stripe.com/3cIcN5d8X7azbmNesEgfu04',pro:'https://buy.stripe.com/dRmdR9ed1dyXfD3gAMgfu08',premium:'https://buy.stripe.com/00weVd6KzbqP62t0BOgfu09',boutique:'https://buy.stripe.com/5kQ14n3ynbqP2Qh5W8gfu07',autoimmo:'https://buy.stripe.com/5kQcN56Kz8eD2Qhacogfu0b'};
+  var slug=(new URLSearchParams(location.search).get('s')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
+  var info=document.getElementById('info'), stage=document.getElementById('stage');
+  document.getElementById('closeX').addEventListener('click',function(e){ if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){ e.preventDefault(); history.back(); } });
+  function fail(t){ info.textContent=''; stage.innerHTML='<p class="msg">'+t+'</p>'; }
+  if(!slug){ fail('Lien d\'aperçu incomplet. Écrivez-nous à contact@mycreativesite.fr.'); return; }
+  fetch(API+'/rest/v1/rpc/cs_site_preview',{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({p_slug:slug})})
+  .then(function(r){ return r.ok?r.json():null; }).then(function(s){
+    if(!s){ fail('Cet aperçu n\'existe pas ou n\'est plus disponible. Écrivez-nous à contact@mycreativesite.fr.'); return; }
+    document.title='Aperçu : '+s.name+' · MyCreativeSite';
+    var live=s.status==='en_ligne';
+    info.innerHTML='<b></b> '+(live?'est en ligne.':(s.paid?'· paiement reçu : votre site est enregistré et prêt, il part en ligne sous 24 h.':'· aperçu provisoire, pas encore en ligne. Après votre paiement, on réserve votre nom de domaine et votre site part en ligne.'));
+    info.querySelector('b').textContent=s.name;
+    var plan=String(s.plan||'').toLowerCase(), pay=document.getElementById('pay');
+    var paid=s.paid; if(!live&&!paid&&PAY[plan]){ pay.href=PAY[plan]+'?client_reference_id='+encodeURIComponent(slug); pay.hidden=false; pay.target='_blank'; pay.rel='noopener'; }
+    // 08/11/2026 : paiement avec les options choisies à la commande (fonction cs-checkout) ; le lien Stripe simple reste en secours
+    pay.addEventListener('click',function(e){ e.preventDefault(); var fb=pay.href, old=pay.textContent; pay.textContent='Ouverture du paiement…';
+      fetch(API+'/functions/v1/cs-checkout',{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({slug:slug})})
+      .then(function(r){ return r.json().then(function(j){ location.href=(r.ok&&j.url)?j.url:fb; }); })
+      .catch(function(){ location.href=fb; }).then(function(){ setTimeout(function(){ pay.textContent=old; },3000); }); });
+    if(new URLSearchParams(location.search).get('paiement')==='ok'&&!paid&&!live){ info.innerHTML='<b></b> · merci, votre paiement est en cours de validation : votre site part en ligne sous 24 h.'; info.querySelector('b').textContent=s.name; pay.hidden=true; }
+    var f=document.createElement('iframe'); f.title='Aperçu du site '+s.name;
+    f.src='/modeles/'+encodeURIComponent(s.trade)+'.html?v=45#'+encodeURIComponent(s.style||'moderne');
+    var c=s.content||{}, en=c.en&&c.en.on&&c.en.dict?c.en.dict:null, lang='fr';
+    f.onload=function(){ noZoom(f); try{ CSEdit.apply(f.contentDocument, c); if(lang==='en'&&en) CSEdit.translate(f.contentDocument, en); }catch(e){} };
+    // 07/11/2026 : version anglaise (Premium, Boutique, option bilingue)
+    if(en){ var ls=document.getElementById('langSeg'); ls.hidden=false;
+      ls.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ lang=b.dataset.l;
+        ls.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });
+        try{ CSEdit.translate(f.contentDocument, lang==='en'?en:null); }catch(e){} }); }); }
+    stage.appendChild(f);
+    document.querySelectorAll('.seg button[data-v]').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.seg button[data-v]').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); });
+      stage.classList.toggle('m', b.dataset.v==='m'); }); });
+  }).catch(function(){ fail('Impossible de charger l\'aperçu. Vérifiez votre connexion et réessayez.'); });
+})();
+</script>
+</body>
+</html>

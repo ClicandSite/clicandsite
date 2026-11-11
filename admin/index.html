@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Espace admin · MyCreativeSite</title>
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
+<meta name="googlebot" content="noindex, nofollow">
+<script src="/assets/supabase-js-2.118.0.js"></script>
+<style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
+/* 06/11/2026 (Claude) : espace admin MyCreativeSite. Données dans le projet Supabase MyCreativeSite (séparé d'Abracadeal et d'EPS). Aucun envoi de mail depuis cette page. */
+:root{--bg:#FFFFFF;--paper:#FAF8FF;--ink:#12162B;--muted:#5C627A;--line:#E1E4EE;--brand:#7C3AED;--soft:#E8EBFF;--ok:#1E8E5A;--warn:#C47A00;--bad:#C0392B}
+@media (prefers-color-scheme:dark){:root{--bg:#0D1020;--paper:#151A30;--ink:#EEF0F8;--muted:#9AA1BC;--line:#262C47;--brand:#A98BFF;--soft:#1E2550;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:20px max(14px,env(safe-area-inset-left,0px)) 60px max(14px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+h1{font-size:1.45rem;margin:0}
+h1 span{color:var(--brand)}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:9px 14px;font:600 .9rem inherit;cursor:pointer}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.card span{font-size:.82rem;color:var(--muted)}
+.card.hl{border-color:var(--brand);background:var(--soft)}
+.robot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.robot .st{font-weight:700}
+.robot details{width:100%}
+.robot summary{cursor:pointer;color:var(--muted);font-size:.88rem}
+.runs{font-size:.82rem;color:var(--muted);display:grid;gap:3px;margin-top:8px}
+.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr)) auto;gap:8px;margin-bottom:12px}
+select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);min-width:0}
+.count{color:var(--muted);font-size:.88rem;margin:0 0 10px}
+.list{display:grid;gap:8px}
+.p{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,2fr) 150px;gap:12px;align-items:start}
+.p h3{margin:0;font-size:1rem}
+.meta{font-size:.84rem;color:var(--muted)}
+.addr{text-transform:capitalize}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.tag.aucun{background:#E7F7EE;color:var(--ok);border-color:#BFE7D0}
+.tag.date{background:#FFF3DC;color:var(--warn);border-color:#F2D9A6}
+.tag.moderne{background:#EEF0F5;color:var(--muted)}
+.tag.injoignable{background:#FDECEA;color:var(--bad);border-color:#F3C3BD}
+.score{font-weight:800;font-variant-numeric:tabular-nums}
+.contact a{color:var(--brand);word-break:break-all}
+.contact div{font-size:.88rem}
+.reasons{font-size:.8rem;color:var(--warn);margin-top:4px}
+.side{display:grid;gap:6px}
+.more{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}
+.hist{font-size:.82rem;color:var(--muted);display:grid;gap:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.msg{padding:14px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.pager{display:flex;gap:8px;justify-content:center;margin-top:14px}
+@media (max-width:860px){.filters{grid-template-columns:1fr 1fr}.p{grid-template-columns:1fr}}
+.login{max-width:380px;margin:8vh auto 0;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px;display:grid;gap:12px}
+.login h1{font-size:1.4rem;margin:0 0 4px}
+.login p{margin:0;color:var(--muted);font-size:.9rem}
+.login .err{color:var(--bad);font-size:.88rem}
+.login .ok{color:var(--ok);font-size:.88rem}
+.linkbtn{background:none;border:0;color:var(--brand);font:600 .88rem inherit;cursor:pointer;padding:0;text-align:left}
+.logo-mark{width:34px;height:34px;flex:none;display:block}
+.logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root{--grad:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%)}
+.brandh{display:flex;align-items:center;gap:10px}.brandh img{flex:none}
+.grad-t{background:linear-gradient(90deg,#FF2D8E 0%,#8B3DFF 52%,#12A8FF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form class="login" id="login" hidden>
+    <h1 class="brandh"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span class="grad-t">creativesite</span></span></h1>
+    <p id="loginTitle">Espace administrateur</p>
+    <input id="lEmail" type="email" autocomplete="username" placeholder="E-mail" required>
+    <input id="lPass" type="password" autocomplete="current-password" placeholder="Mot de passe" minlength="8" required>
+    <button class="btn primary" id="lBtn" type="submit">Se connecter</button>
+    <div id="lMsg"></div>
+    <button class="linkbtn" id="lMode" type="button">Première connexion : créer mon mot de passe</button>
+    <button class="linkbtn" id="lForgot" type="button">Mot de passe oublié</button>
+  </form>
+
+  <div id="gate" class="msg" hidden></div>
+
+  <div id="app" hidden>
+  <header>
+    <h1 class="brandh"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span class="grad-t">creativesite</span> · CRM prospects</span></h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="ordersBtn" type="button">Commandes <span id="ordersN" style="background:#C0392B;color:#fff;border-radius:999px;padding:0 7px;font-size:.78rem" hidden></span></button>
+      <button class="btn" id="sitesBtn" type="button">Sites clients</button>
+      <a class="btn" href="/espace/" style="text-decoration:none">Modifier un site</a>
+      <button class="btn" id="exportBtn" type="button">Exporter (CSV)</button>
+      <button class="btn" id="logout" type="button">Se déconnecter</button>
+    </div>
+  </header>
+
+    <div class="robot" id="ordersBox" hidden style="display:grid;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Commandes reçues depuis le site</b><span class="meta">Formulaire « Je veux mon site » de l'accueil. Contacte le client, prépare son site, puis crée-le dans « Sites clients » avec son e-mail.</span></div>
+      <div id="ordersList" style="display:grid;gap:8px;font-size:.92rem"></div>
+    </div>
+
+    <div class="robot" id="sitesBox" hidden style="display:grid;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>Sites clients</b><span class="meta">Le client modifie son site depuis mycreativesite.fr/espace avec l'e-mail indiqué ici. Toi, tu peux modifier tous les sites depuis « Modifier un site ».</span></div>
+      <b>Demandes d'aide des clients</b>
+      <div id="helpList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
+      <div id="sitesList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
+      <b style="margin-top:6px">Abonnements Stripe</b>
+      <div id="subsList" class="runs" style="font-size:.9rem;color:var(--ink)"></div>
+      <form id="siteForm" class="filters" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:0">
+        <input id="sName" placeholder="Nom (ex. Garage du Port)" required>
+        <input id="sSlug" placeholder="Identifiant (ex. garage-du-port)" pattern="[a-z0-9][a-z0-9-]{2,40}" required>
+        <input id="sEmail" type="email" placeholder="E-mail du client" required>
+        <input id="sDomain" placeholder="Domaine (ex. garage-du-port.fr)">
+        <select id="sTrade"><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option><option value="boutique">Boutique en ligne</option></select>
+        <select id="sStyle"><option value="moderne">Moderne</option><option value="luxe">Luxe</option><option value="riviera">Riviera</option><option value="chaleureux">Chaleureux</option><option value="audacieux">Audacieux</option><option value="minimal">Minimal crème</option><option value="nuit">Nuit bleue</option><option value="provence">Provence lavande</option><option value="ocean">Océan</option><option value="pop">Pop vitaminé</option><option value="corporate">Pro sérieux</option><option value="retro">Rétro</option><option value="zen">Zen nature</option><option value="neon">Néon</option><option value="poudre">Rose poudré</option><option value="terracotta">Terracotta</option><option value="graphite">Graphite</option><option value="foret">Forêt</option><option value="soleil">Soleil</option><option value="marine">Marine chic</option><option value="signature">Signature Émeraude (Premium)</option><option value="signatureonyx">Signature Onyx (Premium)</option><option value="signaturesaphir">Signature Saphir (Premium)</option><option value="signaturebordeaux">Signature Bordeaux (Premium)</option><option value="signatureivoire">Signature Ivoire (Premium)</option></select>
+        <select id="sPlan" aria-label="Formule"><option value="">Formule : selon Stripe</option><option value="essentiel">Essentiel</option><option value="pro">Pro</option><option value="premium">Premium (CRM)</option><option value="boutique">Boutique</option><option value="autoimmo">Pack Auto, Moto &amp; Immo</option></select>
+        <label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="sBi" style="width:auto"> Option bilingue (+10 €/mois)</label>
+        <select id="sStatus"><option value="brouillon">En préparation</option><option value="en_ligne">En ligne</option><option value="suspendu">Suspendu</option></select>
+        <button class="btn primary" type="submit">Enregistrer le site</button>
+      </form>
+    </div>
+    <div class="cards" id="cards"></div>
+
+    <div class="robot">
+      <span>Robot de recherche : <span class="st" id="robotSt">…</span></span>
+      <button class="btn" id="robotToggle" type="button">…</button>
+      <button class="btn primary" id="robotRun" type="button">Lancer une recherche maintenant</button>
+      <span class="meta">Il parcourt l'annuaire officiel des entreprises, toute la France département par département (Riviera en premier), retrouve les sites des pros et y relève l'e-mail (accueil, contact, mentions légales). Il n'envoie aucun mail.</span>
+      <details><summary>Dernières recherches</summary><div class="runs" id="runs"></div></details>
+    </div>
+
+    <div class="robot" id="mailBox">
+      <span>Envoi des mails de prospection : <span class="st" id="mailSt">…</span></span>
+      <button class="btn" id="mailToggle" type="button">…</button>
+      <label style="display:flex;gap:6px;align-items:center">Mails par jour <input type="number" id="mailLimit" min="0" max="200" style="width:80px"></label>
+      <button class="btn" id="mailTest" type="button">M'envoyer un mail d'essai</button>
+      <span class="meta" id="mailMeta">Depuis contact@mycreativesite.fr, du lundi au vendredi de 9 h à 18 h, étalés sur la journée. Montée en douceur pour protéger l'adresse : 5 mails le 1er jour, puis +3 par jour d'envoi, jusqu'à 40. Changer le nombre à la main arrête la montée automatique. Rapport chaque soir par mail.</span>
+      <details id="mailPwBox"><summary>Mot de passe de la boîte contact@mycreativesite.fr</summary>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="password" id="mailPw" autocomplete="new-password" placeholder="Mot de passe de la boîte OVH" style="min-width:240px"><button class="btn primary" id="mailPwSave" type="button">Enregistrer</button></div>
+        <div class="meta">Il est gardé côté serveur et ne s'affiche jamais. À refaire seulement si tu changes le mot de passe de la boîte.</div>
+      </details>
+      <details id="mailBox2"><summary>2e boîte d'envoi</summary>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="email" id="mailB2" placeholder="partenaires@mycreativesite.fr" style="min-width:240px"><input type="password" id="mailB2Pw" autocomplete="new-password" placeholder="Mot de passe de cette boîte" style="min-width:220px"><button class="btn primary" id="mailB2Save" type="button">Enregistrer</button><button class="btn" id="mailB2Test" type="button">Mail d'essai depuis cette boîte</button><button class="btn" id="mailB2Off" type="button">Mettre en pause</button></div>
+        <div class="meta" id="mailB2Meta">Les mails sont répartis entre les deux boîtes. La 2e boîte a sa propre montée en douceur : 5 mails le 1er jour, puis +3 par jour d'envoi, jusqu'à 40. Le mot de passe est gardé côté serveur et ne s'affiche jamais.</div>
+      </details>
+    </div>
+
+    <!-- 10/11/2026 (Anthony) : écrire / répondre depuis la boîte MyCreativeSite (OVH), plus depuis Gmail -->
+    <div class="robot" id="composeWrap"><details id="composeBox" style="width:100%"><summary><b>Écrire un mail</b> <span class="meta">depuis la boîte MyCreativeSite (copie dans « Envoyés »)</span></summary>
+      <div style="display:grid;gap:8px;margin-top:10px;max-width:640px">
+        <label>De <select id="cFrom"><option value="1">contact@mycreativesite.fr</option></select></label>
+        <input type="email" id="cTo" inputmode="email" autocapitalize="none" placeholder="À : adresse@du-pro.fr">
+        <input id="cSubject" placeholder="Objet">
+        <textarea id="cText" rows="9"></textarea>
+        <input type="hidden" id="cPid">
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="cSend" type="button">Envoyer</button><button class="btn" id="cClear" type="button">Effacer</button></div>
+        <div class="meta" id="cStatus" aria-live="polite"></div>
+      </div></details></div>
+
+    <div class="filters">
+      <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option><option value="boutique">Boutique en ligne</option></select>
+      <select id="fSite"><option value="">Tous les sites</option><option value="aucun">Sans site</option><option value="date">Site daté</option><option value="injoignable">Site en panne</option><option value="moderne">Site moderne</option><option value="a_verifier">À vérifier</option></select>
+      <select id="fStatus"><option value="">Tous les statuts</option><option value="nouveau" selected>Nouveau</option><option value="a_contacter">À contacter</option><option value="contacte">Contacté</option><option value="interesse">Intéressé</option><option value="client">Client</option><option value="refus">Refus</option><option value="exclu">Exclu</option></select>
+      <input id="fQ" placeholder="Nom, ville, email…">
+      <select id="fContact"><option value="">Avec ou sans contact</option><option value="email">Avec email</option><option value="phone">Avec téléphone</option></select>
+      <select id="fAge"><option value="">Toutes les entreprises</option><option value="new">Créateurs (moins d'un an)</option><option value="fresh">Nouveaux et futurs pros : auto, moto, immo</option></select>
+      <button class="btn" id="refresh" type="button">Actualiser</button>
+    </div>
+    <p class="count" id="count"></p>
+    <div class="list" id="list"></div>
+    <div class="pager"><button class="btn" id="prev" type="button">Précédent</button><button class="btn" id="next" type="button">Suivant</button></div>
+  </div>
+</div>
+
+<script>
+const sb=supabase.createClient('https://avcynjwcyygygkjuxsdt.supabase.co','sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'clicandsite-admin'}});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SEG={concession:'Concession auto',moto:'Moto / scooter',garage:'Garage',immobilier:'Agence immobilière'};
+const TRADE={vtc:'VTC',restaurant:'Restaurant',garage:'Garage / concession',immobilier:'Immobilier',batiment:'Bâtiment',beaute:'Coiffure / beauté',bienetre:'Bien-être',veterinaire:'Vétérinaire',autoecole:'Auto-école',coach:'Coach sportif',photographe:'Photographe',toiletteur:'Toilettage',fleuriste:'Fleuriste',traiteur:'Traiteur',nautisme:'Location de bateaux',kine:'Kinésithérapeute',dentiste:'Dentiste',bijouterie:'Bijouterie-horlogerie',liberal:'Professions libérales',services:'Services à domicile',evenementiel:'Événementiel',hebergement:'Chambres d\'hôtes et gîtes',tourisme:'Tourisme et loisirs',location:'Location et déménagement',infirmier:'Infirmier libéral',boulangerie:'Boulangerie',depannage:'Dépannage',boutique:'Boutique',autre:'Autre métier'};
+const SITE={aucun:'Sans site',date:'Site daté',moderne:'Site moderne',injoignable:'Site en panne',a_verifier:'À vérifier'};
+const STATUS={nouveau:'Nouveau',a_contacter:'À contacter',contacte:'Contacté',interesse:'Intéressé',client:'Client',refus:'Refus',exclu:'Exclu'};
+const PAGE=50; let offset=0, rows=[];
+
+async function stats(){
+  const {data,error}=await sb.rpc('cs_admin_stats'); if(error){alert(error.message);return;}
+  const s=data, bs=s.by_site||{}, st=s.by_status||{};
+  $('cards').innerHTML=[
+    ['Prospects trouvés',s.total],
+    ['Prêts à démarcher (avec e-mail)',s.targets,'hl'],
+    ['Sans site',bs.aucun||0],['Site daté',bs.date||0],
+    ['Avec email',s.with_email],
+    ['Contactés',(st.contacte||0)+(st.interesse||0)],
+    ['Clients',st.client||0]
+  ].map(([l,v,c])=>`<div class="card ${c||''}"><b>${v??0}</b><span>${l}</span></div>`).join('');
+  const on=s.robot&&s.robot.enabled;
+  $('robotSt').textContent=(on?'en marche':'arrêté')+(s.robot&&s.robot.combos?` · ${Math.round(100*s.robot.done/s.robot.combos)} % de la France parcourue`:''); $('robotSt').style.color=on?'var(--ok)':'var(--bad)';
+  $('robotToggle').textContent=on?'Arrêter le robot':'Remettre en marche';
+  $('robotToggle').dataset.on=on?'1':'0';
+  $('runs').innerHTML=(s.runs||[]).map(r=>{
+    const d=new Date(r.at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return r.kind==='sites'?`<div>${d} · ${r.checked} sites lus, ${r.inserted} e-mails trouvés${r.found?`, ${r.found} sites retrouvés`:''}</div>`
+      :`<div>${d} · ${esc(TRADE[r.trade]||r.trade)} à ${esc(r.area)} · ${r.ok?`${r.found} trouvés, ${r.inserted} nouveaux`:'erreur : '+esc(r.error)}</div>`;
+  }).join('')||'<div>Aucune recherche pour le moment.</div>';
+}
+
+async function load(){
+  const q=$('fQ').value.trim();
+  const {data,error}=await sb.rpc('cs_admin_prospects_v2',{p_trade:$('fTrade').value||null,p_status:$('fStatus').value||null,p_site:$('fSite').value||null,p_q:q||null,p_recent:$('fAge').value==='new',p_fresh:$('fAge').value==='fresh',p_limit:500,p_offset:0});
+  if(error){$('list').innerHTML=`<div class="msg">${esc(error.message)}</div>`;return;}
+  const c=$('fContact').value;
+  rows=(data.rows||[]).filter(r=>!c||(c==='email'?r.email:r.phone));
+  if(offset>=rows.length) offset=0;
+  render();
+}
+
+function render(){
+  const page=rows.slice(offset,offset+PAGE);
+  $('count').textContent=rows.length+(rows.length>1?' prospects':' prospect')+(rows.length>PAGE?` · ${offset+1}–${Math.min(offset+PAGE,rows.length)}`:'');
+  $('prev').disabled=offset===0; $('next').disabled=offset+PAGE>=rows.length;
+  $('list').innerHTML=page.map(r=>{
+    const reasons=(r.site_signals&&r.site_signals.reasons)||[];
+    return `<article class="p" data-id="${r.id}">
+      <div>
+        <h3>${esc(r.name)}</h3>
+        <div class="meta">${esc(SEG[r.segment]||TRADE[r.trade])} · <span class="addr">${esc((r.address||'').toLowerCase())}</span>${r.address?', ':''}${esc([r.postcode,r.city].filter(Boolean).join(' '))}</div>
+        <div class="tags"><span class="tag ${r.site_status}">${SITE[r.site_status]}</span><span class="tag">Score <span class="score">${r.score}</span></span>${r.date_creation?`<span class="tag${(Date.now()-new Date(r.date_creation))<365*864e5?' aucun':''}">${(Date.now()-new Date(r.date_creation))<365*864e5?'Nouvelle entreprise · ':''}créée ${new Date(r.date_creation).toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}</span>`:''}</div>
+        ${r.date_debut&&new Date(r.date_debut)>Date.now()?`<div class="tags"><span class="tag aucun">Futur pro · ouvre le ${new Date(r.date_debut).toLocaleDateString('fr-FR')}</span></div>`:''}
+        ${r.activite?`<div class="reasons" title="${esc(r.activite)}">Activité déclarée : ${esc(r.activite.length>160?r.activite.slice(0,160)+'…':r.activite)}</div>`:''}
+        ${reasons.length?`<div class="reasons">${reasons.map(esc).join(' · ')}</div>`:''}
+      </div>
+      <div class="contact">
+        ${r.email?`<div>✉ <span>${esc(r.email)}</span></div>`:'<div class="meta">Pas d\'email</div>'}
+        ${r.phone?`<div>☎ ${esc(r.phone)}</div>`:''}
+        ${r.website?`<div><a href="${esc(r.website)}" target="_blank" rel="noopener">${esc(r.website.replace(/^https?:\/\//,'').replace(/\/$/,''))}</a></div>`:''}
+        ${r.notes?`<div class="meta">Note : ${esc(r.notes)}</div>`:''}
+      </div>
+      <div class="side">
+        <select class="st" aria-label="Statut">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===r.status?'selected':''}>${v}</option>`).join('')}</select>
+        <button class="btn open" type="button">Détails</button>
+      </div>
+      <div class="more" hidden></div>
+    </article>`;}).join('')||'<div class="msg">Aucun prospect avec ces filtres. Le robot en ajoute au fil de la journée.</div>';
+}
+
+$('list').addEventListener('change',async e=>{
+  if(!e.target.classList.contains('st')) return;
+  const id=e.target.closest('.p').dataset.id;
+  const {error}=await sb.rpc('cs_admin_prospect_update',{p_id:id,p_status:e.target.value});
+  if(error) alert(error.message); else { const r=rows.find(x=>x.id===id); if(r) r.status=e.target.value; stats(); }
+});
+$('list').addEventListener('click',async e=>{
+  const card=e.target.closest('.p'); if(!card) return; const id=card.dataset.id; const more=card.querySelector('.more');
+  if(e.target.classList.contains('open')){
+    if(!more.hidden){more.hidden=true;return;}
+    const r=rows.find(x=>x.id===id);
+    const {data}=await sb.rpc('cs_admin_interactions',{p_id:id});
+    more.innerHTML=`<div class="row2"><input class="em" placeholder="Email" value="${esc(r.email||'')}"><input class="ph" placeholder="Téléphone" value="${esc(r.phone||'')}"></div>
+      <textarea class="nt" rows="2" placeholder="Note interne">${esc(r.notes||'')}</textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary save" type="button">Enregistrer</button>${r.email?'<button class="btn write" type="button">Écrire</button>':''}
+      <select class="kind" style="width:auto"><option value="note">Note</option><option value="appel">Appel</option><option value="mail">Mail envoyé</option><option value="reponse">Réponse reçue</option></select>
+      <input class="hx" placeholder="Ajouter à l'historique…" style="flex:1;min-width:160px"><button class="btn addh" type="button">Ajouter</button></div>
+      <div class="hist">${(data||[]).map(h=>`<div>${new Date(h.at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${esc(h.kind)} · ${esc(h.content)}</div>`).join('')||'Pas encore d\'historique.'}</div>`;
+    more.hidden=false;
+  }
+  if(e.target.classList.contains('write')){const r=rows.find(x=>x.id===id);openCompose(more.querySelector('.em').value.trim()||r.email,id,'');return;}
+  if(e.target.classList.contains('save')){
+    const em=more.querySelector('.em').value.trim(), ph=more.querySelector('.ph').value.trim(), nt=more.querySelector('.nt').value;
+    const {error}=await sb.rpc('cs_admin_prospect_update',{p_id:id,p_notes:nt,p_email:em,p_phone:ph});
+    if(error) alert(error.message); else { e.target.textContent='Enregistré'; const r=rows.find(x=>x.id===id); Object.assign(r,{email:em||null,phone:ph||null,notes:nt}); }
+  }
+  if(e.target.classList.contains('addh')){
+    const t=more.querySelector('.hx').value.trim(); if(!t) return;
+    const {error}=await sb.rpc('cs_admin_add_note',{p_id:id,p_kind:more.querySelector('.kind').value,p_text:t});
+    if(error) alert(error.message); else { more.hidden=true; card.querySelector('.open').click(); }
+  }
+});
+
+['fTrade','fSite','fStatus','fContact','fAge'].forEach(id=>$(id).addEventListener('change',()=>{offset=0;load();}));
+let tq; $('fQ').addEventListener('input',()=>{clearTimeout(tq);tq=setTimeout(()=>{offset=0;load();},350);});
+$('refresh').addEventListener('click',()=>{stats();load();mailStatus();});
+$('prev').addEventListener('click',()=>{offset=Math.max(0,offset-PAGE);render();scrollTo(0,0);});
+$('next').addEventListener('click',()=>{offset+=PAGE;render();scrollTo(0,0);});
+
+async function mailStatus(){
+  const {data,error}=await sb.rpc('cs_admin_mail_status'); if(error){$('mailSt').textContent=error.message;return;}
+  const on=data.settings&&data.settings.enabled, t=data.today||{};
+  $('mailSt').textContent=(on?'en marche':'arrêté')+` · ${t.sent||0} envoyés aujourd'hui · ${data.sent_total} au total · ${data.ready} pros prêts`+(data.unsubscribed?` · ${data.unsubscribed} désinscrits`:'');
+  $('mailSt').style.color=on?'var(--ok)':'var(--bad)';
+  $('mailToggle').textContent=on?"Arrêter l'envoi":"Démarrer l'envoi"; $('mailToggle').dataset.on=on?'1':'0';
+  $('mailLimit').value=data.settings?data.settings.daily_limit:20;
+  $('mailPwBox').open=!data.has_password;
+  $('mailPwBox').querySelector('summary').textContent='Mot de passe de la boîte contact@mycreativesite.fr'+(data.has_password?' (enregistré)':' (à saisir)');
+  const st=data.settings||{}, b2=st.box2_email, b2on=!!(st.box2_enabled&&b2);
+  $('mailB2').value=b2||''; $('mailB2Off').hidden=!b2on; $('mailB2Test').hidden=!b2on;
+  $('mailBox2').querySelector('summary').textContent="2e boîte d'envoi"+(b2on?` : ${b2} · ${data.today_box2||0} envoyés aujourd'hui sur ${st.box2_limit} max`:(b2?` : ${b2} (en pause)`:' (à configurer)'));
+  $('mailLimit').title=b2on?'Limite de la boîte contact@mycreativesite.fr':'';
+}
+$('mailToggle').addEventListener('click',async()=>{const on=$('mailToggle').dataset.on==='1';if(!on&&!confirm("Démarrer l'envoi automatique des mails de prospection ?"))return;const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:!on,p_daily_limit:null,p_trades:null});if(error)alert(error.message);mailStatus();});
+$('mailLimit').addEventListener('change',async()=>{const {error}=await sb.rpc('cs_admin_mail_settings',{p_enabled:null,p_daily_limit:+$('mailLimit').value,p_trades:null});if(error)alert(error.message);mailStatus();});
+$('mailPwSave').addEventListener('click',async()=>{const v=$('mailPw').value;if(!v){alert('Saisis le mot de passe');return;}const {error}=await sb.rpc('cs_admin_mail_password',{p_password:v});$('mailPw').value='';if(error){alert(error.message);return;}alert('Mot de passe enregistré. Clique maintenant sur « M\'envoyer un mail d\'essai ».');mailStatus();});
+$('mailB2Save').addEventListener('click',async()=>{const em=$('mailB2').value.trim(),pw=$('mailB2Pw').value;if(!em){alert("Saisis l'adresse de la boîte");return;}const {error}=await sb.rpc('cs_admin_mail_box2',{p_email:em,p_password:pw});$('mailB2Pw').value='';if(error){alert(error.message);return;}alert("2e boîte enregistrée. Clique maintenant sur « Mail d'essai depuis cette boîte ».");mailStatus();});
+$('mailB2Off').addEventListener('click',async()=>{if(!confirm('Mettre la 2e boîte en pause ?'))return;const {error}=await sb.rpc('cs_admin_mail_box2_off');if(error)alert(error.message);mailStatus();});
+async function mailTestRun(btn,box,label){btn.disabled=true;btn.textContent='Envoi en cours…';
+  const {data:id,error}=await sb.rpc('cs_admin_mail_test',{p_box:box});
+  if(error){alert(error.message);btn.disabled=false;btn.textContent=label;return;}
+  let res=null;for(let i=0;i<20&&!(res&&!res.pending);i++){await new Promise(r=>setTimeout(r,2000));res=(await sb.rpc('cs_admin_mail_test_result',{p_id:id})).data;}
+  btn.disabled=false;btn.textContent=label;
+  if(!res||res.pending){alert("Pas de réponse pour l'instant, regarde ta boîte mail dans une minute.");return;}
+  let j={};try{j=JSON.parse(res.content)}catch(_){}
+  alert(j.ok?'Mail d\'essai envoyé'+(j.from?' depuis '+j.from:'')+' à '+j.to+' : regarde ta boîte (et les spams).':'Échec : '+(j.error||res.content));}
+$('mailB2Test').addEventListener('click',()=>mailTestRun($('mailB2Test'),2,"Mail d'essai depuis cette boîte"));
+$('mailTest').addEventListener('click',async()=>{const b=$('mailTest');b.disabled=true;b.textContent='Envoi en cours…';
+  const {data:id,error}=await sb.rpc('cs_admin_mail_test',{p_box:1});
+  if(error){alert(error.message);b.disabled=false;b.textContent="M'envoyer un mail d'essai";return;}
+  let res=null;for(let i=0;i<20&&!(res&&!res.pending);i++){await new Promise(r=>setTimeout(r,2000));res=(await sb.rpc('cs_admin_mail_test_result',{p_id:id})).data;}
+  b.disabled=false;b.textContent="M'envoyer un mail d'essai";
+  if(!res||res.pending){alert("Pas de réponse pour l'instant, regarde ta boîte mail dans une minute.");return;}
+  let j={};try{j=JSON.parse(res.content)}catch(_){}
+  alert(j.ok?'Mail d\'essai envoyé à '+j.to+' : regarde ta boîte (et les spams).':'Échec : '+(j.error||res.content));});
+$('robotToggle').addEventListener('click',async()=>{const on=$('robotToggle').dataset.on==='1';const {error}=await sb.rpc('cs_admin_robot',{p_enabled:!on});if(error)alert(error.message);stats();});
+$('robotRun').addEventListener('click',async()=>{const b=$('robotRun');b.disabled=true;b.textContent='Recherche lancée…';const {error}=await sb.rpc('cs_admin_robot',{p_run_now:true});if(error)alert(error.message);setTimeout(()=>{b.disabled=false;b.textContent='Lancer une recherche maintenant';stats();load();},60000);});
+const ST={brouillon:'En préparation',en_ligne:'En ligne',suspendu:'Suspendu'};
+const BS={active:'à jour',trialing:'essai',past_due:'en retard',unpaid:'impayé',canceled:'résilié',incomplete:'incomplet',incomplete_expired:'échoué'};
+async function loadSubs(){
+  const {data,error}=await sb.rpc('cs_admin_subscriptions'); if(error){$('subsList').textContent=error.message;return;}
+  $('subsList').innerHTML=(data||[]).map(x=>`<div>${esc(x.company||x.email||x.stripe_customer)} · ${esc(x.email||'')} · ${esc(x.plan||'')} · <b>${esc(BS[x.status]||x.status||'')}</b>${x.current_period_end?' · prochaine échéance '+new Date(x.current_period_end).toLocaleDateString('fr-FR'):''}${x.site_name?' · site : '+esc(x.site_name):' · <span style="color:var(--warn)">aucun site relié : crée-le avec le même e-mail</span>'}</div>`).join('')||'<div>Aucun abonnement pour le moment.</div>';
+}
+/* 10/11/2026 (Anthony) : demandes d'aide envoyées depuis les espaces clients (site identifié automatiquement) */
+async function loadHelp(done){
+  const {data,error}=await sb.rpc('cs_admin_support',{p_done:done||null}); const L=$('helpList'); if(!L) return;
+  if(error){ L.textContent=error.message; return; }
+  L.innerHTML=(data||[]).length?(data||[]).map(r=>'<div style="padding:8px 0;border-bottom:1px solid #eee'+(r.done_at?';opacity:.5':'')+'"><b>'+esc(r.name||'?')+'</b> · '+esc(r.slug||'')+(r.domain?' · '+esc(r.domain):'')+' · '+esc(new Date(r.created_at).toLocaleString('fr-FR'))+' · '+esc(r.from_email||'')+
+    '<div style="white-space:pre-wrap;margin:4px 0">'+esc(r.message)+'</div>'+(r.slug?'<a href="/espace/?site='+encodeURIComponent(r.slug)+'" target="_blank" rel="noopener" style="font-weight:700">Ouvrir son espace</a> · ':'')+'<a href="#" data-reply="'+esc(r.from_email||'')+'" data-subj="'+esc('Re: votre demande · '+(r.name||''))+'">Répondre</a>'+(r.done_at?' · traité':' · <button class="btn" type="button" data-hdone="'+r.id+'" style="padding:2px 8px">Marquer traité</button>')+'</div>').join(''):'<span class="meta">Aucune demande en cours.</span>';
+  L.querySelectorAll('[data-hdone]').forEach(b=>b.onclick=()=>loadHelp(b.dataset.hdone));
+}
+async function loadSites(){ loadHelp();
+  const {data,error}=await sb.rpc('cs_admin_sites'); if(error){$('sitesList').textContent=error.message;return;}
+  $('sitesList').innerHTML=(data||[]).map(s=>`<div>${esc(s.name)} · ${esc(TRADE[s.trade]||s.trade)} · ${esc(s.style)} · ${esc(s.owner_email)}${s.domain?' · '+esc(s.domain):''}${s.plan?' · '+esc(s.plan):''}${s.avis_google==='a_faire'?' · <b style="color:#C2410C">Avis Google à reprendre</b>'+(/^https:\/\//.test(s.google_url||'')?' (<a href="'+esc(s.google_url)+'" target="_blank" rel="noopener">fiche</a>)':''):s.avis_google==='fait'?' · avis Google repris':''}${s.bilingual?' · <b>option bilingue</b>':''}${s.en_on?' · anglais en ligne':''}${s.billing_status?' · paiement : '+esc(BS[s.billing_status]||s.billing_status):''} · <b>${s.status==='brouillon'&&['active','trialing'].includes(s.billing_status)?'<span style="color:#1E8E5A">Payé, prêt à mettre en ligne</span>':(ST[s.status]||s.status)}</b> · <a href="/apercu/?s=${esc(s.slug)}" target="_blank" rel="noopener" title="Lien à envoyer au client pour qu'il voie son site avant de payer">Aperçu client</a> · <button type="button" class="linkbtn" data-edit="${esc(s.slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Remplir le formulaire</button></div>`).join('')||'<div>Aucun site client pour le moment.</div>';
+  // 10/11/2026 (Anthony) : ouvrir l'espace de n'importe quel client pour réparer ou faire à sa place
+  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>{ const o=document.createElement('a'); o.href='/espace/?site='+encodeURIComponent(b.dataset.edit); o.target='_blank'; o.rel='noopener'; o.textContent='Ouvrir son espace'; o.style.cssText='margin-left:8px;font-weight:700'; b.after(o); });
+  // 10/11/2026 (Anthony) : mail de bienvenue au client à la mise en ligne (adresse du site, accès à son espace par son-domaine/admin)
+  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>{ const s=data.find(x=>x.slug===b.dataset.edit); if(!s||s.status!=='en_ligne'||!s.owner_email) return;
+    const real=s.domain&&!/mycreativesite\.fr$/i.test(s.domain), site=real?'https://'+s.domain:'https://mycreativesite.fr/apercu/?s='+s.slug, adm=real?'https://'+s.domain+'/admin':'https://mycreativesite.fr/espace/';
+    const body='Bonjour,\n\nBonne nouvelle : votre site est en ligne !\n'+site+'\n\nPour le modifier vous-même (textes, photos, prix, horaires), recevoir vos demandes clients, faire vos devis et prévenir vos clients de vos promotions ou fermetures, rendez-vous dans votre espace pro :\n'+adm+'\n\nPremière connexion : cliquez sur « Première connexion : créer mon mot de passe » et indiquez cette adresse e-mail : '+s.owner_email+'\n\nAstuce : sur votre téléphone, ouvrez votre espace pro puis « Ajouter à l\'écran d\'accueil » (menu Partager sur iPhone, menu ⋮ sur Android) : vous l\'aurez comme une application.\n\nVous trouverez aussi un petit lien « Espace pro » tout en bas de votre site.\n\nÀ votre disposition pour toute question.\n\nAnthony\nMyCreativeSite';
+    const w=document.createElement('a'); w.href='mailto:'+encodeURIComponent(s.owner_email)+'?subject='+encodeURIComponent('Votre site '+s.name+' est en ligne')+'&body='+encodeURIComponent(body); w.textContent='Mail de bienvenue'; w.style.marginLeft='8px'; b.after(w); });
+  $('sitesList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const s=data.find(x=>x.slug===b.dataset.edit);$('sName').value=s.name;$('sSlug').value=s.slug;$('sEmail').value=s.owner_email;$('sDomain').value=s.domain||'';$('sTrade').value=s.trade;$('sStyle').value=s.style;$('sStatus').value=s.status;$('sPlan').value=(s.plan||'').toLowerCase();$('sBi').checked=!!s.bilingual;});
+}
+
+/* 07/11/2026 : commandes de sites (formulaire de l'accueil) */
+const OST={nouvelle:'Nouvelle',contactee:'Contactée',en_cours:'Site en préparation',payee:'Payée, à mettre en ligne',en_ligne:'En ligne',abandon:'Abandon'};
+const SNAME={moderne:'Moderne',luxe:'Luxe',riviera:'Riviera',chaleureux:'Chaleureux',audacieux:'Audacieux',minimal:'Minimal crème',nuit:'Nuit bleue',provence:'Provence lavande',ocean:'Océan',pop:'Pop vitaminé',corporate:'Pro sérieux',retro:'Rétro',zen:'Zen nature',neon:'Néon',poudre:'Rose poudré',terracotta:'Terracotta',graphite:'Graphite',foret:'Forêt',soleil:'Soleil',marine:'Marine chic',signature:'Signature Émeraude (Premium)',signatureonyx:'Signature Onyx (Premium)',signaturesaphir:'Signature Saphir (Premium)',signaturebordeaux:'Signature Bordeaux (Premium)',signatureivoire:'Signature Ivoire (Premium)'};
+async function loadOrders(){
+  const {data,error}=await sb.rpc('cs_admin_orders'); if(error){$('ordersList').textContent=error.message;return;}
+  const n=(data||[]).filter(o=>o.status==='nouvelle').length; $('ordersN').hidden=!n; $('ordersN').textContent=n;
+  $('ordersList').innerHTML=(data||[]).map(o=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px">
+    <div><b>${esc(o.company)}</b> · ${o.self?'<span style="color:var(--ok,#1E8E5A)">remplit lui-même</span>':'<b style="color:#C0392B">à préparer par nous</b>'}${o.site_slug?` · <a href="/apercu/?s=${esc(o.site_slug)}" target="_blank" rel="noopener">aperçu</a>`:''} · ${new Date(o.created_at).toLocaleString('fr-FR')} · ${esc(o.plan||'')}${(o.options||[]).length?' · <b>options : '+esc(o.options.map(x=>({logo:'logo 19 €',google:'fiche Google 149 €',mail:'mail pro 5 €/mois',bilingue:'bilingue 10 €/mois'}[x]||x)).join(', '))+'</b>':''} · ${esc(TRADE[o.trade]||o.trade||'')}, style ${esc(SNAME[o.style]||o.style||'')}${o.trade&&o.trade!=='autre'?` · <a href="/modeles/${esc(o.trade)}.html#${esc(o.style)}" target="_blank" rel="noopener">voir le modèle</a>`:''}</div>
+    <div><span style="user-select:all">${esc(o.email)}</span>${o.phone?` · <span style="user-select:all">${esc(o.phone)}</span>`:''}${o.city?' · '+esc(o.city):''}</div>
+    ${o.message?`<div style="white-space:pre-wrap;color:var(--muted)">${esc(o.message)}</div>`:''}
+    ${o.site_slug&&(o.brief_at||o.brief_photos)?`<div>${o.brief_at?'<b style="color:#1E8E5A">Infos et photos reçues</b> le '+new Date(o.brief_at).toLocaleString('fr-FR'):'Infos en cours de saisie'} · ${o.brief_photos||0} photo(s) · <button type="button" class="linkbtn" data-brief="${esc(o.site_slug)}" style="background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0">Voir ses infos et photos</button></div><div data-bbox="${esc(o.site_slug)}" hidden></div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select data-ost="${o.id}" style="width:auto">${Object.keys(OST).map(k=>`<option value="${k}"${k===o.status?' selected':''}>${OST[k]}</option>`).join('')}</select>
+    <input data-onote="${o.id}" value="${esc(o.notes||'')}" placeholder="Note" style="flex:1;min-width:160px">
+    <button class="btn" type="button" data-osave="${o.id}">Enregistrer</button></div></div>`).join('')||'<div>Aucune commande pour le moment.</div>';
+  $('ordersList').querySelectorAll('[data-brief]').forEach(b=>b.onclick=async()=>{const box=$('ordersList').querySelector(`[data-bbox="${b.dataset.brief}"]`);if(!box.hidden){box.hidden=true;return;}
+    const {data,error}=await sb.rpc('cs_admin_brief',{p_slug:b.dataset.brief});if(error){alert(error.message);return;}const d=(data&&data.data)||{};
+    const T=[['about','Présentation'],['services','Services et prix'],['hours','Horaires'],['contact','Coordonnées'],['google','Fiche Google (avis à recopier)'],['notes','Souhaits']];
+    box.innerHTML=T.filter(t=>d[t[0]]).map(t=>`<div style="margin-top:6px"><b>${t[1]}</b><div style="white-space:pre-wrap">${esc(d[t[0]])}</div></div>`).join('')+
+      `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px">${(d.photos||[]).map(p=>`<a href="${esc(p.url)}" target="_blank" rel="noopener" download style="display:grid;gap:4px;text-decoration:none;color:inherit"><img src="${esc(p.url)}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px">${p.caption?`<small>${esc(p.caption)}</small>`:''}</a>`).join('')}</div>`;
+    box.hidden=false;});
+  $('ordersList').querySelectorAll('[data-osave]').forEach(b=>b.onclick=async()=>{const id=+b.dataset.osave;const {error}=await sb.rpc('cs_admin_order_update',{p_id:id,p_status:$('ordersList').querySelector(`[data-ost="${id}"]`).value,p_notes:$('ordersList').querySelector(`[data-onote="${id}"]`).value});if(error){alert(error.message);return;}loadOrders();});
+}
+$('ordersBtn').addEventListener('click',()=>{const b=$('ordersBox');b.hidden=!b.hidden;if(!b.hidden)loadOrders();});
+$('sitesBtn').addEventListener('click',()=>{const b=$('sitesBox');b.hidden=!b.hidden;if(!b.hidden){loadSites();loadSubs();}});
+$('sName').addEventListener('input',()=>{if(!$('sSlug').dataset.touched)$('sSlug').value=$('sName').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);});
+$('sSlug').addEventListener('input',()=>{$('sSlug').dataset.touched='1';});
+$('siteForm').addEventListener('submit',async e=>{e.preventDefault();
+  const {error}=await sb.rpc('cs_admin_site_upsert',{p_slug:$('sSlug').value.trim(),p_name:$('sName').value.trim(),p_trade:$('sTrade').value,p_style:$('sStyle').value,p_owner_email:$('sEmail').value.trim(),p_domain:$('sDomain').value.trim(),p_status:$('sStatus').value});
+  if(error){alert(error.message);return;}
+  if($('sPlan').value){const r2=await sb.rpc('cs_admin_site_plan',{p_slug:$('sSlug').value.trim(),p_plan:$('sPlan').value});if(r2.error){alert(r2.error.message);return;}}
+  {const r3=await sb.rpc('cs_admin_site_bilingual',{p_slug:$('sSlug').value.trim(),p_on:$('sBi').checked});if(r3.error){alert(r3.error.message);return;}}
+  e.target.reset(); delete $('sSlug').dataset.touched; loadSites();});
+$('exportBtn').addEventListener('click',()=>{
+  const cols=['name','trade','address','postcode','city','phone','email','website','site_status','score','status','notes'];
+  const csv=[cols.join(';')].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(';'))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='mycreativesite-prospects.csv';a.click();
+});
+
+let signup=false;
+function msg(t,ok){$('lMsg').className=ok?'ok':'err';$('lMsg').textContent=t||'';}
+$('lMode').addEventListener('click',()=>{signup=!signup;$('lBtn').textContent=signup?'Créer mon accès':'Se connecter';$('lMode').textContent=signup?'J\'ai déjà un mot de passe':'Première connexion : créer mon mot de passe';$('lPass').autocomplete=signup?'new-password':'current-password';msg('');});
+$('lForgot').addEventListener('click',async()=>{const em=$('lEmail').value.trim();if(!em){msg('Écris ton e-mail, puis clique à nouveau sur « Mot de passe oublié ».');return;}
+  const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/admin/'});msg(error?error.message:'Si ce compte existe, un lien vient de partir par e-mail.',!error);});
+$('login').addEventListener('submit',async e=>{e.preventDefault();const em=$('lEmail').value.trim(),pw=$('lPass').value;$('lBtn').disabled=true;msg('');
+  try{
+    if(recovery){const {error}=await sb.auth.updateUser({password:pw});if(error)throw error;recovery=false;return boot();}
+    if(signup){const {data,error}=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+'/admin/'}});if(error)throw error;
+      if(!data.session){msg('C\'est presque fini : ouvre le mail de confirmation reçu sur '+em+' et clique sur le lien.',true);return;}}
+    else{const {error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error)throw error;}
+    boot();
+  }catch(err){msg(/Invalid login/i.test(err.message)?'E-mail ou mot de passe incorrect.':err.message);}
+  finally{$('lBtn').disabled=false;}
+});
+$('logout').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
+let recovery=false;
+sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;$('app').hidden=true;$('login').hidden=false;$('loginTitle').textContent='Choisis ton nouveau mot de passe';$('lEmail').hidden=true;$('lEmail').required=false;$('lMode').hidden=true;$('lForgot').hidden=true;$('lBtn').textContent='Enregistrer';}});
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session||recovery){$('login').hidden=false;$('app').hidden=true;return;}
+  const {data:isAdmin,error}=await sb.rpc('cs_is_admin');
+  if(error||!isAdmin){$('login').hidden=true;$('gate').hidden=false;$('gate').innerHTML='Ce compte n\'a pas accès à l\'espace admin. <button class="linkbtn" id="out2" type="button">Se déconnecter</button>';$('out2').onclick=async()=>{await sb.auth.signOut();location.reload();};return;}
+  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus(); loadBoxes();
+}
+boot();
+
+// 10/11/2026 (Anthony) : écrire / répondre depuis la boîte OVH MyCreativeSite (fonction cs-crm-send), copie rangée dans « Envoyés ».
+const C_SIGN='Bonjour,\n\n\n\nBonne journée,\nAnthony\nMyCreativeSite';
+function resetCompose(){$('cTo').value='';$('cSubject').value='';$('cPid').value='';$('cText').value=C_SIGN;$('cStatus').textContent='';}
+async function loadBoxes(){try{const {data}=await sb.functions.invoke('cs-crm-send',{method:'GET'});const b=(data&&data.boxes)||[];if(b.length)$('cFrom').innerHTML=b.map(x=>'<option value="'+x.n+'">'+esc(x.email)+'</option>').join('');}catch(_){}}
+function openCompose(to,pid,subj){$('cTo').value=to||'';$('cPid').value=pid||'';if(subj)$('cSubject').value=subj;$('cStatus').textContent='';const d=$('composeBox');d.open=true;d.scrollIntoView({behavior:'smooth'});setTimeout(()=>$('cSubject').focus(),300);}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-reply]');if(!a)return;e.preventDefault();openCompose(a.dataset.reply,'',a.dataset.subj);});
+$('cClear').addEventListener('click',resetCompose);
+$('cSend').addEventListener('click',async()=>{
+  const to=$('cTo').value.trim(),subject=$('cSubject').value.trim(),text=$('cText').value.trim(),box=Number($('cFrom').value)||1;
+  if(!to||!subject||!text){$('cStatus').textContent='Remplis le destinataire, l’objet et le message.';return;}
+  const from=$('cFrom').selectedOptions[0]?.textContent||'';
+  if(!confirm('Envoyer ce mail à '+to+' depuis '+from+' ?'))return;
+  const b=$('cSend');b.disabled=true;$('cStatus').textContent='Envoi en cours…';
+  try{const {data,error}=await sb.functions.invoke('cs-crm-send',{body:{box,to,subject,text,prospect_id:$('cPid').value||null}});
+    if(error)throw error;if(!data||!data.ok)throw new Error((data&&data.error)||'Échec de l’envoi');
+    $('cStatus').textContent=data.message;$('cSubject').value='';$('cText').value=C_SIGN;}
+  catch(err){$('cStatus').textContent='Erreur : '+(err.message||err);}
+  finally{b.disabled=false;}
+});
+$('cText').value=C_SIGN;
+</script>
+</body>
+</html>

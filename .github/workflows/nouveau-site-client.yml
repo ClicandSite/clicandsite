@@ -1,0 +1,44 @@
+# MyCreativeSite · mise en ligne d'un nouveau site client (09/11/2026)
+# Lancer avec le nom du site (slug, visible dans l'admin) et son domaine. Crée le dépôt ClicandSite/site-<slug>,
+# y installe la mise à jour automatique, active l'hébergement GitHub Pages sur le domaine et publie une première fois.
+# Prérequis (une fois) : secret SITES_TOKEN = jeton GitHub (propriétaire ClicandSite, tous les dépôts) avec, en lecture/écriture :
+#   Repository : Actions, Administration, Contents, Pages, Workflows · Organization : Administration (création des dépôts).
+name: Nouveau site client
+on:
+  workflow_dispatch:
+    inputs:
+      slug: { description: "Identifiant du site (ex. garage-dupont)", required: true }
+      domain: { description: "Domaine (ex. garage-dupont.fr, sans www)", required: true }
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    env: { GH_TOKEN: '${{ secrets.SITES_TOKEN }}', SLUG: '${{ inputs.slug }}', DOMAIN: '${{ inputs.domain }}' }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier les entrées
+        run: |
+          [[ "$SLUG" =~ ^[a-z0-9-]{3,60}$ ]] || { echo "Identifiant invalide"; exit 1; }
+          [[ "$DOMAIN" =~ ^[a-z0-9.-]+\.[a-z]{2,}$ ]] || { echo "Domaine invalide"; exit 1; }
+          [ -n "$GH_TOKEN" ] || { echo "Secret SITES_TOKEN manquant"; exit 1; }
+      - name: Créer le dépôt
+        run: |
+          R="ClicandSite/site-$SLUG"
+          gh api "repos/$R" >/dev/null 2>&1 || gh api -X POST orgs/ClicandSite/repos -f name="site-$SLUG" -F private=false -f description="Site $DOMAIN · réalisé par MyCreativeSite" >/dev/null
+          mkdir -p /tmp/r && cd /tmp/r && git init -q -b main
+          mkdir -p .github/workflows site
+          sed -e "s/__SLUG__/$SLUG/g" -e "s/__DOMAIN__/$DOMAIN/g" "$GITHUB_WORKSPACE/scripts/client-site/site.yml" > .github/workflows/site.yml
+          printf "# %s\n\nSite réalisé et hébergé par [MyCreativeSite](https://mycreativesite.fr). Mis à jour automatiquement depuis l'espace client.\n" "$DOMAIN" > README.md
+          echo "$DOMAIN" > site/CNAME
+          git -c user.name=MyCreativeSite -c user.email=contact@mycreativesite.fr add -A
+          git -c user.name=MyCreativeSite -c user.email=contact@mycreativesite.fr commit -qm "Site $DOMAIN"
+          git push -q "https://x-access-token:$GH_TOKEN@github.com/$R.git" main --force
+      - name: Activer l'hébergement sur le domaine
+        run: |
+          R="ClicandSite/site-$SLUG"
+          gh api -X POST "repos/$R/pages" -f build_type=workflow >/dev/null 2>&1 || gh api -X PUT "repos/$R/pages" -f build_type=workflow >/dev/null || { echo "::error::Activation de GitHub Pages refusée : droit « Pages » (lecture et écriture) manquant sur le jeton SITES_TOKEN"; exit 1; }
+          gh api -X PUT "repos/$R/pages" -f cname="$DOMAIN" >/dev/null || echo "::warning::Domaine pas encore enregistré dans Pages (à refaire quand le DNS sera en place)"
+          gh workflow run site.yml -R "$R" || { echo "::error::Lancement de la mise à jour refusé : droit « Actions » (lecture et écriture) manquant sur le jeton SITES_TOKEN"; exit 1; }
+          echo "Site en cours de publication. DNS à régler chez le registrar de $DOMAIN :"
+          echo "  A     @    185.199.108.153 / 185.199.109.153 / 185.199.110.153 / 185.199.111.153"
+          echo "  CNAME www  clicandsite.github.io"
+          echo "Puis, quand le certificat est prêt : gh api -X PUT repos/$R/pages -F https_enforced=true"

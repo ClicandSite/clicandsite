@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /apercu/
+Disallow: /espace/
+Disallow: /paiement/
+
+Sitemap: https://mycreativesite.fr/sitemap.xml

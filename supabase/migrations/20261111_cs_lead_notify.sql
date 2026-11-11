@@ -1,0 +1,4 @@
+-- 11/11/2026 : le pro reçoit un mail à chaque nouvelle demande (fonction cs-lead-notify, appelée chaque minute)
+alter table clicandsite.leads add column if not exists notified_at timestamptz, add column if not exists notify_attempts int not null default 0, add column if not exists notify_try_at timestamptz, add column if not exists notify_error text;
+create index if not exists leads_notify_idx on clicandsite.leads (created_at) where notified_at is null;
+select cron.schedule('cs-lead-notify', '* * * * *', $$select net.http_post(url:='https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-lead-notify', headers:=jsonb_build_object('Content-Type','application/json','x-cs-key',(select value from clicandsite.secrets where name='mail_internal')), body:='{}'::jsonb, timeout_milliseconds:=60000)$$);

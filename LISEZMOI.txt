@@ -1,0 +1,22 @@
+MISE À JOUR MYCREATIVESITE — 3 étapes
+
+ÉTAPE 1 — Page « rapide »
+- Va sur github.com/ClicandSite/mycreativesite/tree/main/site-internet-rapide
+- Clique sur index.html, puis sur l'icône crayon (Edit).
+- Sélectionne tout (Cmd+A) et supprime.
+- Ouvre rapide-index.html (avec TextEdit), Cmd+A, Cmd+C, puis colle dans GitHub (Cmd+V).
+- Clique sur « Commit changes ».
+
+ÉTAPE 2 — Dossier scripts
+- Va sur github.com/ClicandSite/mycreativesite/tree/main/scripts
+- Add file > Upload files.
+- VÉRIFIE que le titre dit « Uploading files to mycreativesite/scripts ».
+- Glisse : build_seo.py, seo_contenu.py, SEO_PLAN.md, BRIEF_CONTENU_SEO.md
+- Commit changes.
+
+ÉTAPE 3 — Supprimer les fichiers mal placés (sur GitHub, ouvre chaque fichier > menu « ... » > Delete file > Commit)
+- build_seo.py (à la racine)
+- seo_contenu.py (à la racine)
+- SEO_PLAN.md (à la racine)
+- site-internet-rapide/BRIEF_CONTENU_SEO.md
+Ne supprime PAS index.html ni sitemap.xml ni JOURNAL.md.

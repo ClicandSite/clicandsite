@@ -294,7 +294,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .nav .acc:hover{border-color:var(--brand)}
 .nav .acc svg{width:18px;height:18px}
 @media (max-width:860px){.nav .acc span{display:none}.nav .acc{padding:8px}.nav{gap:10px}.nav .btn.sm{white-space:nowrap}}
-.refgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.refgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .ref{min-width:0;display:grid;gap:16px;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;transition:border-color .2s,transform .2s}
 .ref:hover{border-color:var(--brand);transform:translateY(-2px)}
 .refshot{position:relative;padding-right:14%;padding-bottom:6%}
@@ -304,7 +304,9 @@ footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;min-width:0}
 .reftxt .tag{justify-self:start;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand)}
 .reftxt p{color:var(--muted);margin:0}
 .reftxt .lnk{font-weight:700;color:var(--brand);font-size:.92rem}
-@media (max-width:860px){.refgrid{grid-template-columns:1fr}}
+@media (max-width:1000px){.refgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.refgrid{grid-template-columns:1fr}}
+.refgrid .ref{padding:12px;gap:12px}.refgrid .reftxt h3{font-size:1.1rem;margin:0}.refgrid .reftxt p{font-size:.92rem}
 @media (max-width:480px){header .nav .btn.sm{padding:8px 10px;font-size:.82rem}header .nav{gap:6px}header .logo span{font-size:1rem}header .logo{gap:6px}header .logo .logo-mark{width:28px;height:28px}}
 
 /* 07/11/2026 : modèle en plein écran avec bouton Fermer (iPhone : pas de retour possible dans un nouvel onglet) */
@@ -862,7 +864,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
     <div class="head">
       <span class="eyebrow">Réalisations</span>
       <h2>Ils sont en ligne avec nous</h2>
-      <p>Deux sites réalisés par MyCreativeSite, en ligne et utilisés chaque jour.</p>
+      <p>Trois sites réalisés par MyCreativeSite, en ligne et utilisés chaque jour.</p>
     </div>
     <div class="refgrid">
       <a class="ref" href="https://www.elite-prestige-services.fr/" target="_blank" rel="noopener">
@@ -872,6 +874,10 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
       <a class="ref" href="https://abracadeal.fr/" target="_blank" rel="noopener">
         <div class="refshot"><img src="img/ref-abra-d.jpg?v=2" width="960" height="600" alt="Site d'Abracadeal, petites annonces" loading="lazy"><img class="rm" src="img/ref-abra-m.jpg?v=2" width="360" height="720" alt="" loading="lazy"></div>
         <div class="reftxt"><span class="tag">Petites annonces</span><h3>Abracadeal</h3><p>Site de petites annonces : comptes particuliers et pros, messagerie, modération, espace professionnel.</p><span class="lnk">abracadeal.fr ↗</span></div>
+      </a>
+      <a class="ref" href="https://clicandsite.fr/" target="_blank" rel="noopener">
+        <div class="refshot"><img src="img/ref-cs-d.jpg?v=1" width="960" height="600" alt="Site de Clic&amp;Site, guide de voyage en France" loading="lazy"><img class="rm" src="img/ref-cs-m.jpg?v=1" width="360" height="720" alt="" loading="lazy"></div>
+        <div class="reftxt"><span class="tag">Guide de voyage</span><h3>Clic&amp;Site</h3><p>Guide pratique des plus beaux sites de France, en français et en anglais, avec réservation d'activités en ligne.</p><span class="lnk">clicandsite.fr ↗</span></div>
       </a>
     </div>
   </div>

@@ -12,6 +12,8 @@ import content_en as _en
 import seo as _seo
 import photos as _ph
 import og as _og
+import content_paris_fr as _pf
+import content_paris_en as _pe
 
 LANG = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("CS_LANG", "fr")).lower()
 assert LANG in ("fr", "en")
@@ -39,10 +41,11 @@ def _typo(x, lang=None):
 
 # ---------- Adresses des pages dans les deux langues (pour hreflang et le sélecteur de langue) ----------
 SITES = {"fr": "https://clicandsite.fr", "en": "https://clicandsite.com"}
-FR_DEST = _c.DESTINATIONS + _m.PLUS
-REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS}, "en": {r["slug"]: r["path"] for r in _en.REGIONS}}
-DEST_PATH = {"fr": {d["slug"]: d["slug"] for d in FR_DEST}, "en": {d["slug"]: d["path"] for d in _en.DESTINATIONS}}
-ITI_PATH = {"fr": _m.ITINERAIRE["slug"], "en": _en.ITINERAIRE["slug"]}
+FR_DEST = _c.DESTINATIONS + _m.PLUS + _pf.DESTINATIONS
+EN_DEST = _en.DESTINATIONS + _pe.DESTINATIONS
+REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS + [_pf.REGION]}, "en": {r["slug"]: r["path"] for r in _en.REGIONS + [_pe.REGION]}}
+DEST_PATH = {"fr": {d["slug"]: d["slug"] for d in FR_DEST}, "en": {d["slug"]: d["path"] for d in EN_DEST}}
+ITI_PATH = {"fr": {"cote-d-azur": _m.ITINERAIRE["slug"], "paris": _pf.ITINERAIRE["slug"]}, "en": {"cote-d-azur": _en.ITINERAIRE["slug"], "paris": _pe.ITINERAIRE["slug"]}}
 STATIC = {"about": {"fr": "a-propos/", "en": "about/"}, "legal": {"fr": "mentions-legales/", "en": "legal-notice/"}}
 
 def url_of(key, lang):
@@ -55,40 +58,53 @@ def url_of(key, lang):
         reg = next(d["region"] for d in FR_DEST if d["slug"] == ident)
         return f"{REGION_PATH[lang][reg]}/{DEST_PATH[lang][ident]}/"
     if kind == "iti":
-        return f"{REGION_PATH[lang][ident]}/{ITI_PATH[lang]}/"
+        return f"{REGION_PATH[lang][ident]}/{ITI_PATH[lang][ident]}/"
     return STATIC[kind][lang]
 
 # ---------- Contenu de la langue construite ----------
+RIVIERA_EXTRA = {
+    "fr": {"timbre": "Riviera", "photo": _ph.REGION_PHOTO, "photo_alt": "Le Cap-Ferrat et la côte vus du ciel", "h1": "Visiter la Côte d'Azur", "de": "de la Côte d'Azur", "autres": "Autres sites de la Côte d'Azur", "couleur": "azur"},
+    "en": {"timbre": "Riviera", "photo": _ph.REGION_PHOTO, "photo_alt": "Aerial view of Cap Ferrat and the coast", "h1": "Visiting the French Riviera", "de": "French Riviera", "autres": "More places on the French Riviera", "couleur": "azur"},
+}
+PARIS_EXTRA = {
+    "fr": {"h1": "Visiter Paris", "de": "de Paris", "autres": "Autres sites à Paris", "couleur": "encre"},
+    "en": {"h1": "Visiting Paris", "de": "Paris", "autres": "More places in Paris", "couleur": "encre"},
+}
 if LANG == "fr":
-    REGIONS = _typo(_c.REGIONS)
-    PROCHAINES_REGIONS = _typo(_c.PROCHAINES_REGIONS)
-    DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS)
-    GROUPES = _typo(_m.GROUPES)
-    ITI = _typo(_m.ITINERAIRE)
-    SEO_T = _typo(_seo.TITRES)
-    TITRE_REGION = _typo(_seo.TITRE_REGION)
-    TITRE_ITI = _typo(_seo.TITRE_ITI)
-    A_PROPOS = _typo(_seo.A_PROPOS)
-    ALIAS_SRC = _seo.ALIAS
+    REGIONS = _typo([dict(_c.REGIONS[0], **RIVIERA_EXTRA["fr"]), dict(_pf.REGION, **PARIS_EXTRA["fr"])])
+    PROCHAINES_REGIONS = _typo([x for x in _c.PROCHAINES_REGIONS if x != "Paris"])
+    DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS + _pf.DESTINATIONS)
+    GROUPES = {"cote-d-azur": _typo(_m.GROUPES), "paris": _typo(_pf.GROUPES)}
+    ITIS = {"cote-d-azur": _typo(dict(_m.ITINERAIRE, conseils=["Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.", "Évitez la voiture en juillet-août, le train est plus rapide sur la côte.", "Gardez une tenue correcte pour la cathédrale de Monaco et le casino."])),
+            "paris": _typo(_pf.ITINERAIRE)}
+    SEO_T = _typo(dict(_seo.TITRES, **_pf.TITRES))
+    TITRE_REGION = _typo({"cote-d-azur": _seo.TITRE_REGION, "paris": _pf.TITRE_REGION})
+    TITRE_ITI = _typo({"cote-d-azur": _seo.TITRE_ITI, "paris": _pf.TITRE_ITI})
+    A_PROPOS = _typo(_seo.A_PROPOS[:-1] + ["Nous avons commencé par la Côte d'Azur, que nous connaissons le mieux, puis Paris, qui se visite toute l'année. Les autres régions arriveront une par une."])
+    ALIAS_SRC = dict(_seo.ALIAS, **_pf.ALIAS)
+    VEDETTES = {"cote-d-azur": ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"], "paris": _pf.VEDETTES}
 else:
-    REGIONS = _typo(_en.REGIONS)
-    PROCHAINES_REGIONS = _typo(_en.PROCHAINES_REGIONS)
-    DESTINATIONS = _typo(_en.DESTINATIONS)
-    GROUPES = _typo(_en.GROUPES)
-    ITI = _typo(_en.ITINERAIRE)
-    SEO_T = _typo(_en.TITRES)
-    TITRE_REGION = _typo(_en.TITRE_REGION)
-    TITRE_ITI = _typo(_en.TITRE_ITI)
-    A_PROPOS = _typo(_en.ABOUT)
-    ALIAS_SRC = _en.ALIAS
+    REGIONS = _typo([dict(_en.REGIONS[0], **RIVIERA_EXTRA["en"]), dict(_pe.REGION, **PARIS_EXTRA["en"])])
+    PROCHAINES_REGIONS = _typo([x for x in _en.PROCHAINES_REGIONS if x != "Paris"])
+    DESTINATIONS = _typo(_en.DESTINATIONS + _pe.DESTINATIONS)
+    GROUPES = {"cote-d-azur": _typo(_en.GROUPES), "paris": _typo(_pe.GROUPES)}
+    ITIS = {"cote-d-azur": _typo(dict(_en.ITINERAIRE, conseils=["Stay in Nice: the station has direct regional trains to Villefranche, Monaco, Antibes and Cannes.", "Avoid driving in July and August; the coastal train is faster.", "Dress modestly for Monaco Cathedral and the casino."])),
+            "paris": _typo(_pe.ITINERAIRE)}
+    SEO_T = _typo(dict(_en.TITRES, **_pe.TITRES))
+    TITRE_REGION = _typo({"cote-d-azur": _en.TITRE_REGION, "paris": _pe.TITRE_REGION})
+    TITRE_ITI = _typo({"cote-d-azur": _en.TITRE_ITI, "paris": _pe.TITRE_ITI})
+    A_PROPOS = _typo(_en.ABOUT[:-1] + ["We started with the French Riviera, which we know best, then Paris, which is worth visiting all year round. Other regions will follow one by one."])
+    ALIAS_SRC = dict(_en.ALIAS, **_pe.ALIAS)
+    VEDETTES = {"cote-d-azur": ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"], "paris": _pe.VEDETTES}
 for _d in DESTINATIONS:
     _d.setdefault("path", _d["slug"])
 for _r in REGIONS:
     _r.setdefault("path", _r["slug"])
-LIEU_VOIR = _typo(_seo.LIEU_VOIR)
-LIEU_ALLER = _typo(_seo.LIEU_ALLER)
+LIEU_VOIR = _typo(dict(_seo.LIEU_VOIR, **_pf.LIEU_VOIR))
+LIEU_ALLER = _typo(dict(_seo.LIEU_ALLER, **_pf.LIEU_ALLER))
+GEO = dict(_seo.GEO, **_pf.GEO)
+HOME_ORDER = ["paris", "cote-d-azur"]
 BRAND = " | Clic&Site"
-VEDETTES = ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]
 
 SITE = SITES[LANG]
 OTHER = "en" if LANG == "fr" else "fr"
@@ -111,11 +127,11 @@ T = {
             aff_foot="Certains liens de ce site sont affiliés : si vous réservez une activité après avoir cliqué, Clic&amp;Site perçoit une commission, sans aucun surcoût pour vous.",
             about="À propos", legal="Mentions légales", made_by="Site réalisé par", photo="Photo : ",
             home_title="Où aller, comment y aller, quoi réserver.",
-            home_lead="Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par la Côte d’Azur.",
+            home_lead="Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par Paris et la Côte d’Azur.",
             home_alt="La rade de Villefranche-sur-Mer vue du ciel", regions="Les régions", guides="guides", soon="Bientôt : ",
-            must_see="Les incontournables de la Côte d’Azur", see_all="Voir les {n} guides de la Côte d’Azur",
+            must_see="Les incontournables {de}", see_all="Voir les {n} guides {de}",
             home_seo="Clic&Site : les plus beaux sites de France, guides pratiques",
-            home_desc="Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par la Côte d'Azur.",
+            home_desc="Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par Paris et la Côte d'Azur.",
             og_home=("Les plus beaux sites de France", "Où aller, comment y aller, quoi réserver"),
             region_h1="Visiter la {nom}", region_alt="Le Cap-Ferrat et la côte vus du ciel", iti_d="Un itinéraire complet, faisable sans voiture.",
             og_region="{n} guides pratiques", visit="Visiter ", view_of="Vue de ",
@@ -125,8 +141,8 @@ T = {
             faq="Questions fréquentes", brief="En bref", others="Autres sites de la {nom}",
             ride_t="Y aller avec un chauffeur privé",
             ride_p="Pour un aéroport, une famille avec bagages ou plusieurs sites dans la même journée, un chauffeur vous évite parkings et correspondances. Notre partenaire Elite Prestige Services, basé à Cannes, assure les transferts sur toute la Côte d’Azur.",
-            ride_btn="Réserver un transfert", og_dest="Guide pratique de la {nom}",
-            iti_variant="Variante en voiture", iti_guides="Les guides : ", iti_tips="Conseils pour ces trois jours",
+            ride_btn="Réserver un transfert", og_dest="Guide pratique {de}",
+            iti_variant="Variante en voiture", iti_more="Pour aller plus loin", iti_guides="Les guides : ", iti_tips="Conseils pour ces trois jours",
             iti_tips_list=["Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.",
                            "Évitez la voiture en juillet-août, le train est plus rapide sur la côte.",
                            "Gardez une tenue correcte pour la cathédrale de Monaco et le casino."],
@@ -143,11 +159,11 @@ T = {
             aff_foot="Some links on this site are affiliate links: if you book an activity after clicking, Clic&amp;Site earns a commission at no extra cost to you.",
             about="About", legal="Legal notice", made_by="Website by", photo="Photo: ",
             home_title="Where to go, how to get there, what to book.",
-            home_lead="Short, practical guides to the most beautiful places in France, so you spend your time there rather than planning. We start with the French Riviera.",
+            home_lead="Short, practical guides to the most beautiful places in France, so you spend your time there rather than planning. We start with Paris and the French Riviera.",
             home_alt="Aerial view of the bay of Villefranche-sur-Mer", regions="Regions", guides="guides", soon="Coming soon: ",
-            must_see="French Riviera highlights", see_all="See all {n} French Riviera guides",
+            must_see="{de} highlights", see_all="See all {n} {de} guides",
             home_seo="Clic&Site: practical guides to the best places in France",
-            home_desc="What to see, how to get there and what to book: short, practical guides to the most beautiful places in France, starting with the French Riviera.",
+            home_desc="What to see, how to get there and what to book: short, practical guides to the most beautiful places in France, starting with Paris and the French Riviera.",
             og_home=("The most beautiful places in France", "Where to go, how to get there, what to book"),
             region_h1="Visiting the {nom}", region_alt="Aerial view of Cap Ferrat and the coast", iti_d="A complete itinerary you can do without a car.",
             og_region="{n} practical guides", visit="Visit ", view_of="View of ",
@@ -158,7 +174,7 @@ T = {
             ride_t="Go there with a private driver",
             ride_p="For an airport transfer, a family with luggage or several places in one day, a driver saves you parking and connections. Our partner Elite Prestige Services, based in Cannes, covers the whole French Riviera.",
             ride_btn="Book a transfer", og_dest="{nom} travel guide",
-            iti_variant="With a car", iti_guides="Guides: ", iti_tips="Tips for these three days",
+            iti_variant="With a car", iti_more="Going further", iti_guides="Guides: ", iti_tips="Tips for these three days",
             iti_tips_list=["Stay in Nice: the station has direct regional trains to Villefranche, Monaco, Antibes and Cannes.",
                            "Avoid driving in July and August; the coastal train is faster.",
                            "Dress modestly for Monaco Cathedral and the casino."],
@@ -305,11 +321,31 @@ def card(d, root):
   </a>
 </li>"""
 
+def region_card(r, root):
+    n = len([d for d in DESTINATIONS if d["region"] == r["slug"]])
+    return f"""<a class="region-card" href="{root}{r['path']}/">
+    <div class="region-card__face">
+      <img class="card__img" src="{photo(r['photo'], root)['mid']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>
+      {stamp(' '.join(r['departements']), r['timbre'])}
+      <span class="region-card__name">{e(r['nom'])}</span>
+      <span class="region-card__count">{n} {T['guides']}</span>
+    </div>
+    <p class="region-card__txt">{e(r['accroche'])}</p>
+  </a>"""
+
 def build_home():
-    r = REGIONS[0]
-    dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
-    by = {d["slug"]: d for d in dests}
-    vedettes = [by[x] for x in VEDETTES]
+    order = [REGION_BY_SLUG[s] for s in HOME_ORDER]
+    by = {d["slug"]: d for d in DESTINATIONS}
+    musts = ""
+    for r in order:
+        n = len([d for d in DESTINATIONS if d["region"] == r["slug"]])
+        it = ITIS[r["slug"]]
+        musts += f"""<section class="wrap" aria-labelledby="inc-{r['slug']}">
+  <h2 id="inc-{r['slug']}" class="sec-title">{e(T['must_see'].format(de=r['de']))}</h2>
+  <ul class="cards">{''.join(card(by[x], '') for x in VEDETTES[r['slug']])}</ul>
+  <p class="more"><a href="{r['path']}/">{e(T['see_all'].format(n=n, de=r['de']))}</a><span class="foot__sep foot__sep--dark"></span><a href="{r['path']}/{it['slug']}/">{e(it['titre'])}</a></p>
+</section>
+"""
     body = f"""
 <header class="post post--home">
   {hero_img("accueil", "", T['home_alt'])[0]}
@@ -321,23 +357,10 @@ def build_home():
 </header>
 <section class="wrap" id="regions" aria-labelledby="regions-t">
   <h2 id="regions-t" class="sec-title">{T['regions']}</h2>
-  <a class="region-card" href="{r['path']}/">
-    <div class="region-card__face">
-      <img class="card__img" src="{photo(_ph.REGION_PHOTO, '')['mid']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>
-      {stamp(' '.join(r['departements']), 'Riviera')}
-      <span class="region-card__name">{e(r['nom'])}</span>
-      <span class="region-card__count">{len(dests)} {T['guides']}</span>
-    </div>
-    <p class="region-card__txt">{e(r['accroche'])}</p>
-  </a>
+  <div class="regions">{''.join(region_card(r, '') for r in order)}</div>
   <p class="next">{T['soon']}{e(', '.join(PROCHAINES_REGIONS))}.</p>
 </section>
-<section class="wrap" aria-labelledby="inc-t">
-  <h2 id="inc-t" class="sec-title">{T['must_see']}</h2>
-  <ul class="cards">{''.join(card(d, '') for d in vedettes)}</ul>
-  <p class="more"><a href="{r['path']}/">{T['see_all'].format(n=len(dests))}</a><span class="foot__sep foot__sep--dark"></span><a href="{r['path']}/{ITI['slug']}/">{e(ITI['titre'])}</a></p>
-</section>
-"""
+{musts}"""
     _og.make(os.path.join(OUT, "assets", "og", "accueil.jpg"), T["og_home"][0], T["og_home"][1], "FR", "encre")
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR" if LANG == "fr" else "en"},
           {"@context": "https://schema.org", "@type": "Organization", "name": "Clic&Site", "url": SITE + "/", "logo": SITE + "/assets/logo.png",
@@ -348,18 +371,19 @@ def build_region(r):
     dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
     intro = "".join(f"<p>{e(p)}</p>" for p in r["intro"])
     groups = ""
-    for gk, gn in GROUPES:
+    ITI = ITIS[r["slug"]]
+    for gk, gn in GROUPES[r["slug"]]:
         gd = [d for d in dests if d["groupe"] == gk]
         if gd:
             groups += f'<section class="wrap" aria-labelledby="g-{gk}"><h2 id="g-{gk}" class="sec-title">{e(gn)}</h2><ul class="cards">{"".join(card(d, "../") for d in gd)}</ul></section>'
     body = f"""
 <header class="post">
-  {hero_img(_ph.REGION_PHOTO, "../", T['region_alt'])[0]}
+  {hero_img(r['photo'], "../", r['photo_alt'])[0]}
   <div class="wrap post__in">
-    <h1 class="post__title">{e(T['region_h1'].format(nom=r['nom']))}</h1>
+    <h1 class="post__title">{e(r['h1'])}</h1>
     <p class="post__lead">{e(r['accroche'])}</p>
   </div>
-  <p class="credit">{photo(_ph.REGION_PHOTO, "../")["credit"]}</p>
+  <p class="credit">{photo(r['photo'], "../")["credit"]}</p>
 </header>
 <section class="wrap prose">{intro}</section>
 <section class="wrap">
@@ -369,8 +393,8 @@ def build_region(r):
 """
     ld = [{"@context": "https://schema.org", "@type": "TouristDestination", "name": r["nom"], "description": r["description"],
            "includesAttraction": [{"@type": "TouristAttraction", "name": d["nom"], "url": f"{SITE}/{durl(d)}"} for d in dests]}]
-    _og.make(os.path.join(OUT, "assets", "og", r["path"] + ".jpg"), T["region_h1"].format(nom=r["nom"]), T["og_region"].format(n=len(dests)), " ".join(r["departements"]), "azur")
-    write(r["path"], page("region:" + r["slug"], TITRE_REGION + BRAND, r["description"], body,
+    _og.make(os.path.join(OUT, "assets", "og", r["path"] + ".jpg"), r["h1"], T["og_region"].format(n=len(dests)), " ".join(r["departements"]), r["couleur"])
+    write(r["path"], page("region:" + r["slug"], TITRE_REGION[r["slug"]] + BRAND, r["description"], body,
                           crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/")], jsonld=ld, depth=1, og_image=f"assets/og/{r['path']}.jpg"))
 
 ALIAS = []
@@ -399,7 +423,7 @@ def build_dest(d):
     r = REGION_BY_SLUG[d["region"]]
     root = "../../"
     by = {x["slug"]: x for x in DESTINATIONS}
-    used = set()
+    used = {x["slug"] for x in DESTINATIONS if x["region"] != d["region"]}
     L = lambda t: autolink(e(t), d["slug"], used, root, by)
     intro = "".join(f"<p>{L(p)}</p>" for p in d["intro"])
     voir = "".join(f"<h3>{e(t)}</h3><p>{L(x)}</p>" for t, x in d["a_voir"])
@@ -460,7 +484,7 @@ def build_dest(d):
 </div>
 <div class="wrap">{transfert}</div>
 <section class="wrap" aria-labelledby="autres-t">
-  <h2 id="autres-t" class="sec-title">{e(T['others'].format(nom=r['nom']))}</h2>
+  <h2 id="autres-t" class="sec-title">{e(r['autres'])}</h2>
   <ul class="cards">{''.join(card(x, root) for x in autres)}</ul>
 </section>
 """
@@ -468,19 +492,20 @@ def build_dest(d):
         {"@context": "https://schema.org", "@type": "TouristAttraction", "name": d["nom"], "description": d["description"],
          "url": f"{SITE}/{durl(d)}",
          "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['path']}.jpg"],
-         "geo": {"@type": "GeoCoordinates", "latitude": _seo.GEO[d["slug"]][0], "longitude": _seo.GEO[d["slug"]][1]},
+         "geo": {"@type": "GeoCoordinates", "latitude": GEO[d["slug"]][0], "longitude": GEO[d["slug"]][1]},
          "address": {"@type": "PostalAddress", "addressLocality": d["nom"], "addressRegion": r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in d["faq"]]},
     ]
     path = durl(d)
-    _og.make(os.path.join(OUT, "assets", "og", d["path"] + ".jpg"), h1, T["og_dest"].format(nom=r["nom"]), d["dept"], d["couleur"])
+    _og.make(os.path.join(OUT, "assets", "og", d["path"] + ".jpg"), h1, T["og_dest"].format(nom=r["nom"], de=r["de"]), d["dept"], d["couleur"])
     write(path.rstrip("/"), page("dest:" + d["slug"], SEO_T[d["slug"]] + BRAND, d["description"], body,
                                  crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/"), (d["nom"], path)], jsonld=ld, depth=2,
                                  og_image=f"assets/og/{d['path']}.jpg"))
 
 def build_iti(r):
+    ITI = ITIS[r["slug"]]
     by = {d["slug"]: d for d in DESTINATIONS}
     root = "../../"
     jours = ""
@@ -488,7 +513,12 @@ def build_iti(r):
         items = "".join(f'<li><a href="{root}{durl(by[sl])}">{e(by[sl]["nom"])}</a>: {e(txt[0].lower() + txt[1:])}</li>'.replace("</a>: ", "</a> : " if LANG == "fr" else "</a>: ") for sl, txt in etapes)
         jours += f'<li class="day"><h2>{e(titre)}</h2><ul>{items}</ul></li>'
     var_links = ", ".join(f'<a href="{root}{durl(by[sl])}">{e(by[sl]["nom"])}</a>' for sl in ITI["variante_liens"])
-    tips = "".join(f"<li>{e(_typo(t))}</li>" for t in T["iti_tips_list"])
+    tips = "".join(f"<li>{e(t)}</li>" for t in ITI["conseils"])
+    ride = f"""<div class="wrap"><aside class="ride">
+  <h2 class="ride__t">{T['day_t']}</h2>
+  <p>{T['day_p']}</p>
+  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">{T['day_btn']}</a></p>
+</aside></div>""" if r["slug"] == "cote-d-azur" else ""
     body = f"""
 <section class="hero wrap">
   <h1 class="hero__title">{e(ITI['titre'])}</h1>
@@ -496,7 +526,7 @@ def build_iti(r):
 </section>
 <div class="wrap prose">
   <ol class="days">{jours}</ol>
-  <h2>{T['iti_variant']}</h2>
+  <h2>{T['iti_variant'] if r['slug'] == 'cote-d-azur' else T['iti_more']}</h2>
   <p>{e(ITI['variante'])}</p>
   <p>{e(_typo(T['iti_guides']))}{var_links}.</p>
   <h2>{T['iti_tips']}</h2>
@@ -504,18 +534,16 @@ def build_iti(r):
     {tips}
   </ul>
 </div>
-<div class="wrap"><aside class="ride">
-  <h2 class="ride__t">{T['day_t']}</h2>
-  <p>{T['day_p']}</p>
-  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">{T['day_btn']}</a></p>
-</aside></div>
+{ride}
 """
     path = f"{r['path']}/{ITI['slug']}/"
     ld = [{"@context": "https://schema.org", "@type": "Article", "headline": ITI["titre"], "description": ITI["description"], "inLanguage": "fr-FR" if LANG == "fr" else "en",
            "author": {"@type": "Organization", "name": "Clic&Site"}, "dateModified": TODAY}]
-    _og.make(os.path.join(OUT, "assets", "og", ITI["slug"] + ".jpg"), ITI["titre"], T["og_iti"][0], T["og_iti"][1], "encre")
-    write(path.rstrip("/"), page("iti:" + r["slug"], TITRE_ITI + BRAND, ITI["description"], body,
-                                 crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2, og_image=f"assets/og/{ITI['slug']}.jpg"))
+    ogf = f"{r['path']}-{ITI['slug']}.jpg"
+    og_sub = T["og_iti"][0] if r["slug"] == "cote-d-azur" else ITI["accroche"].split(".")[0]
+    _og.make(os.path.join(OUT, "assets", "og", ogf), ITI["titre"], og_sub, T["og_iti"][1], "encre")
+    write(path.rstrip("/"), page("iti:" + r["slug"], TITRE_ITI[r["slug"]] + BRAND, ITI["description"], body,
+                                 crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2, og_image=f"assets/og/{ogf}"))
 
 def build_about():
     paras = "".join(f"<p>{e(p)}</p>" for p in A_PROPOS)
@@ -585,7 +613,7 @@ def build_legal():
     write(path.rstrip("/"), page("legal", title, desc, body, crumbs=[(T["home"], ""), (T["legal"], path)], depth=1))
 
 def build_misc():
-    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{REGIONS[0]['path']}/{ITI['slug']}/", STATIC["about"][LANG], STATIC["legal"][LANG]]
+    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{r['path']}/{ITIS[r['slug']]['slug']}/" for r in REGIONS] + [STATIC["about"][LANG], STATIC["legal"][LANG]]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
@@ -610,7 +638,8 @@ def main():
         build_region(r)
     for d in DESTINATIONS:
         build_dest(d)
-    build_iti(REGIONS[0])
+    for r in REGIONS:
+        build_iti(r)
     build_about()
     build_legal()
     build_misc()

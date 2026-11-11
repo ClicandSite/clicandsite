@@ -258,6 +258,10 @@ def page(key, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="as
         for i, (n, p) in enumerate(crumbs):
             items.append(f'<li><a href="{root}{p}">{e(n)}</a></li>' if i < len(crumbs) - 1 else f'<li aria-current="page">{e(n)}</li>')
         crumb_html = f'<nav class="crumbs wrap" aria-label="{T["crumbs"]}"><ol>{"".join(items)}</ol></nav>'
+    hero = 'class="post' in body
+    if hero and crumb_html:
+        body = body.replace("</header>", "</header>\n" + crumb_html, 1); crumb_html = ""
+    logo = "logo-clair.svg" if hero else "logo-fonce.svg"
     regions_nav = "".join(f'<a href="{root}{r["path"]}/">{e(r["nom"])}</a>' for r in REGIONS)
     return f"""<!doctype html>
 <html lang="{T['html_lang']}">
@@ -282,11 +286,11 @@ def page(key, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="as
 <link rel="preload" href="{root}assets/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{root}assets/style.css?v={CSS_V}">
 {ld}</head>
-<body>
+<body class="{"hero-page" if hero else "plain-page"}">
 <a class="skip" href="#contenu">{T['skip']}</a>
 <header class="top">
   <div class="wrap top__in">
-    <a class="brand" href="{root}"><img class="brand__logo" src="{root}assets/logo-clair.svg" width="167" height="40" alt="Clic&amp;Site"></a>
+    <a class="brand" href="{root}"><img class="brand__logo" src="{root}assets/{logo}" width="167" height="40" alt="Clic&amp;Site"></a>
     <nav class="top__nav" aria-label="{T['nav']}">{regions_nav}<a href="{root}#regions">{T['all_regions']}</a>{switch}</nav>
   </div>
 </header>

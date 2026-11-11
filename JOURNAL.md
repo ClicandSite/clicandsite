@@ -6,3 +6,4 @@
 - 11/11/2026 : pages métier et conseils, boutons et liens plus fins (bouton principal plus bas, encadré « Voir le modèle » compact, « À lire aussi » en petites étiquettes).
 - 11/11/2026 : immobilier, « estimation gratuite en ligne » reformulé en « demande d'estimation en ligne » (le site n'affiche pas de prix automatique : la demande arrive dans Mes clients, type Estimation, et l'agent rappelle).
 - 11/11/2026 : les demandes (contact, rendez-vous, estimation, reprise…) n'étaient pas envoyées par mail au pro, seulement dans Mes clients. Ajout de la fonction cs-lead-notify (chaque minute, depuis contact@mycreativesite.fr, réponse directe au client). Textes auto/moto corrigés : « demande de reprise » au lieu d'« estimation de reprise », plus de « photos » annoncées dans le formulaire de reprise.
+- 11/11/2026 : espace client, bouton « Continuer avec Google » (apparaît tout seul quand Google est activé dans Supabase, Authentication > Providers).

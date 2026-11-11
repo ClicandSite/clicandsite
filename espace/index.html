@@ -31,6 +31,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn.sm{padding:6px 10px;font-size:.85rem}
 .btn:disabled{opacity:.5;cursor:default}
 .linkbtn{background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;padding:0;text-align:left}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid #dadce0;font-weight:600}.gbtn:hover{background:#f8f9fa}
+.gor{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:.82rem}.gor::before,.gor::after{content:"";flex:1;height:1px;background:var(--line)}
 input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--paper);min-width:0}
 textarea{resize:vertical;min-height:64px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
@@ -352,6 +354,8 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
   <form class="box" id="lform">
     <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="34" height="34" alt=""><span>My<span>creativesite</span></span></a>
     <p id="lTitle">Votre espace client : modifiez vous-même votre site.</p>
+    <!-- 11/11/2026 (Anthony) : connexion rapide avec Google. Le bouton n'apparaît que si Google est activé dans Supabase. -->
+    <div id="gBox" hidden><button class="btn gbtn" id="gBtn" type="button"><svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continuer avec Google</button><div class="gor"><span>ou avec votre e-mail</span></div></div>
     <div><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="username" required></div>
     <div id="lPassBox"><label for="lPass">Mot de passe</label><input id="lPass" type="password" autocomplete="current-password" minlength="8" required></div>
     <button class="btn primary" id="lBtn" type="submit">Se connecter</button>
@@ -1859,7 +1863,11 @@ $('lform').addEventListener('submit',async e=>{ e.preventDefault(); const em=$('
   }catch(err){ lmsg(/Invalid login/i.test(err.message)?'E-mail ou mot de passe incorrect.':/Email not confirmed/i.test(err.message)?'Confirmez d\'abord votre adresse avec le lien reçu par e-mail.':err.message); }
   finally{ $('lBtn').disabled=false; }
 });
-SB.auth.onAuthStateChange(ev=>{ if(ev==='PASSWORD_RECOVERY'){ recovery=true; $('app').hidden=true; $('login').hidden=false; $('lTitle').textContent='Choisissez votre nouveau mot de passe.'; $('lEmail').closest('div').hidden=true; $('lEmail').required=false; $('lMode').hidden=true; $('lForgot').hidden=true; $('lBtn').textContent='Enregistrer'; } });
+SB.auth.onAuthStateChange(ev=>{ if(ev==='PASSWORD_RECOVERY'){ recovery=true; $('app').hidden=true; $('login').hidden=false; $('lTitle').textContent='Choisissez votre nouveau mot de passe.'; $('lEmail').closest('div').hidden=true; $('lEmail').required=false; $('lMode').hidden=true; $('lForgot').hidden=true; $('gBox').hidden=true; $('lBtn').textContent='Enregistrer'; } });
+// 11/11/2026 : bouton Google affiché seulement si le fournisseur Google est activé dans Supabase
+fetch('https://avcynjwcyygygkjuxsdt.supabase.co/auth/v1/settings',{headers:{apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'}}).then(r=>r.json()).then(j=>{ if(j&&j.external&&j.external.google&&!recovery) $('gBox').hidden=false; }).catch(()=>{});
+$('gBtn').addEventListener('click',async()=>{ $('gBtn').disabled=true; const u=new URL(location.href); u.hash=''; ['code','error','error_description'].forEach(k=>u.searchParams.delete(k));
+  const {error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:u.toString(),queryParams:{prompt:'select_account'}}}); if(error){ lmsg(error.message); $('gBtn').disabled=false; } });
 async function logout(){ await SB.auth.signOut(); location.href=location.pathname; }
 $('logout').addEventListener('click',logout); $('out2').addEventListener('click',logout);
 
@@ -1877,7 +1885,7 @@ async function boot(){
   try{ window.CS_ADMIN=(await SB.rpc('cs_is_admin')).data===true; }catch(_){ window.CS_ADMIN=false; }
   const {data,error}=await SB.rpc('cs_my_sites');
   sites=error?[]:(data||[]);
-  if(!sites.length){ $('login').hidden=true; $('nosite').hidden=false; return; }
+  if(!sites.length){ $('login').hidden=true; $('nosite').hidden=false; if(SESSION_EMAIL&&!$('nsMail')){ const p=document.createElement('p'); p.id='nsMail'; p.textContent='Vous êtes connecté avec '+SESSION_EMAIL+'. Si votre site a été commandé avec une autre adresse, déconnectez-vous et connectez-vous avec celle-ci.'; $('out2').before(p); } return; }
   $('login').hidden=true; $('nosite').hidden=true; $('app').hidden=false; $('logout').hidden=false;
   if(sites.length>1){ const sp=$('sitePick'); sp.hidden=false; $('siteName').hidden=true; sp.textContent=''; sites.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sp.appendChild(o); }); }
   // 10/11/2026 : arrivée depuis son-domaine/admin (?site=identifiant) : on ouvre ce site-là

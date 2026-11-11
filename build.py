@@ -497,7 +497,7 @@ def build_dest(d):
          "url": f"{SITE}/{durl(d)}",
          "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['path']}.jpg"],
          "geo": {"@type": "GeoCoordinates", "latitude": GEO[d["slug"]][0], "longitude": GEO[d["slug"]][1]},
-         "address": {"@type": "PostalAddress", "addressLocality": d["nom"], "addressRegion": r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
+         "address": {"@type": "PostalAddress", "addressLocality": ("Paris" if d["region"] == "paris" and d["slug"] != "versailles" else d["nom"]), "addressRegion": ("Île-de-France" if d["region"] == "paris" else r["nom"]), "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in d["faq"]]},

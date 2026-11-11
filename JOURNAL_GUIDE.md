@@ -22,3 +22,8 @@
 ## Journal
 - 11/11/2026 (session manuelle) : région Alpes créée (8 stations), 3 guides Paris ajoutés, boutons partenaires refaits, recherches GetYourGuide/Viator ancrées sur le lieu (fonction anchored dans build.py).
 - 11/11/2026 (session manuelle) : 4 pages Idées avec agenda (Carnaval de Nice 9-28 févr. 2027, Fête du Citron 13-28 févr., Mimosa 10-14 févr., cirque de Monte-Carlo 22-31 janv., expos Paris), lien « Idées » dans le menu et section sur l'accueil.
+
+## Search Console (note du 11/11/2026)
+- Les propriétés domaine `sc-domain:clicandsite.fr` et `sc-domain:clicandsite.com` sont sur le compte abracadeal@gmail.com = `https://search.google.com/u/1/search-console/...` (le compte /u/0/ n'y a pas accès).
+- Pour renvoyer un sitemap, saisir l'URL complète (`https://clicandsite.fr/sitemap.xml`), sinon « Adresse de sitemap incorrecte ».
+- 11/11 : 10 pages indexées sur 55 (.fr), .com en cours de traitement ; sitemaps renvoyés (55 URL chacun).

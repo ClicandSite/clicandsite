@@ -96,6 +96,8 @@ img{max-width:100%}
 /* Mise en page article + fiche */
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:3rem;align-items:start;padding-top:2.5rem}
 .prose{max-width:68ch}
+.wrap.prose{max-width:var(--w)}
+.wrap.prose > *{max-width:68ch}
 .prose h2{font:400 1.75rem/1.2 var(--serif);color:var(--encre);margin:2.5rem 0 .75rem}
 .prose h3{font-size:1.1rem;font-weight:700;color:var(--encre);margin:1.6rem 0 .25rem}
 .prose p{margin:.5rem 0 1rem}
@@ -156,3 +158,14 @@ img{max-width:100%}
   .postmark{right:5.8rem}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* Liens secondaires et itinéraire */
+.more{margin:1.25rem 0 0;font-weight:600}
+.foot__sep--dark{background:var(--trait)}
+.iti-link{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;text-decoration:none;background:var(--blanc);border:1px solid var(--trait);border-left:4px solid var(--ocre);border-radius:4px;padding:1.1rem 1.4rem;margin-top:1rem}
+.iti-link__t{font:400 1.4rem/1.2 var(--serif);color:var(--encre)}
+.iti-link__d{color:var(--doux)}
+.iti-link:hover .iti-link__t{text-decoration:underline;text-underline-offset:4px}
+.days{list-style:none;padding:0!important;margin:0;counter-reset:jour}
+.day{border-left:3px solid var(--azur);padding:0 0 .5rem 1.25rem;margin:0 0 1.5rem!important}
+.day h2{margin-top:0!important}

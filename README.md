@@ -2,7 +2,7 @@
 
 Sources du guide d'affiliation Clic&Site (iDream Lab). **Branche de sauvegarde, jamais publiée** : le site sera hébergé dans son propre dépôt `ClicandSite/clicandsite-guide` (GitHub Pages, domaine clicandsite.fr).
 
-- `content.py` : textes des régions et destinations (pas de prix ni d'horaires précis).
+- `content.py` + `content_more.py` : textes (19 lieux de la Côte d’Azur, groupes, itinéraire 3 jours) — pas de prix ni d’horaires précis.
 - `build.py` : génère le site dans `site/` (`python3 build.py`). Identifiants d'affiliation GetYourGuide / Viator dans `AFFILIATION`.
 - Pied de page : « Site réalisé par MyCreativeSite ».
 

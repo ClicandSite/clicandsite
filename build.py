@@ -4,6 +4,9 @@ Les identifiants d'affiliation se règlent dans AFFILIATION ; vides = liens norm
 import html, json, os, shutil, datetime
 from urllib.parse import quote_plus
 import content as _c
+import content_more as _m
+for _d in _c.DESTINATIONS:
+    _d["groupe"] = _m.GROUPES_INITIAUX[_d["slug"]]
 
 def _typo(x):
     if isinstance(x, str):
@@ -13,12 +16,15 @@ def _typo(x):
     if isinstance(x, tuple):
         return tuple(_typo(i) for i in x)
     if isinstance(x, dict):
-        return {k: (v if k in ("slug", "region", "couleur") else _typo(v)) for k, v in x.items()}
+        return {k: (v if k in ("slug", "region", "couleur", "groupe", "variante_liens") else _typo(v)) for k, v in x.items()}
     return x
 
 REGIONS = _typo(_c.REGIONS)
 PROCHAINES_REGIONS = _typo(_c.PROCHAINES_REGIONS)
-DESTINATIONS = _typo(_c.DESTINATIONS)
+DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS)
+GROUPES = _typo(_m.GROUPES)
+ITI = _typo(_m.ITINERAIRE)
+VEDETTES = ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]
 
 SITE = "https://clicandsite.fr"
 OUT = os.path.join(os.path.dirname(__file__), "site")
@@ -130,6 +136,8 @@ def card(d, root):
 def build_home():
     r = REGIONS[0]
     dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
+    by = {d["slug"]: d for d in dests}
+    vedettes = [by[x] for x in VEDETTES]
     body = f"""
 <section class="hero wrap">
   <h1 class="hero__title">Où aller, comment y aller, quoi réserver.</h1>
@@ -149,7 +157,8 @@ def build_home():
 </section>
 <section class="wrap" aria-labelledby="inc-t">
   <h2 id="inc-t" class="sec-title">Les incontournables de la Côte d’Azur</h2>
-  <ul class="cards">{''.join(card(d, '') for d in dests)}</ul>
+  <ul class="cards">{''.join(card(d, '') for d in vedettes)}</ul>
+  <p class="more"><a href="{r['slug']}/">Voir les {len(dests)} guides de la Côte d’Azur</a><span class="foot__sep foot__sep--dark"></span><a href="{r['slug']}/{ITI['slug']}/">{e(ITI['titre'])}</a></p>
 </section>
 """
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR"}]
@@ -158,16 +167,21 @@ def build_home():
 def build_region(r):
     dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
     intro = "".join(f"<p>{e(p)}</p>" for p in r["intro"])
+    groups = ""
+    for gk, gn in GROUPES:
+        gd = [d for d in dests if d["groupe"] == gk]
+        if gd:
+            groups += f'<section class="wrap" aria-labelledby="g-{gk}"><h2 id="g-{gk}" class="sec-title">{e(gn)}</h2><ul class="cards">{"".join(card(d, "../") for d in gd)}</ul></section>'
     body = f"""
 <section class="hero wrap">
   <h1 class="hero__title">Visiter la {e(r['nom'])}</h1>
   <p class="hero__lead">{e(r['accroche'])}</p>
 </section>
 <section class="wrap prose">{intro}</section>
-<section class="wrap" aria-labelledby="g-t">
-  <h2 id="g-t" class="sec-title">Nos guides</h2>
-  <ul class="cards">{''.join(card(d, '../') for d in dests)}</ul>
+<section class="wrap">
+  <a class="iti-link" href="{ITI['slug']}/"><span class="iti-link__t">{e(ITI['titre'])}</span><span class="iti-link__d">Un itinéraire complet, faisable sans voiture.</span></a>
 </section>
+{groups}
 """
     ld = [{"@context": "https://schema.org", "@type": "TouristDestination", "name": r["nom"], "description": r["description"],
            "includesAttraction": [{"@type": "TouristAttraction", "name": d["nom"], "url": f"{SITE}/{r['slug']}/{d['slug']}/"} for d in dests]}]
@@ -187,7 +201,8 @@ def build_dest(d):
   <p class="act__btns"><a class="btn" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank">Voir sur GetYourGuide</a><a class="btn btn--ghost" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">Voir sur Viator</a></p>
 </li>""" for t, x, q in d["activites"])
     faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in d["faq"])
-    autres = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]
+    pool = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]
+    autres = ([x for x in pool if x["groupe"] == d["groupe"]] + [x for x in pool if x["groupe"] != d["groupe"]])[:4]
     transfert = ""
     if d["region"] == "cote-d-azur":
         transfert = f"""<aside class="ride">
@@ -199,7 +214,7 @@ def build_dest(d):
 <header class="post post--{d['couleur']}">
   <div class="wrap post__in">
     {stamp(d['dept'], d['cachet'])}
-    <h1 class="post__title">Visiter {e(d['nom'])}</h1>
+    <h1 class="post__title">{e(d.get('h1') or 'Visiter ' + d['nom'])}</h1>
     <p class="post__lead">{e(d['accroche'])}</p>
   </div>
 </header>
@@ -238,6 +253,43 @@ def build_dest(d):
     write(path.rstrip("/"), page(path, d["titre_seo"], d["description"], body,
                                  crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (d["nom"], path)], jsonld=ld, depth=2))
 
+def build_iti(r):
+    by = {d["slug"]: d for d in DESTINATIONS}
+    root = "../../"
+    jours = ""
+    for titre, etapes in ITI["jours"]:
+        items = "".join(f'<li><a href="{root}{r["slug"]}/{sl}/">{e(by[sl]["nom"])}</a> : {e(txt[0].lower() + txt[1:])}</li>' for sl, txt in etapes)
+        jours += f'<li class="day"><h2>{e(titre)}</h2><ul>{items}</ul></li>'
+    var_links = ", ".join(f'<a href="{root}{r["slug"]}/{sl}/">{e(by[sl]["nom"])}</a>' for sl in ITI["variante_liens"])
+    body = f"""
+<section class="hero wrap">
+  <h1 class="hero__title">{e(ITI['titre'])}</h1>
+  <p class="hero__lead">{e(ITI['accroche'])}</p>
+</section>
+<div class="wrap prose">
+  <ol class="days">{jours}</ol>
+  <h2>Variante en voiture</h2>
+  <p>{e(ITI['variante'])}</p>
+  <p>Les guides : {var_links}.</p>
+  <h2>Conseils pour ces trois jours</h2>
+  <ul>
+    <li>Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.</li>
+    <li>Évitez la voiture en juillet-août, le train est plus rapide sur la côte.</li>
+    <li>Gardez une tenue correcte pour la cathédrale de Monaco et le casino.</li>
+  </ul>
+</div>
+<div class="wrap"><aside class="ride">
+  <h2 class="ride__t">Un chauffeur pour la journée</h2>
+  <p>Pour enchaîner Èze, Monaco et les villages perchés sans correspondances, Elite Prestige Services propose des mises à disposition avec chauffeur sur toute la Côte d’Azur.</p>
+  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">Réserver un chauffeur</a></p>
+</aside></div>
+"""
+    path = f"{r['slug']}/{ITI['slug']}/"
+    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": ITI["titre"], "description": ITI["description"], "inLanguage": "fr-FR",
+           "author": {"@type": "Organization", "name": "Clic&Site"}, "dateModified": TODAY}]
+    write(path.rstrip("/"), page(path, ITI["titre_seo"], ITI["description"], body,
+                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2))
+
 def build_legal():
     body = f"""
 <section class="hero wrap"><h1 class="hero__title hero__title--sm">Mentions légales</h1></section>
@@ -262,7 +314,7 @@ def build_legal():
                                    crumbs=[("Accueil", ""), ("Mentions légales", "mentions-legales/")], depth=1))
 
 def build_misc():
-    urls = [""] + [r["slug"] + "/" for r in REGIONS] + [f"{d['region']}/{d['slug']}/" for d in DESTINATIONS] + ["mentions-legales/"]
+    urls = [""] + [r["slug"] + "/" for r in REGIONS] + [f"{d['region']}/{d['slug']}/" for d in DESTINATIONS] + [f"{REGIONS[0]['slug']}/{ITI['slug']}/", "mentions-legales/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
@@ -286,6 +338,7 @@ def main():
         build_region(r)
     for d in DESTINATIONS:
         build_dest(d)
+    build_iti(REGIONS[0])
     build_legal()
     build_misc()
     print("OK", sum(len(f) for _, _, f in os.walk(OUT)), "fichiers")

@@ -38,6 +38,8 @@ VEDETTES = ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]
 SITE = "https://clicandsite.fr"
 OUT = os.path.join(os.path.dirname(__file__), "site")
 TODAY = datetime.date.today().isoformat()
+import hashlib as _hl
+CSS_V = _hl.md5(open(os.path.join(os.path.dirname(__file__), "assets", "style.css"), "rb").read()).hexdigest()[:8]
 
 AFFILIATION = {
     "getyourguide_partner_id": "",   # à renseigner après acceptation (partner.getyourguide.com)
@@ -127,7 +129,7 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="a
 <meta name="theme-color" content="#13324b">
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="{root}assets/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{root}assets/style.css">
+<link rel="stylesheet" href="{root}assets/style.css?v={CSS_V}">
 {ld}</head>
 <body>
 <a class="skip" href="#contenu">Aller au contenu</a>

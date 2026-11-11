@@ -169,3 +169,6 @@ img{max-width:100%}
 .days{list-style:none;padding:0!important;margin:0;counter-reset:jour}
 .day{border-left:3px solid var(--azur);padding:0 0 .5rem 1.25rem;margin:0 0 1.5rem!important}
 .day h2{margin-top:0!important}
+
+.mcs{display:inline-flex;align-items:center;gap:.35rem;vertical-align:middle}
+.mcs img{display:block;border-radius:4px}

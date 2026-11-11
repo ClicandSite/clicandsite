@@ -124,7 +124,7 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="a
     <p class="foot__brand">Clic<span class="brand__amp">&amp;</span>Site</p>
     <p>Des guides clairs pour visiter les plus beaux sites de France.</p>
     <p class="foot__aff">Certains liens de ce site sont affiliés : si vous réservez une activité après avoir cliqué, Clic&amp;Site perçoit une commission, sans aucun surcoût pour vous.</p>
-    <p><a href="{root}a-propos/">À propos</a><span class="foot__sep"></span><a href="{root}mentions-legales/">Mentions légales</a><span class="foot__sep"></span>Site réalisé par <a href="https://mycreativesite.fr/" rel="noopener">MyCreativeSite</a></p>
+    <p><a href="{root}a-propos/">À propos</a><span class="foot__sep"></span><a href="{root}mentions-legales/">Mentions légales</a><span class="foot__sep"></span>Site réalisé par <a class="mcs" href="https://mycreativesite.fr/" rel="noopener"><img src="{root}assets/mycreativesite-m.png" width="22" height="22" alt="">MyCreativeSite</a></p>
   </div>
 </footer>
 </body>
@@ -384,7 +384,7 @@ def build_misc():
         f.write("clicandsite.fr\n")
     nf = page("404.html", "Page introuvable | Clic&Site", "Cette page n'existe pas.",
               '<section class="hero wrap"><h1 class="hero__title hero__title--sm">Cette page n’existe pas.</h1><p class="hero__lead"><a href="/">Revenir à l’accueil</a> pour choisir une région.</p></section>')
-    nf = nf.replace('href="assets/', 'href="/assets/').replace('href="cote-d-azur/', 'href="/cote-d-azur/').replace('href="mentions-legales/', 'href="/mentions-legales/').replace('href="#regions"', 'href="/#regions"')
+    nf = nf.replace('href="assets/', 'href="/assets/').replace('src="assets/', 'src="/assets/').replace('href="cote-d-azur/', 'href="/cote-d-azur/').replace('href="mentions-legales/', 'href="/mentions-legales/').replace('href="#regions"', 'href="/#regions"')
     with open(os.path.join(OUT, "404.html"), "w", encoding="utf-8") as f:
         f.write(nf)
     with open(os.path.join(OUT, ".nojekyll"), "w") as f:

@@ -1,45 +1,100 @@
 #!/usr/bin/env python3
-"""Générateur du guide Clic&Site (clicandsite.fr) — pages HTML statiques pour GitHub Pages.
+"""Générateur du guide Clic&Site — pages HTML statiques pour GitHub Pages, en deux langues.
+  python3 build.py        -> site/     (français, clicandsite.fr)
+  python3 build.py en     -> site_en/  (anglais, clicandsite.com)
 Les identifiants d'affiliation se règlent dans AFFILIATION ; vides = liens normaux, sans commission."""
-import html, json, os, shutil, datetime
+import html, json, os, shutil, datetime, sys, re
+import hashlib as _hl
 from urllib.parse import quote_plus
 import content as _c
 import content_more as _m
+import content_en as _en
 import seo as _seo
 import photos as _ph
 import og as _og
-import re
+
+LANG = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("CS_LANG", "fr")).lower()
+assert LANG in ("fr", "en")
+HERE = os.path.dirname(os.path.abspath(__file__))
+
 for _d in _c.DESTINATIONS:
     _d["groupe"] = _m.GROUPES_INITIAUX[_d["slug"]]
 
-def _typo(x):
+KEEP = ("slug", "region", "couleur", "groupe", "variante_liens", "path")
+
+def _typo(x, lang=None):
+    lang = lang or LANG
     if isinstance(x, str):
-        return x.replace("'", "\u2019").replace(" :", "\u00a0:").replace(" ;", "\u202f;").replace(" ?", "\u202f?").replace(" !", "\u202f!")
+        x = x.replace("'", "’")
+        if lang == "fr":
+            x = x.replace(" :", " :").replace(" ;", " ;").replace(" ?", " ?").replace(" !", " !")
+        return x
     if isinstance(x, list):
-        return [_typo(i) for i in x]
+        return [_typo(i, lang) for i in x]
     if isinstance(x, tuple):
-        return tuple(_typo(i) for i in x)
+        return tuple(_typo(i, lang) for i in x)
     if isinstance(x, dict):
-        return {k: (v if k in ("slug", "region", "couleur", "groupe", "variante_liens") else _typo(v)) for k, v in x.items()}
+        return {k: (v if k in KEEP else _typo(v, lang)) for k, v in x.items()}
     return x
 
-REGIONS = _typo(_c.REGIONS)
-PROCHAINES_REGIONS = _typo(_c.PROCHAINES_REGIONS)
-DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS)
-GROUPES = _typo(_m.GROUPES)
-ITI = _typo(_m.ITINERAIRE)
-SEO_T = _typo(_seo.TITRES)
+# ---------- Adresses des pages dans les deux langues (pour hreflang et le sélecteur de langue) ----------
+SITES = {"fr": "https://clicandsite.fr", "en": "https://clicandsite.com"}
+FR_DEST = _c.DESTINATIONS + _m.PLUS
+REGION_PATH = {"fr": {r["slug"]: r["slug"] for r in _c.REGIONS}, "en": {r["slug"]: r["path"] for r in _en.REGIONS}}
+DEST_PATH = {"fr": {d["slug"]: d["slug"] for d in FR_DEST}, "en": {d["slug"]: d["path"] for d in _en.DESTINATIONS}}
+ITI_PATH = {"fr": _m.ITINERAIRE["slug"], "en": _en.ITINERAIRE["slug"]}
+STATIC = {"about": {"fr": "a-propos/", "en": "about/"}, "legal": {"fr": "mentions-legales/", "en": "legal-notice/"}}
+
+def url_of(key, lang):
+    kind, _, ident = key.partition(":")
+    if kind == "home":
+        return ""
+    if kind == "region":
+        return REGION_PATH[lang][ident] + "/"
+    if kind == "dest":
+        reg = next(d["region"] for d in FR_DEST if d["slug"] == ident)
+        return f"{REGION_PATH[lang][reg]}/{DEST_PATH[lang][ident]}/"
+    if kind == "iti":
+        return f"{REGION_PATH[lang][ident]}/{ITI_PATH[lang]}/"
+    return STATIC[kind][lang]
+
+# ---------- Contenu de la langue construite ----------
+if LANG == "fr":
+    REGIONS = _typo(_c.REGIONS)
+    PROCHAINES_REGIONS = _typo(_c.PROCHAINES_REGIONS)
+    DESTINATIONS = _typo(_c.DESTINATIONS + _m.PLUS)
+    GROUPES = _typo(_m.GROUPES)
+    ITI = _typo(_m.ITINERAIRE)
+    SEO_T = _typo(_seo.TITRES)
+    TITRE_REGION = _typo(_seo.TITRE_REGION)
+    TITRE_ITI = _typo(_seo.TITRE_ITI)
+    A_PROPOS = _typo(_seo.A_PROPOS)
+    ALIAS_SRC = _seo.ALIAS
+else:
+    REGIONS = _typo(_en.REGIONS)
+    PROCHAINES_REGIONS = _typo(_en.PROCHAINES_REGIONS)
+    DESTINATIONS = _typo(_en.DESTINATIONS)
+    GROUPES = _typo(_en.GROUPES)
+    ITI = _typo(_en.ITINERAIRE)
+    SEO_T = _typo(_en.TITRES)
+    TITRE_REGION = _typo(_en.TITRE_REGION)
+    TITRE_ITI = _typo(_en.TITRE_ITI)
+    A_PROPOS = _typo(_en.ABOUT)
+    ALIAS_SRC = _en.ALIAS
+for _d in DESTINATIONS:
+    _d.setdefault("path", _d["slug"])
+for _r in REGIONS:
+    _r.setdefault("path", _r["slug"])
 LIEU_VOIR = _typo(_seo.LIEU_VOIR)
 LIEU_ALLER = _typo(_seo.LIEU_ALLER)
-A_PROPOS = _typo(_seo.A_PROPOS)
 BRAND = " | Clic&Site"
 VEDETTES = ["nice", "monaco", "eze", "cannes", "iles-de-lerins", "saint-tropez"]
 
-SITE = "https://clicandsite.fr"
-OUT = os.path.join(os.path.dirname(__file__), "site")
+SITE = SITES[LANG]
+OTHER = "en" if LANG == "fr" else "fr"
+OUT = os.path.join(HERE, "site" if LANG == "fr" else "site_en")
 TODAY = datetime.date.today().isoformat()
-import hashlib as _hl
-CSS_V = _hl.md5(open(os.path.join(os.path.dirname(__file__), "assets", "style.css"), "rb").read()).hexdigest()[:8]
+CSS_V = _hl.md5(open(os.path.join(HERE, "assets", "style.css"), "rb").read()).hexdigest()[:8]
 
 AFFILIATION = {
     "getyourguide_partner_id": "",   # à renseigner après acceptation (partner.getyourguide.com)
@@ -49,6 +104,73 @@ AFFILIATION = {
 EPS_URL = "https://elite-prestige-services.fr/"
 CONTACT = "contact@clicandsite.fr"
 
+T = {
+ "fr": dict(html_lang="fr", locale="fr_FR", skip="Aller au contenu", nav="Régions", all_regions="Toutes les régions",
+            crumbs="Fil d’Ariane", home="Accueil", switch="English", switch_lang="en",
+            tagline="Des guides clairs pour visiter les plus beaux sites de France.",
+            aff_foot="Certains liens de ce site sont affiliés : si vous réservez une activité après avoir cliqué, Clic&amp;Site perçoit une commission, sans aucun surcoût pour vous.",
+            about="À propos", legal="Mentions légales", made_by="Site réalisé par", photo="Photo : ",
+            home_title="Où aller, comment y aller, quoi réserver.",
+            home_lead="Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par la Côte d’Azur.",
+            home_alt="La rade de Villefranche-sur-Mer vue du ciel", regions="Les régions", guides="guides", soon="Bientôt : ",
+            must_see="Les incontournables de la Côte d’Azur", see_all="Voir les {n} guides de la Côte d’Azur",
+            home_seo="Clic&Site : les plus beaux sites de France, guides pratiques",
+            home_desc="Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par la Côte d'Azur.",
+            og_home=("Les plus beaux sites de France", "Où aller, comment y aller, quoi réserver"),
+            region_h1="Visiter la {nom}", region_alt="Le Cap-Ferrat et la côte vus du ciel", iti_d="Un itinéraire complet, faisable sans voiture.",
+            og_region="{n} guides pratiques", visit="Visiter ", view_of="Vue de ",
+            see_h2="Que voir {lv}", go_h2="Comment aller {la}", tips_h2="Nos conseils pour {pour}", acts_h2="Activités à réserver {lv}",
+            btn_gyg="Voir sur GetYourGuide", btn_viator="Voir sur Viator",
+            aff_note="Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.",
+            faq="Questions fréquentes", brief="En bref", others="Autres sites de la {nom}",
+            ride_t="Y aller avec un chauffeur privé",
+            ride_p="Pour un aéroport, une famille avec bagages ou plusieurs sites dans la même journée, un chauffeur vous évite parkings et correspondances. Notre partenaire Elite Prestige Services, basé à Cannes, assure les transferts sur toute la Côte d’Azur.",
+            ride_btn="Réserver un transfert", og_dest="Guide pratique de la {nom}",
+            iti_variant="Variante en voiture", iti_guides="Les guides : ", iti_tips="Conseils pour ces trois jours",
+            iti_tips_list=["Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.",
+                           "Évitez la voiture en juillet-août, le train est plus rapide sur la côte.",
+                           "Gardez une tenue correcte pour la cathédrale de Monaco et le casino."],
+            day_t="Un chauffeur pour la journée",
+            day_p="Pour enchaîner Èze, Monaco et les villages perchés sans correspondances, Elite Prestige Services propose des mises à disposition avec chauffeur sur toute la Côte d’Azur.",
+            day_btn="Réserver un chauffeur", og_iti=("Itinéraire sans voiture", "3 j"),
+            about_h1="À propos de Clic&amp;Site", about_mail="Une remarque, une erreur à signaler ? Écrivez-nous : ",
+            about_seo="À propos", about_desc="Qui écrit Clic&Site, comment le guide est financé et pourquoi il ne donne ni prix ni horaires.",
+            nf_title="Page introuvable", nf_h1="Cette page n’existe pas.", nf_p='<a href="/">Revenir à l’accueil</a> pour choisir une région.',
+            accueil_credit="Villefranche-sur-Mer (accueil)"),
+ "en": dict(html_lang="en", locale="en_GB", skip="Skip to content", nav="Regions", all_regions="All regions",
+            crumbs="Breadcrumb", home="Home", switch="Français", switch_lang="fr",
+            tagline="Clear, practical guides to the most beautiful places in France.",
+            aff_foot="Some links on this site are affiliate links: if you book an activity after clicking, Clic&amp;Site earns a commission at no extra cost to you.",
+            about="About", legal="Legal notice", made_by="Website by", photo="Photo: ",
+            home_title="Where to go, how to get there, what to book.",
+            home_lead="Short, practical guides to the most beautiful places in France, so you spend your time there rather than planning. We start with the French Riviera.",
+            home_alt="Aerial view of the bay of Villefranche-sur-Mer", regions="Regions", guides="guides", soon="Coming soon: ",
+            must_see="French Riviera highlights", see_all="See all {n} French Riviera guides",
+            home_seo="Clic&Site: practical guides to the best places in France",
+            home_desc="What to see, how to get there and what to book: short, practical guides to the most beautiful places in France, starting with the French Riviera.",
+            og_home=("The most beautiful places in France", "Where to go, how to get there, what to book"),
+            region_h1="Visiting the {nom}", region_alt="Aerial view of Cap Ferrat and the coast", iti_d="A complete itinerary you can do without a car.",
+            og_region="{n} practical guides", visit="Visit ", view_of="View of ",
+            see_h2="Things to do {lv}", go_h2="How to get {la}", tips_h2="Tips for {pour}", acts_h2="Tours and activities {lv}",
+            btn_gyg="See on GetYourGuide", btn_viator="See on Viator",
+            aff_note="Affiliate links: if you book, Clic&amp;Site earns a commission at no extra cost to you. Prices and availability are set by the booking platform.",
+            faq="Frequently asked questions", brief="At a glance", others="More places on the {nom}",
+            ride_t="Go there with a private driver",
+            ride_p="For an airport transfer, a family with luggage or several places in one day, a driver saves you parking and connections. Our partner Elite Prestige Services, based in Cannes, covers the whole French Riviera.",
+            ride_btn="Book a transfer", og_dest="{nom} travel guide",
+            iti_variant="With a car", iti_guides="Guides: ", iti_tips="Tips for these three days",
+            iti_tips_list=["Stay in Nice: the station has direct regional trains to Villefranche, Monaco, Antibes and Cannes.",
+                           "Avoid driving in July and August; the coastal train is faster.",
+                           "Dress modestly for Monaco Cathedral and the casino."],
+            day_t="A driver for the day",
+            day_p="To link Èze, Monaco and the hilltop villages without waiting for connections, Elite Prestige Services offers chauffeur hire by the hour across the French Riviera.",
+            day_btn="Book a driver", og_iti=("Itinerary without a car", "3 d"),
+            about_h1="About Clic&amp;Site", about_mail="Spotted a mistake or have a suggestion? Email us: ",
+            about_seo="About", about_desc="Who writes Clic&Site, how the guide is funded and why it gives no prices or timetables.",
+            nf_title="Page not found", nf_h1="This page does not exist.", nf_p='<a href="/">Go back to the home page</a> to choose a region.',
+            accueil_credit="Villefranche-sur-Mer (home page)"),
+}[LANG]
+
 e = lambda s: html.escape(str(s), quote=True)
 
 def photo(slug, root):
@@ -57,14 +179,14 @@ def photo(slug, root):
         base = f"{root}assets/photos/{slug}"
         big, mid, small = base + ".jpg", base + "-960.jpg", base + "-640.jpg"
         absolute = f"{SITE}/assets/photos/{slug}.jpg"
-        credit = f'Photo : <a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a> / Unsplash'
+        credit = f'{T["photo"]}<a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a> / Unsplash'
     else:
         path = v[1]; fname = path.split("/")[-1]
         th = lambda w: f"https://upload.wikimedia.org/wikipedia/commons/thumb/{path}/{w}px-{fname}"
         big, mid, small = th(1920), th(960), th(960)
         absolute = big
         lic = v[4]
-        credit = f'Photo : <a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a>, <a href="{_ph.LICENCES[lic]}" rel="noopener license" target="_blank">{lic}</a>, Wikimedia Commons'
+        credit = f'{T["photo"]}<a href="{v[3]}" rel="noopener" target="_blank">{e(v[2])}</a>, <a href="{_ph.LICENCES[lic]}" rel="noopener license" target="_blank">{lic}</a>, Wikimedia Commons'
     return {"big": big, "mid": mid, "small": small, "abs": absolute, "credit": credit}
 
 def hero_img(slug, root, alt):
@@ -73,27 +195,40 @@ def hero_img(slug, root, alt):
             f'<div class="post__shade" aria-hidden="true"></div>'), ph
 
 def gyg(q):
-    u = "https://www.getyourguide.fr/s/?q=" + quote_plus(q)
+    u = ("https://www.getyourguide.fr/s/?q=" if LANG == "fr" else "https://www.getyourguide.com/s/?q=") + quote_plus(q)
     if AFFILIATION["getyourguide_partner_id"]:
         u += "&partner_id=" + AFFILIATION["getyourguide_partner_id"] + "&cmp=clicandsite"
     return u
 
 def viator(q):
-    u = "https://www.viator.com/fr-FR/searchResults/all?text=" + quote_plus(q)
+    u = ("https://www.viator.com/fr-FR/searchResults/all?text=" if LANG == "fr" else "https://www.viator.com/searchResults/all?text=") + quote_plus(q)
     if AFFILIATION["viator_pid"]:
         u += f"&pid={AFFILIATION['viator_pid']}&mcid={AFFILIATION['viator_mcid']}&medium=link"
     return u
 
 REGION_BY_SLUG = {r["slug"]: r for r in REGIONS}
+RPATH = {r["slug"]: r["path"] for r in REGIONS}
+
+def durl(d):
+    return f"{RPATH[d['region']]}/{d['path']}/"
 
 def stamp(dept, cachet, small=False):
     return (f'<div class="stamp{" stamp--sm" if small else ""}" aria-hidden="true">'
             f'<span class="stamp__num">{e(dept)}</span></div>'
             f'<div class="postmark{" postmark--sm" if small else ""}" aria-hidden="true"><span>{e(cachet)}</span></div>')
 
-def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="assets/og/accueil.jpg"):
+def page(key, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="assets/og/accueil.jpg"):
+    path = url_of(key, LANG) if key != "404" else "404.html"
     root = "../" * depth
     canonical = SITE + "/" + path
+    alt_links = ""
+    switch = ""
+    if key != "404":
+        here, there = SITES[LANG] + "/" + url_of(key, LANG), SITES[OTHER] + "/" + url_of(key, OTHER)
+        alt_links = (f'<link rel="alternate" hreflang="{LANG}" href="{e(here)}">\n'
+                     f'<link rel="alternate" hreflang="{OTHER}" href="{e(there)}">\n'
+                     f'<link rel="alternate" hreflang="x-default" href="{e(SITES["en"] + "/" + url_of(key, "en"))}">\n')
+        switch = f'<a class="lang" href="{e(there)}" hreflang="{OTHER}" lang="{OTHER}">{T["switch"]}</a>'
     ld = ""
     blocks = list(jsonld or [])
     if crumbs:
@@ -106,22 +241,22 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="a
         items = []
         for i, (n, p) in enumerate(crumbs):
             items.append(f'<li><a href="{root}{p}">{e(n)}</a></li>' if i < len(crumbs) - 1 else f'<li aria-current="page">{e(n)}</li>')
-        crumb_html = f'<nav class="crumbs wrap" aria-label="Fil d’Ariane"><ol>{"".join(items)}</ol></nav>'
-    regions_nav = "".join(f'<a href="{root}{r["slug"]}/">{e(r["nom"])}</a>' for r in REGIONS)
+        crumb_html = f'<nav class="crumbs wrap" aria-label="{T["crumbs"]}"><ol>{"".join(items)}</ol></nav>'
+    regions_nav = "".join(f'<a href="{root}{r["path"]}/">{e(r["nom"])}</a>' for r in REGIONS)
     return f"""<!doctype html>
-<html lang="fr">
+<html lang="{T['html_lang']}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{e(canonical)}">
-<meta property="og:type" content="website">
+{alt_links}<meta property="og:type" content="website">
 <meta property="og:site_name" content="Clic&amp;Site">
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{e(canonical)}">
-<meta property="og:locale" content="fr_FR">
+<meta property="og:locale" content="{T['locale']}">
 <meta property="og:image" content="{SITE}/{og_image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -132,11 +267,11 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="a
 <link rel="stylesheet" href="{root}assets/style.css?v={CSS_V}">
 {ld}</head>
 <body>
-<a class="skip" href="#contenu">Aller au contenu</a>
+<a class="skip" href="#contenu">{T['skip']}</a>
 <header class="top">
   <div class="wrap top__in">
     <a class="brand" href="{root}">Clic<span class="brand__amp">&amp;</span>Site</a>
-    <nav class="top__nav" aria-label="Régions">{regions_nav}<a href="{root}#regions">Toutes les régions</a></nav>
+    <nav class="top__nav" aria-label="{T['nav']}">{regions_nav}<a href="{root}#regions">{T['all_regions']}</a>{switch}</nav>
   </div>
 </header>
 {crumb_html}
@@ -146,9 +281,9 @@ def page(path, title, desc, body, crumbs=None, jsonld=None, depth=0, og_image="a
 <footer class="foot">
   <div class="wrap foot__in">
     <p class="foot__brand">Clic<span class="brand__amp">&amp;</span>Site</p>
-    <p>Des guides clairs pour visiter les plus beaux sites de France.</p>
-    <p class="foot__aff">Certains liens de ce site sont affiliés : si vous réservez une activité après avoir cliqué, Clic&amp;Site perçoit une commission, sans aucun surcoût pour vous.</p>
-    <p><a href="{root}a-propos/">À propos</a><span class="foot__sep"></span><a href="{root}mentions-legales/">Mentions légales</a><span class="foot__sep"></span>Site réalisé par <a class="mcs" href="https://mycreativesite.fr/" rel="noopener"><img src="{root}assets/mycreativesite-m.png" width="22" height="22" alt="">MyCreativeSite</a></p>
+    <p>{T['tagline']}</p>
+    <p class="foot__aff">{T['aff_foot']}</p>
+    <p><a href="{root}{STATIC['about'][LANG]}">{T['about']}</a><span class="foot__sep"></span><a href="{root}{STATIC['legal'][LANG]}">{T['legal']}</a><span class="foot__sep"></span>{T['made_by']} <a class="mcs" href="https://mycreativesite.fr/" rel="noopener"><img src="{root}assets/mycreativesite-m.png" width="22" height="22" alt="">MyCreativeSite</a></p>
   </div>
 </footer>
 </body>
@@ -164,7 +299,7 @@ def write(path, content):
 def card(d, root):
     ph = photo(d["slug"], root)
     return f"""<li class="card card--{d['couleur']}">
-  <a href="{root}{d['region']}/{d['slug']}/">
+  <a href="{root}{durl(d)}">
     <div class="card__face"><img class="card__img" src="{ph['small']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>{stamp(d['dept'], d['cachet'], small=True)}<span class="card__name">{e(d['nom'])}</span></div>
     <p class="card__txt">{e(d['accroche'])}</p>
   </a>
@@ -177,37 +312,37 @@ def build_home():
     vedettes = [by[x] for x in VEDETTES]
     body = f"""
 <header class="post post--home">
-  {hero_img("accueil", "", "La rade de Villefranche-sur-Mer vue du ciel")[0]}
+  {hero_img("accueil", "", T['home_alt'])[0]}
   <div class="wrap post__in">
-    <h1 class="post__title post__title--home">Où aller, comment y aller, quoi réserver.</h1>
-    <p class="post__lead">Des guides courts et pratiques pour visiter les plus beaux sites de France sans perdre de temps. On commence par la Côte d’Azur.</p>
+    <h1 class="post__title post__title--home">{T['home_title']}</h1>
+    <p class="post__lead">{T['home_lead']}</p>
   </div>
   <p class="credit">{photo("accueil", "")["credit"]}</p>
 </header>
 <section class="wrap" id="regions" aria-labelledby="regions-t">
-  <h2 id="regions-t" class="sec-title">Les régions</h2>
-  <a class="region-card" href="{r['slug']}/">
+  <h2 id="regions-t" class="sec-title">{T['regions']}</h2>
+  <a class="region-card" href="{r['path']}/">
     <div class="region-card__face">
       <img class="card__img" src="{photo(_ph.REGION_PHOTO, '')['mid']}" alt="" loading="lazy" decoding="async"><div class="card__shade" aria-hidden="true"></div>
       {stamp(' '.join(r['departements']), 'Riviera')}
       <span class="region-card__name">{e(r['nom'])}</span>
-      <span class="region-card__count">{len(dests)} guides</span>
+      <span class="region-card__count">{len(dests)} {T['guides']}</span>
     </div>
     <p class="region-card__txt">{e(r['accroche'])}</p>
   </a>
-  <p class="next">Bientôt : {e(', '.join(PROCHAINES_REGIONS))}.</p>
+  <p class="next">{T['soon']}{e(', '.join(PROCHAINES_REGIONS))}.</p>
 </section>
 <section class="wrap" aria-labelledby="inc-t">
-  <h2 id="inc-t" class="sec-title">Les incontournables de la Côte d’Azur</h2>
+  <h2 id="inc-t" class="sec-title">{T['must_see']}</h2>
   <ul class="cards">{''.join(card(d, '') for d in vedettes)}</ul>
-  <p class="more"><a href="{r['slug']}/">Voir les {len(dests)} guides de la Côte d’Azur</a><span class="foot__sep foot__sep--dark"></span><a href="{r['slug']}/{ITI['slug']}/">{e(ITI['titre'])}</a></p>
+  <p class="more"><a href="{r['path']}/">{T['see_all'].format(n=len(dests))}</a><span class="foot__sep foot__sep--dark"></span><a href="{r['path']}/{ITI['slug']}/">{e(ITI['titre'])}</a></p>
 </section>
 """
-    _og.make(os.path.join(OUT, "assets", "og", "accueil.jpg"), "Les plus beaux sites de France", "Où aller, comment y aller, quoi réserver", "FR", "encre")
-    ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR"},
+    _og.make(os.path.join(OUT, "assets", "og", "accueil.jpg"), T["og_home"][0], T["og_home"][1], "FR", "encre")
+    ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Clic&Site", "url": SITE + "/", "inLanguage": "fr-FR" if LANG == "fr" else "en"},
           {"@context": "https://schema.org", "@type": "Organization", "name": "Clic&Site", "url": SITE + "/", "logo": SITE + "/assets/logo.png",
            "parentOrganization": {"@type": "Organization", "name": "iDream Lab"}}]
-    write("", page("", "Clic&Site : les plus beaux sites de France, guides pratiques", "Que voir, comment y aller, quoi réserver : des guides courts et pratiques pour visiter les plus beaux sites de France, à commencer par la Côte d'Azur.", body, jsonld=ld))
+    write("", page("home", T["home_seo"], T["home_desc"], body, jsonld=ld))
 
 def build_region(r):
     dests = [d for d in DESTINATIONS if d["region"] == r["slug"]]
@@ -219,27 +354,27 @@ def build_region(r):
             groups += f'<section class="wrap" aria-labelledby="g-{gk}"><h2 id="g-{gk}" class="sec-title">{e(gn)}</h2><ul class="cards">{"".join(card(d, "../") for d in gd)}</ul></section>'
     body = f"""
 <header class="post">
-  {hero_img(_ph.REGION_PHOTO, "../", "Le Cap-Ferrat et la côte vus du ciel")[0]}
+  {hero_img(_ph.REGION_PHOTO, "../", T['region_alt'])[0]}
   <div class="wrap post__in">
-    <h1 class="post__title">Visiter la {e(r['nom'])}</h1>
+    <h1 class="post__title">{e(T['region_h1'].format(nom=r['nom']))}</h1>
     <p class="post__lead">{e(r['accroche'])}</p>
   </div>
   <p class="credit">{photo(_ph.REGION_PHOTO, "../")["credit"]}</p>
 </header>
 <section class="wrap prose">{intro}</section>
 <section class="wrap">
-  <a class="iti-link" href="{ITI['slug']}/"><span class="iti-link__t">{e(ITI['titre'])}</span><span class="iti-link__d">Un itinéraire complet, faisable sans voiture.</span></a>
+  <a class="iti-link" href="{ITI['slug']}/"><span class="iti-link__t">{e(ITI['titre'])}</span><span class="iti-link__d">{T['iti_d']}</span></a>
 </section>
 {groups}
 """
     ld = [{"@context": "https://schema.org", "@type": "TouristDestination", "name": r["nom"], "description": r["description"],
-           "includesAttraction": [{"@type": "TouristAttraction", "name": d["nom"], "url": f"{SITE}/{r['slug']}/{d['slug']}/"} for d in dests]}]
-    _og.make(os.path.join(OUT, "assets", "og", r["slug"] + ".jpg"), "Visiter la " + r["nom"], f"{len(dests)} guides pratiques", " ".join(r["departements"]), "azur")
-    write(r["slug"], page(r["slug"] + "/", _typo(_seo.TITRE_REGION) + BRAND, r["description"], body,
-                          crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/")], jsonld=ld, depth=1, og_image=f"assets/og/{r['slug']}.jpg"))
+           "includesAttraction": [{"@type": "TouristAttraction", "name": d["nom"], "url": f"{SITE}/{durl(d)}"} for d in dests]}]
+    _og.make(os.path.join(OUT, "assets", "og", r["path"] + ".jpg"), T["region_h1"].format(nom=r["nom"]), T["og_region"].format(n=len(dests)), " ".join(r["departements"]), "azur")
+    write(r["path"], page("region:" + r["slug"], TITRE_REGION + BRAND, r["description"], body,
+                          crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/")], jsonld=ld, depth=1, og_image=f"assets/og/{r['path']}.jpg"))
 
 ALIAS = []
-for _slug, _names in _seo.ALIAS.items():
+for _slug, _names in ALIAS_SRC.items():
     for _n in _names:
         ALIAS.append((_typo(_n), _slug))
 ALIAS.sort(key=lambda x: -len(x[0]))
@@ -255,7 +390,7 @@ def autolink(text_html, current, used, root, by):
         if not m:
             continue
         d = by[slug]
-        store.append(f'<a href="{root}{d["region"]}/{slug}/">{m.group(0)}</a>')
+        store.append(f'<a href="{root}{durl(d)}">{m.group(0)}</a>')
         text_html = text_html[:m.start()] + f"\x00{len(store)-1}\x00" + text_html[m.end():]
         used.add(slug)
     return re.sub(r"\x00(\d+)\x00", lambda m: store[int(m.group(1))], text_html)
@@ -270,15 +405,21 @@ def build_dest(d):
     voir = "".join(f"<h3>{e(t)}</h3><p>{L(x)}</p>" for t, x in d["a_voir"])
     aller = "".join(f"<h3>{e(t)}</h3><p>{L(x)}</p>" for t, x in d["y_aller"])
     conseils = "".join(f"<li>{L(c)}</li>" for c in d["conseils"])
-    lv = LIEU_VOIR.get(d["slug"], "à " + d["nom"])
-    la = LIEU_ALLER.get(d["slug"], "à " + d["nom"])
-    h1 = d.get("h1") or "Visiter " + d["nom"]
-    pour = h1[0].lower() + h1[1:]
-    hero = hero_img(d["slug"], root, "Vue de " + d["nom"])
+    if LANG == "fr":
+        lv = LIEU_VOIR.get(d["slug"], "à " + d["nom"])
+        la = LIEU_ALLER.get(d["slug"], "à " + d["nom"])
+        h1 = d.get("h1") or T["visit"] + d["nom"]
+        pour = h1[0].lower() + h1[1:]
+    else:
+        lv = d.get("in", "in " + d["nom"])
+        la = d.get("to", "to " + d["nom"])
+        h1 = d.get("h1") or T["visit"] + d["nom"]
+        pour = d.get("tips_for", "visiting " + d["nom"])
+    hero = hero_img(d["slug"], root, T["view_of"] + d["nom"])
     fiche = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in d["fiche"])
     acts = "".join(f"""<li class="act">
   <h3 class="act__t">{e(t)}</h3><p>{e(x)}</p>
-  <p class="act__btns"><a class="btn" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank">Voir sur GetYourGuide</a><a class="btn btn--ghost" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">Voir sur Viator</a></p>
+  <p class="act__btns"><a class="btn" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_gyg']}</a><a class="btn btn--ghost" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
 </li>""" for t, x, q in d["activites"])
     faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in d["faq"])
     pool = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]
@@ -286,9 +427,9 @@ def build_dest(d):
     transfert = ""
     if d["region"] == "cote-d-azur":
         transfert = f"""<aside class="ride">
-  <h2 class="ride__t">Y aller avec un chauffeur privé</h2>
-  <p>Pour un aéroport, une famille avec bagages ou plusieurs sites dans la même journée, un chauffeur vous évite parkings et correspondances. Notre partenaire Elite Prestige Services, basé à Cannes, assure les transferts sur toute la Côte d’Azur.</p>
-  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">Réserver un transfert</a></p>
+  <h2 class="ride__t">{T['ride_t']}</h2>
+  <p>{T['ride_p']}</p>
+  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">{T['ride_btn']}</a></p>
 </aside>"""
     body = f"""
 <header class="post post--{d['couleur']}">
@@ -303,51 +444,51 @@ def build_dest(d):
 <div class="wrap layout">
   <article class="prose">
     {intro}
-    <h2>Que voir {e(lv)}</h2>{voir}
-    <h2>Comment aller {e(la)}</h2>{aller}
-    <h2>Nos conseils pour {e(pour)}</h2><ul>{conseils}</ul>
-    <h2>Activités à réserver {e(lv)}</h2>
+    <h2>{e(T['see_h2'].format(lv=lv))}</h2>{voir}
+    <h2>{e(T['go_h2'].format(la=la))}</h2>{aller}
+    <h2>{e(T['tips_h2'].format(pour=pour))}</h2><ul>{conseils}</ul>
+    <h2>{e(T['acts_h2'].format(lv=lv))}</h2>
     <ul class="acts">{acts}</ul>
-    <p class="aff-note">Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.</p>
-    <h2>Questions fréquentes</h2>
+    <p class="aff-note">{T['aff_note']}</p>
+    <h2>{T['faq']}</h2>
     <div class="faq">{faq}</div>
   </article>
   <aside class="fiche" aria-labelledby="fiche-t">
-    <h2 id="fiche-t" class="fiche__t">En bref</h2>
+    <h2 id="fiche-t" class="fiche__t">{T['brief']}</h2>
     <dl>{fiche}</dl>
   </aside>
 </div>
 <div class="wrap">{transfert}</div>
 <section class="wrap" aria-labelledby="autres-t">
-  <h2 id="autres-t" class="sec-title">Autres sites de la {e(r['nom'])}</h2>
+  <h2 id="autres-t" class="sec-title">{e(T['others'].format(nom=r['nom']))}</h2>
   <ul class="cards">{''.join(card(x, root) for x in autres)}</ul>
 </section>
 """
     ld = [
         {"@context": "https://schema.org", "@type": "TouristAttraction", "name": d["nom"], "description": d["description"],
-         "url": f"{SITE}/{r['slug']}/{d['slug']}/", "isAccessibleForFree": False,
-         "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['slug']}.jpg"],
+         "url": f"{SITE}/{durl(d)}",
+         "image": [photo(d["slug"], "")["abs"], f"{SITE}/assets/og/{d['path']}.jpg"],
          "geo": {"@type": "GeoCoordinates", "latitude": _seo.GEO[d["slug"]][0], "longitude": _seo.GEO[d["slug"]][1]},
          "address": {"@type": "PostalAddress", "addressLocality": d["nom"], "addressRegion": r["nom"], "addressCountry": _seo.PAYS.get(d["slug"], "FR")},
          "containedInPlace": {"@type": "Place", "name": r["nom"]}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in d["faq"]]},
     ]
-    del ld[0]["isAccessibleForFree"]
-    path = f"{r['slug']}/{d['slug']}/"
-    _og.make(os.path.join(OUT, "assets", "og", d["slug"] + ".jpg"), h1, "Guide pratique de la " + r["nom"], d["dept"], d["couleur"])
-    write(path.rstrip("/"), page(path, SEO_T[d["slug"]] + BRAND, d["description"], body,
-                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (d["nom"], path)], jsonld=ld, depth=2,
-                                 og_image=f"assets/og/{d['slug']}.jpg"))
+    path = durl(d)
+    _og.make(os.path.join(OUT, "assets", "og", d["path"] + ".jpg"), h1, T["og_dest"].format(nom=r["nom"]), d["dept"], d["couleur"])
+    write(path.rstrip("/"), page("dest:" + d["slug"], SEO_T[d["slug"]] + BRAND, d["description"], body,
+                                 crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/"), (d["nom"], path)], jsonld=ld, depth=2,
+                                 og_image=f"assets/og/{d['path']}.jpg"))
 
 def build_iti(r):
     by = {d["slug"]: d for d in DESTINATIONS}
     root = "../../"
     jours = ""
     for titre, etapes in ITI["jours"]:
-        items = "".join(f'<li><a href="{root}{r["slug"]}/{sl}/">{e(by[sl]["nom"])}</a> : {e(txt[0].lower() + txt[1:])}</li>' for sl, txt in etapes)
+        items = "".join(f'<li><a href="{root}{durl(by[sl])}">{e(by[sl]["nom"])}</a>: {e(txt[0].lower() + txt[1:])}</li>'.replace("</a>: ", "</a> : " if LANG == "fr" else "</a>: ") for sl, txt in etapes)
         jours += f'<li class="day"><h2>{e(titre)}</h2><ul>{items}</ul></li>'
-    var_links = ", ".join(f'<a href="{root}{r["slug"]}/{sl}/">{e(by[sl]["nom"])}</a>' for sl in ITI["variante_liens"])
+    var_links = ", ".join(f'<a href="{root}{durl(by[sl])}">{e(by[sl]["nom"])}</a>' for sl in ITI["variante_liens"])
+    tips = "".join(f"<li>{e(_typo(t))}</li>" for t in T["iti_tips_list"])
     body = f"""
 <section class="hero wrap">
   <h1 class="hero__title">{e(ITI['titre'])}</h1>
@@ -355,48 +496,50 @@ def build_iti(r):
 </section>
 <div class="wrap prose">
   <ol class="days">{jours}</ol>
-  <h2>Variante en voiture</h2>
+  <h2>{T['iti_variant']}</h2>
   <p>{e(ITI['variante'])}</p>
-  <p>Les guides : {var_links}.</p>
-  <h2>Conseils pour ces trois jours</h2>
+  <p>{e(_typo(T['iti_guides']))}{var_links}.</p>
+  <h2>{T['iti_tips']}</h2>
   <ul>
-    <li>Logez à Nice : la gare dessert Villefranche, Monaco, Antibes et Cannes en TER.</li>
-    <li>Évitez la voiture en juillet-août, le train est plus rapide sur la côte.</li>
-    <li>Gardez une tenue correcte pour la cathédrale de Monaco et le casino.</li>
+    {tips}
   </ul>
 </div>
 <div class="wrap"><aside class="ride">
-  <h2 class="ride__t">Un chauffeur pour la journée</h2>
-  <p>Pour enchaîner Èze, Monaco et les villages perchés sans correspondances, Elite Prestige Services propose des mises à disposition avec chauffeur sur toute la Côte d’Azur.</p>
-  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">Réserver un chauffeur</a></p>
+  <h2 class="ride__t">{T['day_t']}</h2>
+  <p>{T['day_p']}</p>
+  <p><a class="btn btn--light" href="{EPS_URL}" rel="noopener" target="_blank">{T['day_btn']}</a></p>
 </aside></div>
 """
-    path = f"{r['slug']}/{ITI['slug']}/"
-    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": ITI["titre"], "description": ITI["description"], "inLanguage": "fr-FR",
+    path = f"{r['path']}/{ITI['slug']}/"
+    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": ITI["titre"], "description": ITI["description"], "inLanguage": "fr-FR" if LANG == "fr" else "en",
            "author": {"@type": "Organization", "name": "Clic&Site"}, "dateModified": TODAY}]
-    _og.make(os.path.join(OUT, "assets", "og", "3-jours.jpg"), ITI["titre"], "Itinéraire sans voiture", "3 j", "encre")
-    write(path.rstrip("/"), page(path, _typo(_seo.TITRE_ITI) + BRAND, ITI["description"], body,
-                                 crumbs=[("Accueil", ""), (r["nom"], r["slug"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2, og_image="assets/og/3-jours.jpg"))
+    _og.make(os.path.join(OUT, "assets", "og", ITI["slug"] + ".jpg"), ITI["titre"], T["og_iti"][0], T["og_iti"][1], "encre")
+    write(path.rstrip("/"), page("iti:" + r["slug"], TITRE_ITI + BRAND, ITI["description"], body,
+                                 crumbs=[(T["home"], ""), (r["nom"], r["path"] + "/"), (ITI["titre"], path)], jsonld=ld, depth=2, og_image=f"assets/og/{ITI['slug']}.jpg"))
 
 def build_about():
     paras = "".join(f"<p>{e(p)}</p>" for p in A_PROPOS)
+    path = STATIC["about"][LANG]
     body = f"""
-<section class="hero wrap"><h1 class="hero__title hero__title--sm">À propos de Clic&amp;Site</h1></section>
-<section class="wrap prose">{paras}<p>Une remarque, une erreur à signaler ? Écrivez-nous : <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
+<section class="hero wrap"><h1 class="hero__title hero__title--sm">{T['about_h1']}</h1></section>
+<section class="wrap prose">{paras}<p>{e(_typo(T['about_mail']))}<a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
 """
-    ld = [{"@context": "https://schema.org", "@type": "AboutPage", "name": "À propos de Clic&Site", "url": SITE + "/a-propos/"}]
-    write("a-propos", page("a-propos/", "À propos" + BRAND, "Qui écrit Clic&Site, comment le guide est financé et pourquoi il ne donne ni prix ni horaires.", body,
-                           crumbs=[("Accueil", ""), ("À propos", "a-propos/")], jsonld=ld, depth=1))
+    ld = [{"@context": "https://schema.org", "@type": "AboutPage", "name": html.unescape(T["about_h1"]), "url": SITE + "/" + path}]
+    write(path.rstrip("/"), page("about", T["about_seo"] + BRAND, T["about_desc"], body,
+                                 crumbs=[(T["home"], ""), (T["about"], path)], jsonld=ld, depth=1))
 
 def build_legal():
     by = {d["slug"]: d["nom"] for d in DESTINATIONS}
-    by["accueil"] = "Villefranche-sur-Mer (accueil)"
-    credits = "".join(f'<li>{e(by.get(k, k))} : {photo(k, "../")["credit"].replace("Photo : ", "")}</li>' for k in _ph.PHOTOS)
-    body = f"""
+    by["accueil"] = T["accueil_credit"]
+    sep = " : " if LANG == "fr" else ": "
+    credits = "".join(f'<li>{e(by.get(k, k))}{sep}{photo(k, "../")["credit"].replace(T["photo"], "")}</li>' for k in _ph.PHOTOS)
+    path = STATIC["legal"][LANG]
+    if LANG == "fr":
+        body = f"""
 <section class="hero wrap"><h1 class="hero__title hero__title--sm">Mentions légales</h1></section>
 <section class="wrap prose">
 <h2>Éditeur</h2>
-<p>Clic&amp;Site (clicandsite.fr) est édité par iDream Lab, société par actions simplifiée à associé unique (SASU) au capital de 50 euros, immatriculée sous le numéro 130 813 744 RCS Cannes, dont le siège social est situé au 34 rue Borniol, 06400 Cannes, France. Contact : <a href="mailto:{CONTACT}">{CONTACT}</a>.</p>
+<p>Clic&amp;Site (clicandsite.fr et clicandsite.com) est édité par iDream Lab, société par actions simplifiée à associé unique (SASU) au capital de 50 euros, immatriculée sous le numéro 130 813 744 RCS Cannes, dont le siège social est situé au 34 rue Borniol, 06400 Cannes, France. Contact : <a href="mailto:{CONTACT}">{CONTACT}</a>.</p>
 <p>Directeur de la publication : Anthony Doche, président d’iDream Lab.</p>
 <h2>Hébergement</h2>
 <p>Le site est hébergé par GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, États-Unis.</p>
@@ -414,20 +557,44 @@ def build_legal():
 <p>Les textes et l’identité visuelle de Clic&amp;Site sont protégés. Toute reproduction sans autorisation est interdite.</p>
 </section>
 """
-    write("mentions-legales", page("mentions-legales/", "Mentions légales | Clic&Site", "Mentions légales du guide Clic&Site, édité par iDream Lab.", body,
-                                   crumbs=[("Accueil", ""), ("Mentions légales", "mentions-legales/")], depth=1))
+        title, desc = "Mentions légales | Clic&Site", "Mentions légales du guide Clic&Site, édité par iDream Lab."
+    else:
+        body = f"""
+<section class="hero wrap"><h1 class="hero__title hero__title--sm">Legal notice</h1></section>
+<section class="wrap prose">
+<h2>Publisher</h2>
+<p>Clic&amp;Site (clicandsite.com and clicandsite.fr) is published by iDream Lab, a French simplified joint-stock company (SASU) with a share capital of 50 euros, registered under number 130 813 744 RCS Cannes, whose registered office is at 34 rue Borniol, 06400 Cannes, France. Contact: <a href="mailto:{CONTACT}">{CONTACT}</a>.</p>
+<p>Publication director: Anthony Doche, president of iDream Lab.</p>
+<h2>Hosting</h2>
+<p>The site is hosted by GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, United States.</p>
+<h2>Affiliate links</h2>
+<p>Clic&amp;Site is an editorial guide. Some links to booking platforms (GetYourGuide, Viator and others) are affiliate links: when a visitor books after clicking, the platform pays Clic&amp;Site a commission. The price you pay is the same. Clic&amp;Site does not sell any travel services: bookings, payments and cancellations are handled solely by the chosen platform and the provider.</p>
+<p>Elite Prestige Services, presented as a partner for chauffeur transfers on the French Riviera, is a company related to the publisher.</p>
+<h2>Photo credits</h2>
+<p>Photos from Unsplash (Unsplash licence) and Wikimedia Commons (Creative Commons licences as stated). Many thanks to their authors.</p>
+<ul>{credits}</ul>
+<h2>Personal data and cookies</h2>
+<p>This site sets no analytics or advertising cookies and collects no personal data. The booking platforms we link to apply their own privacy policies.</p>
+<h2>Accuracy</h2>
+<p>Practical information (access, seasons, tips) is given as a guide and may change. Check opening times and conditions with the sites and transport operators before your visit.</p>
+<h2>Intellectual property</h2>
+<p>The texts and visual identity of Clic&amp;Site are protected. Reproduction without permission is prohibited.</p>
+</section>
+"""
+        title, desc = "Legal notice | Clic&Site", "Legal notice for the Clic&Site travel guide, published by iDream Lab."
+    write(path.rstrip("/"), page("legal", title, desc, body, crumbs=[(T["home"], ""), (T["legal"], path)], depth=1))
 
 def build_misc():
-    urls = [""] + [r["slug"] + "/" for r in REGIONS] + [f"{d['region']}/{d['slug']}/" for d in DESTINATIONS] + [f"{REGIONS[0]['slug']}/{ITI['slug']}/", "a-propos/", "mentions-legales/"]
+    urls = [""] + [r["path"] + "/" for r in REGIONS] + [durl(d) for d in DESTINATIONS] + [f"{REGIONS[0]['path']}/{ITI['slug']}/", STATIC["about"][LANG], STATIC["legal"][LANG]]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     write("sitemap.xml", sm)
     write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
     with open(os.path.join(OUT, "CNAME"), "w") as f:
-        f.write("clicandsite.fr\n")
-    nf = page("404.html", "Page introuvable | Clic&Site", "Cette page n'existe pas.",
-              '<section class="hero wrap"><h1 class="hero__title hero__title--sm">Cette page n’existe pas.</h1><p class="hero__lead"><a href="/">Revenir à l’accueil</a> pour choisir une région.</p></section>')
-    nf = nf.replace('href="assets/', 'href="/assets/').replace('src="assets/', 'src="/assets/').replace('href="cote-d-azur/', 'href="/cote-d-azur/').replace('href="mentions-legales/', 'href="/mentions-legales/').replace('href="#regions"', 'href="/#regions"')
+        f.write(SITE.split("//")[1] + "\n")
+    nf = page("404", T["nf_title"] + BRAND, T["nf_title"] + ".",
+              f'<section class="hero wrap"><h1 class="hero__title hero__title--sm">{T["nf_h1"]}</h1><p class="hero__lead">{T["nf_p"]}</p></section>')
+    nf = re.sub(r'(href|src)="(?!https?:|/|#|mailto:)', r'\1="/', nf)
     with open(os.path.join(OUT, "404.html"), "w", encoding="utf-8") as f:
         f.write(nf)
     with open(os.path.join(OUT, ".nojekyll"), "w") as f:
@@ -436,7 +603,8 @@ def build_misc():
 def main():
     if os.path.isdir(OUT):
         shutil.rmtree(OUT)
-    shutil.copytree(os.path.join(os.path.dirname(__file__), "assets"), os.path.join(OUT, "assets"))
+    shutil.copytree(os.path.join(HERE, "assets"), os.path.join(OUT, "assets"))
+    shutil.rmtree(os.path.join(OUT, "assets", "og"), ignore_errors=True)
     build_home()
     for r in REGIONS:
         build_region(r)
@@ -446,7 +614,7 @@ def main():
     build_about()
     build_legal()
     build_misc()
-    print("OK", sum(len(f) for _, _, f in os.walk(OUT)), "fichiers")
+    print("OK", LANG, sum(len(f) for _, _, f in os.walk(OUT)), "fichiers")
 
 if __name__ == "__main__":
     main()

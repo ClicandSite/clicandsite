@@ -138,7 +138,7 @@ T = {
             region_h1="Visiter la {nom}", region_alt="Le Cap-Ferrat et la côte vus du ciel", iti_d="Un itinéraire complet, faisable sans voiture.",
             og_region="{n} guides pratiques", visit="Visiter ", view_of="Vue de ",
             see_h2="Que voir {lv}", go_h2="Comment aller {la}", tips_h2="Nos conseils pour {pour}", acts_h2="Activités à réserver {lv}",
-            btn_gyg="Voir sur GetYourGuide", btn_viator="Voir sur Viator",
+            btn_gyg="Voir les prix sur GetYourGuide", btn_viator="Comparer sur Viator", book_lead="Réservation en ligne en quelques minutes, annulation gratuite sur la plupart des activités et avis de voyageurs pour bien choisir.", hero_cta="Voir les activités à réserver",
             aff_note="Liens affiliés : si vous réservez, Clic&amp;Site touche une commission, sans surcoût pour vous. Les prix et disponibilités sont ceux de la plateforme.",
             faq="Questions fréquentes", brief="En bref", others="Autres sites de la {nom}",
             ride_t="Y aller avec un chauffeur privé",
@@ -170,7 +170,7 @@ T = {
             region_h1="Visiting the {nom}", region_alt="Aerial view of Cap Ferrat and the coast", iti_d="A complete itinerary you can do without a car.",
             og_region="{n} practical guides", visit="Visit ", view_of="View of ",
             see_h2="Things to do {lv}", go_h2="How to get {la}", tips_h2="Tips for {pour}", acts_h2="Tours and activities {lv}",
-            btn_gyg="See on GetYourGuide", btn_viator="See on Viator",
+            btn_gyg="Check prices on GetYourGuide", btn_viator="Compare on Viator", book_lead="Book online in minutes, with free cancellation on most activities and traveller reviews to help you choose.", hero_cta="See tours and tickets",
             aff_note="Affiliate links: if you book, Clic&amp;Site earns a commission at no extra cost to you. Prices and availability are set by the booking platform.",
             faq="Frequently asked questions", brief="At a glance", others="More places on the {nom}",
             ride_t="Go there with a private driver",
@@ -449,8 +449,8 @@ def build_dest(d):
     hero = hero_img(d["slug"], root, T["view_of"] + d["nom"])
     fiche = "".join(f"<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in d["fiche"])
     acts = "".join(f"""<li class="act">
-  <h3 class="act__t">{e(t)}</h3><p>{e(x)}</p>
-  <p class="act__btns"><a class="btn" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_gyg']}</a><a class="btn btn--ghost" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
+  <h3 class="act__t">{e(t)}</h3><p class="act__d">{e(x)}</p>
+  <p class="act__btns"><a class="bk bk--gyg" href="{e(gyg(q))}" rel="sponsored nofollow noopener" target="_blank"><svg class="bk__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 7v10" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/></svg>{T['btn_gyg']}</a><a class="bk bk--via" href="{e(viator(q))}" rel="sponsored nofollow noopener" target="_blank">{T['btn_viator']}</a></p>
 </li>""" for t, x, q in d["activites"])
     faq = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in d["faq"])
     pool = [x for x in DESTINATIONS if x["region"] == d["region"] and x["slug"] != d["slug"]]
@@ -469,6 +469,7 @@ def build_dest(d):
     {stamp(d['dept'], d['cachet'])}
     <h1 class="post__title">{e(h1)}</h1>
     <p class="post__lead">{e(d['accroche'])}</p>
+    <p class="post__cta"><a class="bk bk--gyg" href="#reserver">{e(T['hero_cta'])}</a></p>
   </div>
   <p class="credit">{hero[1]["credit"]}</p>
 </header>
@@ -478,9 +479,12 @@ def build_dest(d):
     <h2>{e(T['see_h2'].format(lv=lv))}</h2>{voir}
     <h2>{e(T['go_h2'].format(la=la))}</h2>{aller}
     <h2>{e(T['tips_h2'].format(pour=pour))}</h2><ul>{conseils}</ul>
-    <h2>{e(T['acts_h2'].format(lv=lv))}</h2>
-    <ul class="acts">{acts}</ul>
-    <p class="aff-note">{T['aff_note']}</p>
+    <section class="book" id="reserver" aria-labelledby="reserver-t">
+      <h2 id="reserver-t" class="book__t">{e(T['acts_h2'].format(lv=lv))}</h2>
+      <p class="book__lead">{e(_typo(T['book_lead']))}</p>
+      <ul class="acts">{acts}</ul>
+      <p class="aff-note">{T['aff_note']}</p>
+    </section>
     <h2>{T['faq']}</h2>
     <div class="faq">{faq}</div>
   </article>

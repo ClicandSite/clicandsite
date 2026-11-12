@@ -972,7 +972,7 @@ def page(p):
 <section style="padding-top:0"><div class="wrap">
   <h2>Des prix clairs, sans engagement</h2>
   <div class="prices{' one' if len(plans) == 1 else ''}">{prices}</div>
-  <p class="note">TVA non applicable, art. 293 B du CGI. Hébergement, nom de domaine, version mobile et espace client inclus. <a href="/#tarifs">Détail des formules</a>{' · <a href="/#auto-immo">Pack Auto, Moto &amp; Immo</a>' if p.get('pack') else ''} · <a href="/cgv.html">Conditions générales</a></p>
+  <p class="note">TVA non applicable, art. 293 B du CGI. Hébergement, nom de domaine, version mobile, espace client, maintenance et réparations à distance inclus. <a href="/#tarifs">Détail des formules</a>{' · <a href="/#auto-immo">Pack Auto, Moto &amp; Immo</a>' if p.get('pack') else ''} · <a href="/cgv.html">Conditions générales</a></p>
 </div></section>
 <section style="padding-top:0"><div class="wrap">
   <h2>Questions fréquentes</h2>

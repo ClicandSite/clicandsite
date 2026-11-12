@@ -13,7 +13,7 @@ BOUTIQUE = ("Boutique", 99, 490)
 
 PAGES = [
   dict(slug="site-internet-vtc", k="vtc", style="luxe",
-    title="Création de site internet pour chauffeur VTC et taxi",
+    title="Création de site internet pour chauffeur VTC",
     meta="Site internet pour chauffeur VTC et taxi : réservation de course en ligne, tarifs fixes, bouton WhatsApp, version anglaise. En ligne en 48 h, dès 29 €/mois, sans engagement.",
     h1="Libérez-vous des plateformes et trouvez vos clients pros avec votre site web",
     lead="Hôtels, entreprises, agences d'événements, conciergeries : avec votre propre site, vos clients réservent directement chez vous, sans commission. Transferts aéroport, mise à disposition, longues distances.",
@@ -511,7 +511,7 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
            ("Sans engagement","Un abonnement mensuel, résiliable à tout moment, nom de domaine à votre nom.")],
     faq=[("Intervenez-vous en dehors de Cannes ?","Oui : Nice, Antibes, Cagnes-sur-Mer, Grasse, Mougins, Mandelieu, Menton, Saint-Raphaël, Fréjus, Saint-Tropez, et toute la France à distance."),
          ("Faut-il se rencontrer ?","Ce n'est pas nécessaire : tout se fait en ligne. Si vous êtes près de Cannes, on peut aussi en parler de vive voix."),
-         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC et taxis, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, masseurs et ostéopathes, boulangeries, plombiers et électriciens, et d'autres commerces sur demande.")],
+         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, masseurs et ostéopathes, boulangeries, plombiers et électriciens, et d'autres commerces sur demande.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
 # 07/11/2026 (Claude, demande d'Anthony) : pages locales par ville, chacune avec son propre contenu (pas de copie).
@@ -778,7 +778,7 @@ ARGS = ('<div class="args">'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d\'abord pour le téléphone.</span></div>'
   '</div>')
-NAMES = {"vtc":"Chauffeur VTC / Taxi","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -847,7 +847,7 @@ def page(p):
         visual = devices(k, NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
-        visual = devices("vtc", "Chauffeur VTC / Taxi, un des 29 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
+        visual = devices("vtc", "Chauffeur VTC, un des 29 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
     eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 29 métiers")
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)

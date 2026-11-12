@@ -188,3 +188,37 @@ SEO["site-internet-taxi"] = dict(
        ("Puis-je afficher mes tarifs et mes forfaits aéroport ?","Oui. Vous indiquez vos tarifs réglementés et vos forfaits, et vous les modifiez vous-même à tout moment depuis votre espace client."),
        ("Combien coûte un site de taxi ?","Dès 29 € par mois en Essentiel, plus 190 € de mise en ligne une seule fois. Hébergement, nom de domaine, version mobile et dépannages compris, sans engagement."),
        ("En combien de temps mon site est-il en ligne ?","En 48 h après réception de vos informations. Vous le voyez d'abord sur une adresse provisoire, sur ordinateur et téléphone.")])
+
+# 12/11/2026 (Anthony : « les gens cherchent avant d'ouvrir l'entreprise ») : pages créateurs d'entreprise enrichies
+SEO["site-internet-creation-entreprise"] = dict(
+  seo_title="Site internet pour création d'entreprise dès 29 €/mois",
+  body=[
+    ("Pourquoi prévoir son site avant d'ouvrir", [
+      "Quand on crée son entreprise, on pense au statut, à la banque, à l'assurance, au local. Le site internet passe souvent après, alors que c'est lui qui fait venir les premiers clients : avant d'appeler un professionnel qu'il ne connaît pas, presque tout le monde le cherche sur Google.",
+      "Un site prêt le jour de l'ouverture vous fait gagner des semaines. Google a besoin de temps pour découvrir et classer un nouveau site : plus il est en ligne tôt, plus vite il remonte quand on cherche votre métier dans votre ville.",
+      "C'est aussi une question de crédibilité : un site à votre nom, avec vos services, vos tarifs et vos coordonnées, rassure bien plus qu'une simple page sur un réseau social."]),
+    ("Ce qu'il faut sur le site d'une nouvelle entreprise", [
+      "<b>Ce que vous faites et où</b> : vos services, votre ville et votre secteur, écrits simplement. C'est ce que lisent les clients et Google.",
+      "<b>Un moyen de vous joindre en un geste</b> : bouton d'appel sur téléphone, formulaire de contact, WhatsApp si vous l'utilisez.",
+      "<b>Vos tarifs ou une fourchette de prix</b> : c'est l'information la plus recherchée, et elle évite les appels pour rien.",
+      "<b>Des photos réelles</b> : votre local, vos réalisations, votre véhicule ou votre équipe, même peu nombreuses au début.",
+      "<b>Les mentions légales</b> : nom de l'entreprise, forme juridique, SIREN, adresse, hébergeur. Elles sont obligatoires dès que le site est en ligne."]),
+    ("Un budget adapté au démarrage", [
+      "Au lancement, chaque euro compte. Plutôt qu'un devis d'agence à plusieurs milliers d'euros, MyCreativeSite fonctionne en abonnement : dès 29 € par mois, plus 190 € de mise en ligne une seule fois, sans engagement. Hébergement, nom de domaine, version mobile et dépannages sont compris.",
+      "Votre site est fait à partir d'un modèle déjà conçu pour votre métier, en ligne en 48 h, et vous le modifiez vous-même depuis votre téléphone quand votre activité évolue. Pour aller plus loin, lisez notre <a href=\"/conseils/creer-son-entreprise-checklist/\">checklist de la création d'entreprise</a>."]),
+  ]
+)
+SEO["site-internet-auto-entrepreneur"] = dict(
+  seo_title="Site internet pour auto-entrepreneur dès 29 €/mois",
+  body=[
+    ("Un site pro sans plomber vos débuts", [
+      "En micro-entreprise, les charges sont calculées sur votre chiffre d'affaires et le budget de départ est souvent serré. Un site à 29 € par mois, sans engagement, vous donne une vraie présence en ligne sans investissement lourd.",
+      "Le site est fait à partir d'un modèle conçu pour votre métier, mis en ligne en 48 h, avec votre nom de domaine. Vous le modifiez seul, depuis votre téléphone : textes, photos, tarifs, horaires."]),
+    ("Les mentions obligatoires d'un micro-entrepreneur", [
+      "Un micro-entrepreneur n'est pas obligé d'avoir un site. Mais s'il en a un, celui-ci doit afficher des mentions légales : votre nom et prénom précédés ou suivis de la mention « EI » (entrepreneur individuel), votre numéro SIREN, l'adresse de l'entreprise, un moyen de vous contacter et les coordonnées de l'hébergeur du site.",
+      "Si vous vendez en ligne ou prenez des réservations, des informations supplémentaires s'ajoutent (prix, conditions de vente, droit de rétractation selon les cas). Notre guide sur les <a href=\"/conseils/mentions-legales-site-professionnel/\">mentions légales d'un site professionnel</a> fait le point."]),
+    ("Pour quels métiers ?", [
+      "Coiffure ou esthétique à domicile, coach sportif, photographe, artisan du bâtiment, plombier ou électricien, chauffeur VTC, services à domicile, cours particuliers, consultant : chaque activité a son modèle, avec les rubriques qui comptent pour elle (réservation, devis, galerie, zone d'intervention).",
+      "Et si votre activité grandit au-delà de la micro-entreprise, le site vous suit : vous changez de formule ou de statut sans tout refaire. Pour savoir si un site vaut le coup pour vous, lisez <a href=\"/conseils/auto-entrepreneur-site-internet/\">auto-entrepreneur : faut-il un site internet ?</a>"]),
+  ]
+)

@@ -638,6 +638,35 @@ INTENT = [
          ("Mes annonces partent-elles sur d'autres sites que Abracadeal ?","Aujourd'hui la diffusion se fait sur Abracadeal. Votre site et vos pages Google restent par ailleurs visibles par tous."),
          ("Combien ça coûte ?","99 € par mois et 490 € de mise en ligne, une fois. Sans engagement : vous arrêtez quand vous voulez, vos annonces sont alors retirées."),
          ("Qui peut en profiter ?","Les garages et concessions auto et moto, et les agences immobilières. Pour les autres métiers, voyez nos formules Essentiel, Pro et Premium.")]),
+  # 12/11/2026 (Anthony : « les gens cherchent avant d'ouvrir l'entreprise ») : pages pour les créateurs d'entreprise
+  dict(slug="site-internet-creation-entreprise", k=None, label="Création d'entreprise",
+    title="Site internet pour création d'entreprise",
+    meta="Vous créez votre entreprise ? Votre site internet en ligne en 48 h, dès 29 €/mois, sans engagement : être trouvé sur Google dès le premier jour d'activité.",
+    h1="Vous créez votre entreprise ? Ayez votre site dès le premier jour",
+    lead="Les premiers clients vous cherchent sur Google avant même de vous appeler. Un site professionnel en ligne en 48 h, à votre nom, pour démarrer avec une vraie vitrine.",
+    feats=[("Prêt pour l'ouverture","Commandez avant l'ouverture : votre site est prêt pour le jour où vous démarrez."),
+           ("Petit budget de départ","Dès 29 € par mois et 190 € de mise en ligne, une seule fois. Pas d'investissement lourd au démarrage."),
+           ("Sans engagement","Vous arrêtez quand vous voulez : rien ne vous bloque si votre projet évolue."),
+           ("Votre nom de domaine","Votre adresse du type votre-entreprise.fr et votre adresse mail pro, à votre nom."),
+           ("Mentions légales rédigées","Les informations obligatoires (SIREN, adresse, hébergeur) sont intégrées pour vous."),
+           ("Vous le modifiez seul","Nouveaux tarifs, nouvelles photos, horaires : vous changez tout depuis votre téléphone.")],
+    faq=[("Je n'ai pas encore mon SIRET, puis-je commander ?","Oui. On prépare le site avec vous, et vous ajoutez votre SIREN dans les mentions légales dès que vous l'avez reçu."),
+         ("Combien coûte un site quand on démarre ?","Dès 29 € par mois en Essentiel, plus 190 € de mise en ligne une seule fois. Hébergement, nom de domaine et dépannages compris."),
+         ("Un site est-il utile si je démarre petit ?","Oui : c'est souvent la première chose que regarde un client avant d'appeler. Un site à votre nom rassure et vous fait trouver sur Google.")]),
+  dict(slug="site-internet-auto-entrepreneur", k=None, label="Auto-entrepreneur",
+    title="Site internet pour auto-entrepreneur",
+    meta="Site internet pour auto-entrepreneur et micro-entrepreneur : en ligne en 48 h, dès 29 €/mois sans engagement, mentions légales incluses, modifiable depuis votre téléphone.",
+    h1="Le site internet de votre auto-entreprise, simple et pas cher",
+    lead="Vous vous lancez en micro-entreprise ? Un vrai site professionnel à votre nom, en ligne en 48 h, pour le prix d'un abonnement de téléphone.",
+    feats=[("Dès 29 € par mois","Un budget adapté à une auto-entreprise, sans devis à plusieurs milliers d'euros."),
+           ("Mentions légales prêtes","Votre nom avec la mention « EI », votre SIREN, votre adresse, l'hébergeur : on les remplit avec vous."),
+           ("Formulaire de contact et appel","Les demandes de vos clients arrivent par mail ; sur téléphone, un bouton pour vous appeler."),
+           ("Devis en PDF","Créez vos devis à votre nom depuis l'espace client, et envoyez-les à vos clients."),
+           ("Site pour votre métier","Coiffure à domicile, coach, photographe, artisan, VTC… un modèle déjà prévu pour votre activité."),
+           ("Sans engagement","Vous résiliez quand vous voulez, votre nom de domaine reste à vous.")],
+    faq=[("Un auto-entrepreneur est-il obligé d'avoir un site ?","Non, ce n'est pas obligatoire. Mais si vous en avez un, il doit afficher les mentions légales. Et c'est souvent ce qui fait la différence pour être trouvé et choisi."),
+         ("Quelles mentions doivent figurer sur le site d'un micro-entrepreneur ?","Votre nom et prénom suivis de « EI », votre SIREN, votre adresse, un moyen de contact et l'hébergeur du site. Nous les intégrons pour vous."),
+         ("Puis-je changer de formule si mon activité grandit ?","Oui, vous passez à la formule supérieure quand vous voulez, sans refaire le site.")]),
   dict(slug="site-internet-pas-cher", k=None, label="Site pas cher",
     title="Création de site internet pas cher pour les pros",
     meta="Site internet professionnel pas cher : dès 29 €/mois et 190 € de mise en ligne, hébergement et nom de domaine inclus, sans engagement et sans frais cachés.",
@@ -807,6 +836,9 @@ GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "taxi": "site
   "batiment": "site-internet-artisan-batiment-les-indispensables", "beaute": "site-internet-coiffeur-institut-beaute-les-indispensables",
   "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "veterinaire": "site-internet-veterinaire-les-indispensables", "autoecole": "site-internet-auto-ecole-les-indispensables", "coach": "site-internet-coach-sportif-les-indispensables", "photographe": "site-internet-photographe-les-indispensables", "toiletteur": "site-internet-toiletteur-les-indispensables", "fleuriste": "site-internet-fleuriste-les-indispensables", "traiteur": "site-internet-traiteur-les-indispensables", "nautisme": "site-internet-location-bateau-les-indispensables", "kine": "site-internet-kinesitherapeute-les-indispensables", "dentiste": "site-internet-dentiste-les-indispensables", "bijouterie": "site-internet-bijouterie-horlogerie-les-indispensables", "liberal": "site-internet-profession-liberale-les-indispensables", "services": "site-internet-services-a-domicile-les-indispensables", "evenementiel": "site-internet-evenementiel-les-indispensables", "hebergement": "site-internet-chambres-d-hotes-gite-les-indispensables", "tourisme": "site-internet-tourisme-loisirs-les-indispensables", "location": "site-internet-location-demenagement-les-indispensables", "infirmier": "site-internet-infirmier-liberal-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
   "depannage": "site-internet-plombier-electricien-les-indispensables", "boutique": "creer-boutique-en-ligne-les-indispensables"}
+def full_title(t):
+    """12/11/2026 : Google coupe les titres vers 60 caractères ; le nom du site n'est ajouté que s'il tient."""
+    return t if len(t) > 43 else t + " · MyCreativeSite"
 def guide(p):
     g = GUIDES.get(p.get("k"))
     if not g: return ""
@@ -883,7 +915,7 @@ def page(p):
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(p.get("seo_title") or p["title"])} · MyCreativeSite</title>
+<title>{e(full_title(p.get("seo_title") or p["title"]))}</title>
 <meta name="description" content="{e(p["meta"])}">
 <link rel="canonical" href="{url}">
 <meta property="og:title" content="{e(p.get("seo_title") or p["title"])} · MyCreativeSite">
@@ -944,7 +976,7 @@ def page(p):
 </html>
 '''
 
-CTA_LINK = {"Voir le modèle taxi": "/site-internet-taxi/", "Voir le modèle garage d'entretien": "/site-internet-garage-mecanique/", "Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle bijouterie-horlogerie": "/site-internet-bijouterie/", "Voir le modèle profession libérale": "/site-internet-profession-liberale/", "Voir le modèle services à domicile": "/site-internet-services-a-domicile/", "Voir le modèle événementiel": "/site-internet-evenementiel/", "Voir le modèle chambres d'hôtes": "/site-internet-chambres-d-hotes-gite/", "Voir le modèle tourisme et loisirs": "/site-internet-tourisme-loisirs/", "Voir le modèle location et déménagement": "/site-internet-location-demenagement/", "Voir le modèle infirmier libéral": "/site-internet-infirmier-liberal/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
+CTA_LINK = {"Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle coiffure": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle artisan du bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle VTC": "/site-internet-vtc/", "Votre site pour votre création d'entreprise": "/site-internet-creation-entreprise/", "Le site de votre auto-entreprise": "/site-internet-auto-entrepreneur/", "Voir le modèle taxi": "/site-internet-taxi/", "Voir le modèle garage d'entretien": "/site-internet-garage-mecanique/", "Voir le modèle auto-école": "/site-internet-auto-ecole/", "Voir le modèle coach sportif": "/site-internet-coach-sportif/", "Voir le modèle photographe": "/site-internet-photographe/", "Voir le modèle toiletteur": "/site-internet-toiletteur/", "Voir le modèle fleuriste": "/site-internet-fleuriste/", "Voir le modèle traiteur": "/site-internet-traiteur/", "Voir le modèle location de bateaux": "/site-internet-location-bateau/", "Voir le modèle kinésithérapeute": "/site-internet-kinesitherapeute/", "Voir le modèle dentiste": "/site-internet-dentiste/", "Voir le modèle bijouterie-horlogerie": "/site-internet-bijouterie/", "Voir le modèle profession libérale": "/site-internet-profession-liberale/", "Voir le modèle services à domicile": "/site-internet-services-a-domicile/", "Voir le modèle événementiel": "/site-internet-evenementiel/", "Voir le modèle chambres d'hôtes": "/site-internet-chambres-d-hotes-gite/", "Voir le modèle tourisme et loisirs": "/site-internet-tourisme-loisirs/", "Voir le modèle location et déménagement": "/site-internet-location-demenagement/", "Voir le modèle infirmier libéral": "/site-internet-infirmier-liberal/", "Voir le modèle vétérinaire": "/site-internet-veterinaire/", "Voir le modèle restaurant": "/site-internet-restaurant/", "Voir le modèle VTC": "/site-internet-vtc/", "Voir le modèle garage": "/site-internet-garage/", "Voir le modèle concession": "/site-internet-concession-automobile/", "Voir le Pack Auto, Moto & Immo": "/site-internet-diffusion-annonces-auto-immo/", "Voir le modèle immobilier": "/site-internet-agence-immobiliere/", "Voir le modèle bâtiment": "/site-internet-artisan-batiment/", "Voir le modèle beauté": "/site-internet-coiffeur-institut-beaute/", "Voir le modèle bien-être": "/site-internet-masseur-osteopathe-bien-etre/", "Voir le modèle boulangerie": "/site-internet-boulangerie/", "Voir le modèle dépannage": "/site-internet-plombier-electricien/", "Voir la formule Boutique": "/site-internet-boutique-en-ligne/", "Découvrir les modèles par métier": "/#modeles", "Lancer mon site": "/#commande", "Un site pensé pour Google, en ligne en 48 h": "/site-internet-rapide/"}
 ARTICLE_CSS = """
 .art{max-width:740px;padding-block:10px 40px}
 .art h1{margin:6px 0 14px}
@@ -970,7 +1002,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(title)} · MyCreativeSite</title>
+<title>{e(full_title(title))}</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta property="og:title" content="{e(title)}">

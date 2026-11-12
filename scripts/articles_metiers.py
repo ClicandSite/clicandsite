@@ -5,6 +5,27 @@ ML = '<a href="/conseils/mentions-legales-site-professionnel/">mentions légales
 PRIX = '<a href="/conseils/combien-coute-un-site-internet/">combien coûte un site internet</a>'
 
 METIERS = [
+dict(slug="site-internet-taxi-les-indispensables", date="2026-11-12",
+ title="Site internet de taxi : les indispensables pour avoir des clients en direct",
+ desc="Réservation en ligne, transport conventionné, tarifs réglementés, zones desservies, bouton d'appel : ce que doit contenir le site d'un taxi pour être trouvé sur Google.",
+ body=[
+ ("p","Un taxi trouve une bonne partie de ses clients sur la route et à la station. Mais les courses les plus régulières, celles qui remplissent l'agenda (gares tôt le matin, aéroports, transports de patients, entreprises), se réservent à l'avance, et souvent après une recherche sur Google. Un site simple, clair et rapide sur téléphone vous permet de capter ces clients en direct."),
+ ("h2","Les indispensables"),
+ ("ul",["<b>Un bouton d'appel toujours visible</b> sur téléphone, et WhatsApp si vous l'utilisez.",
+        "<b>La réservation de course en ligne</b> : départ, arrivée, date et heure. Pratique pour les départs matinaux et les clients étrangers.",
+        "<b>Le transport conventionné</b>, si vous l'êtes : qui peut en bénéficier, les documents à préparer, comment réserver.",
+        "<b>Vos zones et destinations</b> : votre commune, les villes autour, les gares, aéroports, hôpitaux et cliniques que vous desservez.",
+        "<b>Les tarifs</b> présentés simplement : compteur, forfaits fixés par la préfecture quand ils existent, longues distances sur devis.",
+        "<b>Votre véhicule</b> : places, bagages, siège enfant, accès personnes à mobilité réduite, paiement par carte.",
+        "<b>Vos mentions</b> : nom de l'entreprise, numéro d'autorisation de stationnement et commune de rattachement, conventionnement."]),
+ ("h2","Être trouvé dans sa ville"),
+ ("p",f"Les recherches de taxi sont locales : « taxi gare », « taxi aéroport », « taxi conventionné » suivis d'un nom de ville. Écrivez ces mots naturellement sur votre site, citez les lieux que vous desservez, et gardez la même adresse et le même numéro partout. Votre fiche Google Business Profile et vos avis clients font le reste. Pour aller plus loin : {VG}."),
+ ("h2","Taxi ou VTC : ne pas tout mélanger"),
+ ("p","Seul le taxi peut prendre un client à la volée ou stationner en attente de clientèle ; le VTC travaille uniquement sur réservation. Si vous êtes taxi, mettez en avant ce qui vous distingue : la prise en charge rapide, le conventionnement, les tarifs réglementés et votre connaissance du secteur. Votre site doit afficher clairement que vous êtes un taxi, avec votre autorisation de stationnement."),
+ ("h2","Notre modèle taxi"),
+ ("p","Le modèle taxi de MyCreativeSite réunit la réservation dès l'accueil, le transport conventionné mis en avant, les gares et aéroports, les tarifs modifiables par vous, la présentation du véhicule et les boutons d'appel et WhatsApp. Il est en ligne en 48 h, dès 29 € par mois."),
+ ("cta","Voir le modèle taxi"),
+ ]),
 dict(slug="concession-auto-moto-vendre-plus-avec-son-site", date="2026-11-09",
  title="Concession auto ou moto : vendre plus de véhicules grâce à son site",
  desc="Une page par véhicule sur Google, des annonces mises à jour toutes seules, la reprise et le financement en avant : la méthode pour qu'un site de concession vende vraiment.",

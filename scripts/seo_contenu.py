@@ -155,3 +155,36 @@ SEO = {
     ("Un site rapide à charger, ça compte pour Google ?", "Oui : la vitesse sur mobile fait partie des critères pris en compte par Google, et un site lent fait partir les visiteurs."),
   ]),
 }
+
+# 12/11/2026 (Anthony : « fais une page SEO ») : page taxi enrichie
+SEO["site-internet-taxi"] = dict(
+  seo_title="Site internet pour taxi : réservation en ligne dès 29 €/mois",
+  meta="Création de site internet pour taxi : réservation de course en ligne, transport conventionné CPAM, gares et aéroports, bouton d'appel. En ligne en 48 h, dès 29 €/mois, sans engagement.",
+  h1="Création de site internet pour taxi : vos clients vous réservent en direct",
+  lead="Habitués, patients, hôtels, voyageurs qui arrivent en gare ou à l'aéroport : avec votre propre site, ils vous trouvent sur Google et vous réservent sans passer par une centrale. Un site de taxi pensé pour le téléphone, en ligne en 48 h, dès 29 € par mois.",
+  body=[
+    ("Pourquoi un taxi a besoin de son propre site", [
+      "Quand quelqu'un tape « taxi » suivi du nom de sa ville, Google affiche d'abord des résultats locaux : fiches d'entreprise, centrales de réservation, annuaires. Sans site, vous dépendez de ces intermédiaires pour être trouvé. Avec un site à votre nom, vous existez en direct, avec vos zones, vos services et votre numéro.",
+      "Le site travaille surtout pour les courses réservées à l'avance : un départ tôt pour la gare, un transfert vers l'aéroport, des allers-retours réguliers pour des soins, une entreprise qui reçoit des visiteurs. Ce sont des clients fidèles, qui vous rappellent si vous avez été à l'heure. Votre site leur donne une façon simple de vous retrouver.",
+      "Pour la prise en charge immédiate, le bouton d'appel et le bouton WhatsApp restent visibles en permanence sur téléphone : un geste suffit pour vous joindre."]),
+    ("Le transport conventionné, un vrai argument", [
+      "Si votre taxi est conventionné par l'Assurance maladie, dites-le clairement : beaucoup de patients et de familles cherchent un « taxi conventionné » pour une consultation, un examen, une séance de soins ou une hospitalisation, avec un bon de transport prescrit par le médecin.",
+      "Le modèle met le transport conventionné en avant dans vos services, et vous y ajoutez les informations utiles depuis votre espace client : qui peut en bénéficier, les documents à préparer (prescription médicale de transport, carte Vitale), le tiers payant. Les demandes de course arrivent directement chez vous, avec le jour, l'heure et l'adresse."]),
+    ("Des informations claires sur vos tarifs", [
+      "Les tarifs des taxis sont réglementés : compteur, prise en charge, suppléments et, selon les villes, forfaits pour les aéroports ou les gares fixés par la préfecture. Votre site les présente simplement, pour rassurer avant la course : ce qui est au compteur, ce qui est au forfait, et les longues distances sur devis.",
+      "Vous modifiez vous-même ces informations depuis votre espace client, par exemple quand un nouvel arrêté change les tarifs, sans rien connaître à l'informatique."]),
+    ("Être trouvé dans votre ville et votre secteur", [
+      "Pour qu'une personne qui cherche « taxi gare » ou « taxi aéroport » dans votre ville tombe sur vous, le site indique précisément votre commune de rattachement, les villes autour, les gares, aéroports, hôpitaux et cliniques que vous desservez. Ces mots, écrits naturellement, sont ce que Google lit pour vous proposer.",
+      "Le site est rapide sur téléphone, sécurisé (HTTPS) et contient les données que Google sait lire (nom, téléphone, zone desservie). Pensez aussi à votre fiche Google Business Profile : le site et la fiche se renforcent l'un l'autre, et vos avis clients y comptent beaucoup."]),
+    ("Ce que comprend votre site de taxi", [
+      "<b>Réservation de course</b> dès l'accueil : départ, arrivée, date et heure. La demande arrive par mail et dans « Mes clients », et vous confirmez au client.",
+      "<b>Votre véhicule et vos services</b> : nombre de places, bagages, siège enfant, accès pour personnes à mobilité réduite, paiement par carte à bord, langues parlées.",
+      "<b>Vos mentions obligatoires</b> : nom de l'entreprise, numéro d'autorisation de stationnement et commune, conventionnement le cas échéant. Les mentions légales sont rédigées pour vous.",
+      "<b>Version anglaise</b> pour la clientèle touristique et d'affaires (incluse en Premium), et <b>devis et bons en PDF</b> à votre nom depuis l'espace client.",
+      "Vous êtes chauffeur VTC et pas taxi ? Voyez notre <a href=\"/site-internet-vtc/\">modèle de site pour chauffeur VTC</a>, pensé pour les réservations à l'avance et les forfaits."]),
+  ],
+  faq=[("Puis-je indiquer que je suis conventionné CPAM ?","Oui. Le transport de patients assis est mis en avant dans vos services, et vous ajoutez les documents à prévoir et la façon de réserver. Les demandes arrivent directement chez vous."),
+       ("Je travaille avec une centrale de réservation, un site est-il utile ?","Oui : il vous apporte vos propres clients, ceux qui vous cherchent sur Google ou qui veulent rappeler le même chauffeur, sans commission sur la course."),
+       ("Puis-je afficher mes tarifs et mes forfaits aéroport ?","Oui. Vous indiquez vos tarifs réglementés et vos forfaits, et vous les modifiez vous-même à tout moment depuis votre espace client."),
+       ("Combien coûte un site de taxi ?","Dès 29 € par mois en Essentiel, plus 190 € de mise en ligne une seule fois. Hébergement, nom de domaine, version mobile et dépannages compris, sans engagement."),
+       ("En combien de temps mon site est-il en ligne ?","En 48 h après réception de vos informations. Vous le voyez d'abord sur une adresse provisoire, sur ordinateur et téléphone.")])

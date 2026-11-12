@@ -103,6 +103,9 @@ function template(p: { name: string; trade: string; city: string; site_status: s
   if (p.trade === "garage" && (p.segment === "concession" || p.segment === "moto")) t = { ...t, label: p.segment === "moto" ? "concession moto" : "concession", plus: "vos véhicules en vente, une page par véhicule, diffusés automatiquement sur Abracadeal" };
   const sg = p.segment ? SEG[p.segment] : undefined;
   if (sg) t = { ...t, label: sg.label, plus: sg.plus || t.plus };
+  // 12/11/2026 (Anthony) : un « taxi » (même code APE que les VTC) reçoit le mail taxi et le lien vers la page taxi
+  const taxi = p.trade === "vtc" && /\btaxis?\b/i.test(p.name || "");
+  if (taxi) t = { ...t, label: "taxi", page: "/site-internet-taxi/", plus: "la réservation de courses en ligne, le transport conventionné mis en avant et un bouton d'appel direct" };
   let page = t.page;
   if (p.segment === "concession") page = "/site-internet-concession-automobile/";
   if (p.segment === "moto") page = "/site-internet-concession-moto/";
@@ -137,7 +140,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "MyCreativeSite",
   ].join("\n");
   const subject = hasSite ? `${who} : un site internet neuf en 48 h` : `${who} : votre site internet en 48 h`;
-  return { key: p.trade + (hasSite ? "-refonte" : "-creation"), subject, body, btn: { label: "Voir des exemples de sites", url: SITE + page + "?utm_source=prospection&utm_medium=email" } }; // 12/11/2026 : lien marqué pour le compteur de visiteurs
+  return { key: (taxi ? "taxi" : p.trade) + (hasSite ? "-refonte" : "-creation"), subject, body, btn: { label: "Voir des exemples de sites", url: SITE + page + "?utm_source=prospection&utm_medium=email" } }; // 12/11/2026 : lien marqué pour le compteur de visiteurs
 }
 
 // 09/11/2026 (Anthony) : créateurs d'entreprise (moins d'un an) en priorité, avec un mot de félicitations

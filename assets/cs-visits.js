@@ -13,7 +13,6 @@
     if (window.self !== window.top) return; // modèle affiché dans un cadre (aperçu)
     var path = location.pathname.replace(/index\.html$/, '') || '/';
     var day = new Date().toISOString().slice(0, 10), k = 'cs_visit_' + day + '_' + path;
-    if (localStorage.getItem(k)) return;
     var v = localStorage.getItem('cs_vid');
     if (!v) { v = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem('cs_vid', v); }
     var host = '', src = 'direct';
@@ -33,11 +32,27 @@
     // Navigation interne : on ne garde la provenance que pour la page d'arrivée.
     if (src === 'direct' && document.referrer && /(^|\.)mycreativesite\.fr$/.test(new URL(document.referrer).hostname.replace(/^www\./, ''))) src = 'interne';
     var mobile = matchMedia('(max-width:760px),(pointer:coarse)').matches;
-    var body = JSON.stringify({ p_visitor: v, p_path: path, p_source: src, p_mobile: mobile, p_ref_host: host || null });
-    fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_track_visit', {
-      method: 'POST', keepalive: true,
-      headers: { 'Content-Type': 'application/json', apikey: 'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO' },
-      body: body
-    }).then(function (r) { if (r.ok) localStorage.setItem(k, '1'); }).catch(function () {});
+    var send = function (pth, source, key) {
+      fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_track_visit', {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', apikey: 'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO' },
+        body: JSON.stringify({ p_visitor: v, p_path: pth, p_source: source, p_mobile: mobile, p_ref_host: source === 'interne' ? null : (host || null) })
+      }).then(function (r) { if (r.ok) localStorage.setItem(key, '1'); }).catch(function () {});
+    };
+    if (!localStorage.getItem(k)) send(path, src, k);
+    /* 12/11/2026 (Anthony : « quelles pages amènent des visiteurs et des commandes ») : étapes vers la commande,
+       enregistrées comme pages virtuelles « /_… », une fois par visiteur et par jour. Admin : bloc « Ce qui amène des commandes ». */
+    window.csTrack = function (ev) {
+      try { var kk = 'cs_visit_' + day + '_/_' + ev; if (!localStorage.getItem(kk)) send('/_' + ev, 'interne', kk); } catch (_) {}
+    };
+    document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
+      if (e.target.closest('.tabs [data-k], .gcard')) { window.csTrack('modele-vu'); return; }  // aperçu d'un modèle sur l'accueil
+      var a = e.target.closest('a[href]'); if (!a) return;
+      var h = a.getAttribute('href') || '';
+      if (/(^|\/)espace\/\?[^#]*demo=/.test(h)) window.csTrack('essai-espace');
+      else if (/(^|\/)modeles\//.test(h)) window.csTrack('modele-vu');
+      else if (/#commande$/.test(h)) window.csTrack('clic-commander');
+    }, true);
   } catch (_) {}
 })();

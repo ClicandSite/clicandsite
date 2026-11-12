@@ -1244,6 +1244,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
   $('o-plan').addEventListener('change',rules); rules();
 
   line();
+  $('orderform').addEventListener('focusin',function(){ if(window.csTrack) window.csTrack('commande-commencee'); },{once:true}); // 12/11/2026 : suivi des étapes (admin)
   $('orderform').addEventListener('submit',function(e){
     e.preventDefault();
     var f=e.target, b=f.querySelector('button[type=submit]'), ok=$('ok'), v=function(id){return ($(id).value||'').trim();};
@@ -1254,7 +1255,7 @@ document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener(
     b.disabled=true; b.textContent='Envoi…'; ok.hidden=true; ok.classList.remove('err');
     fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_order_submit',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify(data)})
     .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j&&j.message||'Envoi impossible'); return j; }); })
-    .then(function(j){ var em=data.p_email; f.reset(); line(); b.textContent='Demande envoyée';
+    .then(function(j){ if(window.csTrack) window.csTrack('commande-envoyee'); var em=data.p_email; f.reset(); line(); b.textContent='Demande envoyée';
       if(data.p_self&&j&&j.slug){ ok.innerHTML='Merci ! Votre site est créé. <a class="go" href="/espace/?inscription=1&email='+encodeURIComponent(em)+'">Créer mon mot de passe et remplir mon site</a> avec l\'adresse '+em.replace(/[<>&"]/g,'')+'. Quand il vous plaît, vous le validez et vous payez : on réserve alors votre nom de domaine.'; }
       else if(j&&j.slug){ ok.innerHTML='Merci ! Dernière étape : <a class="go" href="/espace/?inscription=1&vue=infos&email='+encodeURIComponent(em)+'">créez votre mot de passe et déposez vos infos et vos photos</a>. On prépare votre site avec, puis on vous l\'envoie pour validation.'; }
       else ok.textContent='Merci ! Votre demande est bien arrivée. On vous contacte sous 24 h (jours ouvrés) pour préparer votre site. Une question d\'ici là : contact@mycreativesite.fr';
@@ -1333,6 +1334,6 @@ show();
   go(1,false);
 })();
 </script>
-<script src="/assets/cs-visits.js?v=1" defer></script>
+<script src="/assets/cs-visits.js?v=2" defer></script>
 </body>
 </html>

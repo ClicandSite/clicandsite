@@ -1,0 +1,7 @@
+-- 12/11/2026 : tableau « Ce qui amène des commandes » (admin). Appliquée via MCP (migration cs_admin_funnel).
+-- Étapes enregistrées par /assets/cs-visits.js (window.csTrack) comme pages virtuelles « /_… » dans clicandsite.site_visits :
+-- /_modele-vu, /_essai-espace, /_clic-commander, /_commande-commencee, /_commande-envoyee.
+-- cs_admin_traffic : ces pages virtuelles sont exclues des compteurs de visiteurs et de pages.
+-- cs_admin_funnel(p_days) : par visiteur, page d'arrivée + provenance (première vraie page, hors navigation interne si possible),
+-- puis étapes atteintes ; totaux, par page d'arrivée, par provenance, et nombre de demandes reçues (site_orders).
+-- Voir le texte complet dans l'historique Supabase (migration « cs_admin_funnel »).

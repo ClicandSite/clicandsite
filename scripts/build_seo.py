@@ -14,7 +14,7 @@ BOUTIQUE = ("Boutique", 99, 490)
 PAGES = [
   dict(slug="site-internet-vtc", k="vtc", style="luxe",
     title="Création de site internet pour chauffeur VTC",
-    meta="Site internet pour chauffeur VTC et taxi : réservation de course en ligne, tarifs fixes, bouton WhatsApp, version anglaise. En ligne en 48 h, dès 29 €/mois, sans engagement.",
+    meta="Site internet pour chauffeur VTC : réservation de course en ligne, tarifs fixes, bouton WhatsApp, version anglaise. En ligne en 48 h, dès 29 €/mois, sans engagement.",
     h1="Libérez-vous des plateformes et trouvez vos clients pros avec votre site web",
     lead="Hôtels, entreprises, agences d'événements, conciergeries : avec votre propre site, vos clients réservent directement chez vous, sans commission. Transferts aéroport, mise à disposition, longues distances.",
     feats=[("Réservation dès l'accueil","Départ, arrivée, date et heure : la demande arrive par mail et vous rappelez le client."),
@@ -26,6 +26,21 @@ PAGES = [
     faq=[("Mon site peut-il remplacer les plateformes de VTC ?","Il les complète : vos clients fidèles et les personnes qui vous trouvent sur Google réservent chez vous, sans commission sur la course."),
          ("Puis-je afficher mes tarifs aéroport ?","Oui. Vous modifiez vous-même vos forfaits depuis votre espace client, à tout moment."),
          ("Le site fonctionne-t-il pour une petite société de VTC avec plusieurs chauffeurs ?","Oui : vous présentez vos véhicules et les réservations arrivent sur l'adresse de votre choix.")]),
+  # 12/11/2026 (Anthony) : page dédiée aux taxis, la page VTC redevient 100 % VTC. Même modèle (vtc.html).
+  dict(slug="site-internet-taxi", k="vtc", style="moderne", label="Taxi", eyebrow_name="taxi",
+    title="Création de site internet pour taxi",
+    meta="Site internet pour chauffeur de taxi : réservation de course en ligne, transport conventionné, gares et aéroports, bouton d'appel. En ligne en 48 h, dès 29 €/mois, sans engagement.",
+    h1="Le site de votre taxi, pour que vos clients vous réservent en direct",
+    lead="Habitués, patients, hôtels, voyageurs qui arrivent en gare ou à l'aéroport : avec votre propre site, ils vous trouvent sur Google et vous réservent sans passer par une centrale.",
+    feats=[("Réservation de course","Départ, arrivée, date et heure : la demande arrive par mail et vous confirmez au client."),
+           ("Transport conventionné","Mettez en avant votre conventionnement CPAM pour les patients assis : consultations, examens, hospitalisations."),
+           ("Bouton d'appel toujours visible","Sur téléphone, le client vous appelle ou vous écrit sur WhatsApp en un geste."),
+           ("Gares, aéroports, longues distances","Vos trajets réguliers et vos zones desservies affichés clairement, pour ressortir sur Google dans votre ville."),
+           ("Votre véhicule et vos services","Places, bagages, siège enfant, accès personnes à mobilité réduite, paiement par carte à bord."),
+           ("Site en anglais","Pratique pour la clientèle touristique et d'affaires (inclus en Premium).")],
+    faq=[("Puis-je indiquer que je suis conventionné CPAM ?","Oui. Une rubrique présente le transport de patients assis et les démarches, et les demandes arrivent directement chez vous."),
+         ("Je dépends d'une centrale de réservation, le site est-il utile ?","Oui : il vous apporte vos propres clients, ceux qui vous cherchent sur Google ou qui veulent rappeler le même chauffeur."),
+         ("Je peux modifier mes zones et mes services moi-même ?","Oui, depuis votre espace client, à tout moment, sans rien connaître à l'informatique.")]),
   dict(slug="site-internet-restaurant", k="restaurant", style="chaleureux",
     title="Création de site internet pour restaurant",
     meta="Site internet pour restaurant : réservation de table, carte et menu du jour modifiables, photos, horaires, plan d'accès. En ligne en 48 h, dès 29 €/mois, sans engagement.",
@@ -844,11 +859,11 @@ def page(p):
     if k:
         mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else (k + ".html", k)
         demo = f'<a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
-        visual = devices(k, NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
+        visual = devices(k, p.get("label") or NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
         visual = devices("vtc", "Chauffeur VTC, un des 29 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
-    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 29 métiers")
+    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(p.get("eyebrow_name") or NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 29 métiers")
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)
     if p.get("pack"):

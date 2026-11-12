@@ -144,7 +144,7 @@ SEO = {
       "Une fois en ligne, un prix, un horaire ou une photo se change en quelques secondes depuis votre espace client, et la modification est visible aussitôt. La page <a href=\"/site-internet-facile-a-modifier/\">site facile à modifier</a> montre comment, et vous pouvez essayer l'espace client sans inscription.",
     ]),
     ("Quel site pour aller vite ?", [
-      "Les modèles existent déjà pour de nombreux métiers, par exemple <a href=\"/site-internet-plombier-electricien/\">plombier et électricien</a>, <a href=\"/site-internet-vtc/\">chauffeur VTC</a> ou <a href=\"/site-internet-boulangerie/\">boulangerie</a>. Côté prix : Essentiel à 29 € par mois (+ 190 € de mise en ligne), Pro à 49 € (+ 290 €), Premium à 79 € (+ 490 €), sans engagement. Pour un site sans rien à gérer, voyez aussi notre offre <a href=\"/site-internet-cle-en-main/\">site clé en main</a>.",
+      "Les modèles existent déjà pour de nombreux métiers, par exemple <a href=\"/site-internet-plombier-electricien/\">plombier et électricien</a>, <a href=\"/site-internet-vtc/\">chauffeur VTC et taxi</a> ou <a href=\"/site-internet-boulangerie/\">boulangerie</a>. Côté prix : Essentiel à 29 € par mois (+ 190 € de mise en ligne), Pro à 49 € (+ 290 €), Premium à 79 € (+ 490 €), sans engagement. Pour un site sans rien à gérer, voyez aussi notre offre <a href=\"/site-internet-cle-en-main/\">site clé en main</a>.",
     ]),
   ],
   faq=[

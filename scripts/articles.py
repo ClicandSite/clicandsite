@@ -2,7 +2,7 @@
 # Blocs : ("p", texte) · ("h2", titre) · ("ul", [puces]) · ("cta", texte)
 ARTICLES = [
 dict(slug="site-internet-chauffeur-vtc-les-indispensables", date="2026-11-08",
- title="Site internet de chauffeur VTC : les 9 indispensables pour avoir des clients en direct",
+ title="Site internet de chauffeur VTC et taxi : les 9 indispensables pour avoir des clients en direct",
  desc="Réservation en ligne, tarifs aéroport, WhatsApp, version anglaise, paiement à l'avance : ce que doit contenir le site d'un chauffeur VTC pour trouver des clients sans commission.",
  body=[
  ("p","Les plateformes apportent des courses, mais elles prennent une commission sur chacune d'elles et le client ne vous appartient pas : la prochaine fois, il commandera un autre chauffeur. Votre propre site sert à l'inverse : être trouvé sur Google, rassurer, et faire réserver chez vous, en direct. Encore faut-il qu'il contienne les bonnes informations."),

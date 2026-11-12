@@ -137,7 +137,7 @@ function template(p: { name: string; trade: string; city: string; site_status: s
     "MyCreativeSite",
   ].join("\n");
   const subject = hasSite ? `${who} : un site internet neuf en 48 h` : `${who} : votre site internet en 48 h`;
-  return { key: p.trade + (hasSite ? "-refonte" : "-creation"), subject, body, btn: { label: "Voir des exemples de sites", url: SITE + page } };
+  return { key: p.trade + (hasSite ? "-refonte" : "-creation"), subject, body, btn: { label: "Voir des exemples de sites", url: SITE + page + "?utm_source=prospection&utm_medium=email" } }; // 12/11/2026 : lien marqué pour le compteur de visiteurs
 }
 
 // 09/11/2026 (Anthony) : créateurs d'entreprise (moins d'un an) en priorité, avec un mot de félicitations
@@ -164,7 +164,7 @@ function buildHtml(body: string, btn: Tpl["btn"], unsub: string) {
 <tr><td style="padding:26px 28px 6px;font-size:15px;line-height:1.55">${paras}
 <p style="margin:22px 0 8px"><a href="${esc(btn.url)}" style="display:inline-block;background:#6d28d9;color:#fff;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:10px">${esc(btn.label)}</a></p>
 </td></tr><tr><td style="padding:14px 28px 22px;font-size:12px;color:#7a7290;border-top:1px solid #eee">
-${NAME} · Création de sites internet pour les professionnels · <a href="${SITE}" style="color:#6d28d9">mycreativesite.fr</a><br>
+${NAME} · Création de sites internet pour les professionnels · <a href="${SITE}/?utm_source=prospection&utm_medium=email" style="color:#6d28d9">mycreativesite.fr</a><br>
 Vous recevez ce message car votre entreprise est référencée dans l'annuaire officiel des entreprises.
 <a href="${esc(unsub)}" style="color:#7a7290">Ne plus recevoir nos messages</a> (ou répondez STOP).
 </td></tr></table></td></tr></table></body></html>`;

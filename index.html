@@ -1140,7 +1140,8 @@ function show(){
   document.querySelectorAll('.fchips button').forEach(function(x){ var f=x.dataset.f; x.hidden=FK[f].indexOf(cur.k)<0; x.disabled=!FS(f,cur.s); x.title=x.disabled?'Le style '+SN[cur.s]+' n\'est pas inclus dans cette formule':''; });
   var kn=document.getElementById('ex-kname'); if(kn) kn.textContent=NAMES[cur.k];
   var url=FILES[cur.k]+'&f='+cur.f+'#'+cur.s, v=mob()?'m':view, f=v==='m'?ifm:ifd;
-  if(f.getAttribute('src')!==url){f.setAttribute('src',url);}
+  /* 12/11/2026 (Claude, audit) : un modèle pèse ~3 Mo (photos intégrées) ; l'aperçu n'est chargé que quand la zone approche de l'écran (l'accueil passait de 4,6 Mo à ~2 Mo). */
+  if(window.__mcsPrevVis&&f.getAttribute('src')!==url){f.setAttribute('src',url);}
   document.getElementById('ex-open').href=url;
   document.getElementById('ex-edit').href='espace/?demo='+(cur.k==='concession'?'garage&concession=1':cur.k==='atelier'?'garage&atelier=1':cur.k)+'&style='+cur.s;
   document.getElementById('ex-url').textContent=URLS[cur.k];
@@ -1162,6 +1163,7 @@ document.querySelectorAll('.fchips button').forEach(function(b){b.addEventListen
 document.querySelectorAll('.sarr').forEach(function(b){b.addEventListener('click',function(){var r=document.querySelector('.srow'); r.scrollBy({left:(+b.dataset.d)*Math.max(240,r.clientWidth*.8),behavior:'smooth'});});});
 var ec2=document.getElementById('ex-choose2'); if(ec2) ec2.addEventListener('click',function(){ document.getElementById('ex-choose').click(); });
 window.addEventListener('resize',function(){ show(); });
+(function(){var sc=document.querySelector('.screens');if(!sc||!('IntersectionObserver' in window)){window.__mcsPrevVis=true;show();return;}var io=new IntersectionObserver(function(es){if(es.some(function(e){return e.isIntersecting;})){window.__mcsPrevVis=true;io.disconnect();show();}},{rootMargin:'600px 0px'});io.observe(sc);})();
 (function(){
   var g=document.getElementById('grid'), html='';
   var PICK={'vtc':'signature','restaurant':'chaleureux','garage':'audacieux','atelier':'audacieux','concession':'luxe','immobilier':'riviera','batiment':'corporate','beaute':'poudre','bienetre':'zen','veterinaire':'moderne','autoecole':'pop','coach':'neon','photographe':'graphite','toiletteur':'soleil','fleuriste':'provence','traiteur':'nuit','nautisme':'marine','kine':'foret','dentiste':'ocean','bijouterie':'signatureonyx','liberal':'signaturesaphir','services':'minimal','evenementiel':'signaturebordeaux','hebergement':'terracotta','tourisme':'signatureivoire','location':'retro','infirmier':'riviera','boulangerie':'chaleureux','depannage':'pop','boutique':'minimal'};

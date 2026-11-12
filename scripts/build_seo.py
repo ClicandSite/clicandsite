@@ -103,23 +103,23 @@ PAGES = [
          ("Le site est-il adapté à un agent indépendant ou mandataire ?","Oui : il met en avant votre nom, votre secteur et votre accompagnement personnel."),
          ("Faut-il payer une passerelle de diffusion ?","Non : avec le Pack Auto, Moto & Immo, la diffusion sur Abracadeal est incluse et illimitée.")]),
   dict(slug="site-internet-concession-automobile", k="concession", style="luxe", pack=True,
-    title="Création de site internet pour concession automobile et moto",
-    meta="Site internet pour concession auto et moto : stock de véhicules d'occasion, une page Google par véhicule, reprise, financement, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
-    h1="Le site internet des concessions auto et moto qui vend vos véhicules",
+    title="Création de site internet pour concession automobile",
+    meta="Site internet pour concession automobile : stock de voitures d'occasion, une page Google par véhicule, reprise, financement, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
+    h1="Le site internet des concessions automobiles qui vend vos voitures",
     lead="100 % vente : pas d'atelier, pas de rendez-vous, tout le site est tourné vers votre stock. Chaque véhicule a sa propre page sur Google et part automatiquement en annonce sur Abracadeal.",
-    feats=[("Votre stock en vitrine","Voitures et motos filtrables par marque, énergie et budget, avec photos, prix et statut (en vente, réservé, vendu)."),
+    feats=[("Votre stock en vitrine","Voitures filtrables par marque, énergie et budget, avec photos, prix et statut (en vente, réservé, vendu)."),
            ("Une page Google par véhicule","« BMW Série 3 2020 – 24 900 € – votre ville » : une vraie page par véhicule, avec fiche technique, équipements et photos, que Google peut afficher dans ses résultats."),
            ("Annonces illimitées sur Abracadeal","Votre stock est publié et mis à jour tout seul sur Abracadeal. Un véhicule vendu disparaît partout en même temps."),
            ("Fiche véhicule complète","Marque, modèle, version, année, kilométrage, énergie, boîte, puissance, couleur, Crit'Air, garantie, jusqu'à 30 photos : vous remplissez une fois, tout suit."),
            ("Reprise et financement","Demande de reprise en ligne (immatriculation et kilométrage), que vous recevez par mail et dans votre espace, et vos solutions de financement mises en avant."),
            ("Demandes suivies dans un CRM","« Je suis intéressé », demandes d'essai et de reprise arrivent dans votre espace, avec l'historique de chaque client.")],
     faq=[("Quelle différence avec un site de garage ?","La version concession retire l'atelier, les forfaits et la prise de rendez-vous : les boutons mènent à vos véhicules et le site parle d'achat, de reprise et de financement."),
-         ("Je vends des voitures et des motos, ça marche ?","Oui : chaque fiche peut être une voiture, une moto ou un scooter, et Google les reconnaît comme tels."),
+         ("Je vends aussi des motos, ça marche ?","Oui : chaque fiche peut être une voiture, une moto ou un scooter. Si vous vendez surtout des motos, choisissez plutôt notre modèle concession moto."),
          ("Combien coûte le Pack Auto, Moto & Immo ?","99 € par mois et 490 € de mise en ligne, une fois. Annonces illimitées sur Abracadeal, CRM et page Google par véhicule compris, sans engagement."),
          ("Faut-il une passerelle ou un logiciel de diffusion ?","Non : la diffusion sur Abracadeal est incluse. Vous mettez à jour votre stock une seule fois, dans votre espace client."),
          ("Mes véhicules apparaîtront-ils sur Google ?","Chaque véhicule a sa propre page avec un titre, une description et des données structurées (marque, modèle, kilométrage, prix) que Google sait lire. Le délai d'apparition dépend de Google, en général quelques jours à quelques semaines.")]),
-  dict(slug="site-internet-concession-moto", label="Concession moto", k="concession", style="nuit", pack=True,
-    title="Création de site internet pour concession et garage moto",
+  dict(slug="site-internet-concession-moto", label="Concession moto", k="moto", style="luxe", pack=True,
+    title="Création de site internet pour concession moto",
     meta="Site internet pour concession moto et scooter : motos d'occasion avec une page Google par modèle, reprise, financement, atelier en option, annonces illimitées sur Abracadeal. 99 €/mois, sans engagement.",
     h1="Un site pour vendre vos motos et scooters, même pendant que la boutique est fermée",
     lead="Roadsters, trails, sportives, scooters : vos motos d'occasion en vitrine, chacune avec sa page sur Google, et diffusées sur Abracadeal sans rien ressaisir.",
@@ -822,7 +822,7 @@ ARGS = ('<div class="args">'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d\'abord pour le téléphone.</span></div>'
   '</div>')
-NAMES = {"vtc":"Chauffeur VTC","taxi":"Taxi","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","taxi":"Taxi","moto":"Concession moto","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession automobile","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -831,7 +831,7 @@ def trade_links(cur):
     out += [f'<a href="/{p["slug"]}/">{p["label"]}</a>' for p in INTENT if p["slug"] != cur]
     return "".join(out)
 
-GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "taxi": "site-internet-taxi-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables",
+GUIDES = {"moto": "concession-auto-moto-vendre-plus-avec-son-site", "vtc": "site-internet-chauffeur-vtc-les-indispensables", "taxi": "site-internet-taxi-les-indispensables", "restaurant": "site-internet-restaurant-les-indispensables",
   "garage": "site-internet-garage-les-indispensables", "concession": "concession-auto-moto-vendre-plus-avec-son-site", "immobilier": "site-internet-agence-immobiliere-les-indispensables",
   "batiment": "site-internet-artisan-batiment-les-indispensables", "beaute": "site-internet-coiffeur-institut-beaute-les-indispensables",
   "bienetre": "site-internet-masseur-osteopathe-bien-etre-les-indispensables", "veterinaire": "site-internet-veterinaire-les-indispensables", "autoecole": "site-internet-auto-ecole-les-indispensables", "coach": "site-internet-coach-sportif-les-indispensables", "photographe": "site-internet-photographe-les-indispensables", "toiletteur": "site-internet-toiletteur-les-indispensables", "fleuriste": "site-internet-fleuriste-les-indispensables", "traiteur": "site-internet-traiteur-les-indispensables", "nautisme": "site-internet-location-bateau-les-indispensables", "kine": "site-internet-kinesitherapeute-les-indispensables", "dentiste": "site-internet-dentiste-les-indispensables", "bijouterie": "site-internet-bijouterie-horlogerie-les-indispensables", "liberal": "site-internet-profession-liberale-les-indispensables", "services": "site-internet-services-a-domicile-les-indispensables", "evenementiel": "site-internet-evenementiel-les-indispensables", "hebergement": "site-internet-chambres-d-hotes-gite-les-indispensables", "tourisme": "site-internet-tourisme-loisirs-les-indispensables", "location": "site-internet-location-demenagement-les-indispensables", "infirmier": "site-internet-infirmier-liberal-les-indispensables", "boulangerie": "site-internet-boulangerie-les-indispensables",
@@ -906,7 +906,7 @@ def page(p):
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
     if k:
-        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else ("vtc.html?taxi=1", "taxi") if k == "taxi" else (k + ".html", k)
+        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else ("vtc.html?taxi=1", "taxi") if k == "taxi" else ("garage.html?concession=1&amp;moto=1", "garage&amp;concession=1&amp;moto=1") if k == "moto" else (k + ".html", k)
         demo = f'<a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
         visual = devices(k, p.get("label") or NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:

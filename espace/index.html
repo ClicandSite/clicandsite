@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=25"></script>
+<script src="/assets/cs-edit.js?v=26"></script>
 <style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -407,7 +407,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <span><b>Démo</b> : essayez librement, rien n'est enregistré.</span>
       <label for="demoTrade" style="margin:0">Métier</label>
       <select id="demoTrade" autocomplete="off" style="width:auto;padding:5px 9px">
-        <option value="vtc">Chauffeur VTC</option><option value="taxi">Taxi</option><option value="restaurant">Restaurant</option><option value="garage">Garage et concession</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment et rénovation</option><option value="beaute">Coiffure et beauté</option><option value="bienetre">Bien-être et santé</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="boulangerie">Boulangerie et pâtisserie</option><option value="depannage">Dépannage à domicile</option><option value="boutique">Boutique en ligne</option>
+        <option value="vtc">Chauffeur VTC</option><option value="taxi">Taxi</option><option value="restaurant">Restaurant</option><option value="garage">Garage et concession</option><option value="moto">Concession moto</option><option value="immobilier">Agence immobilière</option><option value="batiment">Bâtiment et rénovation</option><option value="beaute">Coiffure et beauté</option><option value="bienetre">Bien-être et santé</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="boulangerie">Boulangerie et pâtisserie</option><option value="depannage">Dépannage à domicile</option><option value="boutique">Boutique en ligne</option>
       </select>
       <a href="/#commande" style="font-weight:600">Je veux mon site</a>
     </div>
@@ -473,12 +473,12 @@ $('tEdit').addEventListener('click',()=>{ $('app').classList.remove('show-pv'); 
 
 let applyT, pvReady=false;
 function refresh(){ clearTimeout(applyT); applyT=setTimeout(()=>{ const d=doc(); if(d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } },120); }
-function loadTemplate(trade, styleName){
+function loadTemplate(trade, styleName, extra){
   return new Promise(res=>{
     pvReady=false;
     // 07/11/2026 : déplacer l'aperçu (ordinateur ↔ téléphone) recharge la page : on réapplique le contenu du pro
     pv.onload=()=>{ noZoom(pv); fit(); const d=doc(); if(pvReady&&d&&state){ CSEdit.apply(d,state); if(pvEN&&state.en&&state.en.dict) CSEdit.translate(d,state.en.dict); } res(); };
-    pv.src='/modeles/'+trade+'.html?v=45#'+styleName;
+    pv.src='/modeles/'+trade+'.html?v=46'+(extra||'')+'#'+styleName; // 12/11/2026 : extra = « &concession=1&moto=1 » pour une concession moto (stock d'exemple en motos)
   });
 }
 
@@ -898,7 +898,12 @@ function buildForms(){
       const GS=[['Devis gratuit','et prix fixé avant travaux'],['Prêt','véhicule de courtoisie']], CS=[['Financement','sur mesure, réponse rapide'],['Reprise','de votre véhicule actuel']];
       (c.stats||[]).forEach(st=>{ (cb.checked?GS:CS).forEach((g,gi)=>{ if((st.v||'').trim()===g[0]&&(st.l||'').trim()===g[1]){ const t=(cb.checked?CS:GS)[gi]; st.v=t[0]; st.l=t[1]; } }); });
       buildForms(); refresh(); markDirty(); });
-    lb.append(cb,document.createTextNode('Concession : vente de véhicules uniquement, sans atelier')); b.appendChild(lb); }
+    lb.append(cb,document.createTextNode('Concession : vente de véhicules uniquement, sans atelier')); b.appendChild(lb);
+    // 12/11/2026 (Anthony : « séparer concession auto et moto ») : version moto (textes et photos d'accueil moto tant qu'ils sont d'origine)
+    const lm=document.createElement('label'); lm.style.cssText='display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer;margin-top:10px';
+    const cm=document.createElement('input'); cm.type='checkbox'; cm.checked=c.moto===true; cm.style.cssText='width:20px;height:20px';
+    cm.addEventListener('change',()=>{ c.moto=cm.checked; if(cm.checked&&!c.concession){ c.concession=true; cb.checked=true; } refresh(); markDirty(); });
+    lm.append(cm,document.createTextNode('Concession moto : motos et scooters')); b.appendChild(lm); }
 
   if(c.stats&&c.stats.length){ b=section('Chiffres clés',false,'Les 4 points forts affichés sous l\'accueil.');
     listEditor(b,c.stats,(it,o)=>{ const r=document.createElement('div'); r.className='row'; r.append(field('En gros',o.v,v=>o.v=v),field('En dessous',o.l,v=>o.l=v)); it.appendChild(r); }); }
@@ -1150,9 +1155,9 @@ async function openSite(s){
   { const ab=$('admBar'); ab.hidden=!s.as_admin; if(s.as_admin) ab.innerHTML='<span><b>Mode équipe</b> : vous êtes dans l\'espace de <b>'+escH(s.name)+'</b>'+(s.owner_email?' (client : <span style="user-select:all">'+escH(s.owner_email)+'</span>)':'')+'. Ce que vous enregistrez est mis en ligne sur son site.</span>'+(s.owner_email?'<a href="mailto:'+escH(s.owner_email)+'?subject='+encodeURIComponent('Votre site '+s.name)+'">Écrire au client</a>':'')+'<a href="/admin/">Retour à l\'admin</a>'; }
   setStatus('Chargement…');
   const tok=openSite.tok=(openSite.tok||0)+1;
-  await loadTemplate(s.trade,(s.content&&s.content.style)||s.style);
+  await loadTemplate(s.trade,(s.content&&s.content.style)||s.style,(s.trade==='garage'&&s.content&&s.content.moto===true)?'&concession=1&moto=1':'');
   if(tok!==openSite.tok) return; // un autre métier a été choisi pendant le chargement
-  const d=doc(); if(s.content&&s.content.taxi===true&&CSEdit.taxi) CSEdit.taxi(d,true); // 12/11/2026 : métier Taxi, textes de départ en version taxi
+  const d=doc(); if(s.content&&s.content.taxi===true&&CSEdit.taxi) CSEdit.taxi(d,true); if(s.content&&s.content.moto===true&&s.content.concession===true&&CSEdit.moto) CSEdit.moto(d,true,s.content); // 12/11/2026 : concession moto // 12/11/2026 : métier Taxi, textes de départ en version taxi
   const base=CSEdit.extract(d);
   const sv=JSON.parse(JSON.stringify(s.content||{})); state=Object.assign(base, sv); state.text=Object.assign({}, base.text, sv.text||{});
   if(base.google) state.google=Object.assign({}, base.google, sv.google||{});
@@ -1203,7 +1208,7 @@ $('undo').addEventListener('click',async()=>{
   if(error){ toast(error.message); return; } site.content=data; await openSite(site); toast('Dernière modification annulée');
 });
 $('sitePick').addEventListener('change',async e=>{ if(dirty&&!confirm('Des modifications ne sont pas enregistrées. Changer de site quand même ?')){ e.target.value=site.id; return; } const s=sites.find(x=>x.id===e.target.value); if(s) await openSite(s); });
-$('demoTrade').addEventListener('change',e=>{ const t=e.target.value; history.replaceState(null,'','?demo='+t); openSite({id:'demo',name:'Site d\'exemple',trade:t==='taxi'?'vtc':t,style:'moderne',content:t==='taxi'?{taxi:true}:{},status:'brouillon'}); }); // 12/11/2026 : Taxi = modèle VTC version taxi
+$('demoTrade').addEventListener('change',e=>{ const t=e.target.value; history.replaceState(null,'','?demo='+t); openSite({id:'demo',name:'Site d\'exemple',trade:t==='taxi'?'vtc':t==='moto'?'garage':t,style:'moderne',content:t==='taxi'?{taxi:true}:t==='moto'?{concession:true,moto:true}:{},status:'brouillon'}); }); // 12/11/2026 : Taxi = modèle VTC version taxi
 
 /* ---------- Mes demandes (CRM Premium) ---------- */
 const KIND={contact:'Message',reservation:'Réservation','rendez-vous':'Rendez-vous',devis:'Devis',commande:'Commande',rappel:'Rappel demandé',estimation:'Estimation',reprise:'Reprise',manuel:'Client ajouté'};
@@ -1901,10 +1906,10 @@ $('logout').addEventListener('click',logout); $('out2').addEventListener('click'
 if(params.get('inscription')==='1'){ setTimeout(()=>{ if(!signup) $('lMode').click(); const em=params.get('email'); if(em) $('lEmail').value=em; $('lTitle').textContent='Créez votre mot de passe pour remplir votre site.'; },0); }
 async function boot(){
   if(DEMO){
-    const t=['vtc','taxi','restaurant','garage','immobilier','batiment','beaute','bienetre','veterinaire','autoecole','coach','photographe','toiletteur','fleuriste','traiteur','nautisme','kine','dentiste','bijouterie','liberal','services','evenementiel','hebergement','tourisme','location','infirmier','boulangerie','depannage','boutique'].includes(params.get('demo'))?params.get('demo'):'garage';
-    $('demoTrade').value=t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
+    const t=['vtc','taxi','moto','restaurant','garage','immobilier','batiment','beaute','bienetre','veterinaire','autoecole','coach','photographe','toiletteur','fleuriste','traiteur','nautisme','kine','dentiste','bijouterie','liberal','services','evenementiel','hebergement','tourisme','location','infirmier','boulangerie','depannage','boutique'].includes(params.get('demo'))?params.get('demo'):'garage';
+    $('demoTrade').value=(t==='garage'&&params.get('moto')==='1')?'moto':t; $('demoBar').hidden=false; $('app').hidden=false; $('login').hidden=true; $('save').hidden=true; fit();
     const st=Object.keys(STYLES).includes(params.get('style'))?params.get('style'):'moderne';
-    return openSite({id:'demo',name:'Site d\'exemple',trade:t==='taxi'?'vtc':t,style:st,content:t==='taxi'?{taxi:true}:(t==='garage'&&params.get('concession')==='1')?{concession:true}:(t==='garage'&&params.get('atelier')==='1')?{atelier:true}:{},status:'brouillon'}); // 09/11/2026 : démo concession
+    return openSite({id:'demo',name:'Site d\'exemple',trade:t==='taxi'?'vtc':t==='moto'?'garage':t,style:st,content:t==='taxi'?{taxi:true}:(t==='moto'||(t==='garage'&&params.get('moto')==='1'))?{concession:true,moto:true}:(t==='garage'&&params.get('concession')==='1')?{concession:true}:(t==='garage'&&params.get('atelier')==='1')?{atelier:true}:{},status:'brouillon'}); // 09/11/2026 : démo concession
   }
   const {data:{session}}=await SB.auth.getSession();
   if(!session||recovery){ $('login').hidden=false; $('app').hidden=true; return; }

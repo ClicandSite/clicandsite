@@ -281,6 +281,31 @@
       else if (e.hasAttribute('data-cs-at')) { e.hidden = e.getAttribute('data-cs-at') === '1'; e.removeAttribute('data-cs-at'); } });
     qa(doc, 'a[href="#vehicules"], a[href="#reprise"]').forEach(function (a) { a.hidden = !!on; });
   }
+  // 12/11/2026 (Anthony : « séparer concession auto et moto ») : concession moto = concession (c.concession) + c.moto.
+  // Comme pour le taxi, on ne remplace que les textes encore d'origine ; photos d'accueil moto tant que le pro n'a pas mis les siennes.
+  var MOTO = [
+    ['.hero .kicker', ['Garage et concession · Orléans'], ['Concession moto · Orléans']],
+    ['.hero h1', ['Votre garage et concession, sans mauvaise surprise.'], ['Des motos choisies avec soin.']],
+    ['.hero .wrap > p, .hero p', ['Véhicules d\'occasion garantis, reprise de votre voiture, entretien toutes marques. Prix annoncé avant les travaux.'], ['Motos d\'occasion récentes et garanties, du 125 au gros cube. Reprise de votre moto, financement sur mesure, essai sur rendez-vous.']],
+    ['.stats .stat b', ['Toutes marques', 'Devis gratuit', 'Prêt', '4,8/5'], ['Garantie', 'Reprise', 'Permis A2', '4,8/5']],
+    ['.stats .stat span', ['essence, diesel, hybride', 'et prix fixé avant travaux', 'véhicule de courtoisie', 'sur Google'], ['6 à 12 mois', 'de votre moto actuelle', 'des motos pour débuter', 'sur Google']],
+    ['#vehicules .head h2', ['Nos véhicules en stock'], ['Nos motos en stock']],
+    ['#vehicules .head p', ['Révisés dans notre atelier et garantis 12 mois. Annonces aussi diffusées sur Abracadeal.'], ['Révisées, garanties et livrées avec la carte grise. Annonces aussi diffusées sur Abracadeal.']],
+    ['label[for="v-fuel"]', ['Énergie'], ['Catégorie']],
+    ['#reprise h2', ['Reprise de votre véhicule'], ['Reprise de votre moto']],
+    ['#reprise h2 + p', ['Estimation gratuite sous 24 h, déduite du prix de votre prochaine voiture.'], ['Estimation gratuite sous 24 h, déduite du prix de votre prochaine moto.']],
+    ['#contact h2', ['Un véhicule vous intéresse ?'], ['Une moto vous intéresse ?']]
+  ];
+  function moto(doc, on, c) {
+    MOTO.forEach(function (r) { qa(doc, r[0]).forEach(function (e, i) { var from = on ? r[1] : r[2], to = on ? r[2] : r[1];
+      if (i < from.length && txt(e) === from[i]) e.textContent = to[i]; }); });
+    var VM = [['Véhicules', 'Motos'], ['Nos véhicules', 'Nos motos'], ['Voir nos véhicules', 'Voir nos motos']];
+    qa(doc, 'a[href="#vehicules"]').forEach(function (a) { VM.forEach(function (v) { if (txt(a) === (on ? v[0] : v[1])) a.textContent = on ? v[1] : v[0]; }); });
+    var h = doc.documentElement; if (h) { if (on) h.setAttribute('data-moto', '1'); else h.removeAttribute('data-moto'); }
+    var p = (c && c.photos) || {}, I = 'https://mycreativesite.fr/modeles/img/';
+    var he = q(doc, '.photo.hero'); if (he && !p.hero) { if (on) he.style.setProperty('--img', 'url(' + I + 'moto-hero.webp)'); else he.style.removeProperty('--img'); }
+    var te = q(doc, '.team .photo'); if (te && !p.team) { if (on) te.style.setProperty('--img', 'url(' + I + 'moto-equipe.webp)'); else te.style.removeProperty('--img'); }
+  }
   // 12/11/2026 (Anthony) : métier « Taxi » = modèle VTC en version taxi (c.taxi). On ne remplace que les textes encore
   // d'origine (VTC ↔ taxi) : un texte modifié par le pro n'est jamais touché, et le pro peut tout réécrire ensuite.
   var TAXI = [
@@ -343,6 +368,7 @@
     if (c.style && doc.documentElement) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
     concession(doc, c.concession === true);
     atelier(doc, c.atelier === true && c.concession !== true);
+    if (q(doc, 'html[data-trade="garage"]') || c.moto === true) moto(doc, c.moto === true && c.concession === true, c);
     freeApply(doc, c.tx);
     credit(doc);
     var ev; try { ev = new Event('cs:applied'); doc.dispatchEvent(ev); } catch (e) {}
@@ -507,7 +533,7 @@
     else { a.style.cssText += ';position:fixed;top:12px;right:12px;z-index:2147482000;background:#fff;color:#16181f'; doc.body.appendChild(a); }
   }
 
-  window.CSEdit = { freeLeaves: freeLeaves, norm: norm, extract: extract, apply: apply, credit: credit, taxi: taxi, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
+  window.CSEdit = { freeLeaves: freeLeaves, norm: norm, extract: extract, apply: apply, credit: credit, taxi: taxi, moto: moto, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;

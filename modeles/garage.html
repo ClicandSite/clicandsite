@@ -944,7 +944,7 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
     var list=cards.slice();
     if(so) list.sort(function(a,b){return so==='asc'?a.dataset.pr-b.dataset.pr:b.dataset.pr-a.dataset.pr;});
     list.forEach(function(c){g.appendChild(c); var ok=!c.hasAttribute('data-cs-empty')&&(!mk||c.dataset.mk===mk)&&(!fu||c.dataset.fuel===fu)&&(!pr||+c.dataset.pr<=pr); c.hidden=!ok; if(ok)n++;});
-    document.getElementById('vcount').textContent=n+(n>1?' véhicules disponibles':' véhicule disponible');
+    var mo=document.documentElement.hasAttribute('data-moto'); document.getElementById('vcount').textContent=n+(mo?(n>1?' motos disponibles':' moto disponible'):(n>1?' véhicules disponibles':' véhicule disponible'));
     document.getElementById('vempty').hidden=n>0;
   }
   ['v-mk','v-fuel','v-pr','v-sort'].forEach(function(id){document.getElementById(id).addEventListener('change',run);});
@@ -975,14 +975,14 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 (function(){
   if(!/[?&]concession=1\b/.test(location.search)) return;
   var d=document, q=function(s){return d.querySelector(s);}, qa=function(s){return [].slice.call(d.querySelectorAll(s));};
-  d.documentElement.setAttribute('data-conc','1'); d.title='Modèle Concession auto et moto MyCreativeSite';
+  d.documentElement.setAttribute('data-conc','1'); d.title='Modèle Concession automobile MyCreativeSite';
   ['#rdv','#prestations','#atelier'].forEach(function(s){var e=q(s); if(e) e.hidden=true;});
   qa('a[href="#prestations"]').forEach(function(a){a.hidden=true;});
   qa('a[href="#rdv"]').forEach(function(a){a.textContent=/rendez-vous/i.test(a.textContent)?'Voir nos véhicules':'Nos véhicules'; a.setAttribute('href','#vehicules');});
   var lg=q('header .logo'); if(lg) lg.textContent='LITTORAL AUTOMOBILES';
-  var k=q('.hero .kicker'); if(k) k.textContent='Concession auto et moto · Orléans';
+  var k=q('.hero .kicker'); if(k) k.textContent='Concession automobile · Orléans';
   var h=q('.hero h1'); if(h) h.textContent='Votre concession, des véhicules choisis avec soin.';
-  var p=q('.hero p'); if(p) p.textContent='Voitures et motos d\'occasion récentes et garanties, reprise de votre véhicule, financement sur mesure. Livraison possible.';
+  var p=q('.hero p'); if(p) p.textContent='Voitures d\'occasion récentes et garanties, reprise de votre véhicule, financement sur mesure. Livraison possible.';
   var S=[['Garantie','12 mois minimum'],['Reprise','de votre véhicule actuel'],['Financement','crédit ou LOA, réponse rapide'],['4,8/5','sur Google']];
   qa('.stats .stat').forEach(function(s,i){ if(!S[i]) return; var b=s.querySelector('b'), sp=s.querySelector('span'); if(b) b.textContent=S[i][0]; if(sp) sp.textContent=S[i][1]; });
   var c2=q('#contact h2'), cp=q('#contact h2 + p'); if(c2) c2.textContent='Un véhicule vous intéresse ?'; if(cp) cp.textContent='Essai, reprise, financement : réponse sous 24 h.';
@@ -997,6 +997,42 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
   var hp=q('.photo.hero'), c1=q('#vehicules .car .photo'); if(hp&&c1){ var m=(c1.className.match(/\bg\d+\b/)||[])[0]; if(m) hp.className=hp.className.replace(/\bg\d+\b/,m); }
   var tph=q('.team .photo'), c2=qa('#vehicules .car .photo')[5]; if(tph&&c2){ var m2=(c2.className.match(/\bg\d+\b/)||[])[0]; if(m2) tph.className=tph.className.replace(/\bg\d+\b/,m2); }
   var av=q('#avis .head p'); if(av) av.textContent=av.textContent.replace('du garage','de la concession');
+})();
+</script>
+<!-- 12/11/2026 (Anthony : « séparer concession auto et moto ») : version « concession moto » (?concession=1&moto=1), textes et stock de motos -->
+<script>
+(function(){
+  if(!/[?&]moto=1\b/.test(location.search)||!/[?&]concession=1\b/.test(location.search)) return;
+  var d=document, q=function(s){return d.querySelector(s);}, qa=function(s){return [].slice.call(d.querySelectorAll(s));};
+  var I='https://mycreativesite.fr/modeles/img/', E=function(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  d.documentElement.setAttribute('data-moto','1'); d.title='Modèle Concession moto MyCreativeSite';
+  var lg=q('header .logo'); if(lg) lg.textContent='LITTORAL MOTOS';
+  var k=q('.hero .kicker'); if(k) k.textContent='Concession moto · Orléans';
+  var h=q('.hero h1'); if(h) h.textContent='Des motos choisies avec soin.';
+  var VM={'Véhicules':'Motos','Nos véhicules':'Nos motos','Voir nos véhicules':'Voir nos motos'}; qa('a[href="#vehicules"]').forEach(function(a){ var t=a.textContent.trim(); if(VM[t]) a.textContent=VM[t]; });
+  var p=q('.hero p'); if(p) p.textContent='Motos d\'occasion récentes et garanties, du 125 au gros cube. Reprise de votre moto, financement sur mesure, essai sur rendez-vous.';
+  var S=[['Garantie','6 à 12 mois'],['Reprise','de votre moto actuelle'],['Permis A2','des motos pour débuter'],['4,8/5','sur Google']];
+  qa('.stats .stat').forEach(function(s,i){ if(!S[i]) return; var b=s.querySelector('b'), sp=s.querySelector('span'); if(b) b.textContent=S[i][0]; if(sp) sp.textContent=S[i][1]; });
+  var vh=q('#vehicules .head h2'); if(vh) vh.textContent='Nos motos en stock';
+  var vp=q('#vehicules .head p'); if(vp) vp.textContent='Révisées, garanties et livrées avec la carte grise. Annonces aussi diffusées sur Abracadeal.';
+  var fl=q('label[for="v-fuel"]'); if(fl) fl.textContent='Catégorie';
+  var M=[{"mk": "Triumph", "cat": "Néo-rétro", "pr": 9490, "t": "Triumph Bonneville T100", "yr": "2021", "km": "12 500 km", "img": "https://mycreativesite.fr/modeles/img/moto-bonneville.webp", "fiche": {"ref": "MO-201", "desc": "Triumph Bonneville T100 900 cm³, première main, entretien complet chez Triumph.\nRévisée avant la livraison, pneus neufs.", "feats": "1re main\nABS\nContrôle de traction\nPoignées chauffantes\nSaute-vent", "photos": ["https://mycreativesite.fr/modeles/img/moto-bonneville.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Triumph", "cat": "Café racer", "pr": 11990, "t": "Triumph Thruxton RS", "yr": "2020", "km": "9 800 km", "img": "https://mycreativesite.fr/modeles/img/moto-thruxton.webp", "fiche": {"ref": "MO-204", "desc": "Triumph Thruxton RS 1200, café racer d'exception, suspensions Öhlins et freins Brembo.", "feats": "Suspensions Öhlins\nFreins Brembo M50\nModes de conduite\nÉchappement d'origine fourni", "photos": ["https://mycreativesite.fr/modeles/img/moto-thruxton.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Triumph", "cat": "Café racer", "pr": 10490, "t": "Triumph Thruxton 1200 rouge", "yr": "2019", "km": "14 200 km", "img": "https://mycreativesite.fr/modeles/img/moto-thruxton-rouge.webp", "fiche": {"ref": "MO-207", "desc": "Triumph Thruxton 1200 rouge, entretien à jour, très bon état général.", "feats": "ABS\nAntipatinage\nRégulateur de vitesse\nBulle café racer", "photos": ["https://mycreativesite.fr/modeles/img/moto-thruxton-rouge.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Royal Enfield", "cat": "Néo-rétro", "pr": 4290, "t": "Royal Enfield Classic 350", "yr": "2022", "km": "4 200 km", "img": "https://mycreativesite.fr/modeles/img/moto-classic350.webp", "fiche": {"ref": "MO-210", "desc": "Royal Enfield Classic 350, compatible permis A2, idéale pour débuter.", "feats": "Compatible A2\nABS double canal\nInjection\nFaible consommation", "photos": ["https://mycreativesite.fr/modeles/img/moto-classic350.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Royal Enfield", "cat": "Néo-rétro", "pr": 4790, "t": "Royal Enfield Classic 500 bleue", "yr": "2020", "km": "7 600 km", "img": "https://mycreativesite.fr/modeles/img/moto-classic-bleue.webp", "fiche": {"ref": "MO-213", "desc": "Royal Enfield Classic 500, coloris bleu, état collection.", "feats": "ABS\nSelle biplace\nGarde-boue chromés\nSacoches latérales", "photos": ["https://mycreativesite.fr/modeles/img/moto-classic-bleue.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Royal Enfield", "cat": "Néo-rétro", "pr": 3990, "t": "Royal Enfield Bullet 500", "yr": "2019", "km": "15 600 km", "img": "https://mycreativesite.fr/modeles/img/moto-bullet.webp", "fiche": {"ref": "MO-216", "desc": "Royal Enfield Bullet 500, le mythe indien, moteur coupleux.", "feats": "ABS\nDémarreur électrique\nPare-carters", "photos": ["https://mycreativesite.fr/modeles/img/moto-bullet.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 6 mois"}, {"mk": "KTM", "cat": "Roadster", "pr": 4690, "t": "KTM 390 Duke", "yr": "2021", "km": "8 900 km", "img": "https://mycreativesite.fr/modeles/img/moto-duke.webp", "fiche": {"ref": "MO-219", "desc": "KTM 390 Duke, roadster vif et léger, compatible permis A2.", "feats": "Compatible A2\nABS Supermoto\nÉcran TFT couleur\nQuickshifter", "photos": ["https://mycreativesite.fr/modeles/img/moto-duke.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 12 mois"}, {"mk": "Suzuki", "cat": "125 cm³", "pr": 1690, "t": "Suzuki GN 125", "yr": "2018", "km": "11 000 km", "img": "https://mycreativesite.fr/modeles/img/moto-gn125.webp", "fiche": {"ref": "MO-222", "desc": "Suzuki GN 125, petite custom économique, accessible avec le permis B et la formation de 7 heures.", "feats": "Permis B + 7 h\nTop-case\nFaible consommation", "photos": ["https://mycreativesite.fr/modeles/img/moto-gn125.webp"], "legal": "Garantie pièces et main-d'œuvre.\nReprise de votre moto possible. Financement sur demande."}, "chip": "Garantie 6 mois"}];
+  qa('#vgrid > .car').forEach(function(c,i){ var m=M[i]; if(!m){ c.remove(); return; }
+    c.setAttribute('data-fiche',JSON.stringify(m.fiche)); c.dataset.mk=m.mk; c.dataset.fuel=m.cat; c.dataset.pr=m.pr;
+    c.innerHTML='<div class="photo pimg" style="--img:url('+m.img+')"><span class="chip on">'+E(m.chip)+'</span></div><h3>'+E(m.t)+'</h3><div class="meta"><span>'+m.yr+'</span><span>'+m.km+'</span><span>'+E(m.cat)+'</span></div><div class="cbot"><span class="prx">'+m.pr.toLocaleString('fr-FR').replace(/\u202f/g,' ')+' €</span><a class="mini" href="#contact">Je suis intéressé</a></div>'; });
+  var hp=q('.photo.hero'); if(hp) hp.style.setProperty('--img','url('+I+'moto-hero.webp)');
+  var tph=q('.team .photo'); if(tph) tph.style.setProperty('--img','url('+I+'moto-equipe.webp)');
+  var rh=q('#reprise h2'); if(rh) rh.textContent='Reprise de votre moto';
+  var rp=q('#reprise h2 + p'); if(rp) rp.textContent='Estimation gratuite sous 24 h, déduite du prix de votre prochaine moto.';
+  var rk=q('#r-km'); if(rk) rk.value='18 000';
+  var tm=q('.team h2'); if(tm){ tm.textContent='Karim, votre conseiller moto'; var tp=tm.nextElementSibling; if(tp) tp.textContent='Motard depuis 20 ans. Je sélectionne chaque moto, je vous la présente en toute transparence et je m\'occupe de la reprise, du financement et de la carte grise.'; }
+  var R=['Moto conforme à l\'annonce, révisée et livrée avec la carte grise. Très pro.','Reprise de mon ancienne moto au juste prix, financement réglé en une journée.','Ma première moto A2 achetée ici, très bien conseillé pour débuter.'];
+  qa('.reviews .rev p').forEach(function(e,i){ if(R[i]) e.textContent=R[i]; });
+  var c2=q('#contact h2'), cp=q('#contact h2 + p'); if(c2) c2.textContent='Une moto vous intéresse ?'; if(cp) cp.textContent='Essai, reprise, financement : réponse sous 24 h.';
+  var em=qa('#contact .v').filter(function(v){return /@/.test(v.textContent);})[0]; if(em) em.textContent='contact@littoral-motos.fr';
+  qa('footer span').forEach(function(s){ s.textContent=s.textContent.replace('Littoral Automobiles · Concession d\'exemple','Littoral Motos · Concession d\'exemple'); });
+  var ok=q('#ok3'); if(ok) ok.textContent=ok.textContent.replace('concessionnaire','concessionnaire moto');
+  d.dispatchEvent(new Event('cs:applied'));
 })();
 </script>
 <!-- 08/11/2026 (Anthony : « on voit mal comment changer de thème ») : barre de styles claire — flèches, nom du style, numéro, et tous les styles en grille -->

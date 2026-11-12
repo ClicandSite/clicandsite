@@ -281,9 +281,41 @@
       else if (e.hasAttribute('data-cs-at')) { e.hidden = e.getAttribute('data-cs-at') === '1'; e.removeAttribute('data-cs-at'); } });
     qa(doc, 'a[href="#vehicules"], a[href="#reprise"]').forEach(function (a) { a.hidden = !!on; });
   }
+  // 12/11/2026 (Anthony) : métier « Taxi » = modèle VTC en version taxi (c.taxi). On ne remplace que les textes encore
+  // d'origine (VTC ↔ taxi) : un texte modifié par le pro n'est jamais touché, et le pro peut tout réécrire ensuite.
+  var TAXI = [
+    ['header.top .logo', ['ÉTOILE PRESTIGE'], ['TAXI ÉTOILE']],
+    ['footer .wrap > span:first-child', ['© 2026 Étoile Prestige · Société d\'exemple'], ['© 2026 Taxi Étoile · Société d\'exemple']],
+    ['#contact .cinfo .v', ['+33 6 00 00 00 00', 'contact@exemple-vtc.fr'], ['+33 6 00 00 00 00', 'contact@exemple-taxi.fr']],
+    ['.hero .kicker', ['Chauffeur privé · VTC'], ['Taxi · Conventionné CPAM']],
+    ['.hero h1', ['Votre chauffeur privé, en toute sérénité.'], ['Votre taxi, toujours à l\'heure.']],
+    ['.hero .wrap > p', ['Aéroports, gares, événements. Prix fixe, 24h/24.'], ['Gares, aéroports, hôpitaux, longues distances. Réservation à l\'avance ou immédiate.']],
+    ['.stats .stat b', ['24h/24', '7', '60 min', '4,9/5'], ['24h/24', '4', 'CPAM', '4,9/5']],
+    ['.stats .stat span', ['7 jours sur 7', 'passagers max.', 'd\'attente offerte à l\'aéroport', 'note clients'], ['7 jours sur 7', 'passagers (8 sur demande)', 'transport de patients assis', 'note clients']],
+    ['#services .cards .card h3', ['Transfert aéroport', 'Salons et événements', 'Mariages et soirées'], ['Gares et aéroports', 'Transport conventionné', 'Longues distances']],
+    ['#services .cards .card p', ['Accueil en salle d\'arrivée avec pancarte. Le vol est suivi, le retard ne coûte rien.', 'Salons, congrès, grands événements : on connaît les accès et les points de dépose.', 'Véhicule décoré sur demande et navettes pour les invités.'], ['Prise en charge à l\'heure, aide aux bagages. Votre train ou votre vol est suivi.', 'Consultations, examens, hospitalisations : patients assis, avec bon de transport, tiers payant.', 'Une autre ville, un aéroport éloigné : prix annoncé avant le départ.']],
+    ['#services .cards .card .price', ['Dès 110 €', 'Dès 120 €', 'Sur devis'], ['Au compteur', 'Pris en charge', 'Sur devis']],
+    ['#vehicule h2', ['Mercedes Classe V'], ['Votre taxi']],
+    ['#vehicule .list > div > span:last-child', ['Jusqu\'à 7', '6 grandes valises', 'Wi-Fi, eau, chargeurs', 'Siège sur demande', 'FR · EN · IT'], ['Jusqu\'à 4', '3 grandes valises', 'Carte bancaire acceptée', 'Siège sur demande', 'FR · EN']],
+    ['#tarifs .head p', ['Forfait par véhicule. Péages et attente compris.'], ['Tarifs réglementés, au compteur ou au forfait fixé par la préfecture.']],
+    ['#tarifs .prices .row .t', ['Aéroport → centre-ville', 'Gare → centre-ville', 'Centre-ville → lieu de mariage', 'Mise à disposition'], ['Aéroport → centre-ville', 'Gare → centre-ville', 'Hôpital, consultation', 'Course longue distance']],
+    ['#tarifs .prices .row .d', ['45 min', '35 min', '40 min', '3 heures minimum'], ['Forfait', 'Au compteur', 'Conventionné', 'Sur devis']],
+    ['#tarifs .prices .row .p', ['95 €', '75 €', '90 €', '75 €/h'], ['Forfait', 'Compteur', 'Tiers payant', 'Sur devis']],
+    ['#avis .reviews .rev p', ['À l\'heure malgré notre vol en retard, voiture impeccable.', 'Navettes pour nos 40 invités entre l\'église et le domaine, sans accroc.', 'Very professional, knew every shortcut to the airport during a busy trade fair week.'], ['Taxi à l\'heure à 5 h pour mon train, chauffeur très aimable.', 'Il m\'emmène à mes séances à l\'hôpital, toujours ponctuel, et il s\'occupe du bon de transport.', 'Quick pick-up at the airport, fair price, very friendly driver.']],
+    ['#avis .reviews .rev .who', ['Sophie · Voyage d\'affaires', 'Julien · Mariage', 'James · London'], ['Sophie · Gare', 'Marcel · Transport conventionné', 'James · London']],
+    ['#contact h2', ['Une course à prévoir ?'], ['Besoin d\'un taxi ?']],
+    ['#contact h2 + p', ['Réponse avec un prix ferme en moins d\'une heure.'], ['Réservez à l\'avance ou appelez pour une course immédiate.']],
+    ['#ok', ['Démonstration : sur le site final, la demande arrive directement chez le chauffeur par mail et WhatsApp. Rien n\'a été envoyé ici.'], ['Démonstration : sur le site final, la demande arrive directement chez le chauffeur de taxi par mail et WhatsApp. Rien n\'a été envoyé ici.']]
+  ];
+  function taxi(doc, on) {
+    TAXI.forEach(function (r) { qa(doc, r[0]).forEach(function (e, i) { var from = on ? r[1] : r[2], to = on ? r[2] : r[1];
+      if (i < from.length && txt(e) === from[i]) e.textContent = to[i]; }); });
+    var h = doc.documentElement; if (h) { if (on) h.setAttribute('data-taxi', '1'); else h.removeAttribute('data-taxi'); }
+  }
   function apply(doc, c) {
     if (!c || typeof c !== 'object') return;
     if (!Array.isArray(c.reviews)) c = Object.assign({}, c, { reviews: [] }); // pas d'avis d'exemple sur un vrai site
+    if (q(doc, 'html[data-trade="vtc"]') || c.taxi === true) taxi(doc, c.taxi === true);
     var t = c.text || {};
     Object.keys(TEXT).forEach(function (k) { if (typeof t[k] === 'string') setTxt(q(doc, TEXT[k]), t[k]); });
     Object.keys(LISTS).forEach(function (k) {
@@ -475,7 +507,7 @@
     else { a.style.cssText += ';position:fixed;top:12px;right:12px;z-index:2147482000;background:#fff;color:#16181f'; doc.body.appendChild(a); }
   }
 
-  window.CSEdit = { freeLeaves: freeLeaves, norm: norm, extract: extract, apply: apply, credit: credit, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
+  window.CSEdit = { freeLeaves: freeLeaves, norm: norm, extract: extract, apply: apply, credit: credit, taxi: taxi, TEXT: TEXT, LISTS: LISTS, gUrl: gUrl, siteIcon: siteIcon, texts: texts, translate: translate, frTxt: frTxt };
 
   // Site client : charge le contenu publié
   var me = document.currentScript;

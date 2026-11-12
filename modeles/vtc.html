@@ -825,4 +825,14 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
   new MutationObserver(upd).observe(document.documentElement,{attributes:true,attributeFilter:['data-style']}); upd();
 })();
 </script>
+<!-- 12/11/2026 (Anthony) : version « taxi » du modèle VTC (?taxi=1), textes dans assets/cs-edit.js (CSEdit.taxi) -->
+<script>
+(function(){
+  if(!/[?&]taxi=1\b/.test(location.search)) return;
+  document.title='Modèle Taxi MyCreativeSite';
+  var go=function(){ if(window.CSEdit&&window.CSEdit.taxi) window.CSEdit.taxi(document,true); };
+  if(window.CSEdit) return go();
+  var s=document.createElement('script'); s.src='/assets/cs-edit.js?v=25'; s.onload=go; document.head.appendChild(s);
+})();
+</script>
 <script src="https://mycreativesite.fr/assets/cs-date.js?v=4" defer></script>

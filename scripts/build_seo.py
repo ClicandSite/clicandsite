@@ -26,8 +26,8 @@ PAGES = [
     faq=[("Mon site peut-il remplacer les plateformes de VTC ?","Il les complète : vos clients fidèles et les personnes qui vous trouvent sur Google réservent chez vous, sans commission sur la course."),
          ("Puis-je afficher mes tarifs aéroport ?","Oui. Vous modifiez vous-même vos forfaits depuis votre espace client, à tout moment."),
          ("Le site fonctionne-t-il pour une petite société de VTC avec plusieurs chauffeurs ?","Oui : vous présentez vos véhicules et les réservations arrivent sur l'adresse de votre choix.")]),
-  # 12/11/2026 (Anthony) : page dédiée aux taxis, la page VTC redevient 100 % VTC. Même modèle (vtc.html).
-  dict(slug="site-internet-taxi", k="vtc", style="moderne", label="Taxi", eyebrow_name="taxi",
+  # 12/11/2026 (Anthony) : page dédiée aux taxis, la page VTC redevient 100 % VTC. Métier Taxi = modèle vtc.html?taxi=1.
+  dict(slug="site-internet-taxi", k="taxi", style="moderne", label="Taxi", eyebrow_name="taxi",
     title="Création de site internet pour taxi",
     meta="Site internet pour chauffeur de taxi : réservation de course en ligne, transport conventionné, gares et aéroports, bouton d'appel. En ligne en 48 h, dès 29 €/mois, sans engagement.",
     h1="Le site de votre taxi, pour que vos clients vous réservent en direct",
@@ -793,7 +793,7 @@ ARGS = ('<div class="args">'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>'
   '<div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d\'abord pour le téléphone.</span></div>'
   '</div>')
-NAMES = {"vtc":"Chauffeur VTC","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
+NAMES = {"vtc":"Chauffeur VTC","taxi":"Taxi","restaurant":"Restaurant","garage":"Garage auto et moto","concession":"Concession auto et moto","immobilier":"Agence immobilière","batiment":"Artisan du bâtiment","beaute":"Coiffeur et institut de beauté","bienetre":"Masseur et ostéopathe","veterinaire":"Vétérinaire","atelier":"Garage d'entretien","autoecole":"Auto-école","coach":"Coach sportif","photographe":"Photographe","toiletteur":"Toiletteur","fleuriste":"Fleuriste","traiteur":"Traiteur","nautisme":"Location de bateaux","kine":"Kinésithérapeute","dentiste":"Dentiste","bijouterie":"Bijouterie-horlogerie","liberal":"Professions libérales","services":"Services à domicile","evenementiel":"Événementiel","hebergement":"Chambres d'hôtes et gîtes","tourisme":"Tourisme et loisirs","location":"Location et déménagement","infirmier":"Infirmier libéral","boulangerie":"Boulangerie","depannage":"Plombier et électricien","boutique":"Boutique en ligne"}
 e = html.escape
 
 def trade_links(cur):
@@ -857,13 +857,13 @@ def page(p):
       {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":p["title"],"item":url}]}
     k = p["k"]
     if k:
-        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else (k + ".html", k)
+        mk, dk = ("garage.html?concession=1", "garage&amp;concession=1") if k == "concession" else ("garage.html?atelier=1", "garage&amp;atelier=1") if k == "atelier" else ("vtc.html?taxi=1", "taxi") if k == "taxi" else (k + ".html", k)
         demo = f'<a class="btn ghost" href="/espace/?demo={dk}&amp;style={p["style"]}">Essayer l\'espace client</a>'
         visual = devices(k, p.get("label") or NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
-        visual = devices("vtc", "Chauffeur VTC, un des 29 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
-    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(p.get("eyebrow_name") or NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 29 métiers")
+        visual = devices("vtc", "Chauffeur VTC, un des 30 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
+    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(p.get("eyebrow_name") or NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 30 métiers")
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)
     if p.get("pack"):

@@ -81,7 +81,7 @@ async function main() {
   qa('meta[name="robots"], meta[name^="claude:"]').forEach((e) => e.remove());
   qa('.picker').forEach((e) => e.remove());
   qa('script').forEach((s) => { const t = s.textContent || '', src = s.getAttribute('src') || '';
-    if (/pk-grid|concession=1|atelier=1|cs-formule|classList\.add\("embed"\)/.test(t) || /cs-formule/.test(src)) s.remove(); });
+    if (/pk-grid|concession=1|atelier=1|taxi=1|cs-formule|classList\.add\("embed"\)/.test(t) || /cs-formule/.test(src)) s.remove(); });
   qa('style').forEach((s) => { if (/\.embed \.picker|pk-grid/.test(s.textContent)) s.remove(); });
   qa('.note').forEach((n) => { if (/exemple|d'exemple|Démonstration/i.test(n.textContent)) n.remove(); });
   qa('.ok').forEach((o) => { if (/Démonstration/i.test(o.textContent)) o.textContent = 'Merci, votre demande est envoyée. Nous vous recontactons rapidement.'; });
@@ -96,7 +96,7 @@ async function main() {
   const city = A.city;
   const phone = (c.contacts || []).find((x) => /t[ée]l/i.test(x.l) || /^[+\d][\d\s.]{8,}$/.test(clean(x.v)))?.v;
   const email = (c.contacts || []).find((x) => /@/.test(x.v))?.v;
-  const metier = trade === 'garage' ? (conc ? 'Concession auto et moto' : c.atelier === true ? 'Garage, entretien et réparation automobile' : 'Garage et concession auto et moto') : METIER[trade] || '';
+  const metier = trade === 'garage' ? (conc ? 'Concession auto et moto' : c.atelier === true ? 'Garage, entretien et réparation automobile' : 'Garage et concession auto et moto') : trade === 'vtc' && c.taxi === true ? 'Taxi' : METIER[trade] || '';
   const items = (Array.isArray(c.items) ? c.items : []).filter((o) => o && clean(o.t));
   const isCar = trade === 'garage', isImmo = trade === 'immobilier', withPages = isCar || isImmo;
   const dir = isImmo ? 'biens' : 'vehicules';
@@ -132,7 +132,7 @@ async function main() {
   if (score > 0 && score <= 5 && count > 0) org.aggregateRating = { '@type': 'AggregateRating', ratingValue: score, reviewCount: count, bestRating: 5 };
   setHead(doc, { title, desc, url: ORIGIN + '/', img: heroImg, type: 'website', jsonld: [org, pages.length ? { '@context': 'https://schema.org', '@type': 'ItemList', name: isImmo ? 'Biens à vendre et à louer' : 'Véhicules en stock', itemListElement: pages.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: ORIGIN + p.url, name: clean(p.o.t) })) } : null] });
   // Script du site : demandes « Mes clients » et mise à jour en direct du contenu
-  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=21'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live); if (!q('script[src*="cs-date.js"]')) { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=25'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live); if (!q('script[src*="cs-date.js"]')) { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
   // 10/11/2026 (Anthony) : lien discret « Espace pro » en bas du site (le pro modifie son site depuis son-domaine/admin)
   const fw = q('footer .wrap');
   if (fw && !q('a[data-cs-admin]', fw)) { const ap = doc.createElement('a'); ap.href = '/admin/'; ap.rel = 'nofollow'; ap.setAttribute('data-cs-admin', ''); ap.textContent = 'Espace pro'; ap.style.cssText = 'opacity:.55;font-size:.8em;color:inherit;text-decoration:none;margin-left:12px'; fw.appendChild(ap); }
@@ -245,7 +245,7 @@ function itemPage(tpl, csEdit, c, p, ctx) {
   const st = doc.createElement('style');
   st.textContent = `.cs-page{padding:28px 0 56px}.cs-bc{font-size:.85rem;color:var(--muted);margin-bottom:14px}.cs-bc a{color:inherit}.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:start}.cs-page h1{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.4rem);margin:0 0 10px;line-height:1.15}.cs-page h2{font-family:var(--display);font-size:1.25rem;margin:28px 0 12px}.cs-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding:0}.cs-meta span{background:var(--soft);border-radius:999px;padding:5px 11px;font-size:.88rem}.cs-gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cs-gal img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r,10px);display:block}.cs-gal img:first-child{grid-column:1/-1}.cs-specs{display:grid;grid-template-columns:auto 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:0}.cs-specs dt,.cs-specs dd{margin:0;padding:9px 13px;border-top:1px solid var(--line)}.cs-specs dt{color:var(--muted)}.cs-specs dd{font-weight:600}.cs-specs dt:first-of-type,.cs-specs dd:first-of-type{border-top:0}.cs-feats{columns:2;padding-left:18px}.cs-side{position:sticky;top:90px;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:10px;background:var(--bg)}.cs-px{font-size:1.8rem;font-weight:800;font-family:var(--display)}.cs-ref,.cs-small{color:var(--muted);font-size:.85rem}.cs-form{display:grid;gap:6px}.cs-form input,.cs-form textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}.cs-form label{font-size:.82rem;color:var(--muted)}.cs-en{display:flex;align-items:center;gap:10px;margin:6px 0}.cs-l{display:inline-grid;place-items:center;width:38px;height:30px;border-radius:6px;color:#fff;font-weight:800}.cs-A{background:#009C6D}.cs-B{background:#52B153}.cs-C{background:#A5CC74}.cs-D{background:#F4E70F;color:#222}.cs-E{background:#F2A541}.cs-F{background:#EB6B2C}.cs-G{background:#D7221F}@media (max-width:860px){.cs-grid{grid-template-columns:1fr}.cs-side{position:static}.cs-feats{columns:1}}`;
   doc.head.appendChild(st);
-  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=21'; live.setAttribute('data-site', slug); live.setAttribute('data-page', 'item'); live.defer = true; doc.body.appendChild(live); { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=25'; live.setAttribute('data-site', slug); live.setAttribute('data-page', 'item'); live.defer = true; doc.body.appendChild(live); { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
   return dom.serialize();
 }
 

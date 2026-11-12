@@ -839,12 +839,29 @@ GUIDES = {"vtc": "site-internet-chauffeur-vtc-les-indispensables", "taxi": "site
 def full_title(t):
     """12/11/2026 : Google coupe les titres vers 60 caractères ; le nom du site n'est ajouté que s'il tient."""
     return t if len(t) > 43 else t + " · MyCreativeSite"
+AVANT = {"site-internet-vtc": "devenir-chauffeur-vtc-etapes", "site-internet-taxi": "devenir-chauffeur-de-taxi-etapes",
+  "site-internet-restaurant": "ouvrir-un-restaurant-etapes", "site-internet-coiffeur-institut-beaute": "ouvrir-salon-de-coiffure-etapes",
+  "site-internet-artisan-batiment": "s-installer-artisan-batiment-etapes", "site-internet-plombier-electricien": "s-installer-artisan-batiment-etapes",
+  "site-internet-coach-sportif": "devenir-coach-sportif-independant", "site-internet-agence-immobiliere": "ouvrir-agence-immobiliere-etapes",
+  "site-internet-chambres-d-hotes-gite": "ouvrir-chambre-d-hotes-etapes", "site-internet-garage-mecanique": "ouvrir-un-garage-automobile-etapes",
+  "site-internet-garage": "ouvrir-un-garage-automobile-etapes", "site-internet-auto-ecole": "ouvrir-une-auto-ecole-etapes",
+  "site-internet-boulangerie": "ouvrir-une-boulangerie-etapes", "site-internet-masseur-osteopathe-bien-etre": "devenir-praticien-massage-bien-etre",
+  "site-internet-services-a-domicile": "creer-entreprise-services-a-la-personne", "site-internet-toiletteur": "ouvrir-salon-de-toilettage-etapes",
+  "site-internet-fleuriste": "ouvrir-une-boutique-de-fleuriste", "site-internet-photographe": "devenir-photographe-independant",
+  "site-internet-traiteur": "devenir-traiteur-etapes", "site-internet-creation-entreprise": "creer-son-entreprise-checklist",
+  "site-internet-auto-entrepreneur": "auto-entrepreneur-site-internet"}
 def guide(p):
-    g = GUIDES.get(p.get("k"))
-    if not g: return ""
     from articles import ARTICLES
-    a = next(x for x in ARTICLES if x["slug"] == g)
-    return f'<p style="margin-top:18px">À lire : <a href="/conseils/{g}/">{e(a["title"])}</a></p>'
+    g = GUIDES.get(p.get("k"))
+    g2 = AVANT.get(p.get("slug"))  # 12/11/2026 : guide « avant d'ouvrir » du métier
+    parts = []
+    if g:
+        a = next(x for x in ARTICLES if x["slug"] == g)
+        parts.append(f'À lire : <a href="/conseils/{g}/">{e(a["title"])}</a>')
+    if g2:
+        b = next((x for x in ARTICLES if x["slug"] == g2), None)
+        if b: parts.append(f'{"Vous n\'avez pas encore ouvert ? " if g else "À lire : "}<a href="/conseils/{g2}/">{e(b["title"])}</a>')
+    return f'<p style="margin-top:18px">{"<br>".join(parts)}</p>' if parts else ""
 
 def why(p):
     w = p.get("why")

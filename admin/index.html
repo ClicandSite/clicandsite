@@ -27,6 +27,15 @@ h1 span{color:var(--brand)}
 .card b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
 .card span{font-size:.82rem;color:var(--muted)}
 .card.hl{border-color:var(--brand);background:var(--soft)}
+.vis{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.vis-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.vis-h h2{font-size:1.05rem;margin:0}
+.vis-seg{display:flex;gap:6px}.vis-seg button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 11px;font:600 .82rem inherit;cursor:pointer}.vis-seg button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.vis-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:12px}
+.vis-cols h3{font-size:.88rem;margin:0 0 6px;color:var(--muted)}
+.vbar{display:grid;grid-template-columns:minmax(110px,45%) 1fr auto;align-items:center;gap:8px;font-size:.84rem;margin:3px 0}.vbar i{height:9px;border-radius:999px;background:var(--brand);display:block}.vbar b{white-space:nowrap}
+.vdays{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:6px}.vdays div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.68rem;color:var(--muted)}.vdays i{display:block;width:100%;max-width:26px;background:var(--brand);border-radius:5px 5px 0 0;min-height:2px}
+.vnote{font-size:.78rem;color:var(--muted);margin:10px 0 0}
 .robot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
 .robot .st{font-weight:700}
 .robot details{width:100%}
@@ -122,6 +131,20 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
         <button class="btn primary" type="submit">Enregistrer le site</button>
       </form>
     </div>
+    <!-- 12/11/2026 (Claude, Anthony : « mets un compteur aussi sur MyCreativeSite ») -->
+    <section class="vis" id="visBox">
+      <div class="vis-h"><h2>Visiteurs du site</h2>
+        <div class="vis-seg" id="visDays"><button type="button" data-d="1">Aujourd’hui</button><button type="button" data-d="7" class="on">7 jours</button><button type="button" data-d="30">30 jours</button></div></div>
+      <div class="cards" id="visCards" style="margin-bottom:0"></div>
+      <div class="vdays" id="visChart"></div>
+      <div class="vis-cols">
+        <div><h3>D’où ils viennent</h3><div id="visSrc"></div></div>
+        <div><h3>Page d’arrivée</h3><div id="visLand"></div></div>
+        <div><h3>Pages les plus vues</h3><div id="visPages"></div></div>
+        <div><h3>Sites qui envoient des visiteurs</h3><div id="visHosts"></div></div>
+      </div>
+      <p class="vnote">Personnes différentes (une fois par jour et par page). Robots et tes appareils ne sont pas comptés : ouvrir cet admin suffit à exclure l’appareil ; ailleurs, ouvre une fois mycreativesite.fr/?moi=1. Compteur en place depuis le 12/11/2026.</p>
+    </section>
     <div class="cards" id="cards"></div>
 
     <div class="robot">
@@ -281,7 +304,7 @@ $('list').addEventListener('click',async e=>{
 
 ['fTrade','fSite','fStatus','fContact','fAge'].forEach(id=>$(id).addEventListener('change',()=>{offset=0;load();}));
 let tq; $('fQ').addEventListener('input',()=>{clearTimeout(tq);tq=setTimeout(()=>{offset=0;load();},350);});
-$('refresh').addEventListener('click',()=>{stats();load();mailStatus();});
+$('refresh').addEventListener('click',()=>{stats();load();mailStatus();visits();});
 $('prev').addEventListener('click',()=>{offset=Math.max(0,offset-PAGE);render();scrollTo(0,0);});
 $('next').addEventListener('click',()=>{offset+=PAGE;render();scrollTo(0,0);});
 
@@ -406,12 +429,34 @@ $('login').addEventListener('submit',async e=>{e.preventDefault();const em=$('lE
 $('logout').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
 let recovery=false;
 sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;$('app').hidden=true;$('login').hidden=false;$('loginTitle').textContent='Choisis ton nouveau mot de passe';$('lEmail').hidden=true;$('lEmail').required=false;$('lMode').hidden=true;$('lForgot').hidden=true;$('lBtn').textContent='Enregistrer';}});
+
+/* 12/11/2026 : compteur de visiteurs du site public (RPC cs_admin_traffic, script /assets/cs-visits.js sur les pages). */
+let visD=7;
+const VSRC={google:'Google',bing:'Autres moteurs (Bing, Qwant…)',ia:'ChatGPT et autres IA',facebook:'Facebook',instagram:'Instagram',prospection:'Mails de prospection',email:'Autres e-mails',abracadeal:'Abracadeal (encart partenaire)',autre_site:'Autres sites',direct:'Direct (adresse tapée, favoris, appli)'};
+const vpage=p=>p==='/'?'Accueil':p.replace(/^\/|\/$/g,'').replace(/^site-internet-/,'Site ').replace(/^modeles\//,'Modèle ').replace(/^conseils\/?/,'Conseil ').replace(/^apercu$/,'Aperçu prospect').replace(/\.html$/,'').replace(/[-/]/g,' ');
+const vbars=(rows,lab)=>{const m=Math.max(1,...rows.map(r=>r[1]));return rows.map(r=>`<div class="vbar"><span>${esc(lab(r[0]))}</span><i style="width:${Math.max(4,Math.round(100*r[1]/m))}%"></i><b>${r[1]}</b></div>`).join('')||'<div class="vnote" style="margin:0">Pas encore de données.</div>';};
+async function visits(){
+  try{localStorage.setItem('cs_not_counted','1');}catch(_){}
+  const {data:t,error}=await sb.rpc('cs_admin_traffic',{p_days:visD});
+  if(error){$('visCards').innerHTML=`<div class="vnote">${esc(error.message)}</div>`;return;}
+  $('visCards').innerHTML=[[visD===1?'Visiteurs aujourd’hui':`Visiteurs (${visD} jours)`,t.visitors,'hl'],['Sur mobile',t.mobiles],['Aujourd’hui',t.today],['Pages vues',t.pageviews]]
+    .map(([l,v,c])=>`<div class="card ${c||''}"><b>${v??0}</b><span>${l}</span></div>`).join('');
+  const days=t.days||[],dm=Math.max(1,...days.map(d=>d.n));
+  $('visChart').innerHTML=visD===1?'':days.map(d=>{const x=new Date(d.day+'T12:00:00');return `<div title="${x.toLocaleDateString('fr-FR')} : ${d.n}"><b style="color:var(--ink)">${d.n}</b><i style="height:${Math.max(2,Math.round(70*d.n/dm))}px"></i>${days.length>10?x.getDate():x.toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3)+' '+x.getDate()}</div>`;}).join('');
+  $('visChart').hidden=visD===1;
+  const tot=Object.values(t.sources||{}).reduce((a,b)=>a+b,0)||1;
+  $('visSrc').innerHTML=vbars(Object.entries(t.sources||{}).sort((a,b)=>b[1]-a[1]),k=>VSRC[k]||k).replace(/<b>(\d+)<\/b>/g,(m,n)=>`<b>${n} · ${Math.round(100*n/tot)} %</b>`);
+  $('visLand').innerHTML=vbars((t.landing||[]).map(r=>[r.path,r.n]),vpage);
+  $('visPages').innerHTML=vbars((t.pages||[]).map(r=>[r.path,r.n]),vpage);
+  $('visHosts').innerHTML=vbars((t.hosts||[]).map(r=>[r.host,r.n]),h=>h);
+}
+$('visDays').addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;visD=+b.dataset.d;document.querySelectorAll('#visDays button').forEach(x=>x.classList.toggle('on',x===b));visits();});
 async function boot(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session||recovery){$('login').hidden=false;$('app').hidden=true;return;}
   const {data:isAdmin,error}=await sb.rpc('cs_is_admin');
   if(error||!isAdmin){$('login').hidden=true;$('gate').hidden=false;$('gate').innerHTML='Ce compte n\'a pas accès à l\'espace admin. <button class="linkbtn" id="out2" type="button">Se déconnecter</button>';$('out2').onclick=async()=>{await sb.auth.signOut();location.reload();};return;}
-  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus(); loadBoxes();
+  $('login').hidden=true;$('gate').hidden=true;$('app').hidden=false; stats(); load(); loadOrders(); mailStatus(); loadBoxes(); visits();
 }
 boot();
 

@@ -1,6 +1,7 @@
 import re, json, html, base64, io, os, sys, subprocess, concurrent.futures as cf
 from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from trades import T
 
 REPO = '/home/claude/mycreativesite'
@@ -239,7 +240,7 @@ def build(k):
         v = (sty[st] if st else base).get(slot)
         if not v: raise SystemExit(f'créneau inconnu {st} {slot}')
         return f'{m.group(0)[:m.group(0).index("{")]}{{--img:url({uris[v]})}}'
-    pre, n = re.subn(r'(?:\:root\[data-p="(\w+)"\] )?\.([gc]\d+)\{--img:url\(data:image/[a-z]+;base64,[A-Za-z0-9+/=]+\)\}', sub, pre)
+    pre, n = re.subn(r'(?:\:root\[data-p="(\w+)"\] )?\.([gc]\d+)\{--img:url\((?:data:image/[a-z]+;base64,[A-Za-z0-9+/=]+|https://mycreativesite\.fr/modeles/img/[0-9a-f]+\.webp)\)\}', sub, pre)
     assert n == 34, n
     w1, w2 = t['words']
     post = post.replace("n+(n>1?' soins':' soin')", f"n+(n>1?' {w1}':' {w2}')", 1)
@@ -247,6 +248,8 @@ def build(k):
     out = pre + body(k, t) + post
     if 'cs-date.js' not in out: out = out.rstrip('\n') + '\n<script src="https://mycreativesite.fr/assets/cs-date.js?v=4" defer></script>\n'
     open(f'{REPO}/modeles/{k}.html', 'w').write(out)
+    # 12/11/2026 : photos sorties en fichiers WebP partagés (modeles/img/), voir scripts/externalize_images.py
+    import externalize_images; externalize_images.run(f'{REPO}/modeles/{k}.html')
     print(k, len(out) // 1024, 'Ko')
 
 for k in (sys.argv[1:] or T):

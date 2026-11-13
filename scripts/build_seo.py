@@ -991,7 +991,7 @@ def page(p):
 </div></section>
 </main>
 <footer><div class="wrap"><span style="display:inline-flex;align-items:center;gap:8px"><img src="/img/m-badge.webp" alt="" width="20" height="20" style="width:20px;height:20px">© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
-<script src="/assets/cs-visits.js?v=2" defer></script>
+<script src="/assets/cs-visits.js?v=3" defer></script>
 </body>
 </html>
 '''
@@ -1043,7 +1043,7 @@ def shell(title, desc, url, ld, body, og_type="website"):
 <header class="top">{HEADER}</header>
 <main>{body}</main>
 <footer><div class="wrap"><span style="display:inline-flex;align-items:center;gap:8px"><img src="/img/m-badge.webp" alt="" width="20" height="20" style="width:20px;height:20px">© 2026 MyCreativeSite</span><nav><a href="/">Accueil</a><a href="/conseils/">Conseils</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><span style="user-select:all">contact@mycreativesite.fr</span></nav></div></footer>
-<script src="/assets/cs-visits.js?v=2" defer></script>
+<script src="/assets/cs-visits.js?v=3" defer></script>
 </body>
 </html>
 '''

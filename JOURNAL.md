@@ -57,3 +57,11 @@
 - Genres respectés (ex. « je suis repartie » → prénom féminin).
 - Anglais (assets/cs-en.json, ?v=3) : nouvelles traductions pour tous les textes avec prénom, y compris équipes et avis des 17 métiers ajoutés le 09/11 qui n'étaient pas traduits. Anciennes clés gardées pour les sites déjà construits.
 - scripts/metiers/trades.py aligné (source des 17 métiers générés).
+
+## 13/11/2026 — Exclure l'appareil d'Anthony des statistiques (comme sur Clic&Site)
+- Mentions légales : « Anthony Doche » = lien secret invisible (même couleur, pas de soulignement, curseur normal). Un toucher : exclu (« ✓ Cet appareil n'est plus compté dans les statistiques ») ; un 2e : recompté (« Cet appareil est de nouveau compté »).
+- Toutes les pages : #nostats / #stats (le # est retiré de l'adresse après). ?moi=1 / ?moi=0 et l'ouverture de l'admin marchent toujours. Même marque localStorage cs_not_counted.
+- Robots en plus : Google-InspectionTool (tests « URL active » de Search Console), GoogleOther, Bing preview, Petal, Yandex. cs-visits.js v=3.
+- Un seul domaine (mycreativesite.fr), une seule langue de domaine : rien d'autre à faire.
+- Le compteur maison n'enregistre pas la ville : « Lyon » ne vient pas de MyCreativeSite.
+- Supprimées : 5 visites mobiles « direct » qui étaient les tests Search Console du 12/11 (20:23-20:26) et du 13/11 (13:12-13:13).

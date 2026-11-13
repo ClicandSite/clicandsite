@@ -1,15 +1,41 @@
 /* 12/11/2026 (Claude, Anthony : « mets un compteur aussi sur MyCreativeSite ») — compteur de visiteurs.
    1 visite par visiteur, page et jour (identifiant anonyme dans le navigateur, aucune donnée personnelle).
    Pas comptés : robots et navigateurs automatisés, l'appareil d'Anthony (marqué en ouvrant l'admin,
-   ou avec mycreativesite.fr/?moi=1 ; ?moi=0 pour annuler). Résultats : admin, bloc « Visiteurs du site ». */
+   ou avec mycreativesite.fr/?moi=1 ; ?moi=0 pour annuler). Résultats : admin, bloc « Visiteurs du site ».
+   13/11/2026 (Anthony, « comme sur Clic&Site ») : aussi #nostats (exclure) / #stats (recompter) sur n'importe quelle page,
+   et lien secret sur son nom dans les mentions légales (window.csStatsToggle). */
 (function () {
   'use strict';
+  var NC = 'cs_not_counted';
+  var toast = function (msg) {
+    try {
+      var t = document.createElement('div'); t.textContent = msg; t.setAttribute('role', 'status');
+      t.style.cssText = 'position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483647;background:#12162B;color:#fff;padding:12px 18px;border-radius:12px;font:600 15px/1.35 system-ui,-apple-system,sans-serif;box-shadow:0 12px 30px -12px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center';
+      (document.body || document.documentElement).appendChild(t); setTimeout(function () { t.remove(); }, 3500);
+    } catch (_) {}
+  };
+  var setMe = function (excluded) {
+    try { if (excluded) localStorage.setItem(NC, '1'); else localStorage.removeItem(NC); } catch (_) {}
+    toast(excluded ? '✓ Cet appareil n\'est plus compté dans les statistiques' : 'Cet appareil est de nouveau compté');
+  };
+  window.csStatsToggle = function () { var ex = false; try { ex = localStorage.getItem(NC) === '1'; } catch (_) {} setMe(!ex); };
+  var fromHash = function () {
+    var h = (location.hash || '').toLowerCase();
+    if (h !== '#nostats' && h !== '#stats') return false;
+    setMe(h === '#nostats');
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {}
+    return true;
+  };
+  window.addEventListener('hashchange', fromHash);
+  window.csTrack = function () {};
   try {
     var q = new URLSearchParams(location.search);
-    if (q.get('moi') === '1') localStorage.setItem('cs_not_counted', '1');
-    else if (q.get('moi') === '0') localStorage.removeItem('cs_not_counted');
-    if (localStorage.getItem('cs_not_counted') === '1') return;
-    if (navigator.webdriver || /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|phantomjs|puppeteer|playwright|selenium/i.test(navigator.userAgent || '')) return;
+    if (q.get('moi') === '1') localStorage.setItem(NC, '1');
+    else if (q.get('moi') === '0') localStorage.removeItem(NC);
+    var go = function () { fromHash(); };
+    if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
+    if (localStorage.getItem(NC) === '1' || /^#nostats$/i.test(location.hash)) return;
+    if (navigator.webdriver || /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|phantomjs|puppeteer|playwright|selenium|inspectiontool|googleother|google-read-aloud|google-site-verification|bingpreview|petalsearch|yandex/i.test(navigator.userAgent || '')) return;
     if (window.self !== window.top) return; // modèle affiché dans un cadre (aperçu)
     var path = location.pathname.replace(/index\.html$/, '') || '/';
     var day = new Date().toISOString().slice(0, 10), k = 'cs_visit_' + day + '_' + path;

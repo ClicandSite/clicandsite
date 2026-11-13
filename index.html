@@ -465,6 +465,18 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
 .pickbar small{font-size:.8rem;color:var(--muted)}
 .pickbar .btn{padding:12px 16px;font-size:.92rem;white-space:nowrap}
 @media (min-width:921px){.pickbar{display:none!important}}
+/* 13/11/2026 (Anthony : « pousser à prendre un site ») */
+.hero .reassure{margin:14px 0 0;font-size:.95rem;color:var(--muted);max-width:540px}
+.hero .reassure b{color:var(--ink,inherit)}
+.cband{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:30px 34px;border-radius:22px;background:var(--brand-soft);border:1px solid var(--line)}
+.cband h2{font-size:clamp(1.35rem,2.4vw,1.8rem);margin:0 0 6px}
+.cband p{margin:0;color:var(--muted);max-width:620px}
+.gobar{position:fixed;left:0;right:0;bottom:0;z-index:39;display:flex;align-items:center;gap:12px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);box-shadow:0 -10px 30px -20px rgba(18,22,43,.4)}
+.gobar>span{flex:1;min-width:0;display:grid;line-height:1.2}
+.gobar b{font-size:.95rem}.gobar small{font-size:.8rem;color:var(--muted)}
+.gobar .btn{padding:12px 16px;font-size:.92rem;white-space:nowrap}
+.gobar[hidden]{display:none}
+@media (min-width:921px){.gobar{display:none!important}}
 @media (max-width:520px){.args>div{padding:0 10px}.args b{font-size:.86rem}.args span:not(.ai){font-size:.78rem}}
 
 /* 09/11/2026 (Anthony) : sur ordinateur, menu à gauche (formule, métiers, styles en liste) et le site en grand à droite */
@@ -642,10 +654,11 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
         <a class="btn" href="#commande">Je veux mon site</a>
         <a class="btn ghost" href="#modeles">Essayer les modèles</a>
       </div>
+      <p class="reassure"><b>Dès 29 €/mois.</b> On prépare votre site, vous le voyez en vrai, et vous ne payez qu'une fois que vous l'avez validé.</p>
       <div class="args">
         <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-3 7.6-7 9-4-1.4-7-4.8-7-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><b>Sans engagement</b><span>Vous arrêtez quand vous voulez.</span></div>
         <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><b>Domaine à votre nom</b><span>Hébergement et domaine inclus.</span></div>
-        <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg></span><b>Parfait sur mobile</b><span>Pensé d'abord pour le téléphone.</span></div>
+        <div><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span><b>Vu avant de payer</b><span>Rien n'est facturé avant votre accord.</span></div>
       </div>
     </div>
     <div class="hero-show">
@@ -814,6 +827,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   </div>
 </section>
 
+<div class="gobar" id="gobar" hidden><span><b>Votre site dès 29 €/mois</b><small>Vous payez seulement après l'avoir vu</small></span><a class="btn" href="#commande">Je veux mon site</a></div>
 <div class="pickbar" id="pickbar" hidden><span><b id="pb-k">Chauffeur VTC</b><small id="pb-s">Moderne</small></span><a class="btn" href="#commande" id="pb-go">Je veux ce modèle</a></div>
 <section class="allgrid" id="tous">
   <div class="wrap">
@@ -861,6 +875,8 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   </div>
 </section>
 
+<section class="ctaband" style="padding-top:0"><div class="wrap"><div class="cband"><div><h2>Votre site prêt en 48 heures.</h2><p>Une minute pour envoyer votre demande. Vous voyez votre site sur ordinateur et téléphone, et vous ne payez qu'après l'avoir validé.</p></div><a class="btn" href="#commande">Je veux mon site</a></div></div></section>
+
 <section class="refs" id="references">
   <div class="wrap">
     <div class="head">
@@ -890,7 +906,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
     <div class="head">
       <span class="eyebrow">Tarifs</span>
       <h2>Un prix clair. Sans engagement.</h2>
-      <p>Des frais de mise en ligne une seule fois, puis un abonnement mensuel. Vous arrêtez quand vous voulez.<br>Essentiel, Pro et Premium : VTC, taxis, restaurants, artisans, beauté, bien-être, vétérinaires, kinés, dentistes, auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, location de bateaux, bijouteries-horlogeries, professions libérales, services à domicile, événementiel, chambres d'hôtes et gîtes, tourisme et loisirs, location et déménagement, infirmiers libéraux, boulangeries, dépannage. Garages en entretien seul (vidange, pneus, freins) : Essentiel, Pro ou Premium. Garages qui vendent des véhicules, concessions et agences immobilières : Pack Auto, Moto &amp; Immo. Vente en ligne : formule Boutique.</p>
+      <p>Des frais de mise en ligne une seule fois, puis un abonnement mensuel. Vous arrêtez quand vous voulez. Un site sur mesure en agence coûte souvent plus de 1 500 €, sans la maintenance.<br>Essentiel, Pro et Premium : VTC, taxis, restaurants, artisans, beauté, bien-être, vétérinaires, kinés, dentistes, auto-écoles, coachs, photographes, toiletteurs, fleuristes, traiteurs, location de bateaux, bijouteries-horlogeries, professions libérales, services à domicile, événementiel, chambres d'hôtes et gîtes, tourisme et loisirs, location et déménagement, infirmiers libéraux, boulangeries, dépannage. Garages en entretien seul (vidange, pneus, freins) : Essentiel, Pro ou Premium. Garages qui vendent des véhicules, concessions et agences immobilières : Pack Auto, Moto &amp; Immo. Vente en ligne : formule Boutique.</p>
     </div>
     <div class="plans">
       <div class="plan">
@@ -1028,6 +1044,8 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
     </div>
   </div>
 </section>
+
+<section class="ctaband" style="padding-top:0"><div class="wrap"><div class="cband"><div><h2>On s'occupe de tout, vous gardez la main.</h2><p>Sans engagement, domaine à votre nom, maintenance comprise. Lancez-vous : vous ne payez rien avant d'avoir vu votre site.</p></div><a class="btn" href="#commande">Je veux mon site</a></div></div></section>
 
 <section class="order" id="commande">
   <div class="wrap">
@@ -1296,6 +1314,13 @@ show();
 })();
 </script>
 <script>/* 09/11 : onglets Pack / Boutique (téléphone) */(function(){var t=document.querySelector('.spec-tabs'),c=document.querySelector('.spec-cols');if(!t||!c)return;t.addEventListener('click',function(e){var b=e.target.closest('button[data-sc]');if(!b)return;c.setAttribute('data-show',b.dataset.sc);t.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});});})();
+/* 13/11/2026 : barre « Je veux mon site » sur téléphone, sauf en haut, dans les modèles et sur le formulaire */
+(function(){
+  var bar=document.getElementById('gobar'); if(!bar||!('IntersectionObserver' in window)) return;
+  var ids=['accueil','modeles','commande'], vis={};
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ vis[e.target.id]=e.isIntersecting; }); bar.hidden=ids.some(function(i){return vis[i];}); var wn=document.querySelector('.studio2.wz .wnav'); if(wn) wn.hidden=!vis.modeles; },{rootMargin:'0px 0px -15% 0px'});
+  ids.forEach(function(i){ var el=document.getElementById(i); if(el){ vis[i]=i==='accueil'; io.observe(el);} });
+})();
 /* 09/11/2026 : barre « Je veux ce modèle » sur téléphone pendant qu'on regarde les modèles */
 (function(){
   var bar=document.getElementById('pickbar'), sec=document.getElementById('modeles'), go=document.getElementById('pb-go');

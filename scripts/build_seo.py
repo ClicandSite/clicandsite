@@ -512,13 +512,13 @@ PAGES = [
          ("Je peux ajouter une intervention depuis le chantier ?","Oui, depuis votre téléphone, avec la photo et le prix."),
          ("Le site convient-il à un auto-entrepreneur ?","Oui, la formule Essentiel est faite pour démarrer, dès 29 € par mois.")]),
 ]
-# 08/11/2026 : page Cannes retirée (pas de pages par ville, Cannes non affiché sur le site). Gardée ici pour mémoire, non générée.
-LOCAL = dict(slug="creation-site-internet-cannes", k=None,
+# 08/11/2026 : page Cannes retirée. 13/11/2026 (Anthony, « ok ») : remise en ligne, une seule page locale « basé à Cannes, partout en France » (impressions GSC sur « création site internet cannes / cagnes-sur-mer »). Pas d'autres pages par ville.
+LOCAL = dict(slug="creation-site-internet-cannes", k=None, label="Création de site à Cannes",
     title="Création de site internet à Cannes et sur la Côte d'Azur",
-    meta="Création de site internet pour les professionnels à Cannes, Nice, Antibes, Grasse, Mougins et dans le Var. Agence basée à Cannes. En ligne en 48 h, dès 29 €/mois.",
+    meta="Création de site internet pour les pros à Cannes, Nice, Antibes, Cagnes-sur-Mer, Grasse et partout en France. Basé à Cannes. En ligne en 48 h, dès 29 €/mois, sans engagement.",
     h1="Création de site internet à Cannes et sur la Côte d'Azur",
-    lead="MyCreativeSite est basé à Cannes. Nous créons les sites des commerçants, artisans et indépendants de la Riviera, de Menton à Saint-Tropez, et partout en France à distance.",
-    feats=[("Une agence locale","Basée à Cannes : nous connaissons les métiers et la clientèle de la Côte d'Azur, locale comme internationale."),
+    lead="MyCreativeSite est basé à Cannes. Nous créons les sites des commerçants, artisans et indépendants de la Riviera, de Menton à Saint-Tropez, et de toute la France à distance : 31 métiers, en ligne en 48 heures.",
+    feats=[("Basés à Cannes","Nous connaissons les métiers et la clientèle de la Côte d'Azur, locale comme internationale."),
            ("Référencement local","Votre site est pensé pour ressortir sur « votre métier + votre ville » dans Google."),
            ("Clientèle étrangère","Site en anglais en option, ou inclus en Premium, pour les touristes et la clientèle d'affaires."),
            ("Tout à distance","Pas de rendez-vous nécessaire : vous envoyez vos infos, on vous envoie votre site."),
@@ -526,7 +526,8 @@ LOCAL = dict(slug="creation-site-internet-cannes", k=None,
            ("Sans engagement","Un abonnement mensuel, résiliable à tout moment, nom de domaine à votre nom.")],
     faq=[("Intervenez-vous en dehors de Cannes ?","Oui : Nice, Antibes, Cagnes-sur-Mer, Grasse, Mougins, Mandelieu, Menton, Saint-Raphaël, Fréjus, Saint-Tropez, et toute la France à distance."),
          ("Faut-il se rencontrer ?","Ce n'est pas nécessaire : tout se fait en ligne. Si vous êtes près de Cannes, on peut aussi en parler de vive voix."),
-         ("Quels métiers accompagnez-vous ?","Chauffeurs VTC, restaurants, garages et concessions, agences immobilières, artisans du bâtiment, coiffeurs et instituts de beauté, masseurs et ostéopathes, boulangeries, plombiers et électriciens, et d'autres commerces sur demande.")],
+         ("Quels métiers accompagnez-vous ?","31 métiers : chauffeurs VTC et taxis, restaurants, garages et concessions auto et moto, agences immobilières, artisans du bâtiment, coiffeurs et instituts, masseurs et ostéopathes, boulangeries, plombiers et électriciens, location de bateaux, chambres d'hôtes et bien d'autres."),
+         ("Combien coûte un site internet à Cannes ?","Dès 29 € par mois et 190 € de mise en ligne, hébergement, nom de domaine et maintenance compris. Vous ne payez qu'après avoir vu et validé votre site.")],
     cities=["Cannes","Le Cannet","Mougins","Antibes","Juan-les-Pins","Vallauris","Mandelieu-la-Napoule","Grasse","Nice","Cagnes-sur-Mer","Saint-Laurent-du-Var","Menton","Monaco","Saint-Raphaël","Fréjus","Sainte-Maxime","Saint-Tropez"])
 
 # 07/11/2026 (Claude, demande d'Anthony) : pages locales par ville, chacune avec son propre contenu (pas de copie).
@@ -618,6 +619,7 @@ CITIES = [
      ("Mon site peut-il être en italien ?","Le site est prévu en français et en anglais. Pour une autre langue, écrivez-nous avant de commander.")],
     ["Menton","Roquebrune-Cap-Martin","Beausoleil","Cap-d'Ail","Sainte-Agnès","Gorbio","Castellar","Castillon"], "une soixantaine de kilomètres"),
 ]
+INTENT_LOCAL = [LOCAL]
 CITIES = []  # 07/11/2026 : retirées à la demande d'Anthony, MyCreativeSite vend dans toute la France
 CITY_SLUG = {}
 
@@ -724,6 +726,7 @@ INTENT = [
          ("Et si je préfère que vous le fassiez ?","En formules Pro et Premium, vous nous envoyez vos changements par message et on s'en occupe."),
          ("Puis-je casser mon site ?","Non : la mise en page est protégée, et vous pouvez toujours annuler votre dernière modification.")]),
 ]
+INTENT += INTENT_LOCAL
 
 CSS = """.logo-mark{width:34px;height:34px;flex:none;display:block}
 .logo .and,.logo i,.grad-t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
@@ -911,8 +914,8 @@ def page(p):
         visual = devices(k, p.get("label") or NAMES[k], f'<a href="/modeles/{mk}#{p["style"]}">Voir le modèle en vrai</a>')
     else:
         demo = '<a class="btn ghost" href="/espace/?demo=restaurant">Essayer l\'espace client</a>' if p["slug"] == "site-internet-facile-a-modifier" else '<a class="btn ghost" href="/#modeles">Voir les modèles</a>'
-        visual = devices("vtc", "Chauffeur VTC, un des 30 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
-    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(p.get("eyebrow_name") or NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 30 métiers")
+        visual = devices("vtc", "Chauffeur VTC, un des 31 métiers", '<a href="/#modeles">Voir tous les modèles</a>')
+    eyebrow = "Pack Auto, Moto &amp; Immo · 99 €/mois" if p.get("pack") else (f'Modèle {e(p.get("eyebrow_name") or NAMES[k].lower())} · en ligne en 48 h' if k else "Sites pros clés en main · 31 métiers")
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t,d in p["feats"])
     prices = "".join(f'<div class="pc"><span>{n}</span><b>{m} €</b><span>par mois · + {s} € de mise en ligne</span></div>' for n,m,s in plans)
     if p.get("pack"):

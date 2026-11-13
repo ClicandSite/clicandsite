@@ -46,3 +46,5 @@
 - Page artisan bâtiment : titre « … et BTP », meta avec maçonnerie.
 - Pages par ville NON recréées (choix d'Anthony du 07/11), malgré des impressions sur « création site internet cannes ».
 - Indexation demandée : accueil (quota GSC atteint ensuite).
+- Page locale /creation-site-internet-cannes/ remise en ligne (accord d'Anthony) : « basés à Cannes, partout en France », lien en pied de page. Aucune autre page par ville.
+- Pages SEO : « 30 métiers » corrigé en « 31 métiers ».

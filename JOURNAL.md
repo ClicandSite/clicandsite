@@ -72,5 +72,5 @@
   Exclusion du pro : toucher le nom de l'entreprise dans le pied de page (« © … », apparence inchangée) ; #nostats / #stats ; messages FR/EN.
 - Espace client : onglet « Statistiques » (visiteurs, pages vues, % téléphone, aujourd'hui, graphique par jour, sources, pages ; 7 j / 30 j / 3 mois / 1 an) + rappel et bouton « Ne plus compter cet appareil ». Données d'exemple en démo.
 - Accueil : ligne « Statistiques de visites… » dans Essentiel (donc Pro, Premium), Boutique et Pack ; carte « Statistiques » dans « Inclus dans toutes les formules » (Mises à jour + Dépannage fusionnés).
-- À faire : 1 visite de test (v:test-claude-1) reste sur le site de démo « demo-concession » (suppression bloquée par une confirmation Supabase).
+- Visite de test (v:test-claude-1) supprimée.
 - À noter : la page d'accueil promet des « Mentions légales prêtes » mais les sites clients n'ont pas encore de page mentions légales.

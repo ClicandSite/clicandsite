@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=27"></script>
+<script src="/assets/cs-edit.js?v=28"></script>
 <style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -257,6 +257,20 @@ html.bnopen,html.bnopen body{overflow:hidden}
 .kpi span{font-size:.82rem;color:var(--muted)}
 .kpi.warn b{color:var(--bad)}
 .kpi[aria-pressed="true"]{border-color:var(--brand);background:var(--soft)}
+/* 13/11/2026 : onglet Statistiques */
+.stp{display:flex;gap:6px;flex-wrap:wrap}.stp button{font:inherit;font-size:.88rem;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:inherit;cursor:pointer}.stp button[aria-pressed="true"]{border-color:var(--brand);background:var(--soft);font-weight:600}
+.stchart{display:flex;align-items:flex-end;gap:2px;height:140px;padding:12px 12px 0;background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+.stchart i{flex:1;min-width:2px;background:var(--brand);border-radius:3px 3px 0 0;opacity:.85}
+.stchart i.z{background:var(--line);opacity:1}
+.stgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stbox{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.stbox h3{margin:0 0 8px;font-size:1rem}
+.strow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:.92rem}
+.strow:first-of-type{border-top:0}.strow span{overflow-wrap:anywhere}
+.strow b{font-variant-numeric:tabular-nums}
+.stme{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;font-size:.92rem}
+.stme p{margin:0 0 8px}.stme .btn{margin-top:4px}
+@media (max-width:860px){.stgrid{grid-template-columns:minmax(0,1fr)}}
 .upsell{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
 .upsell p{margin:0;font-size:.92rem;max-width:70ch}
 .ctools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -393,7 +407,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
       <a class="brand" href="/" aria-label="MyCreativeSite, accueil"><img src="/img/logo-m.png" width="26" height="26" alt=""><span>My<span>creativesite</span></span></a>
       <span class="site" id="siteName"></span>
       <select id="sitePick" hidden aria-label="Choisir le site"></select>
-      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="home" aria-pressed="false" id="homeTab" hidden>Accueil</button><button type="button" data-mode="edit" id="editTab" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="agenda" aria-pressed="false" id="agendaTab" hidden>Mon agenda</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button></div>
+      <div class="vseg" role="group" aria-label="Affichage"><button type="button" data-mode="home" aria-pressed="false" id="homeTab" hidden>Accueil</button><button type="button" data-mode="edit" id="editTab" aria-pressed="true">Mon site</button><button type="button" data-mode="stock" aria-pressed="false" id="stockTab" hidden>Mes véhicules</button><button type="button" data-mode="brief" aria-pressed="false" id="briefTab" hidden>Mes infos et photos</button><button type="button" data-mode="agenda" aria-pressed="false" id="agendaTab" hidden>Mon agenda</button><button type="button" data-mode="devis" aria-pressed="false" id="devisTab">Devis</button><button type="button" data-mode="crm" aria-pressed="false">Mes clients <span class="cnt" id="crmCnt" hidden></span></button><button type="button" data-mode="stats" aria-pressed="false" id="statsTab" hidden>Statistiques</button></div>
       <span class="sp"></span>
       <span class="status" id="status" role="status"></span>
       <a class="btn sm hide-m" id="viewSite" target="_blank" rel="noopener" hidden>Voir mon site</a>
@@ -418,6 +432,7 @@ html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
   <div class="crm" id="devis" hidden><div class="crm-in" id="devisIn"></div></div>
   <div class="crm" id="stock" hidden><div class="crm-in" id="stockIn"></div></div>
   <div class="crm" id="agenda" hidden><div class="crm-in" id="agendaIn"></div></div>
+  <div class="crm" id="stats" hidden><div class="crm-in" id="statsIn"></div></div>
   <div class="main" id="mainEd">
     <div class="panel" id="panel"></div>
     <div class="preview">
@@ -1185,8 +1200,8 @@ async function openSite(s){
     try{ const r=await fetch('https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-checkout',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},body:JSON.stringify({slug:site.slug})}); const j=await r.json(); location.href=(r.ok&&j.url)?j.url:fb; }
     catch(x){ location.href=fb; } finally{ setTimeout(()=>{ pb.textContent=old; },3000); } }); }
   // 10/11/2026 (Anthony) : site en ligne = l'espace sert d'abord à gérer (clients, rendez-vous, véhicules, devis) ; la modification du site reste accessible
-  { const live=DEMO||s.status==='en_ligne'; $('homeTab').hidden=!live; $('editTab').textContent=live?'Modifier mon site':'Mon site';
-    { const vs=document.querySelector('.vseg[aria-label="Affichage"]'), ord=live?['home','crm','agenda','stock','devis','edit','brief']:['edit','brief','stock','agenda','devis','crm','home'];
+  { const live=DEMO||s.status==='en_ligne'; $('homeTab').hidden=!live; $('statsTab').hidden=!live; if(!live&&mode==='stats') await setMode('edit'); $('editTab').textContent=live?'Modifier mon site':'Mon site';
+    { const vs=document.querySelector('.vseg[aria-label="Affichage"]'), ord=live?['home','crm','agenda','stock','devis','stats','edit','brief']:['edit','brief','stock','agenda','devis','crm','home','stats'];
       ord.forEach(m=>{ const b=vs.querySelector('button[data-mode="'+m+'"]'); if(b) vs.appendChild(b); }); }
     if(!live&&mode==='home') await setMode('edit');
     if(live&&!openSite.homeDone&&mode==='edit'&&!params.get('vue')){ openSite.homeDone=true; await setMode('home'); }
@@ -1414,6 +1429,33 @@ const HI={client:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 
   stock:'<path d="M5 16h14l-1.5-5.5A2 2 0 0 0 15.6 9H8.4a2 2 0 0 0-1.9 1.5zM5 16v3M19 16v3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',agenda:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v4M10 15h4"/>',
   presta:'<path d="M4 6h16M4 12h16M4 18h10"/><path d="M19 15v6M16 18h6"/>',banner:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>'};
 const hsvg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+HI[k]+'</svg>';
+/* 13/11/2026 (Anthony) : statistiques de visites du site (script cs-site-stats.js sur le site du pro) */
+let STD=30;
+const SRC={google:'Google',bing:'Autres moteurs (Bing, Qwant…)',ia:'Assistants IA (ChatGPT…)',facebook:'Facebook',instagram:'Instagram',email:'E-mails',direct:'Accès direct (adresse tapée, favori, QR code)',autre_site:'Liens depuis d\'autres sites'};
+async function renderStats(){
+  const R=$('statsIn'); if(!site) return;
+  let d;
+  if(DEMO){ const n=STD; const days=[...Array(n)].map((_,i)=>{ const t=new Date(); t.setDate(t.getDate()-(n-1-i)); const w=t.getDay(); return {day:t.toISOString().slice(0,10),n:Math.max(0,Math.round(9+6*Math.sin(i/2.3)+(w===6?6:w===0?-4:0)+((i*7)%5)))}; });
+    const v=days.reduce((a,x)=>a+x.n,0); d={visitors:v,mobiles:Math.round(v*.71),pageviews:Math.round(v*2.4),today:days[days.length-1].n,days,sources:{google:Math.round(v*.46),direct:Math.round(v*.27),facebook:Math.round(v*.11),instagram:Math.round(v*.07),bing:Math.round(v*.05),ia:Math.round(v*.02)},
+      hosts:[{host:'google.com',n:Math.round(v*.44)},{host:'facebook.com',n:Math.round(v*.1)},{host:'pagesjaunes.fr',n:Math.round(v*.03)}],pages:[{path:'/',n:Math.round(v*.9)},{path:'/vehicules/',n:Math.round(v*.3)}]}; }
+  else { R.innerHTML='<div class="empty">Chargement…</div>';
+    try{ const r=await SB.rpc('cs_site_traffic',{p_site:site.id,p_days:STD}); if(r.error) throw r.error; d=r.data; }catch(x){ R.innerHTML='<div class="empty">Statistiques indisponibles pour le moment.</div>'; return; } }
+  if(mode!=='stats') return;
+  const fmt=n=>(+n||0).toLocaleString('fr-FR'), mx=Math.max(1,...d.days.map(x=>x.n));
+  const url=siteUrl(), pct=d.visitors?Math.round(100*d.mobiles/d.visitors):0;
+  const rows=(arr)=>arr.length?arr.map(x=>'<div class="strow"><span>'+escH(x[0])+'</span><b>'+fmt(x[1])+'</b></div>').join(''):'<p class="hint" style="margin:0">Pas encore de données.</p>';
+  const src=Object.entries(d.sources||{}).sort((a,b)=>b[1]-a[1]).map(([k,n])=>[SRC[k]||k,n]);
+  const pg=(d.pages||[]).map(p=>[p.path==='/'?'Accueil':decodeURIComponent(p.path).replace(/^\/|\/$/g,'').replace(/[-/]/g,' ').replace(/^./,c=>c.toUpperCase()),p.n]);
+  R.innerHTML='<div class="crm-head"><div><h2>Statistiques</h2><p>'+(DEMO?'<b>Démo</b> : exemple de chiffres. ':'')+'Les visites de votre site, sans compter les robots ni vos propres visites. Un visiteur est compté une fois par page et par jour.</p></div>'+
+    '<div class="stp" role="group" aria-label="Période">'+[[7,'7 jours'],[30,'30 jours'],[90,'3 mois'],[365,'1 an']].map(p=>'<button type="button" data-std="'+p[0]+'" aria-pressed="'+(STD===p[0])+'">'+p[1]+'</button>').join('')+'</div></div>'+
+    '<div class="kpis">'+[['Visiteurs',d.visitors],['Pages vues',d.pageviews],['Sur téléphone',pct+' %'],['Aujourd\'hui',d.today]].map(k=>'<div class="kpi" style="cursor:default"><b>'+(typeof k[1]==='string'?k[1]:fmt(k[1]))+'</b><span>'+k[0]+'</span></div>').join('')+'</div>'+
+    '<div class="stchart" role="img" aria-label="Visiteurs par jour">'+d.days.map(x=>'<i class="'+(x.n?'':'z')+'" style="height:'+Math.max(3,Math.round(100*x.n/mx))+'%" title="'+new Date(x.day+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})+' : '+x.n+' visiteur'+(x.n>1?'s':'')+'"></i>').join('')+'</div>'+
+    '<div class="stgrid"><div class="stbox"><h3>D\'où viennent vos visiteurs</h3>'+rows(src)+'</div><div class="stbox"><h3>Pages les plus vues</h3>'+rows(pg)+'</div></div>'+
+    '<div class="stme"><p><b>Vos propres visites ne sont pas comptées</b> une fois votre téléphone ou ordinateur exclu. À faire une fois par appareil et par navigateur :</p>'+
+    '<p>• touchez le nom de votre entreprise en bas de votre site (« © … ») : un message confirme « Cet appareil n\'est plus compté » ; touchez-le à nouveau pour être recompté ;<br>• ou ouvrez votre site avec <b>#nostats</b> à la fin de l\'adresse (et <b>#stats</b> pour être recompté).</p>'+
+    (url&&!DEMO?'<a class="btn sm" href="'+escH(url)+'/#nostats" target="_blank" rel="noopener">Ne plus compter cet appareil</a>':'')+'</div>';
+  R.querySelectorAll('[data-std]').forEach(b=>b.addEventListener('click',()=>{ STD=+b.dataset.std; renderStats(); }));
+}
 async function renderHome(){
   const R=$('homeIn'); if(!site) return;
   const nw=+site.leads_new||0, due=+site.leads_due||0;
@@ -1843,7 +1885,7 @@ function printBon(q){
 let mode='edit';
 async function setMode(m){
   mode=m; document.querySelectorAll('.vseg[aria-label="Affichage"] button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
-  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('home').hidden=m!=='home'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
+  const on=m==='crm', other=m!=='edit'; $('crm').hidden=!on; $('brief').hidden=m!=='brief'; $('devis').hidden=m!=='devis'; $('stock').hidden=m!=='stock'; $('agenda').hidden=m!=='agenda'; $('stats').hidden=m!=='stats'; $('home').hidden=m!=='home'; $('mainEd').hidden=other; $('app').classList.toggle('crm-on',other);
   ['save','undo','status'].forEach(id=>{ const e=$(id); if(e) e.style.visibility=other?'hidden':''; });
   // 10/11/2026 : sur téléphone, l'onglet choisi est toujours entièrement visible dans la barre d'onglets
   { const bar=document.querySelector('.vseg[aria-label="Affichage"]'), b=bar&&bar.querySelector('button[aria-pressed="true"]'); if(b&&bar.scrollWidth>bar.clientWidth){ const l=b.getBoundingClientRect().left-bar.getBoundingClientRect().left+bar.scrollLeft; bar.scrollTo({left:Math.max(0,l-(bar.clientWidth-b.offsetWidth)/2),behavior:'smooth'}); } }
@@ -1852,6 +1894,7 @@ async function setMode(m){
   if(m==='devis'){ await loadDevis(); return; }
   if(m==='stock'){ if(window.CSStock) CSStock.open(); return; }
   if(m==='agenda'){ if(window.CSAgenda) await CSAgenda.open(); return; }
+  if(m==='stats'){ await renderStats(); return; }
   if(on){ if(!crm.loaded||crm.site!==site.id+':'+site.trade){ crm.loaded=false; crm.site=site.id+':'+site.trade; crm.filter='actives'; crm.q=''; renderCrm(); await loadCrm(); } renderCrm(); }
 }
 document.querySelector('.vseg[aria-label="Affichage"]').addEventListener('click',e=>{ const b=e.target.closest('button[data-mode]'); if(b) setMode(b.dataset.mode); });
@@ -1939,19 +1982,20 @@ boot();
     brief:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>',
     agenda:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
     devis:'<path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"/><path d="M10 8h4M10 12h4"/>',
+    stats:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
     crm:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
     view:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
     help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/>',
     mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     out:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H4"/>'};
   const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>';
-  const SUB={home:'Votre activité au quotidien : clients, rendez-vous, devis.',edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Votre fichier clients : demandes, suivi et messages à tous.'};
+  const SUB={stats:'Combien de visiteurs, d\'où ils viennent, ce qu\'ils regardent.',home:'Votre activité au quotidien : clients, rendez-vous, devis.',edit:'Modifiez les textes et les photos de votre site.',stock:'Ajoutez, modifiez ou retirez vos véhicules.',brief:'Vos informations et vos photos pour préparer le site.',agenda:'Vos rendez-vous et réservations.',devis:'Créez et envoyez vos devis.',crm:'Votre fichier clients : demandes, suivi et messages à tous.'};
   const list=$('snavList'), vseg=document.querySelector('.vseg[aria-label="Affichage"]');
   let subs=[];
   function draw(){
     list.textContent='';
     const add=(html,fn,cur)=>{ const b=document.createElement('button'); b.type='button'; b.innerHTML=html; if(cur) b.setAttribute('aria-current','page'); b.addEventListener('click',fn); list.appendChild(b); return b; };
-    const live=!$('homeTab').hidden, ORD=live?['home','crm','agenda','stock','devis','edit','brief']:['edit','brief','stock','agenda','devis','crm'];
+    const live=!$('homeTab').hidden, ORD=live?['home','crm','agenda','stock','devis','stats','edit','brief']:['edit','brief','stock','agenda','devis','crm'];
     const vbs=[...vseg.querySelectorAll('button[data-mode]')].sort((a,b)=>ORD.indexOf(a.dataset.mode)-ORD.indexOf(b.dataset.mode));
     vbs.forEach(vb=>{ if(vb.hidden) return; const m=vb.dataset.mode;
       if(live&&m==='edit'){ const g=document.createElement('div'); g.className='sgrp'; g.textContent='Mon site internet'; list.appendChild(g); }

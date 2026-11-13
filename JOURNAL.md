@@ -65,3 +65,12 @@
 - Un seul domaine (mycreativesite.fr), une seule langue de domaine : rien d'autre à faire.
 - Le compteur maison n'enregistre pas la ville : « Lyon » ne vient pas de MyCreativeSite.
 - Supprimées : 5 visites mobiles « direct » qui étaient les tests Search Console du 12/11 (20:23-20:26) et du 13/11 (13:12-13:13).
+
+## 13/11/2026 — Statistiques pour les sites clients
+- Base : table clicandsite.client_visits ; RPC cs_site_track (envoi depuis le site, sites « en_ligne » seulement, 3000 pages/jour max, propriétaire connecté non compté) et cs_site_traffic (propriétaire du site ou admin).
+- assets/cs-site-stats.js (chargé par cs-edit.js v=28 sur tout site client) : 1 visite par visiteur, page et jour ; robots exclus ; pas dans l'aperçu de l'espace.
+  Exclusion du pro : toucher le nom de l'entreprise dans le pied de page (« © … », apparence inchangée) ; #nostats / #stats ; messages FR/EN.
+- Espace client : onglet « Statistiques » (visiteurs, pages vues, % téléphone, aujourd'hui, graphique par jour, sources, pages ; 7 j / 30 j / 3 mois / 1 an) + rappel et bouton « Ne plus compter cet appareil ». Données d'exemple en démo.
+- Accueil : ligne « Statistiques de visites… » dans Essentiel (donc Pro, Premium), Boutique et Pack ; carte « Statistiques » dans « Inclus dans toutes les formules » (Mises à jour + Dépannage fusionnés).
+- À faire : 1 visite de test (v:test-claude-1) reste sur le site de démo « demo-concession » (suppression bloquée par une confirmation Supabase).
+- À noter : la page d'accueil promet des « Mentions légales prêtes » mais les sites clients n'ont pas encore de page mentions légales.

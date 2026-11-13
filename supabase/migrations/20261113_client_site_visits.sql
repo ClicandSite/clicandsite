@@ -1,0 +1,2 @@
+-- 13/11/2026 : statistiques des sites clients (table clicandsite.client_visits, RPC cs_site_track (anon) et cs_site_traffic (propriétaire du site / admin)).
+-- Appliquée via MCP (migration "client_site_visits") ; voir la définition complète dans la base.

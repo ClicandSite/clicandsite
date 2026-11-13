@@ -37,3 +37,12 @@
 - Tarifs : comparaison agence (souvent plus de 1 500 €).
 - Téléphone : barre fixe « Votre site dès 29 €/mois · Je veux mon site », masquée sur le haut de page, les modèles et le formulaire.
 - Bug corrigé : la barre « Continuer → » du parcours modèles s'affichait dès l'arrivée sur téléphone ; limitée à la section modèles.
+
+## 13/11/2026 — SEO d'après Search Console
+- Requêtes vues dans GSC (28 j : 73 impressions, 1 clic) : « être visible sur google artisan » (pos. 63), « nom de domaine important entreprise » (54), « site internet maçonnerie / btp » (34-61).
+- Guide « être visible sur Google » enrichi : délais, gratuit vs Google Ads, erreurs, méthode hebdo, FAQ (FAQPage).
+- Guide « nom de domaine » : section « Pourquoi le choix du nom de domaine est important », FAQ.
+- Articles : bloc "faq" + JSON-LD FAQPage, champ "updated" (dateModified + « mis à jour le »).
+- Page artisan bâtiment : titre « … et BTP », meta avec maçonnerie.
+- Pages par ville NON recréées (choix d'Anthony du 07/11), malgré des impressions sur « création site internet cannes ».
+- Indexation demandée : accueil (quota GSC atteint ensuite).

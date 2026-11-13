@@ -133,8 +133,8 @@ PAGES = [
          ("J'ai aussi un atelier, je garde la prise de rendez-vous ?","Oui : la version garage garde l'atelier et les rendez-vous. La version concession les retire pour ne parler que de vente."),
          ("Combien ça coûte ?","Le Pack Auto, Moto & Immo : 99 € par mois et 490 € de mise en ligne, une fois. Annonces illimitées sur Abracadeal, CRM et une page Google par moto compris, sans engagement.")]),
   dict(slug="site-internet-artisan-batiment", k="batiment", style="moderne",
-    title="Création de site internet pour artisan du bâtiment",
-    meta="Site internet pour artisan du bâtiment et entreprise de rénovation : demande de devis, réalisations avant/après, tarifs au m², zone d'intervention, décennale. Dès 29 €/mois.",
+    title="Création de site internet pour artisan du bâtiment et BTP",
+    meta="Site internet pour artisan du bâtiment, entreprise de maçonnerie, de rénovation ou du BTP : demande de devis, réalisations avant/après, tarifs au m², zone d'intervention, décennale. Dès 29 €/mois.",
     h1="Le site internet des artisans du bâtiment et de la rénovation",
     lead="Maçon, électricien, plombier, peintre, carreleur ou entreprise générale : montrez vos chantiers et recevez des demandes de devis qualifiées.",
     feats=[("Demande de devis","Type de travaux, code postal du chantier, date de début : vous recevez des demandes précises."),
@@ -1050,6 +1050,7 @@ def render_block(b):
     if t == "p": return f"<p>{v}</p>"
     if t == "h2": return f"<h2>{e(v)}</h2>"
     if t == "ul": return "<ul>" + "".join(f"<li>{x}</li>" for x in v) + "</ul>"
+    if t == "faq": return '<h2>Questions fréquentes</h2><div class="faq">' + "".join(f"<details><summary>{e(q)}</summary><p>{e(r)}</p></details>" for q, r in v) + "</div>"
     if t == "cta": return f'<div class="box"><b>{e(v)}</b><a class="btn" href="{CTA_LINK.get(v, "/#tarifs")}">Voir</a></div>'
     return ""
 
@@ -1060,15 +1061,17 @@ def build_blog():
         url = f"{SITE}/conseils/{a['slug']}/"
         others = "".join(f'<a href="/conseils/{o["slug"]}/">{e(o["title"])}</a>' for o in ARTICLES if o is not a)
         body = f'''<div class="wrap crumbs"><a href="/">Accueil</a> › <a href="/conseils/">Conseils</a></div>
-<article class="wrap art"><h1>{e(a["title"])}</h1><p class="date">Publié le {datetime.date.fromisoformat(a["date"]).strftime("%d/%m/%Y")} · MyCreativeSite</p>
+<article class="wrap art"><h1>{e(a["title"])}</h1><p class="date">Publié le {datetime.date.fromisoformat(a["date"]).strftime("%d/%m/%Y")}{(" · mis à jour le " + datetime.date.fromisoformat(a["updated"]).strftime("%d/%m/%Y")) if a.get("updated") else ""} · MyCreativeSite</p>
 {"".join(render_block(b) for b in a["body"])}
 <h2>À lire aussi</h2><div class="links">{others}</div></article>'''
-        ld = [{"@context":"https://schema.org","@type":"Article","headline":a["title"],"description":a["desc"],"datePublished":a["date"],"dateModified":a["date"],
+        ld = [{"@context":"https://schema.org","@type":"Article","headline":a["title"],"description":a["desc"],"datePublished":a["date"],"dateModified":a.get("updated",a["date"]),
                "inLanguage":"fr-FR","mainEntityOfPage":url,"image":SITE+"/img/og.jpg",
                "author":{"@type":"Organization","name":"MyCreativeSite","url":SITE+"/"},"publisher":{"@type":"Organization","name":"MyCreativeSite","url":SITE+"/"}},
               {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
                {"@type":"ListItem","position":1,"name":"Accueil","item":SITE+"/"},{"@type":"ListItem","position":2,"name":"Conseils","item":SITE+"/conseils/"},
                {"@type":"ListItem","position":3,"name":a["title"],"item":url}]}]
+        fq = [x for b in a["body"] if b[0] == "faq" for x in b[1]]
+        if fq: ld.append({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":r}} for q, r in fq]})
         os.makedirs(f"conseils/{a['slug']}", exist_ok=True)
         open(f"conseils/{a['slug']}/index.html","w").write(shell(a["title"], a["desc"], url, ld, body, "article"))
     cards = "".join(f'<a class="card" href="/conseils/{a["slug"]}/"><h3>{e(a["title"])}</h3><p>{e(a["desc"])}</p></a>' for a in ARTICLES)

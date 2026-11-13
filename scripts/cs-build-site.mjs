@@ -132,15 +132,18 @@ async function main() {
   if (score > 0 && score <= 5 && count > 0) org.aggregateRating = { '@type': 'AggregateRating', ratingValue: score, reviewCount: count, bestRating: 5 };
   setHead(doc, { title, desc, url: ORIGIN + '/', img: heroImg, type: 'website', jsonld: [org, pages.length ? { '@context': 'https://schema.org', '@type': 'ItemList', name: isImmo ? 'Biens à vendre et à louer' : 'Véhicules en stock', itemListElement: pages.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: ORIGIN + p.url, name: clean(p.o.t) })) } : null] });
   // Script du site : demandes « Mes clients » et mise à jour en direct du contenu
-  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=28'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live); if (!q('script[src*="cs-date.js"]')) { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=29'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live); if (!q('script[src*="cs-date.js"]')) { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
   // 10/11/2026 (Anthony) : lien discret « Espace pro » en bas du site (le pro modifie son site depuis son-domaine/admin)
   const fw = q('footer .wrap');
+  legalLink(doc);
   if (fw && !q('a[data-cs-admin]', fw)) { const ap = doc.createElement('a'); ap.href = '/admin/'; ap.rel = 'nofollow'; ap.setAttribute('data-cs-admin', ''); ap.textContent = 'Espace pro'; ap.style.cssText = 'opacity:.55;font-size:.8em;color:inherit;text-decoration:none;margin-left:12px'; fw.appendChild(ap); }
   const home = dom.serialize();
 
   // ---- Pages des annonces
   const files = [['index.html', home]];
   for (const p of pages) files.push([p.url.slice(1) + 'index.html', itemPage(tpl, csEdit, c, p, { name, city, A, phone, email, trade, isImmo, org, domain })]);
+  // 13/11/2026 (Anthony) : page « Mentions légales » de chaque site client (obligatoire), avec lien secret pour les statistiques
+  files.push(['mentions-legales/index.html', legalPage(tpl, csEdit, c, { name, A, phone, email, domain })]);
   files.push(['404.html', `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=/"><title>${esc(name)}</title></head><body><a href="/">${esc(name)}</a></body></html>`]);
   files.push(['robots.txt', `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /espace/\n\nSitemap: ${ORIGIN}/sitemap.xml\n`]);
   files.push(['sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${ORIGIN}/</loc><lastmod>${today}</lastmod><priority>1.0</priority></url>\n${pages.map((p) => `  <url><loc>${ORIGIN}${p.url}</loc><lastmod>${today}</lastmod><priority>0.8</priority></url>`).join('\n')}\n</urlset>\n`]);
@@ -245,7 +248,75 @@ function itemPage(tpl, csEdit, c, p, ctx) {
   const st = doc.createElement('style');
   st.textContent = `.cs-page{padding:28px 0 56px}.cs-bc{font-size:.85rem;color:var(--muted);margin-bottom:14px}.cs-bc a{color:inherit}.cs-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:start}.cs-page h1{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.4rem);margin:0 0 10px;line-height:1.15}.cs-page h2{font-family:var(--display);font-size:1.25rem;margin:28px 0 12px}.cs-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding:0}.cs-meta span{background:var(--soft);border-radius:999px;padding:5px 11px;font-size:.88rem}.cs-gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cs-gal img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r,10px);display:block}.cs-gal img:first-child{grid-column:1/-1}.cs-specs{display:grid;grid-template-columns:auto 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:0}.cs-specs dt,.cs-specs dd{margin:0;padding:9px 13px;border-top:1px solid var(--line)}.cs-specs dt{color:var(--muted)}.cs-specs dd{font-weight:600}.cs-specs dt:first-of-type,.cs-specs dd:first-of-type{border-top:0}.cs-feats{columns:2;padding-left:18px}.cs-side{position:sticky;top:90px;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:10px;background:var(--bg)}.cs-px{font-size:1.8rem;font-weight:800;font-family:var(--display)}.cs-ref,.cs-small{color:var(--muted);font-size:.85rem}.cs-form{display:grid;gap:6px}.cs-form input,.cs-form textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}.cs-form label{font-size:.82rem;color:var(--muted)}.cs-en{display:flex;align-items:center;gap:10px;margin:6px 0}.cs-l{display:inline-grid;place-items:center;width:38px;height:30px;border-radius:6px;color:#fff;font-weight:800}.cs-A{background:#009C6D}.cs-B{background:#52B153}.cs-C{background:#A5CC74}.cs-D{background:#F4E70F;color:#222}.cs-E{background:#F2A541}.cs-F{background:#EB6B2C}.cs-G{background:#D7221F}@media (max-width:860px){.cs-grid{grid-template-columns:1fr}.cs-side{position:static}.cs-feats{columns:1}}`;
   doc.head.appendChild(st);
-  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=28'; live.setAttribute('data-site', slug); live.setAttribute('data-page', 'item'); live.defer = true; doc.body.appendChild(live); { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=29'; live.setAttribute('data-site', slug); live.setAttribute('data-page', 'item'); live.defer = true; doc.body.appendChild(live); { const dj = doc.createElement('script'); dj.src = SITE + '/assets/cs-date.js?v=4'; dj.defer = true; doc.body.appendChild(dj); }
+  legalLink(doc);
+  return dom.serialize();
+}
+
+// Lien « Mentions légales » dans le pied de page
+function legalLink(doc) {
+  const fw = doc.querySelector('footer .wrap'); if (!fw || fw.querySelector('a[data-cs-legal]')) return;
+  const a = doc.createElement('a'); a.href = '/mentions-legales/'; a.setAttribute('data-cs-legal', ''); a.textContent = 'Mentions légales';
+  a.style.cssText = 'opacity:.7;font-size:.9em;color:inherit;margin-left:12px';
+  const ad = fw.querySelector('a[data-cs-admin]'); if (ad) fw.insertBefore(a, ad); else fw.appendChild(a);
+}
+
+// 13/11/2026 : page « Mentions légales et confidentialité » (LCEN art. 6, RGPD), d'après la rubrique « Mentions légales » de l'espace client
+function legalPage(tpl, csEdit, c, ctx) {
+  const dom = new JSDOM(tpl, { runScripts: 'outside-only', url: 'https://x/' }); const { window } = dom, doc = window.document;
+  window.eval(csEdit); window.CSEdit.apply(doc, c);
+  const q = (s, r = doc) => r.querySelector(s), qa = (s, r = doc) => [...r.querySelectorAll(s)];
+  qa('meta[name^="claude:"]').forEach((e) => e.remove());
+  qa('.picker').forEach((e) => e.remove());
+  qa('script').forEach((s) => { const t = s.textContent || ''; if (!/A=\["data-l"/.test(t)) s.remove(); });
+  [...doc.body.children].forEach((e) => { if (!e.matches('header.top, footer, script, style')) e.remove(); });
+  qa('style').forEach((s) => { if (/\.embed \.picker|pk-grid/.test(s.textContent)) s.remove(); });
+  const ft = q('footer .wrap > span:first-child'); if (ft && /exemple/i.test(ft.textContent)) ft.textContent = '© ' + new Date().getFullYear() + ' ' + ctx.name;
+  if (c.style) doc.documentElement.setAttribute('data-style', String(c.style).replace(/[^a-z]/g, ''));
+  doc.documentElement.setAttribute('lang', 'fr');
+  qa('header.top a[href^="#"]').forEach((a) => a.setAttribute('href', '/' + a.getAttribute('href')));
+  const logo = q('header.top .logo'); if (logo && !q('a', logo)) { const a = doc.createElement('a'); a.href = '/'; a.style.cssText = 'color:inherit;text-decoration:none'; a.textContent = logo.textContent; logo.textContent = ''; logo.appendChild(a); }
+  // Informations : rubrique « Mentions légales » de l'espace, sinon coordonnées du site
+  const L = c.legal && typeof c.legal === 'object' ? c.legal : {};
+  const v = (k) => clean(L[k]);
+  const co = v('company') || ctx.name, adr = v('address') || [ctx.A.street, [ctx.A.cp, ctx.A.city].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const mail = v('email') || clean(ctx.email), tel = v('phone') || clean(ctx.phone);
+  const siret = v('siret').replace(/\D/g, ''), fsiret = siret.length === 14 ? siret.replace(/^(\d{3})(\d{3})(\d{3})(\d{5})$/, '$1 $2 $3 $4') : v('siret');
+  const line = (label, val) => (val ? `<p><b>${esc(label)} :</b> ${esc(val)}</p>` : '');
+  const dir = v('director');
+  const secret = dir ? `<a href="#" id="cs-me" style="color:inherit;text-decoration:none;cursor:default;font-weight:inherit" onclick="event.preventDefault();if(window.csStatsToggle)window.csStatsToggle()">${esc(dir)}</a>` : '';
+  const respo = mail ? `<a href="mailto:${esc(mail)}">${esc(mail)}</a>` : esc(co);
+  const main = doc.createElement('main'); main.className = 'cs-page cs-legal'; main.id = 'mentions';
+  main.innerHTML = `<div class="wrap">
+    <p class="cs-bc"><a href="/">Accueil</a> › Mentions légales</p>
+    <h1>Mentions légales et confidentialité</h1>
+    <h2>Éditeur du site</h2>
+    <p><b>${esc(co)}</b>${v('form') ? ', ' + esc(v('form')) : ''}</p>
+    ${line('Adresse', adr)}${line('SIRET', fsiret)}${line('Immatriculation', v('reg'))}${line('N° de TVA intracommunautaire', v('tva'))}
+    ${line('Téléphone', tel)}${mail ? `<p><b>E-mail :</b> <a href="mailto:${esc(mail)}">${esc(mail)}</a></p>` : ''}
+    ${dir ? `<p><b>Responsable de la publication :</b> ${secret}</p>` : ''}
+    ${v('extra') ? `<p>${esc(v('extra')).replace(/\n/g, '<br>')}</p>` : ''}
+    <h2>Hébergement</h2>
+    <p>Site hébergé par GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
+    <p>Site réalisé et maintenu par MyCreativeSite (iDream Lab, 34 rue Borniol, 06400 Cannes) : <a href="https://mycreativesite.fr/" rel="noopener">mycreativesite.fr</a>.</p>
+    <h2>Données personnelles</h2>
+    <p>Les informations que vous envoyez par les formulaires du site (nom, téléphone, e-mail, message, demande de rendez-vous ou de réservation) sont destinées uniquement à ${esc(co)}, pour répondre à votre demande et assurer le suivi de la relation. Elles ne sont ni vendues ni cédées. Elles sont conservées au plus 3 ans après le dernier contact.</p>
+    <p>Elles sont enregistrées par MyCreativeSite, prestataire technique du site, et ses sous-traitants d'hébergement, qui n'en font aucun autre usage.</p>
+    <p>Vous pouvez demander l'accès, la rectification, la suppression ou la limitation de vos données, et vous opposer à leur utilisation, en écrivant à ${respo}. Vous pouvez aussi adresser une réclamation à la CNIL (<a href="https://www.cnil.fr/" rel="noopener">cnil.fr</a>).</p>
+    <h2>Cookies et statistiques</h2>
+    <p>Ce site n'utilise ni cookie publicitaire ni outil de suivi d'une autre société. Il mesure sa fréquentation de façon anonyme : un identifiant au hasard, renouvelé au bout de 13 mois, est gardé dans votre navigateur pour compter une visite par page et par jour. Aucune donnée ne sert à vous identifier ni à vous suivre sur d'autres sites.</p>
+    <p>Vous pouvez refuser d'être compté : <a href="#nostats">ne plus compter mes visites</a> (et <a href="#stats">être compté à nouveau</a>).</p>
+    <h2>Propriété intellectuelle</h2>
+    <p>Les textes, photos et logos de ce site appartiennent à ${esc(co)} ou sont utilisés avec autorisation. Toute reproduction sans accord est interdite.</p>
+  </div>`;
+  const header = q('header.top'); if (header) header.after(main); else doc.body.prepend(main);
+  const st = doc.createElement('style');
+  st.textContent = '.cs-legal{padding:28px 0 56px}.cs-legal .wrap{max-width:820px}.cs-legal .cs-bc{font-size:.85rem;color:var(--muted);margin-bottom:14px}.cs-legal .cs-bc a{color:inherit}.cs-legal h1{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.2rem);line-height:1.15;margin:0 0 18px}.cs-legal h2{font-family:var(--display);font-size:1.15rem;margin:28px 0 8px}.cs-legal p{margin:0 0 8px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.cs-legal p b{color:inherit;font-weight:600}';
+  doc.head.appendChild(st);
+  setHead(doc, { title: cut('Mentions légales · ' + ctx.name, 65), desc: 'Mentions légales, données personnelles et cookies du site ' + ctx.name + '.', url: 'https://' + ctx.domain + '/mentions-legales/', type: 'website' });
+  const rb = doc.head.querySelector('meta[name="robots"]'); if (rb) rb.setAttribute('content', 'noindex, follow');
+  legalLink(doc);
+  const live = doc.createElement('script'); live.src = SITE + '/assets/cs-edit.js?v=29'; live.setAttribute('data-site', slug); live.defer = true; doc.body.appendChild(live);
   return dom.serialize();
 }
 

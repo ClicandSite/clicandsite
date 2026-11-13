@@ -40,7 +40,9 @@
     var path = location.pathname.replace(/index\.html$/, '') || '/';
     var day = new Date().toISOString().slice(0, 10), k = 'cs_visit_' + day + '_' + path;
     var v = localStorage.getItem('cs_vid');
-    if (!v) { v = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem('cs_vid', v); }
+    // identifiant anonyme renouvelé au bout de 13 mois (recommandation CNIL pour la mesure d'audience)
+    var vt = +localStorage.getItem('cs_vid_t') || 0; if (v && (!vt || Date.now() - vt > 395 * 864e5)) { if (vt) v = null; else localStorage.setItem('cs_vid_t', String(Date.now())); }
+    if (!v) { v = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2)); localStorage.setItem('cs_vid', v); localStorage.setItem('cs_vid_t', String(Date.now())); }
     var host = '', src = 'direct';
     try { host = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '').toLowerCase() : ''; } catch (_) {}
     var utm = (q.get('utm_source') || '') + ' ' + (q.get('utm_medium') || '');

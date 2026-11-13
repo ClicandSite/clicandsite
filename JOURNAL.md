@@ -73,4 +73,13 @@
 - Espace client : onglet « Statistiques » (visiteurs, pages vues, % téléphone, aujourd'hui, graphique par jour, sources, pages ; 7 j / 30 j / 3 mois / 1 an) + rappel et bouton « Ne plus compter cet appareil ». Données d'exemple en démo.
 - Accueil : ligne « Statistiques de visites… » dans Essentiel (donc Pro, Premium), Boutique et Pack ; carte « Statistiques » dans « Inclus dans toutes les formules » (Mises à jour + Dépannage fusionnés).
 - Visite de test (v:test-claude-1) supprimée.
-- À noter : la page d'accueil promet des « Mentions légales prêtes » mais les sites clients n'ont pas encore de page mentions légales.
+- Mentions légales des sites clients : faites (voir ci-dessous).
+
+## 13/11/2026 — Page « Mentions légales » des sites clients
+- cs-build-site.mjs : page /mentions-legales/ (noindex) sur chaque site, même en-tête / pied / couleurs que le site ; lien « Mentions légales » en bas de toutes les pages.
+  Contenu : éditeur (raison sociale, forme et capital, adresse, SIRET, immatriculation, TVA, téléphone, e-mail), responsable de la publication, mentions du métier,
+  hébergement (GitHub Pages), réalisation (MyCreativeSite / iDream Lab), données personnelles (RGPD, 3 ans, droits, CNIL), cookies et statistiques (refus #nostats), propriété intellectuelle.
+- Lien secret : le nom du responsable de la publication (même apparence que le texte) → exclusion / réinclusion des statistiques.
+- Espace client, « Modifier mon site » : rubrique « Mentions légales » (content.legal), pré-remplie depuis « Mon entreprise » (devis). Sans rubrique remplie : nom et coordonnées du site.
+- Identifiant anonyme des statistiques renouvelé au bout de 13 mois (cs-visits v=4, cs-site-stats v=2, cs-edit v=29).
+- mycreativesite.fr/mentions-legales.html : la partie Cookies disait « aucun outil de mesure d'audience » (faux depuis le compteur du 12/11) → corrigée, avec liens #nostats / #stats.

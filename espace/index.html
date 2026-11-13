@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=28"></script>
+<script src="/assets/cs-edit.js?v=29"></script>
 <style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -754,6 +754,23 @@ function field(label, value, onInput, multi){
   i.addEventListener('input',()=>{ onInput(i.value); refresh(); markDirty(); });
   w.append(l,i); return w;
 }
+/* 13/11/2026 (Anthony) : rubrique « Mentions légales » : page /mentions-legales/ de chaque site (obligatoire pour un pro).
+   Pré-remplie avec « Mon entreprise » (onglet Devis) ; le nom du responsable de la publication y sert de lien secret pour ne plus compter ses visites. */
+function legalSection(c){
+  const L=c.legal=(c.legal&&typeof c.legal==='object')?c.legal:{};
+  const b=section('Mentions légales',false,'Obligatoires sur le site d\'un professionnel : elles s\'affichent sur la page « Mentions légales », en lien en bas de votre site. Vérifiez-les une fois, c\'est tout.');
+  const F=[['company','Nom de l\'entreprise (raison sociale)'],['form','Forme juridique et capital','Ex. : SARL au capital de 5 000 €, ou Entrepreneur individuel'],['address','Adresse du siège'],['siret','SIRET (14 chiffres)'],
+    ['reg','Immatriculation','Ex. : RCS Cannes, Répertoire des métiers 06, ou « Dispensé d\'immatriculation »'],['tva','N° de TVA intracommunautaire (si vous en avez un)'],['director','Responsable de la publication (votre prénom et nom)'],
+    ['email','E-mail de contact'],['phone','Téléphone'],['extra','Mentions propres à votre métier (facultatif)','Ex. : carte professionnelle, assurance, médiateur de la consommation, ordre professionnel…',1]];
+  const inputs={};
+  F.forEach(f=>{ const w=field(f[1],L[f[0]],v=>{ L[f[0]]=v; },!!f[3]); const i=w.querySelector('input,textarea'); if(f[2]) i.placeholder=f[2]; inputs[f[0]]=i; b.appendChild(w); });
+  const h=document.createElement('p'); h.className='hint'; h.innerHTML='Astuce : touchez votre nom sur la page « Mentions légales » de votre site pour que vos propres visites ne comptent plus dans vos statistiques.'; b.appendChild(h);
+  // Pré-remplissage depuis « Mon entreprise » pour les cases vides (enregistré avec la prochaine modification du site)
+  const fill=(p)=>{ if(!p) return; const m={company:p.company,siret:p.siret,address:String(p.address||'').replace(/\n+/g,', '),tva:p.tva_number,email:p.email,phone:p.phone};
+    Object.keys(m).forEach(k=>{ if(!L[k]&&m[k]&&inputs[k]&&!inputs[k].value){ inputs[k].value=m[k]; L[k]=String(m[k]); } }); };
+  if(DEMO) fill({company:site.name||'Votre entreprise',email:'contact@votre-site.fr'});
+  else SB.rpc('cs_pro_profile_get',{p_site:site.id}).then(({data})=>fill(data)).catch(()=>{});
+}
 function section(title, open, hint){
   const d=document.createElement('details'); d.className='sec'; if(open) d.open=true;
   const s=document.createElement('summary'); s.textContent=title; const b=document.createElement('div'); b.className='body';
@@ -991,6 +1008,7 @@ function buildForms(){
   qrSection();
   enSection();
   if(c.text.footer!==undefined){ b=section('Bas de page'); b.appendChild(T('footer','Mention en bas de page')); }
+  legalSection(c);
 
   const help=document.createElement('p'); help.className='hint'; help.style.margin='14px 4px';
   help.textContent=DEMO?'Démo : les changements restent dans cette page et disparaissent si vous la quittez.':'Besoin d\'un changement plus important (nouvelle page, nouvelle rubrique) ? Écrivez à contact@mycreativesite.fr.';
@@ -1452,7 +1470,7 @@ async function renderStats(){
     '<div class="stchart" role="img" aria-label="Visiteurs par jour">'+d.days.map(x=>'<i class="'+(x.n?'':'z')+'" style="height:'+Math.max(3,Math.round(100*x.n/mx))+'%" title="'+new Date(x.day+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})+' : '+x.n+' visiteur'+(x.n>1?'s':'')+'"></i>').join('')+'</div>'+
     '<div class="stgrid"><div class="stbox"><h3>D\'où viennent vos visiteurs</h3>'+rows(src)+'</div><div class="stbox"><h3>Pages les plus vues</h3>'+rows(pg)+'</div></div>'+
     '<div class="stme"><p><b>Vos propres visites ne sont pas comptées</b> une fois votre téléphone ou ordinateur exclu. À faire une fois par appareil et par navigateur :</p>'+
-    '<p>• touchez le nom de votre entreprise en bas de votre site (« © … ») : un message confirme « Cet appareil n\'est plus compté » ; touchez-le à nouveau pour être recompté ;<br>• ou ouvrez votre site avec <b>#nostats</b> à la fin de l\'adresse (et <b>#stats</b> pour être recompté).</p>'+
+    '<p>• touchez votre nom sur la page « Mentions légales » de votre site, ou le nom de votre entreprise en bas du site (« © … ») : un message confirme « Cet appareil n\'est plus compté » ; touchez-le à nouveau pour être recompté ;<br>• ou ouvrez votre site avec <b>#nostats</b> à la fin de l\'adresse (et <b>#stats</b> pour être recompté).</p>'+
     (url&&!DEMO?'<a class="btn sm" href="'+escH(url)+'/#nostats" target="_blank" rel="noopener">Ne plus compter cet appareil</a>':'')+'</div>';
   R.querySelectorAll('[data-std]').forEach(b=>b.addEventListener('click',()=>{ STD=+b.dataset.std; renderStats(); }));
 }

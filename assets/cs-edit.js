@@ -555,7 +555,7 @@
     initLeads(slug);
     proButton(slug);
     // 13/11/2026 (Anthony) : statistiques de visites (espace client, onglet « Statistiques »)
-    try { if (!document.querySelector('script[src*="cs-site-stats.js"]')) { var ss = document.createElement('script'); ss.src = 'https://mycreativesite.fr/assets/cs-site-stats.js?v=1'; ss.defer = true; ss.setAttribute('data-site', slug); document.head.appendChild(ss); } } catch (_) {}
+    try { if (!document.querySelector('script[src*="cs-site-stats.js"]')) { var ss = document.createElement('script'); ss.src = 'https://mycreativesite.fr/assets/cs-site-stats.js?v=2'; ss.defer = true; ss.setAttribute('data-site', slug); document.head.appendChild(ss); } } catch (_) {}
     // 10/11/2026 : sur iPhone, les champs date et heure (réservation, fiches) ne dépassent plus de leur cadre
     try { if (!document.getElementById('cs-date-css')) { var sd = document.createElement('style'); sd.id = 'cs-date-css'; sd.textContent = 'input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}.stats>.stat{min-width:0}.stats .stat b,.stats .stat span{overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}@media (max-width:600px){.stats .stat b{font-size:clamp(1.15rem,6.4vw,1.9rem)!important}}'; document.head.appendChild(sd); } } catch (e) {}
   }

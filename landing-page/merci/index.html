@@ -127,17 +127,17 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 <header class="top"><div class="wrap"><a class="logo" href="/" aria-label="MyCreativeSite, accueil"><img class="logo-mark" src="/img/logo-m.png" width="34" height="34" alt=""><span>My<i>creativesite</i></span></a><nav class="nav"><a class="acc" href="/espace/" aria-label="Espace client : se connecter"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 16.6c1.1-2.9 3.4-4.3 6.2-4.3s5.1 1.4 6.2 4.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>Espace client</span></a><a class="btn sm" href="/#commande">Je veux mon site</a></nav></div></header>
 <main>
 <div class="wrap" style="padding-block:28px 56px;max-width:720px">
-  <span class="eyebrow">Paiement reçu</span>
-  <h1 style="font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;margin-top:12px">Merci ! Parlez-nous de votre offre.</h1>
-  <p class="lead" style="color:var(--muted);margin:14px 0 22px">Cinq minutes pour nous dire quoi mettre en avant. Votre page est en ligne 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.</p>
+  <span class="eyebrow" id="lbk">Paiement reçu</span>
+  <h1 id="lbh" style="font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;margin-top:12px">Merci ! Parlez-nous de votre offre.</h1>
+  <p class="lead" id="lbl" style="color:var(--muted);margin:14px 0 22px">Cinq minutes pour nous dire quoi mettre en avant. Votre page est en ligne 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.</p>
   <form id="lb" class="feat" style="gap:14px" novalidate>
     <input type="text" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
     <label>Nom de votre entreprise<input name="company" required autocomplete="organization"></label>
     <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
     <label>Téléphone<input name="phone" type="tel" required autocomplete="tel"></label>
-    <label>L'offre à mettre en avant<textarea name="offer" rows="3" required placeholder="Ex. : rénovation de salle de bain clé en main dès 6 900 €, à Nice et alentours"></textarea></label>
-    <label>Votre publicité<select name="ads"><option>Google Ads</option><option>Facebook / Instagram</option><option>Google et Facebook</option><option>Pas encore lancée</option><option>Autre</option></select></label>
-    <label>Ce que doit faire le visiteur<select name="goal"><option>Demander un devis</option><option>Prendre rendez-vous</option><option>Appeler</option><option>Écrire sur WhatsApp</option><option>Autre</option></select></label>
+    <label><span id="lbo">L'offre à mettre en avant</span><textarea name="offer" rows="3" required placeholder="Ex. : rénovation de salle de bain clé en main dès 6 900 €, à Nice et alentours"></textarea></label>
+    <label data-ads>Votre publicité<select name="ads"><option>Google Ads</option><option>Facebook / Instagram</option><option>Google et Facebook</option><option>Pas encore lancée</option><option>Autre</option></select></label>
+    <label data-ads>Ce que doit faire le visiteur<select name="goal"><option>Demander un devis</option><option>Prendre rendez-vous</option><option>Appeler</option><option>Écrire sur WhatsApp</option><option>Autre</option></select></label>
     <label>Votre site actuel (si vous en avez un)<input name="url" type="url" placeholder="https://"></label>
     <label>Précisions (facultatif)<textarea name="msg" rows="3" placeholder="Couleurs, logo, photos, zone d'intervention, ce que font vos concurrents…"></textarea></label>
     <button class="btn" type="submit">Envoyer mon brief</button>
@@ -147,12 +147,17 @@ footer nav{display:flex;flex-wrap:wrap;gap:16px}
 </div>
 <style>#lb label{display:grid;gap:6px;font-weight:600;font-size:.95rem}#lb input,#lb textarea,#lb select{font:inherit;font-weight:400;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box}</style>
 <script>
-(function(){var f=document.getElementById('lb'),m=document.getElementById('lbm'),s=new URLSearchParams(location.search).get('s')||'';
+(function(){var f=document.getElementById('lb'),m=document.getElementById('lbm'),Q=new URLSearchParams(location.search),s=Q.get('s')||'',t=Q.get('t')||'landing';
+var T={ads:['Lancement Google Ads','Merci ! Parlez-nous de votre activité.','Cinq minutes pour préparer votre campagne : ce que vous vendez, où, et ce que doit faire le client. Votre campagne est prête 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.','Ce que vous voulez promouvoir (service, zone, prix)'],
+pack:['Pack Landing Page + Google Ads','Merci ! Parlez-nous de votre offre.','Cinq minutes pour nous dire quoi mettre en avant. Votre page et votre campagne sont prêtes 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.',null],
+kit:['Kit réseaux sociaux','Merci ! Parlez-nous de votre entreprise.','Vos couleurs, votre logo, vos réseaux : nous préparons votre kit sous 5 jours ouvrés. Envoyez votre logo et vos photos en réponse à notre e-mail. Votre facture arrive par e-mail.','Votre activité en une phrase, et les réseaux que vous utilisez']};
+if(T[t]){document.getElementById('lbk').textContent='Paiement reçu · '+T[t][0];document.getElementById('lbh').textContent=T[t][1];document.getElementById('lbl').textContent=T[t][2];if(T[t][3])document.getElementById('lbo').textContent=T[t][3];
+if(t==='kit')f.querySelectorAll('[data-ads]').forEach(function(x){x.hidden=true;});}
 f.addEventListener('submit',function(e){e.preventDefault();if(!f.reportValidity())return;var d=new FormData(f),b=f.querySelector('button');b.disabled=true;m.textContent='Envoi…';
 fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_landing_brief',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'},
-body:JSON.stringify({p_company:d.get('company'),p_email:d.get('email'),p_phone:d.get('phone'),p_url:d.get('url'),p_offer:d.get('offer'),p_ads:d.get('ads'),p_goal:d.get('goal'),p_message:d.get('msg'),p_session:s,p_hp:d.get('hp')})})
+body:JSON.stringify({p_company:d.get('company'),p_email:d.get('email'),p_phone:d.get('phone'),p_url:d.get('url'),p_offer:d.get('offer'),p_ads:d.get('ads'),p_goal:d.get('goal'),p_message:d.get('msg'),p_session:s,p_hp:d.get('hp'),p_kind:t})})
 .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||'Erreur');return j;});})
-.then(function(){f.innerHTML='<h2>Brief bien reçu, merci !</h2><p>On vous recontacte sous 24 h ouvrées pour lancer votre page.</p>';if(window.csTrack)window.csTrack('landing-brief');})
+.then(function(){f.innerHTML='<h2>Brief bien reçu, merci !</h2><p>On vous recontacte sous 24 h ouvrées pour démarrer.</p>';if(window.csTrack)window.csTrack('landing-brief');})
 .catch(function(x){b.disabled=false;m.textContent=x.message||'Envoi impossible, réessayez ou écrivez-nous.';});});})();
 </script>
 </main>

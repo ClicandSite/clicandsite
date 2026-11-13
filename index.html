@@ -467,7 +467,11 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
 @media (min-width:921px){.pickbar{display:none!important}}
 /* 13/11/2026 (Anthony : « pousser à prendre un site ») */
 /* 13/11/2026 : Services en plus */
-.xgrid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:20px;align-items:stretch}
+.xgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
+.xcard.xwide{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:start}
+.xwide>div{display:flex;flex-direction:column;gap:12px}.xwide ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+.xside{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:20px}
+.xpack{display:grid;gap:4px;padding-top:14px;margin-top:4px;border-top:1px solid var(--line);font-size:.92rem}.xpack span{color:var(--muted)}.xpack a{font-weight:700;color:var(--brand)}
 .xcard{background:var(--paper,#fff);border:1px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:12px}
 .xcard.hi{border:2px solid var(--brand);box-shadow:0 18px 40px -24px rgba(124,58,237,.45)}
 .xtag{align-self:flex-start;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);background:var(--brand-soft);padding:5px 10px;border-radius:999px}
@@ -478,7 +482,7 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
 .xprice{margin-top:auto;padding-top:10px;display:grid;gap:2px}.xprice b{font:800 1.9rem/1.1 "Bricolage Grotesque",sans-serif}.xprice span{color:var(--muted);font-size:.88rem}
 .xctas{display:flex;flex-wrap:wrap;gap:10px}
 .xcard>.btn,.xctas .btn{align-self:flex-start}
-@media (max-width:920px){.xgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:920px){.xgrid,.xcard.xwide,.xwide ul{grid-template-columns:minmax(0,1fr)}}
 .hero .reassure{margin:14px 0 0;font-size:.95rem;color:var(--muted);max-width:540px}
 .hero .reassure b{color:var(--ink,inherit)}
 .cband{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:30px 34px;border-radius:22px;background:var(--brand-soft);border:1px solid var(--line)}
@@ -1040,6 +1044,35 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
   <div class="wrap">
     <div class="head"><span class="eyebrow">Services en plus</span><h2>Pour aller plus loin.</h2><p>À ajouter à votre site, ou à commander seul.</p></div>
     <div class="xgrid">
+      <article class="xcard hi xwide">
+        <div>
+          <span class="xtag">Nouveau · Landing Page</span>
+          <h3>Vous faites de la pub Google ou Facebook ? Ne l'envoyez pas sur votre page d'accueil.</h3>
+          <p>Une page faite pour une seule chose : transformer vos clics payés en appels, devis et rendez-vous. Pour les pros qui lancent une pub, testent une nouvelle offre ou ont une page qui ne convertit pas.</p>
+          <ul><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Textes sur mesure</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Design orienté conversion, pensé pour le mobile</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tracking complet : Google Ads, Meta, clics appel et WhatsApp</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Formulaire ou prise de rendez-vous</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Optimisation de la vitesse</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Suivi et ajustements pendant 30 jours</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Livraison en 5 jours</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Hébergement inclus sur votre domaine, ou sur votre propre hébergement</li></ul>
+        </div>
+        <div class="xside">
+          <div class="xprice"><b>490 € HT</b><span>paiement unique, même prix pour tous · TVA non applicable, vous payez 490 €</span></div>
+          <div class="xctas"><a class="btn" href="landing-page/">Découvrir la landing page</a><a class="btn ghost" href="https://buy.stripe.com/14AeVd9WLeD19eFfwIgfu0c" data-cs-landing>Commander</a></div>
+          <div class="xpack"><b>Pack Landing Page + Google Ads · 590 € HT</b><span>La page et votre première campagne Google Ads, prêtes en 5 jours.</span><a href="https://buy.stripe.com/aFa00jed1gL9duVgAMgfu0e" data-cs-landing>Commander le pack →</a></div>
+        </div>
+      </article>
+      <article class="xcard">
+        <span class="xtag">Publicité</span>
+        <h3>Lancement Google Ads</h3>
+        <p>Votre première campagne Google, montée pour vous, pour apparaître en haut des résultats dès cette semaine.</p>
+        <ul><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Mots-clés, annonces et zone de diffusion</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Budget conseillé selon votre métier</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Suivi des appels et des demandes installé</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Contrôle et réglages après 7 jours</li></ul>
+        <div class="xprice"><b>190 €</b><span>une fois · budget pub payé directement à Google</span></div>
+        <a class="btn ghost" href="https://buy.stripe.com/6oU14n7OD8eDgH798kgfu0d" data-cs-landing>Commander</a>
+      </article>
+      <article class="xcard">
+        <span class="xtag">Réseaux sociaux</span>
+        <h3>Kit réseaux sociaux</h3>
+        <p>Des réseaux qui ont l'air pros dès aujourd'hui, aux couleurs de votre entreprise.</p>
+        <ul><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Photo de profil</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Bannières Facebook, LinkedIn et Google</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>10 visuels de publications prêts à poster</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Livré en 5 jours</li></ul>
+        <div class="xprice"><b>79 €</b><span>une fois</span></div>
+        <a class="btn ghost" href="https://buy.stripe.com/9B65kD8SH0MbbmN4S4gfu0f" data-cs-landing>Commander</a>
+      </article>
       <article class="xcard">
         <span class="xtag">Identité</span>
         <h3>Logo et bannière</h3>
@@ -1047,14 +1080,6 @@ svg.pi{vertical-align:-3px;margin-right:4px;opacity:.85}
         <ul><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Logo : 2 propositions, puis retouches</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Bannière du haut de votre site</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Fichiers fournis, pour vos cartes, votre véhicule ou vos réseaux</li></ul>
         <div class="xprice"><b>49 €</b><span>une fois · offert en Premium et Boutique</span></div>
         <a class="btn ghost" href="#commande" data-addopt="logo">L'ajouter à ma commande</a>
-      </article>
-      <article class="xcard hi">
-        <span class="xtag">Nouveau · Landing Page</span>
-        <h3>Vous faites de la pub Google ou Facebook ? Ne l'envoyez pas sur votre page d'accueil.</h3>
-        <p>Une page faite pour une seule chose : transformer vos clics payés en appels, devis et rendez-vous. Pour les pros qui lancent une pub, testent une nouvelle offre ou ont une page qui ne convertit pas.</p>
-        <ul><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Textes sur mesure</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Design orienté conversion, pensé pour le mobile</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tracking complet : Google Ads, Meta, clics appel et WhatsApp</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Formulaire ou prise de rendez-vous</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Optimisation de la vitesse</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Suivi et ajustements pendant 30 jours</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Livraison en 5 jours</li><li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Hébergement inclus sur votre domaine, ou sur votre propre hébergement</li></ul>
-        <div class="xprice"><b>490 € HT</b><span>paiement unique, même prix pour tous · TVA non applicable, vous payez 490 €</span></div>
-        <div class="xctas"><a class="btn" href="landing-page/">Découvrir la landing page</a><a class="btn ghost" href="https://buy.stripe.com/14AeVd9WLeD19eFfwIgfu0c" data-cs-landing>Commander</a></div>
       </article>
     </div>
   </div>

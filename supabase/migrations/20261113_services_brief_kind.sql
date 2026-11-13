@@ -1,0 +1,1 @@
+-- 13/11/2026 : cs_landing_brief(…, p_kind) — brief après paiement pour landing (490), ads (190), pack (590), kit (79). Appliquée via MCP (migration "services_brief_kind").

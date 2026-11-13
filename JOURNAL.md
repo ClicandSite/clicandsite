@@ -93,3 +93,9 @@
 - CGV : rubrique « Services en plus » (logo, landing page : 5 jours ouvrés après brief complet, ajustements 30 jours, pub à la charge du client).
 - TVA : franchise (art. 293 B) → affiché « 490 € HT · TVA non applicable, vous payez 490 € ».
 - Hébergement de la landing page (choix d'Anthony) : par défaut GitHub Pages sur le domaine du client, inclus sans frais tant qu'elle est en ligne ; ou sur l'hébergement du client (installation avec ses accès ou fichiers remis), même prix. Page, FAQ, accueil et CGV mis à jour.
+- Ajout (13/11, soir) : Lancement Google Ads 190 € (prod_VcgqXpsrdsZX1r, https://buy.stripe.com/6oU14n7OD8eDgH798kgfu0d),
+  Pack Landing Page + Google Ads 590 € HT (prod_Vcgqh40fVfUjMF, https://buy.stripe.com/aFa00jed1gL9duVgAMgfu0e),
+  Kit réseaux sociaux 79 € (prod_Vcgq0VsPaZjBoX, https://buy.stripe.com/9B65kD8SH0MbbmN4S4gfu0f).
+  Section « Services en plus » refaite : Landing Page en grand (avec le pack), puis Google Ads / Kit réseaux / Logo. Page /landing-page/ : carte du pack + FAQ.
+  Brief commun /landing-page/merci/?t=landing|ads|pack|kit → cs_landing_brief(p_kind) → commandes de l'admin. CGV complétées.
+- Idée en attente : assistant IA sur les sites clients (19 €/mois) — à tester d'abord sur la démo et 1-2 clients ; nécessite un compte API IA payant d'Anthony.

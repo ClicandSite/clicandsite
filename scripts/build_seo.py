@@ -1125,6 +1125,7 @@ def build_help():
 
 # 13/11/2026 (Anthony) : offre « Landing Page » — 490 € HT, paiement unique (Stripe), même prix pour tous
 LANDING_PAY = "https://buy.stripe.com/14AeVd9WLeD19eFfwIgfu0c"
+PACK_PAY = "https://buy.stripe.com/aFa00jed1gL9duVgAMgfu0e"  # landing + lancement Google Ads, 590 €
 def landing_pages():
     url = SITE + "/landing-page/"
     inc = [("Textes sur mesure", "Écrits pour votre offre et pour la personne qui clique sur votre pub : un message, une promesse, une action."),
@@ -1145,7 +1146,7 @@ def landing_pages():
     faq = [("Pourquoi ne pas envoyer ma pub sur ma page d'accueil ?", "Une page d'accueil parle de tout : vos services, votre histoire, vos horaires. Le visiteur qui arrive d'une pub cherche une seule chose. Une landing page lui répond directement et lui donne un seul bouton, ce qui fait en général beaucoup plus d'appels ou de demandes pour le même budget de pub."),
            ("Le prix est-il le même pour tout le monde ?", "Oui : 490 € HT, paiement unique, quel que soit votre métier. TVA non applicable (art. 293 B du CGI) : vous payez 490 €."),
            ("Faut-il avoir un site MyCreativeSite ?", "Non. La landing page fonctionne seule. Si vous avez déjà un site chez nous ou ailleurs, elle peut se mettre sur votre propre nom de domaine."),
-           ("Qui gère mes publicités ?", "Vous, ou la personne qui s'en occupe. Nous créons la page et installons le suivi (Google Ads, Meta, clics appel et WhatsApp) pour que vos campagnes mesurent les bons résultats."),
+           ("Qui gère mes publicités ?", "Vous, ou la personne qui s'en occupe. Nous créons la page et installons le suivi (Google Ads, Meta, clics appel et WhatsApp) pour que vos campagnes mesurent les bons résultats. Pas encore de campagne ? Le pack Landing Page + Google Ads à 590 € HT comprend aussi la création de votre première campagne Google Ads ; le budget publicitaire est payé directement à Google."),
            ("Y a-t-il un abonnement ?", "Non, c'est un paiement unique de 490 € HT. L'hébergement est inclus, sans frais, tant que la page est en ligne."),
            ("Où la page est-elle hébergée ?", "Par défaut, nous l'hébergeons pour vous, sans frais, sur votre nom de domaine (par exemple promo.votre-site.fr), avec le cadenas HTTPS. Vous préférez votre propre hébergement (OVH, IONOS, o2switch, WordPress…) ? Nous l'y installons avec vos accès, ou nous vous remettons les fichiers, au même prix. Les ajustements des 30 jours se font alors avec vos accès."),
            ("Que se passe-t-il après les 30 jours ?", "La page reste à vous et continue de fonctionner. Si vous voulez d'autres changements plus tard, on vous fait un devis simple.")]
@@ -1173,8 +1174,10 @@ def landing_pages():
   <div class="feats" style="grid-template-columns:repeat(4,minmax(0,1fr))">{"".join(f'<div class="feat"><span class="eyebrow">Étape {i+1}</span><h3>{e(a)}</h3><p>{e(b)}</p></div>' for i,(a,b) in enumerate(steps))}</div>
 </div></section>
 <section><div class="wrap">
-  <div class="prices one"><div class="pc hi"><em>Landing Page</em><b>490 € HT</b><span>Paiement unique, même prix pour tous. TVA non applicable, art. 293 B du CGI : vous payez 490 €.</span>
-    <a class="btn" href="{LANDING_PAY}" data-cs-landing style="margin-top:14px">Commander ma landing page</a></div></div>
+  <div class="prices" style="grid-template-columns:repeat(2,minmax(0,1fr));max-width:880px"><div class="pc hi"><em>Landing Page</em><b>490 € HT</b><span>Paiement unique, même prix pour tous. TVA non applicable, art. 293 B du CGI : vous payez 490 €.</span>
+    <a class="btn" href="{LANDING_PAY}" data-cs-landing style="margin-top:14px">Commander ma landing page</a></div>
+    <div class="pc"><em>Pack Landing Page + Google Ads</em><b>590 € HT</b><span>La landing page, plus la création de votre première campagne Google Ads : mots-clés, annonces, zone, budget conseillé, suivi des conversions, contrôle après 7 jours. Votre pub et sa page prêtes en 5 jours. Budget publicitaire payé directement à Google.</span>
+    <a class="btn ghost" href="{PACK_PAY}" data-cs-landing style="margin-top:14px">Commander le pack</a></div></div>
 </div></section>
 <section><div class="wrap">
   <span class="eyebrow">Questions fréquentes</span><h2>Vos questions sur la landing page</h2>
@@ -1184,7 +1187,7 @@ def landing_pages():
   <div class="cta"><div><h2>Vos clics méritent mieux que votre page d'accueil</h2><p>490 € HT, livrée en 5 jours, suivie pendant 30 jours.</p></div><a class="btn" href="{LANDING_PAY}" data-cs-landing>Commander</a></div>
   <p class="note">Besoin d'un site complet plutôt qu'une page ? <a href="/#tarifs">Voir les formules MyCreativeSite</a>. <a href="/cgv.html">Conditions générales</a>.</p>
 </div></section>
-<style>@media (max-width:860px){{.feats[style]{{grid-template-columns:minmax(0,1fr)!important}}}}</style>
+<style>@media (max-width:860px){{.feats[style],.prices[style]{{grid-template-columns:minmax(0,1fr)!important}}}}</style>
 <script>document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('[data-cs-landing]');if(a&&window.csTrack)window.csTrack('landing-paiement');}},true);</script>
 """
     ld = [{"@context": "https://schema.org", "@type": "Service", "name": "Landing Page pour publicité Google Ads et Facebook", "serviceType": "Création de landing page",
@@ -1196,17 +1199,17 @@ def landing_pages():
     open("landing-page/index.html", "w").write(shell("Landing page pour vos pubs Google et Facebook : 490 €", "Une landing page qui transforme vos clics de pub en appels et demandes : textes sur mesure, design mobile, tracking Google Ads et Meta, formulaire, suivi 30 jours. 490 € HT, livrée en 5 jours.", url, ld, body))
     merci = f"""
 <div class="wrap" style="padding-block:28px 56px;max-width:720px">
-  <span class="eyebrow">Paiement reçu</span>
-  <h1 style="font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;margin-top:12px">Merci ! Parlez-nous de votre offre.</h1>
-  <p class="lead" style="color:var(--muted);margin:14px 0 22px">Cinq minutes pour nous dire quoi mettre en avant. Votre page est en ligne 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.</p>
+  <span class="eyebrow" id="lbk">Paiement reçu</span>
+  <h1 id="lbh" style="font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;margin-top:12px">Merci ! Parlez-nous de votre offre.</h1>
+  <p class="lead" id="lbl" style="color:var(--muted);margin:14px 0 22px">Cinq minutes pour nous dire quoi mettre en avant. Votre page est en ligne 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.</p>
   <form id="lb" class="feat" style="gap:14px" novalidate>
     <input type="text" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
     <label>Nom de votre entreprise<input name="company" required autocomplete="organization"></label>
     <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
     <label>Téléphone<input name="phone" type="tel" required autocomplete="tel"></label>
-    <label>L'offre à mettre en avant<textarea name="offer" rows="3" required placeholder="Ex. : rénovation de salle de bain clé en main dès 6 900 €, à Nice et alentours"></textarea></label>
-    <label>Votre publicité<select name="ads"><option>Google Ads</option><option>Facebook / Instagram</option><option>Google et Facebook</option><option>Pas encore lancée</option><option>Autre</option></select></label>
-    <label>Ce que doit faire le visiteur<select name="goal"><option>Demander un devis</option><option>Prendre rendez-vous</option><option>Appeler</option><option>Écrire sur WhatsApp</option><option>Autre</option></select></label>
+    <label><span id="lbo">L'offre à mettre en avant</span><textarea name="offer" rows="3" required placeholder="Ex. : rénovation de salle de bain clé en main dès 6 900 €, à Nice et alentours"></textarea></label>
+    <label data-ads>Votre publicité<select name="ads"><option>Google Ads</option><option>Facebook / Instagram</option><option>Google et Facebook</option><option>Pas encore lancée</option><option>Autre</option></select></label>
+    <label data-ads>Ce que doit faire le visiteur<select name="goal"><option>Demander un devis</option><option>Prendre rendez-vous</option><option>Appeler</option><option>Écrire sur WhatsApp</option><option>Autre</option></select></label>
     <label>Votre site actuel (si vous en avez un)<input name="url" type="url" placeholder="https://"></label>
     <label>Précisions (facultatif)<textarea name="msg" rows="3" placeholder="Couleurs, logo, photos, zone d'intervention, ce que font vos concurrents…"></textarea></label>
     <button class="btn" type="submit">Envoyer mon brief</button>
@@ -1216,12 +1219,17 @@ def landing_pages():
 </div>
 <style>#lb label{{display:grid;gap:6px;font-weight:600;font-size:.95rem}}#lb input,#lb textarea,#lb select{{font:inherit;font-weight:400;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box}}</style>
 <script>
-(function(){{var f=document.getElementById('lb'),m=document.getElementById('lbm'),s=new URLSearchParams(location.search).get('s')||'';
+(function(){{var f=document.getElementById('lb'),m=document.getElementById('lbm'),Q=new URLSearchParams(location.search),s=Q.get('s')||'',t=Q.get('t')||'landing';
+var T={{ads:['Lancement Google Ads','Merci ! Parlez-nous de votre activité.','Cinq minutes pour préparer votre campagne : ce que vous vendez, où, et ce que doit faire le client. Votre campagne est prête 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.','Ce que vous voulez promouvoir (service, zone, prix)'],
+pack:['Pack Landing Page + Google Ads','Merci ! Parlez-nous de votre offre.','Cinq minutes pour nous dire quoi mettre en avant. Votre page et votre campagne sont prêtes 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.',null],
+kit:['Kit réseaux sociaux','Merci ! Parlez-nous de votre entreprise.','Vos couleurs, votre logo, vos réseaux : nous préparons votre kit sous 5 jours ouvrés. Envoyez votre logo et vos photos en réponse à notre e-mail. Votre facture arrive par e-mail.','Votre activité en une phrase, et les réseaux que vous utilisez']}};
+if(T[t]){{document.getElementById('lbk').textContent='Paiement reçu · '+T[t][0];document.getElementById('lbh').textContent=T[t][1];document.getElementById('lbl').textContent=T[t][2];if(T[t][3])document.getElementById('lbo').textContent=T[t][3];
+if(t==='kit')f.querySelectorAll('[data-ads]').forEach(function(x){{x.hidden=true;}});}}
 f.addEventListener('submit',function(e){{e.preventDefault();if(!f.reportValidity())return;var d=new FormData(f),b=f.querySelector('button');b.disabled=true;m.textContent='Envoi…';
 fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_landing_brief',{{method:'POST',headers:{{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'}},
-body:JSON.stringify({{p_company:d.get('company'),p_email:d.get('email'),p_phone:d.get('phone'),p_url:d.get('url'),p_offer:d.get('offer'),p_ads:d.get('ads'),p_goal:d.get('goal'),p_message:d.get('msg'),p_session:s,p_hp:d.get('hp')}})}})
+body:JSON.stringify({{p_company:d.get('company'),p_email:d.get('email'),p_phone:d.get('phone'),p_url:d.get('url'),p_offer:d.get('offer'),p_ads:d.get('ads'),p_goal:d.get('goal'),p_message:d.get('msg'),p_session:s,p_hp:d.get('hp'),p_kind:t}})}})
 .then(function(r){{return r.json().then(function(j){{if(!r.ok)throw new Error(j.message||'Erreur');return j;}});}})
-.then(function(){{f.innerHTML='<h2>Brief bien reçu, merci !</h2><p>On vous recontacte sous 24 h ouvrées pour lancer votre page.</p>';if(window.csTrack)window.csTrack('landing-brief');}})
+.then(function(){{f.innerHTML='<h2>Brief bien reçu, merci !</h2><p>On vous recontacte sous 24 h ouvrées pour démarrer.</p>';if(window.csTrack)window.csTrack('landing-brief');}})
 .catch(function(x){{b.disabled=false;m.textContent=x.message||'Envoi impossible, réessayez ou écrivez-nous.';}});}});}})();
 </script>
 """

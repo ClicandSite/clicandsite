@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png"><link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96.png"><link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png?v=2"><link rel="manifest" href="/espace/manifest.webmanifest?v=3"><meta name="apple-mobile-web-app-title" content="MyCreativeSite">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <script src="/assets/supabase-js-2.118.0.js"></script>
-<script src="/assets/cs-edit.js?v=26"></script>
+<script src="/assets/cs-edit.js?v=27"></script>
 <style>/* 10/11/2026 : sur iPhone, les champs date et heure ne dépassent plus de leur cadre */input[type=date],input[type=datetime-local],input[type=time],input[type=month]{min-width:0;max-width:100%;box-sizing:border-box}@supports (-webkit-touch-callout:none){input[type=date],input[type=datetime-local],input[type=time],input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:2.6em}input::-webkit-date-and-time-value{text-align:left;margin:0}}
 /* 06/11/2026 (Claude) : espace client MyCreativeSite. Le client modifie lui-même son site (textes, prix, horaires, coordonnées, photos)
    avec un aperçu en direct. Données dans le projet Supabase MyCreativeSite. Mode démo sans compte : ?demo=garage */
@@ -1047,7 +1047,7 @@ function qrSection(){
 const TR_FN='https://avcynjwcyygygkjuxsdt.supabase.co/functions/v1/cs-translate';
 let pvEN=false, baseDict=null;
 function canEN(){ return DEMO||!!(site&&site.bilingual); }
-function loadBase(){ return baseDict||(baseDict=fetch('/assets/cs-en.json?v=2').then(r=>r.ok?r.json():{}).catch(()=>({}))); }
+function loadBase(){ return baseDict||(baseDict=fetch('/assets/cs-en.json?v=3').then(r=>r.ok?r.json():{}).catch(()=>({}))); }
 async function gtxOne(q){ const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=en&dt=t&q='+encodeURIComponent(q)); if(!r.ok) throw new Error('service de traduction indisponible ('+r.status+')'); const j=await r.json(); return (j[0]||[]).map(x=>x[0]||'').join(''); }
 async function gtxBatch(arr){
   const out={}, packs=[]; let pack=[], len=0;

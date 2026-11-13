@@ -48,3 +48,12 @@
 - Indexation demandée : accueil (quota GSC atteint ensuite).
 - Page locale /creation-site-internet-cannes/ remise en ligne (accord d'Anthony) : « basés à Cannes, partout en France », lien en pied de page. Aucune autre page par ville.
 - Pages SEO : « 30 métiers » corrigé en « 31 métiers ».
+
+## 13/11/2026 — Prénoms des démos (demande d'Anthony : « Karim » partout)
+- 31 démos (dont taxi, concession auto, concession moto) : chaque prénom n'apparaît plus que dans une seule démo (équipe, liste « Avec », avis clients). 150 prénoms distincts, vérifié sur les pages affichées.
+- Karim remplacé : garage Franck, concession auto Stéphane, concession moto Ludovic, location Farid, beauté Rayan, auto-école Rachid, dépannage (avis) Nordine.
+- Concession auto et moto : avis avec leurs propres prénoms (avant : mêmes noms que le garage d'entretien).
+- Taxi : Gisèle, Marcel, Oliver (cs-edit v=27). « Famille Martin » x3 → Roussel, Garnier, Lefèvre ; « Société Azur » / « Atelier Solène » en double → Lérins, Garance.
+- Genres respectés (ex. « je suis repartie » → prénom féminin).
+- Anglais (assets/cs-en.json, ?v=3) : nouvelles traductions pour tous les textes avec prénom, y compris équipes et avis des 17 métiers ajoutés le 09/11 qui n'étaient pas traduits. Anciennes clés gardées pour les sites déjà construits.
+- scripts/metiers/trades.py aligné (source des 17 métiers générés).

@@ -860,7 +860,7 @@ body>header.top{order:-19}
   <div class="wrap team">
     <div class="photo pimg g4"></div>
     <div>
-      <h2>Karim, votre garagiste</h2>
+      <h2>Franck, votre garagiste</h2>
       <p style="color:var(--muted);margin-top:14px;max-width:52ch">20 ans de métier, dont 10 chez un concessionnaire. Je vous montre les pièces changées et je vous explique ce qui peut attendre et ce qui ne peut pas.</p>
     </div>
   </div>
@@ -870,9 +870,9 @@ body>header.top{order:-19}
   <div class="wrap">
     <div class="head"><h2>Avis clients</h2><p>Exemples, remplacés par les vrais avis Google du garage.</p></div>
     <div class="reviews">
-      <div class="rev"><span class="s">★★★★★</span><p>Prix annoncé au téléphone respecté à l'euro près. Enfin un garage honnête.</p><span class="who">Nadia · Orléans</span></div>
-      <div class="rev"><span class="s">★★★★★</span><p>Voyant moteur réglé en une matinée, avec une voiture de prêt en attendant.</p><span class="who">Thomas · Olivet</span></div>
-      <div class="rev"><span class="s">★★★★★</span><p>J'ai acheté ma Polo ici, révisée et garantie. Aucun souci depuis un an.</p><span class="who">Léa · Saint-Jean-de-Braye</span></div>
+      <div class="rev"><span class="s">★★★★★</span><p>Prix annoncé au téléphone respecté à l'euro près. Enfin un garage honnête.</p><span class="who">Valérie · Orléans</span></div>
+      <div class="rev"><span class="s">★★★★★</span><p>Voyant moteur réglé en une matinée, avec une voiture de prêt en attendant.</p><span class="who">Bruno · Olivet</span></div>
+      <div class="rev"><span class="s">★★★★★</span><p>J'ai acheté ma Polo ici, révisée et garantie. Aucun souci depuis un an.</p><span class="who">Margaux · Saint-Jean-de-Braye</span></div>
     </div>
   </div>
 </section>
@@ -990,9 +990,10 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
   qa('footer span').forEach(function(s){ s.textContent=s.textContent.replace('Garage du Littoral · Garage d\'exemple','Littoral Automobiles · Concession d\'exemple'); });
   // Tarifs d'atelier masqués ; vendeur à la place du garagiste ; avis et textes sans entretien ; photo d'accueil : une voiture
   var pr=q('.prices'); if(pr){ var sc=pr.closest('section'); if(sc) sc.hidden=true; }
-  var tm=q('.team h2'); if(tm){ tm.textContent='Karim, votre conseiller'; var tp=tm.nextElementSibling; if(tp) tp.textContent='20 ans dans l\'automobile. Je sélectionne chaque véhicule, je vous le présente en toute transparence et je m\'occupe de la reprise, du financement et de la carte grise.'; }
+  var tm=q('.team h2'); if(tm){ tm.textContent='Stéphane, votre conseiller'; var tp=tm.nextElementSibling; if(tp) tp.textContent='20 ans dans l\'automobile. Je sélectionne chaque véhicule, je vous le présente en toute transparence et je m\'occupe de la reprise, du financement et de la carte grise.'; }
   var R=['Véhicule conforme à l\'annonce, livré propre avec la carte grise faite. Très pro.','Reprise de mon ancienne voiture au juste prix et financement réglé en une journée.','J\'ai acheté ma Polo ici, garantie 12 mois. Aucun souci depuis un an.'];
   qa('.reviews .rev p').forEach(function(e,i){ if(R[i]) e.textContent=R[i]; });
+  var RW=['Fabrice · Orléans','Coralie · Olivet','Yannick · Saint-Jean-de-Braye']; qa('.reviews .rev .who').forEach(function(e,i){ if(RW[i]) e.textContent=RW[i]; });
   var vh=q('#vehicules .head p'); if(vh) vh.textContent='Contrôlés, garantis 12 mois et livrés avec la carte grise. Annonces aussi diffusées sur Abracadeal.';
   var hp=q('.photo.hero'), c1=q('#vehicules .car .photo'); if(hp&&c1){ var m=(c1.className.match(/\bg\d+\b/)||[])[0]; if(m) hp.className=hp.className.replace(/\bg\d+\b/,m); }
   var tph=q('.team .photo'), c2=qa('#vehicules .car .photo')[5]; if(tph&&c2){ var m2=(c2.className.match(/\bg\d+\b/)||[])[0]; if(m2) tph.className=tph.className.replace(/\bg\d+\b/,m2); }
@@ -1025,9 +1026,10 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
   var rh=q('#reprise h2'); if(rh) rh.textContent='Reprise de votre moto';
   var rp=q('#reprise h2 + p'); if(rp) rp.textContent='Estimation gratuite sous 24 h, déduite du prix de votre prochaine moto.';
   var rk=q('#r-km'); if(rk) rk.value='18 000';
-  var tm=q('.team h2'); if(tm){ tm.textContent='Karim, votre conseiller moto'; var tp=tm.nextElementSibling; if(tp) tp.textContent='Motard depuis 20 ans. Je sélectionne chaque moto, je vous la présente en toute transparence et je m\'occupe de la reprise, du financement et de la carte grise.'; }
+  var tm=q('.team h2'); if(tm){ tm.textContent='Ludovic, votre conseiller moto'; var tp=tm.nextElementSibling; if(tp) tp.textContent='Motard depuis 20 ans. Je sélectionne chaque moto, je vous la présente en toute transparence et je m\'occupe de la reprise, du financement et de la carte grise.'; }
   var R=['Moto conforme à l\'annonce, révisée et livrée avec la carte grise. Très pro.','Reprise de mon ancienne moto au juste prix, financement réglé en une journée.','Ma première moto A2 achetée ici, très bien conseillé pour débuter.'];
   qa('.reviews .rev p').forEach(function(e,i){ if(R[i]) e.textContent=R[i]; });
+  var RW=['Dylan · Orléans','Morgane · Olivet','Jordan · Saint-Jean-de-Braye']; qa('.reviews .rev .who').forEach(function(e,i){ if(RW[i]) e.textContent=RW[i]; });
   var c2=q('#contact h2'), cp=q('#contact h2 + p'); if(c2) c2.textContent='Une moto vous intéresse ?'; if(cp) cp.textContent='Essai, reprise, financement : réponse sous 24 h.';
   var em=qa('#contact .v').filter(function(v){return /@/.test(v.textContent);})[0]; if(em) em.textContent='contact@littoral-motos.fr';
   qa('footer span').forEach(function(s){ s.textContent=s.textContent.replace('Littoral Automobiles · Concession d\'exemple','Littoral Motos · Concession d\'exemple'); });

@@ -327,7 +327,7 @@
     ['#tarifs .prices .row .d', ['45 min', '35 min', '40 min', '3 heures minimum'], ['Forfait', 'Au compteur', 'Conventionné', 'Sur devis']],
     ['#tarifs .prices .row .p', ['95 €', '75 €', '90 €', '75 €/h'], ['Forfait', 'Compteur', 'Tiers payant', 'Sur devis']],
     ['#avis .reviews .rev p', ['À l\'heure malgré notre vol en retard, voiture impeccable.', 'Navettes pour nos 40 invités entre l\'église et le domaine, sans accroc.', 'Very professional, knew every shortcut to the airport during a busy trade fair week.'], ['Taxi à l\'heure à 5 h pour mon train, chauffeur très aimable.', 'Il m\'emmène à mes séances à l\'hôpital, toujours ponctuel, et il s\'occupe du bon de transport.', 'Quick pick-up at the airport, fair price, very friendly driver.']],
-    ['#avis .reviews .rev .who', ['Sophie · Voyage d\'affaires', 'Julien · Mariage', 'James · London'], ['Sophie · Gare', 'Marcel · Transport conventionné', 'James · London']],
+    ['#avis .reviews .rev .who', ['Caroline · Voyage d\'affaires', 'Maxime · Mariage', 'James · London'], ['Gisèle · Gare', 'Marcel · Transport conventionné', 'Oliver · London']],
     ['#contact h2', ['Une course à prévoir ?'], ['Besoin d\'un taxi ?']],
     ['#contact h2 + p', ['Réponse avec un prix ferme en moins d\'une heure.'], ['Réservez à l\'avance ou appelez pour une course immédiate.']],
     ['#ok', ['Démonstration : sur le site final, la demande arrive directement chez le chauffeur par mail et WhatsApp. Rien n\'a été envoyé ici.'], ['Démonstration : sur le site final, la demande arrive directement chez le chauffeur de taxi par mail et WhatsApp. Rien n\'a été envoyé ici.']]

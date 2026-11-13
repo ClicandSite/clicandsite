@@ -1133,19 +1133,21 @@ def landing_pages():
            ("Formulaire ou prise de rendez-vous", "Le visiteur demande un devis ou réserve un créneau sans quitter la page. Les demandes arrivent chez vous tout de suite."),
            ("Optimisation de la vitesse", "Une page qui s'affiche en moins de 2 secondes : chaque seconde de plus fait partir des visiteurs que vous avez payés."),
            ("Suivi et ajustements pendant 30 jours", "On regarde les chiffres avec vous et on ajuste les textes, l'ordre ou le bouton si la page ne convertit pas assez."),
-           ("Livraison en 5 jours", "Votre page est en ligne en 5 jours ouvrés après votre brief, prête à recevoir vos campagnes.")]
+           ("Livraison en 5 jours", "Votre page est en ligne en 5 jours ouvrés après votre brief, prête à recevoir vos campagnes."),
+           ("Hébergement inclus", "Sur votre nom de domaine, sans frais tant que la page est en ligne. Ou sur votre propre hébergement si vous préférez, au même prix.")]
     who = [("Vous lancez une publicité", "Google Ads, Facebook ou Instagram : envoyez vos clics vers une page faite pour ça, pas vers votre accueil."),
            ("Vous testez une nouvelle offre", "Un nouveau service, une promo, une saison : une page dédiée pour mesurer si l'offre prend avant d'investir plus."),
            ("Votre page actuelle ne convertit pas", "Des visites mais peu d'appels ou de demandes ? On repart de zéro avec une page construite pour l'action.")]
     steps = [("Vous réglez en ligne", "Paiement unique et sécurisé, facture envoyée par e-mail."),
              ("Vous remplissez un court brief", "Votre offre, votre publicité, ce que doit faire le visiteur. Cinq minutes."),
-             ("On crée votre page en 5 jours", "Textes, design, formulaire et tracking installés, sur votre domaine ou une adresse dédiée."),
+             ("On crée votre page en 5 jours", "Textes, design, formulaire et tracking installés, hébergée par nos soins sur votre domaine, ou sur votre propre hébergement."),
              ("On l'améliore pendant 30 jours", "Suivi des résultats et ajustements inclus.")]
     faq = [("Pourquoi ne pas envoyer ma pub sur ma page d'accueil ?", "Une page d'accueil parle de tout : vos services, votre histoire, vos horaires. Le visiteur qui arrive d'une pub cherche une seule chose. Une landing page lui répond directement et lui donne un seul bouton, ce qui fait en général beaucoup plus d'appels ou de demandes pour le même budget de pub."),
            ("Le prix est-il le même pour tout le monde ?", "Oui : 490 € HT, paiement unique, quel que soit votre métier. TVA non applicable (art. 293 B du CGI) : vous payez 490 €."),
            ("Faut-il avoir un site MyCreativeSite ?", "Non. La landing page fonctionne seule. Si vous avez déjà un site chez nous ou ailleurs, elle peut se mettre sur votre propre nom de domaine."),
            ("Qui gère mes publicités ?", "Vous, ou la personne qui s'en occupe. Nous créons la page et installons le suivi (Google Ads, Meta, clics appel et WhatsApp) pour que vos campagnes mesurent les bons résultats."),
-           ("Y a-t-il un abonnement ?", "Non, c'est un paiement unique de 490 € HT. La page est mise en ligne par nos soins, sur votre nom de domaine ou sur une adresse dédiée."),
+           ("Y a-t-il un abonnement ?", "Non, c'est un paiement unique de 490 € HT. L'hébergement est inclus, sans frais, tant que la page est en ligne."),
+           ("Où la page est-elle hébergée ?", "Par défaut, nous l'hébergeons pour vous, sans frais, sur votre nom de domaine (par exemple promo.votre-site.fr), avec le cadenas HTTPS. Vous préférez votre propre hébergement (OVH, IONOS, o2switch, WordPress…) ? Nous l'y installons avec vos accès, ou nous vous remettons les fichiers, au même prix. Les ajustements des 30 jours se font alors avec vos accès."),
            ("Que se passe-t-il après les 30 jours ?", "La page reste à vous et continue de fonctionner. Si vous voulez d'autres changements plus tard, on vous fait un devis simple.")]
     feat = lambda t: "".join(f'<div class="feat"><h3>{e(a)}</h3><p>{e(b)}</p></div>' for a, b in t)
     faq_html = "".join(f"<details><summary>{e(q)}</summary><p>{e(r)}</p></details>" for q, r in faq)

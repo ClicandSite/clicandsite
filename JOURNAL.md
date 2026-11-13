@@ -92,3 +92,4 @@
 - /landing-page/merci/ (noindex) : brief (offre, pub, objectif, site actuel) → RPC cs_landing_brief → commandes de l'admin (métier « Landing Page (490 €) »).
 - CGV : rubrique « Services en plus » (logo, landing page : 5 jours ouvrés après brief complet, ajustements 30 jours, pub à la charge du client).
 - TVA : franchise (art. 293 B) → affiché « 490 € HT · TVA non applicable, vous payez 490 € ».
+- Hébergement de la landing page (choix d'Anthony) : par défaut GitHub Pages sur le domaine du client, inclus sans frais tant qu'elle est en ligne ; ou sur l'hébergement du client (installation avec ses accès ou fichiers remis), même prix. Page, FAQ, accueil et CGV mis à jour.

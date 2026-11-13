@@ -1122,6 +1122,109 @@ def build_help():
     open("aide/nom-de-domaine/index.html", "w").write(shell("Relier votre nom de domaine à votre site", "Votre nom de domaine est chez OVH, IONOS, GoDaddy ou Gandi ? Les enregistrements DNS à ajouter pour le relier à votre site MyCreativeSite, pas à pas.", url, ld, body, "article"))
     return ["aide/nom-de-domaine/"]
 
+
+# 13/11/2026 (Anthony) : offre « Landing Page » — 490 € HT, paiement unique (Stripe), même prix pour tous
+LANDING_PAY = "https://buy.stripe.com/14AeVd9WLeD19eFfwIgfu0c"
+def landing_pages():
+    url = SITE + "/landing-page/"
+    inc = [("Textes sur mesure", "Écrits pour votre offre et pour la personne qui clique sur votre pub : un message, une promesse, une action."),
+           ("Design orienté conversion, mobile d'abord", "La plupart des clics de pub viennent du téléphone : la page est pensée pour lui, sans menu qui disperse."),
+           ("Tracking complet", "Google Ads, Meta (Facebook, Instagram), clics sur « Appeler » et WhatsApp : vous savez ce que chaque euro de pub rapporte."),
+           ("Formulaire ou prise de rendez-vous", "Le visiteur demande un devis ou réserve un créneau sans quitter la page. Les demandes arrivent chez vous tout de suite."),
+           ("Optimisation de la vitesse", "Une page qui s'affiche en moins de 2 secondes : chaque seconde de plus fait partir des visiteurs que vous avez payés."),
+           ("Suivi et ajustements pendant 30 jours", "On regarde les chiffres avec vous et on ajuste les textes, l'ordre ou le bouton si la page ne convertit pas assez."),
+           ("Livraison en 5 jours", "Votre page est en ligne en 5 jours ouvrés après votre brief, prête à recevoir vos campagnes.")]
+    who = [("Vous lancez une publicité", "Google Ads, Facebook ou Instagram : envoyez vos clics vers une page faite pour ça, pas vers votre accueil."),
+           ("Vous testez une nouvelle offre", "Un nouveau service, une promo, une saison : une page dédiée pour mesurer si l'offre prend avant d'investir plus."),
+           ("Votre page actuelle ne convertit pas", "Des visites mais peu d'appels ou de demandes ? On repart de zéro avec une page construite pour l'action.")]
+    steps = [("Vous réglez en ligne", "Paiement unique et sécurisé, facture envoyée par e-mail."),
+             ("Vous remplissez un court brief", "Votre offre, votre publicité, ce que doit faire le visiteur. Cinq minutes."),
+             ("On crée votre page en 5 jours", "Textes, design, formulaire et tracking installés, sur votre domaine ou une adresse dédiée."),
+             ("On l'améliore pendant 30 jours", "Suivi des résultats et ajustements inclus.")]
+    faq = [("Pourquoi ne pas envoyer ma pub sur ma page d'accueil ?", "Une page d'accueil parle de tout : vos services, votre histoire, vos horaires. Le visiteur qui arrive d'une pub cherche une seule chose. Une landing page lui répond directement et lui donne un seul bouton, ce qui fait en général beaucoup plus d'appels ou de demandes pour le même budget de pub."),
+           ("Le prix est-il le même pour tout le monde ?", "Oui : 490 € HT, paiement unique, quel que soit votre métier. TVA non applicable (art. 293 B du CGI) : vous payez 490 €."),
+           ("Faut-il avoir un site MyCreativeSite ?", "Non. La landing page fonctionne seule. Si vous avez déjà un site chez nous ou ailleurs, elle peut se mettre sur votre propre nom de domaine."),
+           ("Qui gère mes publicités ?", "Vous, ou la personne qui s'en occupe. Nous créons la page et installons le suivi (Google Ads, Meta, clics appel et WhatsApp) pour que vos campagnes mesurent les bons résultats."),
+           ("Y a-t-il un abonnement ?", "Non, c'est un paiement unique de 490 € HT. La page est mise en ligne par nos soins, sur votre nom de domaine ou sur une adresse dédiée."),
+           ("Que se passe-t-il après les 30 jours ?", "La page reste à vous et continue de fonctionner. Si vous voulez d'autres changements plus tard, on vous fait un devis simple.")]
+    feat = lambda t: "".join(f'<div class="feat"><h3>{e(a)}</h3><p>{e(b)}</p></div>' for a, b in t)
+    faq_html = "".join(f"<details><summary>{e(q)}</summary><p>{e(r)}</p></details>" for q, r in faq)
+    body = f"""
+<div class="wrap crumbs"><a href="/">Accueil</a> › Landing Page</div>
+<div class="wrap" style="padding-block:20px 40px;max-width:900px">
+  <span class="eyebrow">Service en plus · Landing Page</span>
+  <h1 style="font-size:clamp(1.8rem,4vw,2.9rem);font-weight:800;line-height:1.08;margin-top:12px">Vous faites de la pub Google ou Facebook ? Ne l'envoyez pas sur votre page d'accueil.</h1>
+  <p class="lead" style="color:var(--muted);font-size:1.05rem;margin:16px 0 24px;max-width:62ch">Une page faite pour une seule chose : transformer les clics que vous payez en appels, en demandes de devis et en rendez-vous. Textes, design, formulaire et suivi des résultats compris.</p>
+  <div class="ctas"><a class="btn" href="{LANDING_PAY}" data-cs-landing>Commander ma landing page · 490 € HT</a><a class="btn ghost" href="#inclus">Ce qui est inclus</a></div>
+  <p class="note">Paiement unique, même prix pour tous. TVA non applicable (art. 293 B du CGI) : vous payez 490 €. Livrée en 5 jours.</p>
+</div>
+<section id="inclus"><div class="wrap">
+  <span class="eyebrow">Inclus</span><h2>Tout ce qu'il faut pour que votre pub rapporte</h2>
+  <div class="feats">{feat(inc)}</div>
+</div></section>
+<section><div class="wrap">
+  <span class="eyebrow">Pour qui</span><h2>Pour les pros qui veulent des résultats de leur pub</h2>
+  <div class="feats">{feat(who)}</div>
+</div></section>
+<section><div class="wrap">
+  <span class="eyebrow">Comment ça se passe</span><h2>De la commande à la mise en ligne</h2>
+  <div class="feats" style="grid-template-columns:repeat(4,minmax(0,1fr))">{"".join(f'<div class="feat"><span class="eyebrow">Étape {i+1}</span><h3>{e(a)}</h3><p>{e(b)}</p></div>' for i,(a,b) in enumerate(steps))}</div>
+</div></section>
+<section><div class="wrap">
+  <div class="prices one"><div class="pc hi"><em>Landing Page</em><b>490 € HT</b><span>Paiement unique, même prix pour tous. TVA non applicable, art. 293 B du CGI : vous payez 490 €.</span>
+    <a class="btn" href="{LANDING_PAY}" data-cs-landing style="margin-top:14px">Commander ma landing page</a></div></div>
+</div></section>
+<section><div class="wrap">
+  <span class="eyebrow">Questions fréquentes</span><h2>Vos questions sur la landing page</h2>
+  <div class="faq">{faq_html}</div>
+</div></section>
+<section><div class="wrap">
+  <div class="cta"><div><h2>Vos clics méritent mieux que votre page d'accueil</h2><p>490 € HT, livrée en 5 jours, suivie pendant 30 jours.</p></div><a class="btn" href="{LANDING_PAY}" data-cs-landing>Commander</a></div>
+  <p class="note">Besoin d'un site complet plutôt qu'une page ? <a href="/#tarifs">Voir les formules MyCreativeSite</a>. <a href="/cgv.html">Conditions générales</a>.</p>
+</div></section>
+<style>@media (max-width:860px){{.feats[style]{{grid-template-columns:minmax(0,1fr)!important}}}}</style>
+<script>document.addEventListener('click',function(e){{var a=e.target.closest&&e.target.closest('[data-cs-landing]');if(a&&window.csTrack)window.csTrack('landing-paiement');}},true);</script>
+"""
+    ld = [{"@context": "https://schema.org", "@type": "Service", "name": "Landing Page pour publicité Google Ads et Facebook", "serviceType": "Création de landing page",
+           "provider": {"@id": SITE + "/#org"}, "areaServed": "FR", "url": url,
+           "offers": {"@type": "Offer", "price": "490", "priceCurrency": "EUR", "url": LANDING_PAY, "availability": "https://schema.org/InStock"}},
+          {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": r}} for q, r in faq]},
+          {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Accueil", "item": SITE + "/"}, {"@type": "ListItem", "position": 2, "name": "Landing Page", "item": url}]}]
+    os.makedirs("landing-page/merci", exist_ok=True)
+    open("landing-page/index.html", "w").write(shell("Landing page pour vos pubs Google et Facebook : 490 €", "Une landing page qui transforme vos clics de pub en appels et demandes : textes sur mesure, design mobile, tracking Google Ads et Meta, formulaire, suivi 30 jours. 490 € HT, livrée en 5 jours.", url, ld, body))
+    merci = f"""
+<div class="wrap" style="padding-block:28px 56px;max-width:720px">
+  <span class="eyebrow">Paiement reçu</span>
+  <h1 style="font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;margin-top:12px">Merci ! Parlez-nous de votre offre.</h1>
+  <p class="lead" style="color:var(--muted);margin:14px 0 22px">Cinq minutes pour nous dire quoi mettre en avant. Votre page est en ligne 5 jours ouvrés après ce brief. Votre facture arrive par e-mail.</p>
+  <form id="lb" class="feat" style="gap:14px" novalidate>
+    <input type="text" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <label>Nom de votre entreprise<input name="company" required autocomplete="organization"></label>
+    <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+    <label>Téléphone<input name="phone" type="tel" required autocomplete="tel"></label>
+    <label>L'offre à mettre en avant<textarea name="offer" rows="3" required placeholder="Ex. : rénovation de salle de bain clé en main dès 6 900 €, à Nice et alentours"></textarea></label>
+    <label>Votre publicité<select name="ads"><option>Google Ads</option><option>Facebook / Instagram</option><option>Google et Facebook</option><option>Pas encore lancée</option><option>Autre</option></select></label>
+    <label>Ce que doit faire le visiteur<select name="goal"><option>Demander un devis</option><option>Prendre rendez-vous</option><option>Appeler</option><option>Écrire sur WhatsApp</option><option>Autre</option></select></label>
+    <label>Votre site actuel (si vous en avez un)<input name="url" type="url" placeholder="https://"></label>
+    <label>Précisions (facultatif)<textarea name="msg" rows="3" placeholder="Couleurs, logo, photos, zone d'intervention, ce que font vos concurrents…"></textarea></label>
+    <button class="btn" type="submit">Envoyer mon brief</button>
+    <p class="note" id="lbm" role="status"></p>
+  </form>
+  <p class="note">Une question ? <a href="mailto:contact@mycreativesite.fr">contact@mycreativesite.fr</a></p>
+</div>
+<style>#lb label{{display:grid;gap:6px;font-weight:600;font-size:.95rem}}#lb input,#lb textarea,#lb select{{font:inherit;font-weight:400;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box}}</style>
+<script>
+(function(){{var f=document.getElementById('lb'),m=document.getElementById('lbm'),s=new URLSearchParams(location.search).get('s')||'';
+f.addEventListener('submit',function(e){{e.preventDefault();if(!f.reportValidity())return;var d=new FormData(f),b=f.querySelector('button');b.disabled=true;m.textContent='Envoi…';
+fetch('https://avcynjwcyygygkjuxsdt.supabase.co/rest/v1/rpc/cs_landing_brief',{{method:'POST',headers:{{'Content-Type':'application/json',apikey:'sb_publishable_fdSM-pnUtZRKX7K6nOf5Ag_i1TQgqLO'}},
+body:JSON.stringify({{p_company:d.get('company'),p_email:d.get('email'),p_phone:d.get('phone'),p_url:d.get('url'),p_offer:d.get('offer'),p_ads:d.get('ads'),p_goal:d.get('goal'),p_message:d.get('msg'),p_session:s,p_hp:d.get('hp')}})}})
+.then(function(r){{return r.json().then(function(j){{if(!r.ok)throw new Error(j.message||'Erreur');return j;}});}})
+.then(function(){{f.innerHTML='<h2>Brief bien reçu, merci !</h2><p>On vous recontacte sous 24 h ouvrées pour lancer votre page.</p>';if(window.csTrack)window.csTrack('landing-brief');}})
+.catch(function(x){{b.disabled=false;m.textContent=x.message||'Envoi impossible, réessayez ou écrivez-nous.';}});}});}})();
+</script>
+"""
+    open("landing-page/merci/index.html", "w").write(shell("Merci : votre brief de landing page", "Brief de votre landing page MyCreativeSite.", url + "merci/", [], merci).replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="robots" content="noindex">', 1))
+
 def main():
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     for p in PAGES + CITIES + INTENT:
@@ -1130,7 +1233,8 @@ def main():
     import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     blog = build_blog()
     aide = build_help()
-    urls = [("", "1.0")] + [(p["slug"] + "/", "0.8") for p in PAGES + CITIES + INTENT] + [(u, "0.6") for u in blog] + [(u, "0.4") for u in aide] + [("cgv.html", "0.3")]
+    landing_pages()
+    urls = [("", "1.0"), ("landing-page/", "0.8")] + [(p["slug"] + "/", "0.8") for p in PAGES + CITIES + INTENT] + [(u, "0.6") for u in blog] + [(u, "0.4") for u in aide] + [("cgv.html", "0.3")]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     from articles import ARTICLES
     adate = {f"conseils/{a['slug']}/": a["date"] for a in ARTICLES}

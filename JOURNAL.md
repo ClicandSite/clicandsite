@@ -83,3 +83,12 @@
 - Espace client, « Modifier mon site » : rubrique « Mentions légales » (content.legal), pré-remplie depuis « Mon entreprise » (devis). Sans rubrique remplie : nom et coordonnées du site.
 - Identifiant anonyme des statistiques renouvelé au bout de 13 mois (cs-visits v=4, cs-site-stats v=2, cs-edit v=29).
 - mycreativesite.fr/mentions-legales.html : la partie Cookies disait « aucun outil de mesure d'audience » (faux depuis le compteur du 12/11) → corrigée, avec liens #nostats / #stats.
+
+## 13/11/2026 — « Services en plus » et offre Landing Page
+- Accueil : section « Services en plus » (#services) après les tarifs, hors cartes de formules : Logo et bannière 49 € (bouton qui coche l'option dans le formulaire) et Landing Page 490 € HT. Logo retiré de « Options à la carte » (doublon).
+- Page /landing-page/ (build_seo.py, landing_pages()) : accroche, inclus, pour qui, étapes, prix, FAQ (FAQPage + Service), lien en pied de l'accueil, dans le sitemap.
+- Stripe (compte MyCreativeSite, live) : produit prod_VcghYCtQ37uUQO, prix price_1UbRJjEVjm0uqFCchUWEQf1d (490 €), lien https://buy.stripe.com/14AeVd9WLeD19eFfwIgfu0c
+  (facture créée, nom de l'entreprise + téléphone + adresse demandés, retour vers /landing-page/merci/?s={CHECKOUT_SESSION_ID}).
+- /landing-page/merci/ (noindex) : brief (offre, pub, objectif, site actuel) → RPC cs_landing_brief → commandes de l'admin (métier « Landing Page (490 €) »).
+- CGV : rubrique « Services en plus » (logo, landing page : 5 jours ouvrés après brief complet, ajustements 30 jours, pub à la charge du client).
+- TVA : franchise (art. 293 B) → affiché « 490 € HT · TVA non applicable, vous payez 490 € ».

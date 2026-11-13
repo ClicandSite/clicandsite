@@ -1,0 +1,2 @@
+-- 13/11/2026 : public.cs_landing_brief — brief envoyé après paiement de la Landing Page (mycreativesite.fr/landing-page/merci/),
+-- enregistré dans clicandsite.site_orders (plan « landing », sans création de site). Appliquée via MCP (migration "landing_brief").

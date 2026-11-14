@@ -102,5 +102,5 @@
 
 ## 14/11/2026 — Alerte Supabase « Disk IO Budget »
 - Cause : robot de prospection (clicandsite-crawl) toutes les 20 s → 277 000 mises à jour sur 185 000 prospects ; ~7 100 tâches planifiées / jour, historique jamais purgé (25 Mo).
-- Correctif : crawl 5 min, search 15 min, nouveaux 30 min, alerte leads 2 min ; purge quotidienne de l'historique cron (2 jours). Envoi des mails inchangé (1 800 prospects prêts ≈ 2 mois).
+- Correctif (2 passes) : crawl 15 min, search 1 h, nouveaux 1 h, Abracadeal 20 min, boutique 30 min, alerte leads 2 min ; purge quotidienne de l'historique cron (2 jours). Envoi des mails inchangé (1 800 prospects prêts ≈ 2 mois).
 - À surveiller : graphique Disk IO du tableau de bord Supabase dans 24-48 h. Sinon, passer en Pro (25 $/mois, compute Micro).

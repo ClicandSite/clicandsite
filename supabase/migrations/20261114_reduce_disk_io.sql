@@ -6,3 +6,9 @@ select cron.alter_job((select jobid from cron.job where jobname='clicandsite-nou
 select cron.alter_job((select jobid from cron.job where jobname='cs-lead-notify'), schedule := '*/2 * * * *');
 delete from cron.job_run_details where end_time < now() - interval '2 days';
 select cron.schedule('cs-cron-purge', '41 4 * * *', $$delete from cron.job_run_details where end_time < now() - interval '2 days'$$);
+-- 2e réduction (Anthony : « réduit oui »)
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-crawl'), schedule := '*/15 * * * *');
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-search'), schedule := '7 * * * *');
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-nouveaux'), schedule := '37 * * * *');
+select cron.alter_job((select jobid from cron.job where jobname='cs-abracadeal-sync'), schedule := '*/20 * * * *');
+select cron.alter_job((select jobid from cron.job where jobname='cs-shop-sweep'), schedule := '*/30 * * * *');

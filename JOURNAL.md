@@ -113,4 +113,4 @@
 ## 14/11/2026 — Sites « devinés » faux dans la liste de prospects
 - Constat (capture d'Anthony) : « B.w.b » → bwb.com, « Ma.mo. » → site allemand. Cause : guessSite acceptait n'importe quel domaine existant quand le nom n'a aucun mot de 4 lettres (Math.min(2, 0) = 0).
 - Les entreprises SANS site n'ont ni e-mail ni téléphone (l'annuaire officiel n'en donne pas) : 162 000, injoignables par mail.
-- Correctifs : 874 prospects au nom trop court exclus ; cs-prospecting v15 vérifie le site avant chaque envoi (ville ou code postal sur la page, ou 2 mots du nom), sinon prospect exclu ; guessSite plus strict dans le repo (clicandsite-prospect-finder) — À DÉPLOYER au prochain réveil du robot (il est en pause).
+- Correctifs : 356 prospects au nom trop court exclus ; cs-prospecting v15 vérifie le site avant chaque envoi (ville ou code postal sur la page, ou 2 mots du nom), sinon prospect exclu ; guessSite plus strict dans le repo (clicandsite-prospect-finder) — À DÉPLOYER au prochain réveil du robot (il est en pause).

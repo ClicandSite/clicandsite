@@ -99,3 +99,8 @@
   Section « Services en plus » refaite : Landing Page en grand (avec le pack), puis Google Ads / Kit réseaux / Logo. Page /landing-page/ : carte du pack + FAQ.
   Brief commun /landing-page/merci/?t=landing|ads|pack|kit → cs_landing_brief(p_kind) → commandes de l'admin. CGV complétées.
 - Idée en attente : assistant IA sur les sites clients (19 €/mois) — à tester d'abord sur la démo et 1-2 clients ; nécessite un compte API IA payant d'Anthony.
+
+## 14/11/2026 — Alerte Supabase « Disk IO Budget »
+- Cause : robot de prospection (clicandsite-crawl) toutes les 20 s → 277 000 mises à jour sur 185 000 prospects ; ~7 100 tâches planifiées / jour, historique jamais purgé (25 Mo).
+- Correctif : crawl 5 min, search 15 min, nouveaux 30 min, alerte leads 2 min ; purge quotidienne de l'historique cron (2 jours). Envoi des mails inchangé (1 800 prospects prêts ≈ 2 mois).
+- À surveiller : graphique Disk IO du tableau de bord Supabase dans 24-48 h. Sinon, passer en Pro (25 $/mois, compute Micro).

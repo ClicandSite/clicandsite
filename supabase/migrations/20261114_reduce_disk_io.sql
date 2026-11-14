@@ -12,3 +12,7 @@ select cron.alter_job((select jobid from cron.job where jobname='clicandsite-sea
 select cron.alter_job((select jobid from cron.job where jobname='clicandsite-nouveaux'), schedule := '37 * * * *');
 select cron.alter_job((select jobid from cron.job where jobname='cs-abracadeal-sync'), schedule := '*/20 * * * *');
 select cron.alter_job((select jobid from cron.job where jobname='cs-shop-sweep'), schedule := '*/30 * * * *');
+-- 3e passe (Anthony : « mets en pause, une fois par semaine ») : robot de prospection le dimanche seulement (UTC)
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-search'), schedule := '7 2 * * 0');
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-nouveaux'), schedule := '37 2 * * 0');
+select cron.alter_job((select jobid from cron.job where jobname='clicandsite-crawl'), schedule := '*/15 3-5 * * 0');

@@ -40,6 +40,18 @@ h1 span{color:var(--brand)}
 .vbar{display:grid;grid-template-columns:minmax(110px,45%) 1fr auto;align-items:center;gap:8px;font-size:.84rem;margin:3px 0}.vbar i{height:9px;border-radius:999px;background:var(--brand);display:block}.vbar b{white-space:nowrap}
 .vdays{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:6px}.vdays div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.68rem;color:var(--muted)}.vdays i{display:block;width:100%;max-width:26px;background:var(--brand);border-radius:5px 5px 0 0;min-height:2px}
 .vnote{font-size:.78rem;color:var(--muted);margin:10px 0 0}
+ /* 14/11/2026 (Anthony : « trop de scroll, fenêtres pliables ») */
+details.fold{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+details.fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:700}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s;flex:none;opacity:.6}
+details.fold[open]>summary::before{transform:rotate(45deg)}
+details.fold>summary .fsum{font-weight:400;color:var(--muted);font-size:.9rem;margin-left:auto;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+details.fold>.fbody{padding:0 14px 14px}
+details.fold>.fbody>.vis,details.fold>.fbody>.robot{border:0;padding:0;margin:0;background:none}
+details.fold>.fbody>.vis>.vis-h>h2{display:none}
+.foldbar{display:flex;gap:8px;justify-content:flex-end;margin:-4px 0 10px}
+@media (max-width:640px){details.fold>summary .fsum{max-width:50%}}
 .robot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
 .robot .st{font-weight:700}
 .robot details{width:100%}
@@ -159,9 +171,8 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
       </div>
       <p class="vnote">Même période que « Visiteurs du site ». Chaque visiteur est rattaché à sa page d’arrivée et à sa provenance, puis on regarde jusqu’où il va : regarder un modèle, essayer l’espace client, commencer le formulaire de commande, envoyer sa demande. Suivi en place depuis le 12/11/2026 au soir ; une demande arrivée avant ne figure pas dans les colonnes.</p>
     </section>
-    <div class="cards" id="cards"></div>
 
-    <div class="robot">
+    <div class="robot" id="robotBox">
       <span>Robot de recherche : <span class="st" id="robotSt">…</span></span>
       <button class="btn" id="robotToggle" type="button">…</button>
       <button class="btn primary" id="robotRun" type="button">Lancer une recherche maintenant</button>
@@ -197,6 +208,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
         <div class="meta" id="cStatus" aria-live="polite"></div>
       </div></details></div>
 
+    <div id="prospBox"><div class="cards" id="cards"></div>
     <div class="filters">
       <select id="fTrade"><option value="">Tous les métiers</option><option value="vtc">VTC</option><option value="restaurant">Restaurant</option><option value="garage">Garage / concession</option><option value="immobilier">Immobilier</option><option value="batiment">Bâtiment</option><option value="veterinaire">Vétérinaire</option><option value="autoecole">Auto-école</option><option value="coach">Coach sportif</option><option value="photographe">Photographe</option><option value="toiletteur">Toilettage</option><option value="fleuriste">Fleuriste</option><option value="traiteur">Traiteur</option><option value="nautisme">Location de bateaux</option><option value="kine">Kinésithérapeute</option><option value="dentiste">Dentiste</option><option value="bijouterie">Bijouterie-horlogerie</option><option value="liberal">Professions libérales</option><option value="services">Services à domicile</option><option value="evenementiel">Événementiel</option><option value="hebergement">Chambres d'hôtes et gîtes</option><option value="tourisme">Tourisme et loisirs</option><option value="location">Location et déménagement</option><option value="infirmier">Infirmier libéral</option><option value="beaute">Coiffure / beauté</option><option value="bienetre">Bien-être</option><option value="boulangerie">Boulangerie</option><option value="depannage">Dépannage</option><option value="boutique">Boutique en ligne</option></select>
       <select id="fSite"><option value="">Tous les sites</option><option value="aucun">Sans site</option><option value="date">Site daté</option><option value="injoignable">Site en panne</option><option value="moderne">Site moderne</option><option value="a_verifier">À vérifier</option></select>
@@ -208,7 +220,7 @@ select,input,textarea{width:100%;font:inherit;padding:9px 10px;border-radius:9px
     </div>
     <p class="count" id="count"></p>
     <div class="list" id="list"></div>
-    <div class="pager"><button class="btn" id="prev" type="button">Précédent</button><button class="btn" id="next" type="button">Suivant</button></div>
+    <div class="pager"><button class="btn" id="prev" type="button">Précédent</button><button class="btn" id="next" type="button">Suivant</button></div></div>
   </div>
 </div>
 
@@ -508,6 +520,31 @@ $('cSend').addEventListener('click',async()=>{
   finally{b.disabled=false;}
 });
 $('cText').value=C_SIGN;
+</script>
+<script>
+/* 14/11/2026 (Anthony) : blocs pliables, état gardé sur l'appareil */
+(function(){
+  var B=[['ordersBox',null,null,1],['sitesBox',null,null,1],['visBox','Visiteurs du site','visCards',0],['funBox','Ce qui amène des commandes',null,0],['robotBox','Robot de recherche de prospects','robotSt',0],['mailBox','Envoi des mails de prospection','mailSt',0],['composeWrap','Écrire un mail',null,0],['prospBox','Prospects','count',1]];
+  var K='cs_admin_fold', st={}; try{ st=JSON.parse(localStorage.getItem(K)||'{}'); }catch(_){}
+  var all=[];
+  B.forEach(function(b){ var el=document.getElementById(b[0]); if(!el||!b[1]) return;
+    var d=document.createElement('details'); d.className='fold'; d.id='f-'+b[0];
+    d.open = (b[0] in st) ? !!st[b[0]] : !!b[3];
+    var sm=document.createElement('summary'); sm.innerHTML='<span></span><span class="fsum"></span>'; sm.firstChild.textContent=b[1];
+    var body=document.createElement('div'); body.className='fbody';
+    el.parentNode.insertBefore(d,el); d.appendChild(sm); d.appendChild(body); body.appendChild(el);
+    d.addEventListener('toggle',function(){ st[b[0]]=d.open; try{ localStorage.setItem(K,JSON.stringify(st)); }catch(_){} if(d.open) window.dispatchEvent(new Event('resize')); });
+    if(b[2]){ var src=document.getElementById(b[2]), out=sm.lastChild;
+      var sync=function(){ var t=src.id==='visCards' ? (function(){ var c=src.querySelector('b,strong'); var l=src.querySelector('span'); return c?(c.textContent+' '+(l?l.textContent.toLowerCase():'')):''; })() : src.textContent; out.textContent=(t||'').replace(/\s+/g,' ').trim(); };
+      new MutationObserver(sync).observe(src,{childList:true,subtree:true,characterData:true}); sync(); }
+    if(b[0]==='composeWrap'){ var inner=document.getElementById('composeBox'); if(inner){ inner.open=true; var su=inner.querySelector('summary'); if(su) su.style.display='none'; } }
+    all.push(d); });
+  // Boutons « tout plier / tout déplier »
+  var app=document.getElementById('app'), first=all[0]; if(first){ var bar=document.createElement('div'); bar.className='foldbar';
+    bar.innerHTML='<button class="btn" type="button" data-f="0">Tout plier</button><button class="btn" type="button" data-f="1">Tout déplier</button>';
+    first.parentNode.insertBefore(bar,first);
+    bar.addEventListener('click',function(e){ var v=e.target.getAttribute('data-f'); if(v==null) return; all.forEach(function(d){ d.open=v==='1'; }); }); }
+})();
 </script>
 </body>
 </html>

@@ -106,3 +106,6 @@
 - À surveiller : graphique Disk IO du tableau de bord Supabase dans 24-48 h. Sinon, passer en Pro (25 $/mois, compute Micro).
 - 3e passe : robot de recherche de prospects en pause la semaine, actif le dimanche nuit seulement (recherche 3 h, nouvelles entreprises 3 h 30, vérification des sites 4 h-7 h, heure de Paris). Envoi des mails inchangé.
 - 4e passe : recherches de prospects arrêtées (167 000 en attente, dont 162 000 jamais vérifiés). La vérification des sites ne repart (dimanche nuit) que si la réserve avec e-mail tombe sous 300. Pour relancer les recherches : recréer les tâches clicandsite-search / clicandsite-nouveaux.
+
+## 14/11/2026 — Admin : blocs pliables
+- Visiteurs, Ce qui amène des commandes, Robot, Envoi des mails, Écrire un mail, Prospects : blocs pliables avec un résumé à droite (ex. « 23 visiteurs (7 jours) »), état gardé sur l'appareil, boutons « Tout plier / Tout déplier ». Par défaut seul « Prospects » est ouvert.

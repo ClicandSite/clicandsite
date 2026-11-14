@@ -1,0 +1,2 @@
+-- 14/11/2026 : cs_robot_to_guess renvoie aussi le code postal ; prospects « annuaire » au nom sans mot de 4 lettres (site deviné invérifiable) → exclus.
+-- Appliquée via MCP (migration "guess_site_stricter").

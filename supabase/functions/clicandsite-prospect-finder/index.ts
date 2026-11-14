@@ -192,10 +192,12 @@ async function sirene(dept: string, trade: string, page: number) {
 
 const PARKED = /domain (is )?for sale|ce domaine est|nom de domaine est (à vendre|disponible)|parked|sedo|godaddy|dan\.com|buy this domain|hugedomains|site en construction|under construction|default web site page|index of \//i;
 const noAccent = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-async function guessSite(p: { id: string; name: string; city: string | null }) {
+async function guessSite(p: { id: string; name: string; city: string | null; postcode?: string | null }) {
   const base = noAccent(p.name.toLowerCase()).replace(LEGAL, " ").replace(/&/g, " et ").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
   if (base.length < 4) return null;
   const words = base.split(" ").filter(w => w.length >= 4);
+  // 14/11/2026 : sans mot d'au moins 4 lettres (« B.w.b », « Ma.mo. »), impossible de vérifier → on ne devine pas
+  if (!words.length) return null;
   const joined = base.replace(/ /g, ""), dashed = base.replace(/ /g, "-");
   const city = p.city ? noAccent(p.city.toLowerCase()).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "";
   const cands = [...new Set([joined + ".fr", dashed + ".fr", joined + ".com", dashed + ".com", ...(city ? [dashed + "-" + city + ".fr", joined + city.replace(/-/g, "") + ".fr"] : [])])].filter(d => d.length <= 45).slice(0, 6);
@@ -206,7 +208,9 @@ async function guessSite(p: { id: string; name: string; city: string | null }) {
       const low = noAccent(html.toLowerCase());
       const hit = words.filter(w => low.includes(w)).length;
       const cityHit = p.city ? low.includes(noAccent(p.city.toLowerCase())) : false;
-      if (hit >= Math.min(2, words.length) || (hit >= 1 && cityHit)) return url;
+      const cpHit = p.postcode ? low.includes(String(p.postcode)) : false;
+      // 14/11/2026 : la ville ou le code postal doit figurer sur la page, sauf si au moins 2 mots du nom y sont
+      if (hit >= 1 && (cityHit || cpHit || (words.length >= 2 && hit >= 2))) return url;
     } catch { /* domaine absent */ }
   }
   return null;

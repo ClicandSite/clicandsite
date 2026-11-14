@@ -270,7 +270,7 @@ const frDate = (d: string) => d.split("-").reverse().join("/");
 
 async function pending(trades: string[], limit: number) {
   if (limit <= 0) return [];
-  return await sql`select p.id, lower(trim(p.email)) email, p.name, p.trade, p.city, p.site_status, p.segment, p.date_creation
+  return await sql`select p.id, lower(trim(p.email)) email, p.name, p.trade, p.city, p.postcode, p.website, p.source, p.site_status, p.segment, p.date_creation
     from clicandsite.prospects p
     where p.email is not null and lower(trim(p.email)) ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'
       and p.status in ('nouveau','a_contacter') and coalesce(p.site_status,'aucun') <> 'moderne' and p.trade = any(${trades})
@@ -278,6 +278,25 @@ async function pending(trades: string[], limit: number) {
       and not exists (select 1 from clicandsite.mail_recipients r where r.prospect_id = p.id and (r.status in ('envoyé','en cours','désinscrit') or r.attempts >= ${MAX_ATTEMPTS}))
       and not exists (select 1 from clicandsite.mail_recipients r2 where lower(r2.email) = lower(trim(p.email)) and r2.status in ('envoyé','désinscrit'))
     order by (p.status = 'a_contacter') desc, (p.date_creation >= current_date - 365) desc nulls last, p.date_creation desc nulls last, p.score desc nulls last, p.created_at asc limit ${limit}`;
+}
+
+// 14/11/2026 : les sites des entreprises de l'annuaire sont « devinés » d'après le nom (ex. « B.w.b » → bwb.com, une autre société).
+// Avant d'écrire, on vérifie que le site parle bien de cette entreprise : ville ou code postal sur la page, ou au moins 2 mots du nom.
+const noAcc = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const LEGAL_W = /\b(sarl|sas|sasu|eurl|sa|snc|sci|ste|societe|ets|etablissements|holding|groupe|ei|eirl|scp|selarl|selas|selasu|selurl|scm|sel)\b/g;
+async function siteMatches(p: any): Promise<boolean> {
+  if (p.source !== "sirene" || !p.website) return true;
+  const words = noAcc(p.name || "").replace(LEGAL_W, " ").replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter((w: string) => w.length >= 4);
+  if (!words.length) return false;
+  try {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(p.website, { signal: ctl.signal, redirect: "follow", headers: { "user-agent": "Mozilla/5.0 (compatible; MyCreativeSite/1.0; +https://mycreativesite.fr)" } });
+    clearTimeout(t); if (!r.ok) return false;
+    const low = noAcc((await r.text()).slice(0, 300000));
+    const hit = words.filter((w: string) => low.includes(w)).length;
+    const city = p.city ? low.includes(noAcc(p.city)) : false, cp = p.postcode ? low.includes(String(p.postcode)) : false;
+    return hit >= 1 && (city || cp || (words.length >= 2 && hit >= 2));
+  } catch { return false; }
 }
 
 async function report(date: string, to: string, tok: string) {
@@ -380,7 +399,13 @@ Deno.serve(async (req: Request) => {
     await sql`update clicandsite.mail_recipients set status='échec', last_error='Envoi interrompu, nouvel essai automatique' where status='en cours' and sent_at is null`;
 
     let sent = 0, failed = 0;
-    const list = take > 0 ? await pending(s.trades, take) : [];
+    const cand = take > 0 ? await pending(s.trades, take * 3) : [];
+    const list: any[] = [];
+    for (const c of cand) {
+      if (list.length >= take) break;
+      if (await siteMatches(c)) { list.push(c); continue; }
+      await sql`update clicandsite.prospects set status='exclu', notes=trim(coalesce(notes,'') || ' Site deviné non confirmé (ni la ville ni le nom sur la page) : mail non envoyé.'), updated_at=now() where id=${c.id}::uuid and status in ('nouveau','a_contacter')`;
+    }
     if (!manual && list.length) await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 20000)));
     for (let i = 0; i < list.length; i++) {
       const p = list[i];

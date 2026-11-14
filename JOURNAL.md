@@ -105,3 +105,4 @@
 - Correctif (2 passes) : crawl 15 min, search 1 h, nouveaux 1 h, Abracadeal 20 min, boutique 30 min, alerte leads 2 min ; purge quotidienne de l'historique cron (2 jours). Envoi des mails inchangé (1 800 prospects prêts ≈ 2 mois).
 - À surveiller : graphique Disk IO du tableau de bord Supabase dans 24-48 h. Sinon, passer en Pro (25 $/mois, compute Micro).
 - 3e passe : robot de recherche de prospects en pause la semaine, actif le dimanche nuit seulement (recherche 3 h, nouvelles entreprises 3 h 30, vérification des sites 4 h-7 h, heure de Paris). Envoi des mails inchangé.
+- 4e passe : recherches de prospects arrêtées (167 000 en attente, dont 162 000 jamais vérifiés). La vérification des sites ne repart (dimanche nuit) que si la réserve avec e-mail tombe sous 300. Pour relancer les recherches : recréer les tâches clicandsite-search / clicandsite-nouveaux.

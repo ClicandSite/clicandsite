@@ -16,3 +16,5 @@ select cron.alter_job((select jobid from cron.job where jobname='cs-shop-sweep')
 select cron.alter_job((select jobid from cron.job where jobname='clicandsite-search'), schedule := '7 2 * * 0');
 select cron.alter_job((select jobid from cron.job where jobname='clicandsite-nouveaux'), schedule := '37 2 * * 0');
 select cron.alter_job((select jobid from cron.job where jobname='clicandsite-crawl'), schedule := '*/15 3-5 * * 0');
+-- 4e passe (Anthony : « on en a plein déjà ») : recherches arrêtées (clicandsite-search et clicandsite-nouveaux supprimées) ;
+-- clicandsite-crawl le dimanche 3-5 h UTC seulement si moins de 300 prospects « nouveau » avec e-mail. Appliquée via MCP (prospect_robot_pause).
